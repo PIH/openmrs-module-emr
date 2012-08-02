@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>emr</groupId>
 	<artifactId>emr</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<packaging>pom</packaging>
 	<name>EMR Module</name>
 	<description>An EMR that runs on top of the OpenMRS platform</description>
@@ -25,7 +24,8 @@
         <connection>scm:git:git@github.com:PIH/openmrs-module-emr.git</connection>
         <developerConnection>scm:git:git@github.com:PIH/openmrs-module-emr.git</developerConnection>
         <url>scm:git:git@github.com:PIH/openmrs-module-emr.git</url>
-    </scm>
+      <tag>0.0.1</tag>
+  </scm>
 
     <distributionManagement>
         <repository>
