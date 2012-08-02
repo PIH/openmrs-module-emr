@@ -3,7 +3,7 @@
 
 	<groupId>emr</groupId>
 	<artifactId>emr</artifactId>
-	<version>0.0.1</version>
+	<version>0.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>EMR Module</name>
 	<description>An EMR that runs on top of the OpenMRS platform</description>
@@ -24,7 +24,7 @@
         <connection>scm:git:git@github.com:PIH/openmrs-module-emr.git</connection>
         <developerConnection>scm:git:git@github.com:PIH/openmrs-module-emr.git</developerConnection>
         <url>scm:git:git@github.com:PIH/openmrs-module-emr.git</url>
-      <tag>0.0.1</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <distributionManagement>
