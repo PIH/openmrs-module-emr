@@ -10,3 +10,7 @@
 /omod/.settings
 /omod/.project
 /omod/target
+
+/.idea
+*.iml
+
