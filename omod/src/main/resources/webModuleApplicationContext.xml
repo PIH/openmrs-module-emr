@@ -24,5 +24,12 @@
 	<bean class="org.openmrs.ui.framework.StandardModuleUiConfiguration">
 		<property name="moduleId" value="${project.parent.artifactId}"/>
 	</bean>
+
+    <!-- Apps -->
+    <bean id="emrFindPatientApp" class="org.openmrs.module.appframework.SimpleAppDescriptor">
+        <property name="id" value="emr.findPatient"/>
+        <property name="label" value="Find a Patient"/>
+        <property name="homepageUrl" value="emr/findPatient.page"/>
+    </bean>
 	
 </beans>

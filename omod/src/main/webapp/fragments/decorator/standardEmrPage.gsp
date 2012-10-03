@@ -2,14 +2,20 @@
 	ui.includeFragment("emr", "standardEmrIncludes")
 	ui.includeCss("emr", "emr.css")
 	
-	def title = config.title ?: "OpenMRS Electronic Medical Record"
+	def title = config.title ?: ui.message("emr.title")
 %>
 
+<script type="text/javascript">
+	var jq = jQuery;
+</script>
+
 <div id="application-header">
-	${ title }
+	<a href="/${ contextPath }/index.htm">
+		${ title }
+	</a>
 	<% if (context.authenticated) { %>
 		<span style="float: right">
-			${ context.authenticatedUser.personName }
+			${ ui.includeFragment("emr", "loginInfo") }
 			|
 			<a href="/${ contextPath }/logout">Log Out</a>
 		</span>

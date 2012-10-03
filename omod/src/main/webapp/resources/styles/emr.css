@@ -1,12 +1,4 @@
-#application-header {
+#application-header, #application-header a {
 	color: white;
 	background-color: black;
-}
-
-.panel {
-	border: 1px black solid;
-}
-	
-.panel .title {
-	font-weight: bold;
 }
