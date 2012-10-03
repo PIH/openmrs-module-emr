@@ -1,31 +1,9 @@
 <%
 	ui.decorateWith("emr", "standardEmrPage")
+    ui.includeCss("emr", "findPatient.css")
 
     def interpolate = { "<%= " + it + " %" + ">" }
 %>
-
-<style type="text/css">
-    .patient-result {
-        cursor: pointer;
-        padding: 1em;
-        margin-bottom: 1em;
-        border: 1px black solid;
-        border-radius: 0.2em;
-    }
-
-    .patient-result:nth-child(even) {
-        background-color: #e0e0e0;
-    }
-
-    .patient-result:nth-child(odd) {
-        background-color: #f0f0f0;
-    }
-
-    .patient-result .name {
-        font-weight: bold;
-        font-size: 1.2em;
-    }
-</style>
 
 <script id="patient-result-template" type="text/template">
     <div class="patient-result">
@@ -40,17 +18,13 @@
     var patientResultTemplate = _.template(jq('#patient-result-template').html());
 
     function doPatientSearch() {
-        var query = jq('#find-patient-form').serializeArray();
-        jq.getJSON('${ ui.actionLink('emr', 'findPatient', 'search') }', query)
-                .success(function(data) {
-                    jq('#results').html('');
-                    jq.each(data, function(i, patient) {
-                        jq(patientResultTemplate(patient)).appendTo(jq('#results'));
-                    });
-                })
-                .error(function(err) {
-                    emr.showError(err);
-                });
+        emr.ajaxSearch({
+            fragment: 'findPatient',
+            action: 'search',
+            query: jq('#find-patient-form').serializeArray(),
+            resultTarget: '#results',
+            resultTemplate: patientResultTemplate
+        });
     }
 
     jq(function() {

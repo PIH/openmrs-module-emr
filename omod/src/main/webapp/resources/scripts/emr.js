@@ -35,9 +35,37 @@ var emr = (function($) {
             return '/' + OPENMRS_CONTEXT_PATH + '/ms/uiframework/resource/' + providerName + '/' + resourceName;
         },
 
-        fragmentActionLink: function(fragmentName, actionName, options) {
-            var ret = '/' + OPENMRS_CONTEXT_PATH + '/' + fragmentName + '/' + actionName + '.action';
+        fragmentActionLink: function(providerName, fragmentName, actionName, options) {
+            var ret = '/' + OPENMRS_CONTEXT_PATH + '/' + providerName + '/' + fragmentName + '/' + actionName + '.action';
             return ret += toQueryString(options);
+        },
+
+        /*
+         * opts should contain:
+         *   provider (defaults to 'emr')
+         *   fragment
+         *   action
+         *   query, e.g. { q: "bob", checkedInAt: 5 }
+         *   resultTarget e.g. '#search-results'
+         *   resultTemplate (should be an underscore template)
+         */
+        ajaxSearch: function(opts) {
+            var provider = opts.provider;
+            if (!provider) {
+                provider = 'emr';
+            }
+            var url = this.fragmentActionLink(provider, opts.fragment, opts.action, opts.query);
+            var target = $(opts.resultTarget);
+            $.getJSON(url)
+                .success(function(data) {
+                    target.html('');
+                    jq.each(data, function(i, result) {
+                        jq(opts.resultTemplate(result)).appendTo(target);
+                    });
+                })
+                .error(function(err) {
+                    emr.showError(err);
+                });
         }
 
     };
