@@ -13,8 +13,11 @@
 */
 package org.openmrs.module.emr;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.junit.Assert;
+import org.openmrs.util.OpenmrsUtil;
 
+import java.util.Collection;
 import java.util.regex.Pattern;
 
 
@@ -23,6 +26,27 @@ import java.util.regex.Pattern;
  */
 public class TestUtils {
 
+	/**
+	 * To test things like: assertContainsElementWithProperty(listOfPatients, "patientId", 2)
+	 * 
+	 * @param collection
+	 * @param property
+	 * @param value
+	 */
+	public static void assertContainsElementWithProperty(Collection<?> collection, String property, Object value) {
+		for (Object o : collection) {
+			try {
+				if (OpenmrsUtil.nullSafeEquals(value, PropertyUtils.getProperty(o, property))) {
+					return;
+				}
+			}
+			catch (Exception ex) {
+				// pass
+			}
+		}
+		Assert.fail("Collection does not contain an element with " + property + " = " + value + ". Collection: "
+		        + collection);
+	}
 
     /**
      * Tests whether the substring is contained in the actual string.
