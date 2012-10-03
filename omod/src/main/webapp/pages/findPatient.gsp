@@ -2,7 +2,9 @@
 	ui.decorateWith("emr", "standardEmrPage")
     ui.includeCss("emr", "findPatient.css")
 
-    def interpolate = { "<%= " + it + " %" + ">" }
+    def interpolate = { "<%- " + it + " %" + ">" }
+    def interpolateRaw = { "<%= " + it + " %" + ">" }
+    def interpolateJs = { "<% " + it + " %" + ">" }
 %>
 
 <script id="patient-result-template" type="text/template">

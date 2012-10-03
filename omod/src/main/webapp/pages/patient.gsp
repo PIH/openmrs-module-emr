@@ -2,13 +2,11 @@
 	ui.decorateWith("emr", "standardEmrPage")
 %>
 
-<h1>${ ui.format(patient) }</h1>
+${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
-<img src="${ ui.resourceLink("emr", "images/patient_" + patient.gender + ".gif") }"/>
-${ ui.format("emr.gender." + patient.gender) }
-
+Actions:
 <ul>
-<%  patient.identifiers.each { %>
-    <li>${ ui.format(it)  }</li>
-<% } %>
+    <li>
+        <a href="${ ui.pageLink("emr", "orderXray", [ patientId: patient.id ]) }">Order XRay</a>
+    </li>
 </ul>

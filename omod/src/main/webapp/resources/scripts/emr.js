@@ -15,7 +15,11 @@ var emr = (function($) {
         navigateTo: function(opts) {
             var url = opts.url;
             if (opts.page) {
-                url = this.pageLink(opts.provider, opts.page, opts.query);
+                var provider = opts.provider;
+                if (provider == null) {
+                    provider = "emr"
+                }
+                url = this.pageLink(provider, opts.page, opts.query);
             }
             location.href = url;
         },
