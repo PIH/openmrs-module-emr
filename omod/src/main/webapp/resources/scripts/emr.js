@@ -54,9 +54,9 @@ var emr = (function($) {
             if (!provider) {
                 provider = 'emr';
             }
-            var url = this.fragmentActionLink(provider, opts.fragment, opts.action, opts.query);
+            var url = this.fragmentActionLink(provider, opts.fragment, opts.action);
             var target = $(opts.resultTarget);
-            $.getJSON(url)
+            $.getJSON(url, opts.query)
                 .success(function(data) {
                     target.html('');
                     jq.each(data, function(i, result) {
