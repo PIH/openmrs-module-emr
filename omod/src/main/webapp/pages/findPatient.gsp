@@ -30,6 +30,8 @@
     }
 
     jq(function() {
+        jq('#find-patient-form').submit(function() { return false; });
+
         jq('#find-patient-form :input').change(doPatientSearch);
 
         jq('#results').on('click', '.patient-result', function(event) {
