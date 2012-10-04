@@ -37,5 +37,28 @@
 	</messages>
 	<!-- /Internationalization -->
 
+    <globalProperty>
+        <property>emr.placeOrdersEncounterType</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the encounter type used for placing orders (e.g. requisitioning radiology studies)
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>emr.clinicianEncounterRole</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the encounter role that represents the primary clinician who is seeing the patient
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>emr.testOrderType</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the OrderType that represents lab tests and radiology studies
+        </description>
+    </globalProperty>
 </module>
 
