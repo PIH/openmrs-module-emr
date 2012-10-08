@@ -30,6 +30,7 @@
         <property name="id" value="emr.findPatient"/>
         <property name="label" value="Find a Patient"/>
         <property name="homepageUrl" value="emr/findPatient.page"/>
+        <property name="iconUrl" value="moduleResources/uilibrary/images/folder_32.png"/>
     </bean>
 	
 </beans>

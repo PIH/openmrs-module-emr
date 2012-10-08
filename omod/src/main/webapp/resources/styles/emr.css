@@ -1,4 +1,17 @@
+body {
+    margin: 0px;
+}
+
+div.container {
+    padding: 5px;
+}
+
 #application-header, #application-header a {
 	color: white;
 	background-color: black;
+}
+
+.shaded-box {
+    border: 1px black solid;
+    background-color: #d3d3d3;
 }

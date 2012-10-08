@@ -4,5 +4,6 @@
     ui.includeJavascript("emr", "emr.js")
     ui.includeJavascript("emr", "underscore-min.js")
 
+    ui.includeCss("emr", "emr.css")
 	ui.includeCss("emr", "cupertino/jquery-ui-1.8.23.custom.css")
 %>

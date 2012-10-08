@@ -16,6 +16,7 @@ package org.openmrs.module.emr.page.controller;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.ui.framework.page.PageModel;
@@ -29,8 +30,9 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 public class FindPatientPageController {
 	
-	public void controller(PageModel model, Session session) {
-        model.addAttribute("location", session.getLocation());
+	public void controller(PageModel model,
+                           @RequestParam(value = "checkedInAt", required = false) Location checkedInAt) {
+        model.addAttribute("checkedInAt", checkedInAt);
 	}
 	
 }

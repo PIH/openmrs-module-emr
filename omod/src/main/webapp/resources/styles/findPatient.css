@@ -1,7 +1,7 @@
 .patient-result {
     cursor: pointer;
     padding: 1em;
-    margin-bottom: 1em;
+    margin-top: 1em;
     border: 1px black solid;
     border-radius: 0.2em;
 }
@@ -14,7 +14,28 @@
     background-color: #f0f0f0;
 }
 
+.patient-result .icon {
+    float: left;
+    margin-right: 1em;
+}
+
 .patient-result .name {
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 1.4em;
+}
+
+#search-box, #results-box {
+    float: left;
+}
+
+.location-option {
+    border: 1px black solid;
+    border-radius: 5px;
+    padding: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.selected {
+    background-color: yellow;
 }

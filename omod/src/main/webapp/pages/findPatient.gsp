@@ -1,18 +1,15 @@
 <%
 	ui.decorateWith("emr", "standardEmrPage")
     ui.includeCss("emr", "findPatient.css")
-
-    def interpolate = { "<%- " + it + " %" + ">" }
-    def interpolateRaw = { "<%= " + it + " %" + ">" }
-    def interpolateJs = { "<% " + it + " %" + ">" }
 %>
-
 <script id="patient-result-template" type="text/template">
     <div class="patient-result">
-        <input type="hidden" name="patientId" value="${ interpolate("patientId") }"/>
-        <span class="name">${ interpolate("preferredName.fullName") }</span>
-        <span class="gender">${ interpolate("gender") }</span>
-        <span class="age">${ interpolate("age")} year(s)</span>
+        <input type="hidden" name="patientId" value="{{- patientId }}"/>
+        <span class="icon"><img width="32" src="<%= ui.resourceLink("uilibrary", "images/patient_{{- gender }}.gif") %>"/></span>
+        <span class="name">{{- preferredName.fullName }}</span>
+        <br/>
+        <span class="gender">{{- gender }}</span>
+        <span class="age">{{- age }} year(s)</span>
     </div>
 </script>
 
@@ -32,7 +29,7 @@
     jq(function() {
         jq('#find-patient-form').submit(function() { return false; });
 
-        jq('#find-patient-form :input').change(doPatientSearch);
+        jq('#find-patient-form :input').keypress(doPatientSearch);
 
         jq('#results').on('click', '.patient-result', function(event) {
             var ptId = jq(this).find('input[name=patientId]').val();
@@ -48,16 +45,34 @@
     });
 </script>
 
-Find a patient:
-<form id="find-patient-form">
-    <select name="checkedInAt">
-        <option value="">All patients</option>
-        <% context.locationService.getAllLocations(false).each { %>
-            <option value="${ it.id }">Checked in at ${ ui.format(it) }</option>
-        <% } %>
-    </select>
-    <input type="text" size="40" name="q"/>
-</form>
+<div id="search-box" class="container">
+    Which patients?
+    <%
+        def opts = [] + [ id: null, label: "All Patients" ]
+        opts.addAll(context.locationService.getAllLocations(false).collect { [ id: it.id, label: "Checked in at: ${ ui.format(it) }" ] })
 
-<div id="results">
+        opts.each {
+            def selected = it.id == checkedInAt?.id
+    %>
+            <div class="location-option<% if (selected) { %> selected<% } %>">
+                <% if (!selected) { %>
+                    <a href="?checkedInAt=${ it.id ?: "" }">
+                <% } %>
+                ${ it.label }
+                <% if (!selected) { %>
+                    </a>
+                <% } %>
+            </div>
+        <% } %>
+
+</div>
+
+<div id="results-box" class="container">
+    <form id="find-patient-form">
+        <input type="hidden" name="checkedInAt" value="${ checkedInAt?.id ?: "" }"/>
+        Search: <input type="text" size="40" name="q"/>
+    </form>
+
+    <div id="results">
+    </div>
 </div>

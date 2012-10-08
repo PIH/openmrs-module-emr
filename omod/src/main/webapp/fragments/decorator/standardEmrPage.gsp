@@ -1,15 +1,19 @@
 <%
 	ui.includeFragment("emr", "standardEmrIncludes")
-	ui.includeCss("emr", "emr.css")
-	
+
 	def title = config.title ?: ui.message("emr.title")
 %>
 
 <script type="text/javascript">
 	var jq = jQuery;
+    _.templateSettings = {
+        interpolate : /\\{\\{=(.+?)\\}\\}/g ,
+        escape : /\\{\\{-(.+?)\\}\\}/g ,
+        evaluate : /\\{\\{(.+?)\\}\\}/g
+    };
 </script>
 
-<div id="application-header">
+<div id="application-header" class="container">
 	<a href="/${ contextPath }/index.htm">
 		${ title }
 	</a>
@@ -22,6 +26,6 @@
 	<% } %>
 </div>
 
-<div id="content">
+<div id="content" class="container">
 	<%= config.content %>
 </div>

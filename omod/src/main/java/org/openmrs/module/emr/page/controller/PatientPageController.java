@@ -13,9 +13,15 @@
  */
 package org.openmrs.module.emr.page.controller;
 
+import org.openmrs.Order;
 import org.openmrs.Patient;
+import org.openmrs.api.OrderService;
+import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -24,8 +30,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class PatientPageController {
 
 	public void controller(@RequestParam("patientId") Patient patient,
-	                       PageModel model) {
-		model.addAttribute("patient", patient);
-	}
+	                       PageModel model,
+                           @SpringBean("orderService") OrderService orderService) {
+        List<Order> orders = orderService.getOrdersByPatient(patient);
+        model.addAttribute("patient", patient);
+        model.addAttribute("orders", orders);
+    }
 
 }
