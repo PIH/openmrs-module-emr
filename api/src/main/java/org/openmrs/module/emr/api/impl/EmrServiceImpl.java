@@ -82,7 +82,7 @@ public class EmrServiceImpl implements EmrService {
             o.setOrderType(testOrderType);
             o.setConcept(concept);
             o.setStartDate(requisition.getEncounterDatetime());
-            o.setInstructions(requisition.getIndication());
+            o.setInstructions(requisition.getClinicalHistory());
             encounter.addOrder(o);
         }
 

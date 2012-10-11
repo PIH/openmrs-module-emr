@@ -89,11 +89,11 @@ public class EmrServiceTest {
         radiologyRequisition.setPatient(patient);
         radiologyRequisition.setModality(RadiologyRequisition.Modality.XRAY);
         radiologyRequisition.setRequestedBy(drBob);
-        radiologyRequisition.setIndication(patientHistory);
+        radiologyRequisition.setClinicalHistory(patientHistory);
         radiologyRequisition.setEncounterLocation(encounterLocation);
         radiologyRequisition.setEncounterDatetime(encounterDatetime);
         radiologyRequisition.addStudy(armXray);
-        //radiologyRequisition.setUrgency(OrderConstants.Urgency.ROUTINE);
+        radiologyRequisition.setUrgency(Order.Urgency.ROUTINE);
         //radiologyRequisition.setExamLocation(radiologyDepartment);
         //radiologyRequisition.setTransportation(walking);
 
@@ -106,6 +106,7 @@ public class EmrServiceTest {
         expectedOrder.setConcept(armXray);
         expectedOrder.setStartDate(encounterDatetime);
         expectedOrder.setOrderType(testOrderType);
+        expectedOrder.setUrgency(Order.Urgency.ROUTINE);
 
         Encounter expected = new Encounter();
         expected.setEncounterDatetime(encounterDatetime);
@@ -185,6 +186,7 @@ public class EmrServiceTest {
             assertThat(actual.getConcept(), is(expected.getConcept()));
             assertThat(actual.getInstructions(), is(expected.getInstructions()));
             assertThat(actual.getStartDate(), is(expected.getStartDate()));
+            assertThat(actual.getUrgency(), is(expected.getUrgency()));
 
             return true;
         }

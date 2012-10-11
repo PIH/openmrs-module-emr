@@ -16,10 +16,10 @@ package org.openmrs.module.emr.domain;
 
 import org.openmrs.Concept;
 import org.openmrs.Location;
+import org.openmrs.Order;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.Visit;
-import org.openmrs.module.emr.OrderConstants;
 
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -38,9 +38,9 @@ public class RadiologyRequisition {
 
     private Provider requestedBy;
 
-    private String indication;
+    private String clinicalHistory;
 
-    private OrderConstants.Urgency urgency;
+    private Order.Urgency urgency;
 
     /**
      * where the exam should take place
@@ -75,11 +75,11 @@ public class RadiologyRequisition {
         return requestedBy;
     }
 
-    public String getIndication() {
-        return indication;
+    public String getClinicalHistory() {
+        return clinicalHistory;
     }
 
-    public OrderConstants.Urgency getUrgency() {
+    public Order.Urgency getUrgency() {
         return urgency;
     }
 
@@ -103,15 +103,15 @@ public class RadiologyRequisition {
         this.requestedBy = requestedBy;
     }
 
-    public void setIndication(String indication) {
-        this.indication = indication;
+    public void setClinicalHistory(String clinicalHistory) {
+        this.clinicalHistory = clinicalHistory;
     }
 
     public void addStudy(Concept orderable) {
         studies.add(orderable);
     }
 
-    public void setUrgency(OrderConstants.Urgency urgency) {
+    public void setUrgency(Order.Urgency urgency) {
         this.urgency = urgency;
     }
 
