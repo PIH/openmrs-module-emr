@@ -13,6 +13,8 @@
  */
 package org.openmrs.module.emr.api.impl;
 
+import java.util.List;
+
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
@@ -21,6 +23,7 @@ import org.openmrs.Location;
 import org.openmrs.Order;
 import org.openmrs.OrderType;
 import org.openmrs.Patient;
+import org.openmrs.TestOrder;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.OrderService;
@@ -30,8 +33,6 @@ import org.openmrs.module.emr.api.db.EmrDAO;
 import org.openmrs.module.emr.domain.RadiologyRequisition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.util.List;
 
 public class EmrServiceImpl implements EmrService {
 
@@ -77,12 +78,13 @@ public class EmrServiceImpl implements EmrService {
         encounter.setEncounterDatetime(requisition.getEncounterDatetime());
 
         for (Concept concept : requisition.getStudies()) {
-            Order o = new Order();
+            Order o = new TestOrder();
             o.setPatient(requisition.getPatient());
             o.setOrderType(testOrderType);
             o.setConcept(concept);
             o.setStartDate(requisition.getEncounterDatetime());
             o.setInstructions(requisition.getClinicalHistory());
+            o.setUrgency(requisition.getUrgency());
             encounter.addOrder(o);
         }
 

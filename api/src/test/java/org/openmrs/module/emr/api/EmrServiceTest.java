@@ -14,6 +14,8 @@
 
 package org.openmrs.module.emr.api;
 
+import java.util.Date;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,8 +37,6 @@ import org.openmrs.module.emr.api.impl.EmrServiceImpl;
 import org.openmrs.module.emr.domain.RadiologyRequisition;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import java.util.Date;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -93,7 +93,7 @@ public class EmrServiceTest {
         radiologyRequisition.setEncounterLocation(encounterLocation);
         radiologyRequisition.setEncounterDatetime(encounterDatetime);
         radiologyRequisition.addStudy(armXray);
-        radiologyRequisition.setUrgency(Order.Urgency.ROUTINE);
+        radiologyRequisition.setUrgency(Order.Urgency.STAT);
         //radiologyRequisition.setExamLocation(radiologyDepartment);
         //radiologyRequisition.setTransportation(walking);
 
@@ -106,7 +106,7 @@ public class EmrServiceTest {
         expectedOrder.setConcept(armXray);
         expectedOrder.setStartDate(encounterDatetime);
         expectedOrder.setOrderType(testOrderType);
-        expectedOrder.setUrgency(Order.Urgency.ROUTINE);
+        expectedOrder.setUrgency(Order.Urgency.STAT);
 
         Encounter expected = new Encounter();
         expected.setEncounterDatetime(encounterDatetime);
