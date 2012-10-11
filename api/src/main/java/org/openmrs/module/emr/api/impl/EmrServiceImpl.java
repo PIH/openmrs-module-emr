@@ -20,7 +20,6 @@ import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
-import org.openmrs.Order;
 import org.openmrs.OrderType;
 import org.openmrs.Patient;
 import org.openmrs.TestOrder;
@@ -78,13 +77,14 @@ public class EmrServiceImpl implements EmrService {
         encounter.setEncounterDatetime(requisition.getEncounterDatetime());
 
         for (Concept concept : requisition.getStudies()) {
-            Order o = new TestOrder();
+            TestOrder o = new TestOrder();
             o.setPatient(requisition.getPatient());
             o.setOrderType(testOrderType);
             o.setConcept(concept);
             o.setStartDate(requisition.getEncounterDatetime());
-            o.setInstructions(requisition.getClinicalHistory());
+            o.setClinicalHistory(requisition.getClinicalHistory());
             o.setUrgency(requisition.getUrgency());
+            o.setLaterality(requisition.getLaterality());
             encounter.addOrder(o);
         }
 

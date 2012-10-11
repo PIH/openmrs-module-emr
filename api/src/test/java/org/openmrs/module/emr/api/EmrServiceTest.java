@@ -30,6 +30,7 @@ import org.openmrs.OrderType;
 import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.Provider;
+import org.openmrs.TestOrder;
 import org.openmrs.User;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
@@ -94,19 +95,21 @@ public class EmrServiceTest {
         radiologyRequisition.setEncounterDatetime(encounterDatetime);
         radiologyRequisition.addStudy(armXray);
         radiologyRequisition.setUrgency(Order.Urgency.STAT);
+        radiologyRequisition.setLaterality(TestOrder.Laterality.LEFT);
         //radiologyRequisition.setExamLocation(radiologyDepartment);
         //radiologyRequisition.setTransportation(walking);
 
         service.placeRadiologyRequisition(radiologyRequisition);
 
-        Order expectedOrder = new Order();
+        TestOrder expectedOrder = new TestOrder();
         expectedOrder.setPatient(patient);
         //expectedOrder.setOrderer(drBobUser);
-        expectedOrder.setInstructions(patientHistory);
+        expectedOrder.setClinicalHistory(patientHistory);
         expectedOrder.setConcept(armXray);
         expectedOrder.setStartDate(encounterDatetime);
         expectedOrder.setOrderType(testOrderType);
         expectedOrder.setUrgency(Order.Urgency.STAT);
+        expectedOrder.setLaterality(TestOrder.Laterality.LEFT);
 
         Encounter expected = new Encounter();
         expected.setEncounterDatetime(encounterDatetime);
@@ -172,21 +175,23 @@ public class EmrServiceTest {
     }
 
     private class IsExpectedOrder extends ArgumentMatcher<Order> {
-        private Order expected;
+        private TestOrder expected;
 
         public IsExpectedOrder(Order expected) {
-            this.expected = expected;
+            this.expected = (TestOrder) expected;
         }
 
         @Override
         public boolean matches(Object o) {
-            Order actual = (Order) o;
+            TestOrder actual = (TestOrder) o;
             assertThat(actual.getOrderType(), is(expected.getOrderType()));
             assertThat(actual.getPatient(), is(expected.getPatient()));
             assertThat(actual.getConcept(), is(expected.getConcept()));
             assertThat(actual.getInstructions(), is(expected.getInstructions()));
             assertThat(actual.getStartDate(), is(expected.getStartDate()));
             assertThat(actual.getUrgency(), is(expected.getUrgency()));
+            assertThat(actual.getClinicalHistory(), is(expected.getClinicalHistory()));
+            assertThat(actual.getLaterality(), is(expected.getLaterality()));
 
             return true;
         }

@@ -14,23 +14,24 @@
 
 package org.openmrs.module.emr.domain;
 
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.openmrs.Concept;
 import org.openmrs.Location;
 import org.openmrs.Order;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
+import org.openmrs.TestOrder;
 import org.openmrs.Visit;
-
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * Requisition of one or more radiology studies (XRay, CT, Ultrasound), with associated metadata about the entire group
  */
 public class RadiologyRequisition {
 
-    public enum Modality { XRAY }
+    public enum Modality { XRAY;}
 
     private Modality modality;
 
@@ -41,6 +42,8 @@ public class RadiologyRequisition {
     private String clinicalHistory;
 
     private Order.Urgency urgency;
+
+    private TestOrder.Laterality laterality;
 
     /**
      * where the exam should take place
@@ -83,6 +86,10 @@ public class RadiologyRequisition {
         return urgency;
     }
 
+    public TestOrder.Laterality getLaterality() {
+        return laterality;
+    }
+
     public Location getExamLocation() {
         return examLocation;
     }
@@ -113,6 +120,10 @@ public class RadiologyRequisition {
 
     public void setUrgency(Order.Urgency urgency) {
         this.urgency = urgency;
+    }
+
+    public void setLaterality(TestOrder.Laterality laterality) {
+        this.laterality = laterality;
     }
 
     public void setExamLocation(Location examLocation) {
