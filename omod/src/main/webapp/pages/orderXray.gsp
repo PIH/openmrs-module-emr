@@ -32,6 +32,15 @@
         clear: both;
         float: right;
     }
+
+    .row {
+        display: table-row;
+    }
+    .row .radio-label , .row div {
+        display: table-cell;
+        padding-right: 1.0em;
+        white-space: nowrap;
+    }
 </style>
 
 <script type="text/template" id="selected-study-template">
@@ -71,15 +80,60 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
 <h1>X-Ray Requisition</h1>
 
-<div class="left-column">
-    <label for="study-search">Which Studies?</label>
-    <input id="study-search" type="text" size="40"/>
-</div>
-
-
 <form action="${ ui.actionLink("emr", "radiologyRequisition", "orderXray") }">
     <input type="hidden" name="patient" value="${ patient.id }"/>
     <input type="hidden" name="requestedBy" value="${ currentProvider.id }"/>
+
+
+
+    <br/><br/>
+
+    <div class="left-column">
+        ${ ui.includeFragment("emr", "field/textarea", [ label: "Indication", formFieldName: "clinicalHistory", labelPosition: "top", rows: 10, cols: 60 ]) }
+    </div>
+
+    <div class="right-column">
+        <div class="row">
+            ${ ui.includeFragment("emr", "field/radioButtons", [
+                    label: "Timing",
+                    formFieldName: "urgency",
+                    options: [
+                        [ value: "ROUTINE", label: "Routine", checked: true ],
+                        [ value: "STAT", label: "STAT" ]
+                    ]
+            ]) }
+        </div>
+
+        <div class="row">
+            ${ ui.includeFragment("emr", "field/radioButtons", [
+                    label: "Exam Location",
+                    formFieldName: "ignoredExamLocation",
+                    options: [
+                            [ value: "radiology", label: "Radiology", checked: true ],
+                            [ value: "portable", label: "Portable" ]
+                    ]
+            ]) }
+        </div>
+
+        <div class="row">
+            ${ ui.includeFragment("emr", "field/radioButtons", [
+                    label: "Transport",
+                    formFieldName: "ignoredTransport",
+                    options: [
+                            [ value: "walking", label: "Walking", checked: true ],
+                            [ value: "wheelchair", label: "Wheelchair" ],
+                            [ value: "stretcher", label: "Stretcher" ]
+                    ]
+            ]) }
+        </div>
+
+    </div>
+
+
+    <div class="left-column">
+        <label for="study-search">Which Studies?</label>
+        <input id="study-search" type="text" size="40"/>
+    </div>
 
     <div class="right-column">
         Selected studies:
@@ -87,45 +141,6 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
         <ul id="selected-studies" class="right-column">
 
         </ul>
-    </div>
-
-    <br/><br/>
-
-    <div class="left-column">
-        ${ ui.includeFragment("emr", "field/textarea", [ label: "Clinical History", formFieldName: "clinicalHistory", labelPosition: "top", rows: 10, cols: 60 ]) }
-    </div>
-
-    <div class="right-column">
-        ${ ui.includeFragment("emr", "field/radioButtons", [
-                label: "Urgency",
-                formFieldName: "urgency",
-                options: [
-                    [ value: "ROUTINE", label: "Routine", checked: true ],
-                    [ value: "STAT", label: "Urgent/Stat" ]
-                ]
-        ]) }
-        <br/>
-
-        ${ ui.includeFragment("emr", "field/radioButtons", [
-                label: "Exam Location",
-                formFieldName: "ignoredExamLocation",
-                options: [
-                        [ value: "radiology", label: "Radiology", checked: true ],
-                        [ value: "portable", label: "Portable" ]
-                ]
-        ]) }
-        <br/>
-
-        ${ ui.includeFragment("emr", "field/radioButtons", [
-                label: "Transport",
-                formFieldName: "ignoredTransport",
-                options: [
-                        [ value: "walking", label: "Walking", checked: true ],
-                        [ value: "wheelchair", label: "Wheelchair" ],
-                        [ value: "stretcher", label: "Stretcher" ]
-                ]
-        ]) }
-
     </div>
 
     <div id="bottom">
@@ -138,5 +153,6 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             ${ ui.message("emr.next") }
         </button>
     </div>
-
 </form>
+
+
