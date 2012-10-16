@@ -56,6 +56,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 <h1>X-Ray Requisition</h1>
 
 <form action="${ ui.actionLink("emr", "radiologyRequisition", "orderXray") }">
+    <input type="hidden" name="successUrl" value="${ ui.pageLink("emr", "patient", [ patientId: patient.id ]) }"/>
     <input type="hidden" name="patient" value="${ patient.id }"/>
     <input type="hidden" name="requestedBy" value="${ currentProvider.id }"/>
 
