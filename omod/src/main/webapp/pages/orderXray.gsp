@@ -32,12 +32,12 @@
         border: 1px black solid;
         border-radius: 5px;
         background-color: #e0e0e0;
-        padding: 1em;
+        padding: 0.5em 1em 0.5em 1em;
+        width: 100%;
     }
 
     #bottom {
         clear: both;
-        float: right;
     }
 
     .row {
@@ -52,6 +52,7 @@
 
 
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
+
 
 <h1>X-Ray Requisition</h1>
 
@@ -75,54 +76,32 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                     ]
             ]) }
         </div>
-
-        <div class="row">
-            ${ ui.includeFragment("emr", "field/radioButtons", [
-                    label: "Exam Location",
-                    formFieldName: "ignoredExamLocation",
-                    options: [
-                            [ value: "radiology", label: "Radiology", checked: true ],
-                            [ value: "portable", label: "Portable" ]
-                    ]
-            ]) }
-        </div>
-
-        <div class="row">
-            ${ ui.includeFragment("emr", "field/radioButtons", [
-                    label: "Transport",
-                    formFieldName: "ignoredTransport",
-                    options: [
-                            [ value: "walking", label: "Walking", checked: true ],
-                            [ value: "wheelchair", label: "Wheelchair" ],
-                            [ value: "stretcher", label: "Stretcher" ]
-                    ]
-            ]) }
-        </div>
-
     </div>
 
 
     <div class="left-column">
-        <label for="study-search">Which Studies?</label>
+        <label for="study-search">Which Studies?</label><br/>
         <input id="study-search" type="text" size="40" data-bind="autocomplete: searchTerm" />
     </div>
     <div class="right-column">
-        Selected studies:
-        <ul id="selected-studies" class="right-column" data-bind="foreach: selectedStudies">
+        <p>Selected studies:</p>
+        <div style="border: 1px solid #000000; height: 100px; width: 100%;">
+        <ul id="selected-studies" data-bind="foreach: selectedStudies">
             <li>
                 <input type="hidden" data-bind="value: id" name="studies" />
                 <span data-bind="text: name"></span>
                 <span style="float:right" data-bind="click: \$root.unselectStudy">X</span>
             </li>
         </ul>
+        </div>
     </div>
 
     <div id="bottom">
-        <button type="button" onclick="location.href = emr.pageLink('emr', 'patient', { patientId: <%= patient.id %> })">
+        <button type="button" style="float: left;" onclick="location.href = emr.pageLink('emr', 'patient', { patientId: <%= patient.id %> })">
             <img src="${ ui.resourceLink("uilibrary", "images/close_32.png") }"/> <br/>
             ${ ui.message("emr.cancel") }
         </button>
-        <button type="submit">
+        <button type="submit" style="float: right;" data-bind="visible: selectedStudies().length > 0">
             <img src="${ ui.resourceLink("uilibrary", "images/arrow_right_32.png") }"/> <br/>
             ${ ui.message("emr.next") }
         </button>
