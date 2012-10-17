@@ -25,11 +25,14 @@ import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.api.PaperRecordService;
 import org.openmrs.module.emr.api.db.PaperRecordRequestDAO;
 import org.openmrs.module.emr.domain.PaperRecordRequest;
+import org.openmrs.module.emr.utils.GeneralUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class PaperRecordServiceImpl implements PaperRecordService {
 
@@ -53,13 +56,12 @@ public class PaperRecordServiceImpl implements PaperRecordService {
     @Transactional
     public void requestPaperRecord(Patient patient, Location medicalRecordLocation, Location requestLocation) {
 
-        //  TODO:  handle bogus parameters
+        //  TODO:  handle bogus parameters;
+        // TODO: handle null case if no patient identifier found or patient has multiple identifiers
 
-        // fetch the patient identifier we want to use
-        // TODO: change this to make sure it handles getting the identifier from the right location
-        PatientIdentifier paperRecordIdentifier = patient.getPatientIdentifier(getPaperRecordIdentifierType());
+        // fetch the appropriate identifier
+        PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient, getPaperRecordIdentifierType(), medicalRecordLocation);
 
-        // TODO: handle null case if no patient identifier found
         PaperRecordRequest request = new PaperRecordRequest();
         request.setCreator(Context.getAuthenticatedUser());
         request.setDateCreated(new Date());

@@ -15,15 +15,10 @@
 package org.openmrs.module.emr.utils;
 
 import org.apache.commons.lang.StringUtils;
-import org.openmrs.Concept;
-import org.openmrs.Location;
-import org.openmrs.PatientIdentifierType;
-import org.openmrs.Person;
-import org.openmrs.Program;
-import org.openmrs.ProgramWorkflow;
-import org.openmrs.ProgramWorkflowState;
-import org.openmrs.User;
+import org.openmrs.*;
 import org.openmrs.api.context.Context;
+
+import java.util.List;
 
 public class GeneralUtils {
 
@@ -497,6 +492,43 @@ public class GeneralUtils {
                 }
             }
         }
+        return null;
+    }
+
+    /**
+     * Utility method to fetch the patient identifier for a patient of a certain type at a certain location
+     *
+     * Returns null if no identifiers found for that patient of that type at that location
+     * If the patient has multiple identifiers for that type/location, it returns the first preferred one
+     * If no preferred identifiers, returns first non-preferred one
+     *
+     * @param patient
+     * @param patientIdentifierType
+     * @param location
+     * @return
+     */
+    public static PatientIdentifier getPatientIdentifier(Patient patient, PatientIdentifierType patientIdentifierType, Location location) {
+
+        // TODO: add some sort of data quality flag if there are two or more identifiers of the same type and location?
+
+        List<PatientIdentifier> patientIdentifiers = patient.getPatientIdentifiers(patientIdentifierType);
+
+        if (patientIdentifiers == null || patientIdentifiers.size() == 0) {
+            return null;
+        }
+
+        for (PatientIdentifier patientIdentifer : patientIdentifiers) {
+            if (patientIdentifer.getLocation().equals(location) && patientIdentifer.isPreferred()) {
+                return patientIdentifer;
+            }
+        }
+
+        for (PatientIdentifier patientIdentifer : patientIdentifiers) {
+            if (patientIdentifer.getLocation().equals(location)) {
+                return patientIdentifer;
+            }
+        }
+
         return null;
     }
 

@@ -93,6 +93,51 @@ public class PaperRecordServiceTest {
 
     }
 
+    @Test
+    public void testCreatePaperRecordRequestForPatientWithMultipleIdentifiersAtSameLocation() throws Exception {
+
+        Patient patient = new Patient();
+        patient.setId(15);
+
+        Location medicalRecordLocation = new Location();
+        medicalRecordLocation.setId(3);
+        medicalRecordLocation.setName("Mirebalais");
+
+        Location otherLocation = new Location();
+        otherLocation.setId(5);
+        otherLocation.setName("Cange");
+
+        Location requestLocation = new Location();
+        requestLocation.setId(4);
+        requestLocation.setName("Outpatient Clinic");
+
+
+        PatientIdentifier wrongIdentifer = new PatientIdentifier();
+        wrongIdentifer.setIdentifier("ZYXCBA");
+        wrongIdentifer.setIdentifierType(paperRecordIdentifierType);
+        wrongIdentifer.setLocation(otherLocation);
+        patient.addIdentifier(wrongIdentifer);
+
+        PatientIdentifier identifer = new PatientIdentifier();
+        identifer.setIdentifier("ABCZYX");
+        identifer.setIdentifierType(paperRecordIdentifierType);
+        identifer.setLocation(medicalRecordLocation);
+        patient.addIdentifier(identifer);
+
+        PaperRecordRequest expectedRequest = new PaperRecordRequest();
+        expectedRequest.setAssignee(null);
+        expectedRequest.setCreator(authenicatedUser);
+        expectedRequest.setIdentifier("ABCZYX");
+        expectedRequest.setMedicalRecordLocation(medicalRecordLocation);
+        expectedRequest.setPatient(patient);
+        expectedRequest.setStatus(PaperRecordRequest.Status.OPEN);
+
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        verify(mockPaperRecordDAO).saveOrUpdate(argThat(new IsExpectedRequest(expectedRequest)));
+
+    }
+
     private class IsExpectedRequest extends ArgumentMatcher<PaperRecordRequest> {
 
         private PaperRecordRequest expectedRequest;
