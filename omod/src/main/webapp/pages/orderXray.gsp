@@ -90,15 +90,15 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
 
     <div class="left-column">
-        <label for="study-search">Which Studies?</label><br/>
-        <input id="study-search" type="text" size="40" data-bind="autocomplete: searchTerm" />
+        <label for="study-search">Type the name of a study:</label><br/>
+        <input id="study-search" style="width: 430px; height: 2em; padding-left: 5px; margin-top: 5px;" type="text" size="40" data-bind="autocomplete: searchTerm" placeholder="eg. Chest x-ray"/>
     </div>
     <div class="right-column">
         <div data-bind="visible: selectedStudies().length == 0">
-            <span style="color: blue;">Please select the studies!</span>
+            <span style="color: blue;">Please select at least one study.</span>
         </div>
         <div data-bind="visible: selectedStudies().length > 0">
-            <label>Selected studies:</label>
+            <label>Selected studies</label>
             <ul id="selected-studies" data-bind="foreach: selectedStudies">
                 <li>
                     <input type="hidden" data-bind="value: id" name="studies" />
