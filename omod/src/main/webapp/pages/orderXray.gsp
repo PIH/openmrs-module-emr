@@ -4,7 +4,7 @@
     ui.includeJavascript("emr", "jquery-1.8.1.min.js")
     ui.includeJavascript("emr", "jquery-ui-1.8.23.custom.min.js")
     ui.includeJavascript("emr", "knockout-2.1.0.js")
-    ui.includeJavascript("emr", "xrayOrder.js")
+    ui.includeJavascript("emr", "custom/xrayOrder.js")
     ui.includeCss("emr", "cupertino/jquery-ui-1.8.23.custom.css")
 %>
 
@@ -14,9 +14,12 @@
     });
 </script>
 <style type="text/css">
+    @import url(http://fonts.googleapis.com/css?family=Droid+Sans);
+
     .left-column, .right-column {
         float: left;
         width: 45%;
+        padding-bottom: 20px;
     }
     .left-column {
         clear: left;
@@ -33,7 +36,6 @@
         border-radius: 5px;
         background-color: #e0e0e0;
         padding: 0.5em 1em 0.5em 1em;
-        width: 100%;
     }
 
     #bottom {
@@ -48,21 +50,29 @@
         padding-right: 1.0em;
         white-space: nowrap;
     }
+    #contentForm {
+        padding-left: 50px;
+        padding-right: 50px;
+    }
+    body {
+        font-family: 'Droid Sans';
+    }
 </style>
 
 
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
 
-<h1>X-Ray Requisition</h1>
 
+<div id="contentForm">
+<h1>X-Ray Requisition</h1>
 <form action="${ ui.actionLink("emr", "radiologyRequisition", "orderXray") }">
     <input type="hidden" name="successUrl" value="${ ui.pageLink("emr", "patient", [ patientId: patient.id ]) }"/>
     <input type="hidden" name="patient" value="${ patient.id }"/>
     <input type="hidden" name="requestedBy" value="${ currentProvider.id }"/>
 
     <div class="left-column">
-        ${ ui.includeFragment("emr", "field/textarea", [ label: "Indication", formFieldName: "clinicalHistory", labelPosition: "top", rows: 10, cols: 60 ]) }
+        ${ ui.includeFragment("emr", "field/textarea", [ label: "Indication", formFieldName: "clinicalHistory", labelPosition: "top", rows: 5, cols: 60 ]) }
     </div>
 
     <div class="right-column">
@@ -84,15 +94,18 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
         <input id="study-search" type="text" size="40" data-bind="autocomplete: searchTerm" />
     </div>
     <div class="right-column">
-        <p>Selected studies:</p>
-        <div style="border: 1px solid #000000; height: 100px; width: 100%;">
-        <ul id="selected-studies" data-bind="foreach: selectedStudies">
-            <li>
-                <input type="hidden" data-bind="value: id" name="studies" />
-                <span data-bind="text: name"></span>
-                <span style="float:right" data-bind="click: \$root.unselectStudy">X</span>
-            </li>
-        </ul>
+        <div data-bind="visible: selectedStudies().length == 0">
+            <span style="color: blue;">Please select the studies!</span>
+        </div>
+        <div data-bind="visible: selectedStudies().length > 0">
+            <label>Selected studies:</label>
+            <ul id="selected-studies" data-bind="foreach: selectedStudies">
+                <li>
+                    <input type="hidden" data-bind="value: id" name="studies" />
+                    <span data-bind="text: name"></span>
+                    <span style="float:right" data-bind="click: \$root.unselectStudy">X</span>
+                </li>
+            </ul>
         </div>
     </div>
 
@@ -107,5 +120,5 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
         </button>
     </div>
 </form>
-
+</div>
 
