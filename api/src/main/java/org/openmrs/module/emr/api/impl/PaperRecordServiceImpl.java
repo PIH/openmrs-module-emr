@@ -16,12 +16,20 @@ package org.openmrs.module.emr.api.impl;
 
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.PatientService;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.api.PaperRecordService;
 import org.openmrs.module.emr.api.db.PaperRecordRequestDAO;
+import org.openmrs.module.emr.domain.PaperRecordRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 public class PaperRecordServiceImpl implements PaperRecordService {
 
@@ -29,7 +37,13 @@ public class PaperRecordServiceImpl implements PaperRecordService {
 
     @Autowired
     @Qualifier("adminService")
-    private AdministrationService adminService;
+    private AdministrationService administrationService;
+
+
+    @Autowired
+    @Qualifier("patientService")
+    private PatientService patientService;
+
 
     public void setDao(PaperRecordRequestDAO paperRecordRequestDAO) {
         this.paperRecordRequestDAO = paperRecordRequestDAO;
@@ -39,13 +53,30 @@ public class PaperRecordServiceImpl implements PaperRecordService {
     @Transactional
     public void requestPaperRecord(Patient patient, Location medicalRecordLocation, Location requestLocation) {
 
+        //  TODO:  handle bogus parameters
+
         // fetch the patient identifier we want to use
-
         // TODO: change this to make sure it handles getting the identifier from the right location
-        //patient.getPatientIdentifier(administrationService)
-
+        PatientIdentifier paperRecordIdentifier = patient.getPatientIdentifier(getPaperRecordIdentifierType());
 
         // TODO: handle null case if no patient identifier found
+        PaperRecordRequest request = new PaperRecordRequest();
+        request.setCreator(Context.getAuthenticatedUser());
+        request.setDateCreated(new Date());
+        request.setIdentifier(paperRecordIdentifier.getIdentifier());
+        request.setMedicalRecordLocation(medicalRecordLocation);
+        request.setPatient(patient);
+        request.setRequestLocation(requestLocation);
 
+        paperRecordRequestDAO.saveOrUpdate(request);
+    }
+
+    protected PatientIdentifierType getPaperRecordIdentifierType() {
+        String uuid = administrationService.getGlobalProperty(EmrConstants.GP_PAPER_RECORD_IDENTIFIER_TYPE);
+        PatientIdentifierType paperRecordIdentifierType = patientService.getPatientIdentifierTypeByUuid(uuid);
+        if (paperRecordIdentifierType == null) {
+            throw new IllegalStateException("Configuration required: " + EmrConstants.GP_PAPER_RECORD_IDENTIFIER_TYPE);
+        }
+        return paperRecordIdentifierType;
     }
 }

@@ -15,7 +15,6 @@
 package org.openmrs.module.emr.api;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -28,6 +27,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.verify;
@@ -35,12 +35,12 @@ import static org.powermock.api.mockito.PowerMockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Context.class)
-@Ignore
 public class PaperRecordServiceTest {
 
     private PaperRecordService paperRecordService;
     private PaperRecordRequestDAO mockPaperRecordDAO;
     private User authenicatedUser;
+    private PatientIdentifierType paperRecordIdentifierType;
 
     @Before
     public void setup() {
@@ -51,7 +51,10 @@ public class PaperRecordServiceTest {
 
         mockPaperRecordDAO = mock(PaperRecordRequestDAO.class);
 
-        paperRecordService = new PaperRecordServiceImpl();
+        paperRecordIdentifierType = new PatientIdentifierType();
+        paperRecordIdentifierType.setId(2);
+
+        paperRecordService = new PaperRecordServiceStub(paperRecordIdentifierType);
         ((PaperRecordServiceImpl) paperRecordService).setDao(mockPaperRecordDAO);
     }
 
@@ -61,9 +64,6 @@ public class PaperRecordServiceTest {
         Patient patient = new Patient();
         patient.setId(15);
 
-        PatientIdentifierType identifierType = new PatientIdentifierType();
-        identifierType.setId(2);
-
         Location medicalRecordLocation = new Location();
         medicalRecordLocation.setId(3);
         medicalRecordLocation.setName("Mirebalais");
@@ -72,10 +72,9 @@ public class PaperRecordServiceTest {
         requestLocation.setId(4);
         requestLocation.setName("Outpatient Clinic");
 
-
         PatientIdentifier identifer = new PatientIdentifier();
         identifer.setIdentifier("ABCZYX");
-        identifer.setIdentifierType(identifierType);
+        identifer.setIdentifierType(paperRecordIdentifierType);
         identifer.setLocation(medicalRecordLocation);
 
         patient.addIdentifier(identifer);
@@ -113,8 +112,24 @@ public class PaperRecordServiceTest {
             assertThat(actualRequest.getMedicalRecordLocation(), is(expectedRequest.getMedicalRecordLocation()));
             assertThat(actualRequest.getPatient(), is(expectedRequest.getPatient()));
             assertThat(actualRequest.getStatus(), is(expectedRequest.getStatus()));
+            assertNotNull(actualRequest.getDateCreated());
 
             return true;
+        }
+
+    }
+
+    private class PaperRecordServiceStub extends PaperRecordServiceImpl {
+
+        private PatientIdentifierType paperRecordIdentifierType;
+
+        public PaperRecordServiceStub(PatientIdentifierType paperRecordIdentifierType) {
+            this.paperRecordIdentifierType = paperRecordIdentifierType;
+        }
+
+        @Override
+        protected PatientIdentifierType getPaperRecordIdentifierType()  {
+            return paperRecordIdentifierType;
         }
 
     }
