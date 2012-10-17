@@ -42,7 +42,7 @@
         <property name="moduleService">
             <list>
                 <value>${project.parent.groupId}.${project.parent.artifactId}.api.EmrService</value>
-                <ref local="emrService"/>
+                <ref local="emrService"/>                <!-- TODO: why did I change this to ref bean? -->
             </list>
         </property>
     </bean>
