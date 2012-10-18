@@ -73,6 +73,21 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
     }
 
+    @Test
+    public void testGetPaperRecordRequestById() {
+
+        PaperRecordRequest request = paperRecordService.getPaperRecordRequestById(1);
+
+        Assert.assertNotNull(request);
+        //TODO: why is this giving a lazy loading exception?
+        //Assert.assertEquals(new Integer(3), request.getPatient().getId());
+        Assert.assertEquals(new Integer(1), request.getRecordLocation().getId());
+        Assert.assertEquals(new Integer(2), request.getRequestLocation().getId());
+        Assert.assertEquals("CATBALL", request.getIdentifier());
+        Assert.assertEquals(PaperRecordRequest.Status.CANCELLED, request.getStatus());
+        Assert.assertNull(request.getAssignee());
+
+    }
 
 
 

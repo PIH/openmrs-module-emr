@@ -50,6 +50,11 @@ public class PaperRecordServiceImpl implements PaperRecordService {
     }
 
     @Override
+    public PaperRecordRequest getPaperRecordRequestById(Integer id) {
+        return paperRecordRequestDAO.getById(id);
+    }
+
+    @Override
     @Transactional
     public void requestPaperRecord(Patient patient, Location medicalRecordLocation, Location requestLocation) {
 

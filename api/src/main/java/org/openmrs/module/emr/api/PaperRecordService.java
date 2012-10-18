@@ -25,6 +25,8 @@ import java.util.List;
  */
 public interface PaperRecordService {
 
+    public PaperRecordRequest getPaperRecordRequestById(Integer id);
+
     public void requestPaperRecord(Patient patient, Location medicalRecordLocation, Location requestLocation);
 
     public List<PaperRecordRequest> getOpenPaperRecordRequests();

@@ -66,4 +66,21 @@
 
     </changeSet>
 
+    <changeSet id="201210180608" author="mgoodrich">
+        <comment>Make assignee nullable and change column names for creator and request_id</comment>
+
+        <modifyColumn tableName="emr_paper_record_request">
+            <column name="assignee_id" type="int">
+                <constraints nullable="true"/>
+            </column>
+        </modifyColumn>
+
+        <renameColumn tableName="emr_paper_record_request" oldColumnName="emr_request_id"
+                      newColumnName="request_id" columnDataType="int"/>
+
+        <renameColumn tableName="emr_paper_record_request" oldColumnName="creator_id"
+                      newColumnName="creator" columnDataType="int"/>
+    </changeSet>
+
+
 </databaseChangeLog>

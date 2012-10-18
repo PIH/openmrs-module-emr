@@ -12,22 +12,22 @@
         <property name="uuid" type="java.lang.String"
                   column="uuid" length="38" unique="true" />
 
-        <property name="identifier" type="java.lang.String" column="identifer" length="50" not-null="true"/>
+        <property name="identifier" type="java.lang.String" column="identifier" length="50" not-null="true"/>
 
         <property name="dateCreated" type="java.util.Date" column="date_created"/>
 
-        <property name="status" column="urgency" length="50" not-null="true">
+        <property name="status" column="status" length="50" not-null="true">
             <type name="org.openmrs.util.HibernateEnumType">
                 <param name="enumClassName">org.openmrs.module.emr.domain.PaperRecordRequest$Status</param>
             </type>
         </property>
 
-        <many-to-one name="assignee" class="org.openmrs.Person" not-null="true">
+        <many-to-one name="assignee" class="org.openmrs.Person">
             <column name="assignee_id" />
         </many-to-one>
 
         <many-to-one name="creator" class="org.openmrs.User" not-null="true">
-            <column name="creator_id" />
+            <column name="creator" />
         </many-to-one>
 
         <many-to-one name="patient" class="org.openmrs.Patient" not-null="true">
