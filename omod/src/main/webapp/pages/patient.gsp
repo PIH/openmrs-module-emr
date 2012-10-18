@@ -6,9 +6,9 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
 Actions:
 <ul>
-    <li>
-        <a href="${ ui.pageLink("emr", "orderXray", [ patientId: patient.id ]) }">Order XRay</a>
-    </li>
+    <% availableTasks.each { %>
+        <li><a href="/${ contextPath }/${ it.getUrl(emrContext) }">${ it.getLabel(emrContext) }</a></li>
+    <% } %>
 </ul>
 
 Orders:

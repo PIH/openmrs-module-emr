@@ -32,5 +32,12 @@
         <property name="homepageUrl" value="emr/findPatient.page"/>
         <property name="iconUrl" value="moduleResources/uilibrary/images/folder_32.png"/>
     </bean>
+
+    <!-- Tasks -->
+    <bean id="emrOrderXrayTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
+        <property name="id" value="emr.orderXray"/>
+        <property name="labelCode" value="emr.task.orderXray.label"/>
+        <property name="url" value="emr/orderXray.page"/>
+    </bean>
 	
 </beans>

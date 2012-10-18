@@ -16,7 +16,16 @@ package org.openmrs.module.emr;
 
 import org.apache.commons.logging.Log; 
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.appframework.AppDescriptor;
+import org.openmrs.module.emr.task.TaskDescriptor;
+import org.openmrs.module.emr.task.TaskService;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
@@ -36,7 +45,29 @@ public class EMRActivator implements ModuleActivator {
 	 * @see ModuleActivator#contextRefreshed()
 	 */
 	public void contextRefreshed() {
-		log.info("EMR Module refreshed");
+        TaskService taskService = Context.getService(TaskService.class);
+
+        List<TaskDescriptor> allTasks = new ArrayList<TaskDescriptor>();
+        allTasks.addAll(Context.getRegisteredComponents(TaskDescriptor.class));
+
+        Set<String> ids = new HashSet<String>();
+        for (TaskDescriptor task : allTasks) {
+            if (ids.contains(task.getId()))
+                log.warn("Found multiple tasks with id: " + task.getId());
+            else
+                ids.add(task.getId());
+        }
+
+        taskService.setAllTasksInternal(allTasks);
+        for (TaskDescriptor task : allTasks) {
+            taskService.ensurePrivilegeExistsInternal(task);
+        }
+
+		log.info("EMR Module refreshed. " + allTasks.size() + " tasks available.");
+        if (log.isDebugEnabled()) {
+            for (TaskDescriptor task : allTasks)
+                log.debug(task.getId() + " (" + task.getClass().getName() + ")");
+        }
 	}
 	
 	/**
