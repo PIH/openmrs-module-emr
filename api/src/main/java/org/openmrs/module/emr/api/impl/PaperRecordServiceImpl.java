@@ -42,13 +42,21 @@ public class PaperRecordServiceImpl implements PaperRecordService {
     @Qualifier("adminService")
     private AdministrationService administrationService;
 
-
     @Autowired
     @Qualifier("patientService")
     private PatientService patientService;
 
 
-    public void setDao(PaperRecordRequestDAO paperRecordRequestDAO) {
+    public void setAdministrationService(AdministrationService administrationService) {
+        this.administrationService = administrationService;
+    }
+
+    public void setPatientService(PatientService patientService) {
+        this.patientService = patientService;
+    }
+
+
+    public void setPaperRecordRequestDAO(PaperRecordRequestDAO paperRecordRequestDAO) {
         this.paperRecordRequestDAO = paperRecordRequestDAO;
     }
 

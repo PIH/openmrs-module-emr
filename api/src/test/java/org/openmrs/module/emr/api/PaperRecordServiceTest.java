@@ -55,7 +55,7 @@ public class PaperRecordServiceTest {
         paperRecordIdentifierType.setId(2);
 
         paperRecordService = new PaperRecordServiceStub(paperRecordIdentifierType);
-        ((PaperRecordServiceImpl) paperRecordService).setDao(mockPaperRecordDAO);
+        ((PaperRecordServiceImpl) paperRecordService).setPaperRecordRequestDAO(mockPaperRecordDAO);
     }
 
     @Test
