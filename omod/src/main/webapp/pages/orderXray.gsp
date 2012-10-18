@@ -14,8 +14,6 @@
     });
 </script>
 <style type="text/css">
-    @import url(http://fonts.googleapis.com/css?family=Droid+Sans);
-
     .left-column, .right-column {
         float: left;
         width: 45%;
@@ -53,9 +51,6 @@
     #contentForm {
         padding-left: 50px;
         padding-right: 50px;
-    }
-    body {
-        font-family: 'Droid Sans';
     }
 </style>
 
