@@ -38,6 +38,15 @@
         </property>
     </bean>
 
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list merge="true">
+                <value>${project.parent.groupId}.${project.parent.artifactId}.api.EmrService</value>
+                <ref local="emrService"/>                <!-- TODO: why did I change this to ref bean? -->
+            </list>
+        </property>
+    </bean>
+
     <bean id="paperRecordService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
         <property name="transactionManager">
             <ref bean="transactionManager" />
@@ -45,12 +54,10 @@
         <property name="target">
             <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.PaperRecordServiceImpl">
                 <property name="paperRecordRequestDAO">
-                    <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernatePaperRecordDAO">
+                    <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernatePaperRecordRequestDAO">
                         <property name="sessionFactory"><ref bean="sessionFactory"/></property>
                     </bean>
                 </property>
-                <property name="administrationService"><ref bean="adminService"/></property>
-                <property name="patientService"><ref bean="patientService"/></property>
             </bean>
         </property>
         <property name="preInterceptors">
@@ -63,9 +70,9 @@
 
     <bean parent="serviceContext">
         <property name="moduleService">
-            <list>
-                <value>${project.parent.groupId}.${project.parent.artifactId}.api.EmrService</value>
-                <ref local="emrService"/>                <!-- TODO: why did I change this to ref bean? -->
+            <list merge="true">
+                <value>${project.parent.groupId}.${project.parent.artifactId}.api.PaperRecordService</value>
+                <ref local="paperRecordService"/>
             </list>
         </property>
     </bean>
@@ -87,7 +94,7 @@
 
     <bean parent="serviceContext">
         <property name="moduleService">
-            <list>
+            <list merge="true">
                 <value>${project.parent.groupId}.${project.parent.artifactId}.task.TaskService</value>
                 <ref local="taskService"/>
             </list>

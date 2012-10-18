@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <!--
+        See http://www.liquibase.org/manual/home#available_database_refactorings
+        for a list of supported elements and attributes
+    -->
+
+    <changeSet id="2012101249" author="mgoodrich">
+        <comment>Adds paper record request table</comment>
+        <createTable tableName="emr_paper_record_request">
+            <column name="emr_request_id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="identifier" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(50)" defaultValue="OPEN">
+                <constraints nullable="false" />
+            </column>
+            <column name="patient_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="record_location_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="request_location_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assignee_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creator_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="uuid" type="char(38)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="record_location_id_location_id_fk"
+                                 baseTableName="emr_paper_record_request" baseColumnNames="record_location_id"
+                                 referencedTableName="location" referencedColumnNames="location_id"/>
+
+        <addForeignKeyConstraint constraintName="request_location_id_location_id_fk"
+                                 baseTableName="emr_paper_record_request" baseColumnNames="request_location_id"
+                                 referencedTableName="location" referencedColumnNames="location_id" />
+
+        <addForeignKeyConstraint constraintName="assign_id_person_id_fk"
+                                 baseTableName="emr_paper_record_request" baseColumnNames="record_location_id"
+                                 referencedTableName="person" referencedColumnNames="person_id" />
+
+        <addForeignKeyConstraint constraintName="creator_id_user_id_fk"
+                                 baseTableName="emr_paper_record_request" baseColumnNames="creator_id"
+                                 referencedTableName="users" referencedColumnNames="user_id" />
+
+        <addForeignKeyConstraint constraintName="request_patient_id_patient_id_fk"
+                                 baseTableName="emr_paper_record_request" baseColumnNames="patient_id"
+                                 referencedTableName="patient" referencedColumnNames="patient_id" />
+
+    </changeSet>
+
+</databaseChangeLog>

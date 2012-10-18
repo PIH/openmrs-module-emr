@@ -30,9 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class PaperRecordServiceImpl implements PaperRecordService {
 
@@ -45,16 +43,6 @@ public class PaperRecordServiceImpl implements PaperRecordService {
     @Autowired
     @Qualifier("patientService")
     private PatientService patientService;
-
-
-    public void setAdministrationService(AdministrationService administrationService) {
-        this.administrationService = administrationService;
-    }
-
-    public void setPatientService(PatientService patientService) {
-        this.patientService = patientService;
-    }
-
 
     public void setPaperRecordRequestDAO(PaperRecordRequestDAO paperRecordRequestDAO) {
         this.paperRecordRequestDAO = paperRecordRequestDAO;
@@ -74,7 +62,7 @@ public class PaperRecordServiceImpl implements PaperRecordService {
         request.setCreator(Context.getAuthenticatedUser());
         request.setDateCreated(new Date());
         request.setIdentifier(paperRecordIdentifier.getIdentifier());
-        request.setMedicalRecordLocation(medicalRecordLocation);
+        request.setRecordLocation(medicalRecordLocation);
         request.setPatient(patient);
         request.setRequestLocation(requestLocation);
 

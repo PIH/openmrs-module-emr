@@ -83,7 +83,7 @@ public class PaperRecordServiceTest {
         expectedRequest.setAssignee(null);
         expectedRequest.setCreator(authenicatedUser);
         expectedRequest.setIdentifier("ABCZYX");
-        expectedRequest.setMedicalRecordLocation(medicalRecordLocation);
+        expectedRequest.setRecordLocation(medicalRecordLocation);
         expectedRequest.setPatient(patient);
         expectedRequest.setStatus(PaperRecordRequest.Status.OPEN);
 
@@ -128,7 +128,7 @@ public class PaperRecordServiceTest {
         expectedRequest.setAssignee(null);
         expectedRequest.setCreator(authenicatedUser);
         expectedRequest.setIdentifier("ABCZYX");
-        expectedRequest.setMedicalRecordLocation(medicalRecordLocation);
+        expectedRequest.setRecordLocation(medicalRecordLocation);
         expectedRequest.setPatient(patient);
         expectedRequest.setStatus(PaperRecordRequest.Status.OPEN);
 
@@ -154,7 +154,7 @@ public class PaperRecordServiceTest {
             assertThat(actualRequest.getAssignee(), is(expectedRequest.getAssignee()));
             assertThat(actualRequest.getCreator(), is(expectedRequest.getCreator()));
             assertThat(actualRequest.getIdentifier(), is(expectedRequest.getIdentifier()));
-            assertThat(actualRequest.getMedicalRecordLocation(), is(expectedRequest.getMedicalRecordLocation()));
+            assertThat(actualRequest.getRecordLocation(), is(expectedRequest.getRecordLocation()));
             assertThat(actualRequest.getPatient(), is(expectedRequest.getPatient()));
             assertThat(actualRequest.getStatus(), is(expectedRequest.getStatus()));
             assertNotNull(actualRequest.getDateCreated());

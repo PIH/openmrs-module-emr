@@ -14,10 +14,7 @@
 
 package org.openmrs.module.emr.domain;
 
-import org.openmrs.BaseOpenmrsObject;
-import org.openmrs.Location;
-import org.openmrs.Patient;
-import org.openmrs.User;
+import org.openmrs.*;
 
 import java.util.Date;
 
@@ -31,11 +28,11 @@ public class PaperRecordRequest extends BaseOpenmrsObject {
 
     private String identifier;
 
-    private Location medicalRecordLocation;
+    private Location recordLocation;
 
     private Location requestLocation;
 
-    private User assignee;
+    private Person assignee;
 
     private Status status = Status.OPEN;
 
@@ -82,12 +79,12 @@ public class PaperRecordRequest extends BaseOpenmrsObject {
         this.identifier = identifier;
     }
 
-    public Location getMedicalRecordLocation() {
-        return medicalRecordLocation;
+    public Location getRecordLocation() {
+        return recordLocation;
     }
 
-    public void setMedicalRecordLocation(Location medicalRecordLocation) {
-        this.medicalRecordLocation = medicalRecordLocation;
+    public void setRecordLocation(Location recordLocation) {
+        this.recordLocation = recordLocation;
     }
 
     public Location getRequestLocation() {
@@ -98,11 +95,11 @@ public class PaperRecordRequest extends BaseOpenmrsObject {
         this.requestLocation = requestLocation;
     }
 
-    public User getAssignee() {
+    public Person getAssignee() {
         return assignee;
     }
 
-    public void setAssignee(User assignee) {
+    public void setAssignee(Person assignee) {
         this.assignee = assignee;
     }
 

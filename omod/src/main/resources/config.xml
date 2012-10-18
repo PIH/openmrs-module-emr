@@ -27,7 +27,7 @@
 	
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
-				
+	    PaperRecordRequest.hbm.xml
 	</mappingFiles>
 
 	<!-- Internationalization -->
@@ -59,6 +59,14 @@
         <defaultValue></defaultValue>
         <description>
             UUID of the OrderType that represents lab tests and radiology studies
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>emr.paperRecordIdentifierType</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the Patient Identifier Type that represents the identifier for a patient's paper record
         </description>
     </globalProperty>
 </module>
