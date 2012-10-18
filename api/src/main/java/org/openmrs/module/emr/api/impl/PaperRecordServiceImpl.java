@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 public class PaperRecordServiceImpl implements PaperRecordService {
 
@@ -67,6 +68,11 @@ public class PaperRecordServiceImpl implements PaperRecordService {
         request.setRequestLocation(requestLocation);
 
         paperRecordRequestDAO.saveOrUpdate(request);
+    }
+
+    @Override
+    public List<PaperRecordRequest> getOpenPaperRecordRequests() {
+        return paperRecordRequestDAO.getOpenPaperRecordRequests();
     }
 
     protected PatientIdentifierType getPaperRecordIdentifierType() {

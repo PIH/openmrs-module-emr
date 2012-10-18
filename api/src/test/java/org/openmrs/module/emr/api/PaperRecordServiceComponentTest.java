@@ -22,8 +22,11 @@ import org.openmrs.Patient;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.emr.domain.PaperRecordRequest;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveTest {
 
@@ -57,7 +60,20 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
         paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
 
-        // TODO: do some verification
+        // make sure the record is in the database
+        List<PaperRecordRequest> requests = paperRecordService.getOpenPaperRecordRequests();
+        Assert.assertEquals(1, requests.size());
+        PaperRecordRequest request = requests.get(0);
+        Assert.assertEquals(new Integer(2), request.getPatient().getId());
+        Assert.assertEquals(new Integer(1), request.getRecordLocation().getId());
+        Assert.assertEquals(new Integer(3), request.getRequestLocation().getId());
+        Assert.assertEquals("101", request.getIdentifier());
+        Assert.assertEquals(PaperRecordRequest.Status.OPEN, request.getStatus());
+        Assert.assertNull(request.getAssignee());
+
     }
+
+
+
 
 }

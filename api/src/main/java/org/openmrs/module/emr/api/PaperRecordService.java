@@ -16,11 +16,16 @@ package org.openmrs.module.emr.api;
 
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.module.emr.domain.PaperRecordRequest;
+
+import java.util.List;
 
 /**
  * Public API for functionality relating to paper medical records
  */
 public interface PaperRecordService {
 
-    void requestPaperRecord(Patient patient, Location medicalRecordLocation, Location requestLocation);
+    public void requestPaperRecord(Patient patient, Location medicalRecordLocation, Location requestLocation);
+
+    public List<PaperRecordRequest> getOpenPaperRecordRequests();
 }

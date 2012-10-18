@@ -16,5 +16,9 @@ package org.openmrs.module.emr.api.db;
 
 import org.openmrs.module.emr.domain.PaperRecordRequest;
 
+import java.util.List;
+
 public interface PaperRecordRequestDAO extends SingleClassDAO<PaperRecordRequest> {
+
+    public List<PaperRecordRequest> getOpenPaperRecordRequests();
 }

@@ -14,8 +14,13 @@
 
 package org.openmrs.module.emr.api.db.hibernate;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.openmrs.module.emr.api.db.PaperRecordRequestDAO;
 import org.openmrs.module.emr.domain.PaperRecordRequest;
+
+import java.util.List;
 
 public class HibernatePaperRecordRequestDAO  extends HibernateSingleClassDAO<PaperRecordRequest> implements PaperRecordRequestDAO {
 
@@ -23,4 +28,13 @@ public class HibernatePaperRecordRequestDAO  extends HibernateSingleClassDAO<Pap
         super(PaperRecordRequest.class);
     }
 
+    @Override
+    public List<PaperRecordRequest> getOpenPaperRecordRequests() {
+
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(PaperRecordRequest.class);
+        criteria.add(Restrictions.eq("status", PaperRecordRequest.Status.OPEN));
+        criteria.addOrder(Order.asc("dateCreated"));
+
+        return (List<PaperRecordRequest>) criteria.list();
+    }
 }
