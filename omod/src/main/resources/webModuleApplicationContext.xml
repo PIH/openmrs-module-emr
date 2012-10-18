@@ -32,6 +32,12 @@
         <property name="homepageUrl" value="emr/findPatient.page"/>
         <property name="iconUrl" value="moduleResources/uilibrary/images/folder_32.png"/>
     </bean>
+    <bean id="emrArchivesRoomApp" class="org.openmrs.module.appframework.SimpleAppDescriptor">
+        <property name="id" value="emr.archivesRoom"/>
+        <property name="label" value="Archives Room"/>
+        <property name="homepageUrl" value="emr/archivesRoom.page"/>
+        <property name="iconUrl" value="moduleResources/uilibrary/images/folder_32.png"/>
+    </bean>
 
     <!-- Tasks -->
     <bean id="emrOrderXrayTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
