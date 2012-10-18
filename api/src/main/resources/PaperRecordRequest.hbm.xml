@@ -5,7 +5,7 @@
 <hibernate-mapping>
 
     <class name="org.openmrs.module.emr.domain.PaperRecordRequest" table="emr_paper_record_request">
-        <id name="requestId" type="int" column="emr_request_id" unsaved-value="0">
+        <id name="requestId" type="int" column="request_id" unsaved-value="0">
             <generator class="native"/>
         </id>
 
