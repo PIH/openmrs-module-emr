@@ -29,7 +29,6 @@ import javax.servlet.http.HttpSession;
 public class EmrContext {
 
     public final static String LOCATION_SESSION_ATTRIBUTE = "emrContext.sessionLocationId";
-    public final static String PATIENT_SESSION_ATTRIBUTE = "emrContext.currentPatientId";
 
     UserContext userContext;
 
