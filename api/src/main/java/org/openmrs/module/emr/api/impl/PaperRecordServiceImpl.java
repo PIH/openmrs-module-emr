@@ -18,6 +18,7 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.Person;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
@@ -78,6 +79,25 @@ public class PaperRecordServiceImpl implements PaperRecordService {
     @Override
     public List<PaperRecordRequest> getOpenPaperRecordRequests() {
         return paperRecordRequestDAO.getOpenPaperRecordRequests();
+    }
+
+    @Override
+    @Transactional
+    public synchronized List<PaperRecordRequest> assignRequests(List<PaperRecordRequest> requests, Person assignee) {
+        // first verify that all of these requests are open, or else we can't assign them
+        for (PaperRecordRequest request : requests) {
+            if (request.getStatus() != PaperRecordRequest.Status.OPEN) {
+                throw new IllegalStateException("Cannot assign a request that is not open");
+            }
+        }
+
+        for (PaperRecordRequest request : requests) {
+            request.setStatus(PaperRecordRequest.Status.ASSIGNED);
+            request.setAssignee(assignee);
+            paperRecordRequestDAO.saveOrUpdate(request);
+        }
+
+        return requests;
     }
 
     protected PatientIdentifierType getPaperRecordIdentifierType() {

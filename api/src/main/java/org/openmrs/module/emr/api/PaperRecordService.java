@@ -16,6 +16,7 @@ package org.openmrs.module.emr.api;
 
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.Person;
 import org.openmrs.module.emr.domain.PaperRecordRequest;
 
 import java.util.List;
@@ -25,9 +26,19 @@ import java.util.List;
  */
 public interface PaperRecordService {
 
-    public PaperRecordRequest getPaperRecordRequestById(Integer id);
+    PaperRecordRequest getPaperRecordRequestById(Integer id);
 
-    public void requestPaperRecord(Patient patient, Location medicalRecordLocation, Location requestLocation);
+    void requestPaperRecord(Patient patient, Location medicalRecordLocation, Location requestLocation);
 
-    public List<PaperRecordRequest> getOpenPaperRecordRequests();
+    List<PaperRecordRequest> getOpenPaperRecordRequests();
+
+    /**
+     * Sets the status to ASSIGNED and the assignee to the given value, for the given requests.
+     * @param requests
+     * @param assignee
+     * @return the list that was passed in, but with assignees and status set
+     * @throws IllegalStateException if any of the requests are not in the OPEN status
+     */
+    List<PaperRecordRequest> assignRequests(List<PaperRecordRequest> requests, Person assignee);
+
 }

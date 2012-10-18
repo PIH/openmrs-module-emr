@@ -26,10 +26,14 @@ import org.openmrs.module.emr.domain.PaperRecordRequest;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.*;
 
@@ -39,15 +43,15 @@ public class PaperRecordServiceTest {
 
     private PaperRecordService paperRecordService;
     private PaperRecordRequestDAO mockPaperRecordDAO;
-    private User authenicatedUser;
+    private User authenticatedUser;
     private PatientIdentifierType paperRecordIdentifierType;
 
     @Before
     public void setup() {
         mockStatic(Context.class);
 
-        authenicatedUser = new User();
-        when(Context.getAuthenticatedUser()).thenReturn(authenicatedUser);
+        authenticatedUser = new User();
+        when(Context.getAuthenticatedUser()).thenReturn(authenticatedUser);
 
         mockPaperRecordDAO = mock(PaperRecordRequestDAO.class);
 
@@ -81,7 +85,7 @@ public class PaperRecordServiceTest {
 
         PaperRecordRequest expectedRequest = new PaperRecordRequest();
         expectedRequest.setAssignee(null);
-        expectedRequest.setCreator(authenicatedUser);
+        expectedRequest.setCreator(authenticatedUser);
         expectedRequest.setIdentifier("ABCZYX");
         expectedRequest.setRecordLocation(medicalRecordLocation);
         expectedRequest.setPatient(patient);
@@ -126,7 +130,7 @@ public class PaperRecordServiceTest {
 
         PaperRecordRequest expectedRequest = new PaperRecordRequest();
         expectedRequest.setAssignee(null);
-        expectedRequest.setCreator(authenicatedUser);
+        expectedRequest.setCreator(authenticatedUser);
         expectedRequest.setIdentifier("ABCZYX");
         expectedRequest.setRecordLocation(medicalRecordLocation);
         expectedRequest.setPatient(patient);
@@ -136,6 +140,38 @@ public class PaperRecordServiceTest {
 
         verify(mockPaperRecordDAO).saveOrUpdate(argThat(new IsExpectedRequest(expectedRequest)));
 
+    }
+
+    @Test
+    public void testAssignRequests() throws Exception {
+        Person assignTo = new Person(15);
+
+        List<PaperRecordRequest> requests = new ArrayList<PaperRecordRequest>();
+        requests.add(buildPaperRecordRequest());
+        requests.add(buildPaperRecordRequest());
+        requests.add(buildPaperRecordRequest());
+
+        paperRecordService.assignRequests(requests, assignTo);
+
+        verify(mockPaperRecordDAO, times(3)).saveOrUpdate(argThat(new IsAssignedTo(assignTo)));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testAssignRequestsShouldFailIfARequestIsNotOpen() throws Exception {
+        Person assignTo = new Person(15);
+
+        List<PaperRecordRequest> requests = new ArrayList<PaperRecordRequest>();
+        requests.add(buildPaperRecordRequest());
+        requests.add(buildPaperRecordRequest());
+        requests.get(0).setStatus(PaperRecordRequest.Status.CANCELLED);
+
+        paperRecordService.assignRequests(requests, assignTo);
+    }
+
+    private PaperRecordRequest buildPaperRecordRequest() {
+        PaperRecordRequest request = new PaperRecordRequest();
+        request.setStatus(PaperRecordRequest.Status.OPEN);
+        return request;
     }
 
     private class IsExpectedRequest extends ArgumentMatcher<PaperRecordRequest> {
@@ -179,4 +215,20 @@ public class PaperRecordServiceTest {
 
     }
 
+    private class IsAssignedTo extends ArgumentMatcher<PaperRecordRequest> {
+
+        private Person shouldBeAssignedTo;
+
+        public IsAssignedTo(Person shouldBeAssignedTo) {
+            this.shouldBeAssignedTo = shouldBeAssignedTo;
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            PaperRecordRequest request = (PaperRecordRequest) o;
+            assertThat(request.getStatus(), is(PaperRecordRequest.Status.ASSIGNED));
+            assertThat(request.getAssignee(), is(shouldBeAssignedTo));
+            return true;
+        }
+    }
 }
