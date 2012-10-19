@@ -10,12 +10,11 @@
 
 <script type="text/javascript">
     jq(document).ready( function() {
-        var fifthRequest = RecordRequestModel(5, "Mario", "A001", "Lacoline", "12:34 pm");
         var requests = [];
 
         <% openRequests.each { %>
             requests.push(RecordRequestModel(
-                ${it.requestId}, "${ui.format(it.patient)}", "${it.identifier}", "${ui.format(it.requestLocation)}", ${timeFormat.format(it.dateCreated)}, ${it.dateCreated.time}
+                ${it.requestId}, "${ui.format(it.patient)}", "${it.identifier}", "${ui.format(it.requestLocation)}", "${timeFormat.format(it.dateCreated)}", ${it.dateCreated.time}
             ));
         <% } %>
 
@@ -50,7 +49,7 @@
 </table>
 
 <form method="post">
-    <span style="display: none" data-bind="foreach: selectedRequests">
+    <span style="display: none" data-bind="foreach: viewModel.selectedRequests">
         <input type="hidden" name="requestId" data-bind="value: requestId"/>
     </span>
     <input type="submit" value="${ ui.message("emr.pullRecords.pullSelected") }"/>
