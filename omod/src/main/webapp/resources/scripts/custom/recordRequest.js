@@ -28,13 +28,9 @@ function RecordRequestsViewModel(requests) {
     };
 
     api.selectedRequests = ko.computed(function() {
-        var selected = [];
-        ko.utils.arrayForEach(api.requests(), function(item) {
-           if (item.selected()) {
-               selected.push(item);
-           }
+        return jQuery.grep(api.requests(), function(item) {
+           return item.selected();
         });
-        return selected;
     });
 
     return api;

@@ -18,9 +18,6 @@
                 ${it.requestId}, "${ui.format(it.patient)}", "${it.identifier}", "${ui.format(it.requestLocation)}", "${timeFormat.format(it.dateCreated)}", ${it.dateCreated.time}
             ));
         <% } %>
-        for (i = 0; i < 50; i++) {
-            requests.push(RecordRequestModel(i, "Alex", "A001", "Mirebalais", "12:34"));
-        }
 
         var viewModel = RecordRequestsViewModel(requests);
         ko.applyBindings(viewModel);
