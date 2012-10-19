@@ -1,11 +1,12 @@
 <%
     ui.decorateWith("emr", "standardEmrPage")
 
+    ui.includeCss("emr", "dataTable.css")
+
     ui.includeJavascript("emr", "knockout-2.1.0.js")
     ui.includeJavascript("emr", "custom/recordRequest.js")
 
     def timeFormat = new java.text.SimpleDateFormat("HH:mm")
-
 %>
 
 <script type="text/javascript">
@@ -37,29 +38,6 @@
         padding: 0 50px 0 50px;
     }
 
-    #requests {
-        clear: both;
-        padding: 0 50px 0 50px;
-        line-height: 2em;
-        border-spacing: 0;
-        width: 100%;
-    }
-
-    #requests td {
-        border-bottom: 1px solid black;
-        padding: 10px;
-        text-align: center;
-    }
-
-    #requests td:first-child {
-        text-align: left;
-    }
-
-    #requests td:last-child {
-        width: 15%;
-    }
-
-
     #post_requests input[type=submit] {
         margin-top: 30px;
         font-size: 20pt;
@@ -78,7 +56,7 @@
 </form>
 
 
-<table id="requests">
+<table class="dataTable">
     <thead>
         <tr>
             <th>Name</th>
