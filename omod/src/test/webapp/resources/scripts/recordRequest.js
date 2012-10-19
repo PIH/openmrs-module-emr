@@ -43,6 +43,11 @@ describe("Tests for medical record requests", function() {
         verifySelectedRecords(1);
     });
 
+    it("should select all if number is larger than size", function () {
+       viewModel.selectNumber(10);
+        verifySelectedRecords(8);
+    });
+
     it("should compute when none are selected", function() {
         viewModel.selectNumber(0);
         expect(viewModel.selectedRequests().length).toBe(0);

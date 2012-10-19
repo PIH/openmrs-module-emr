@@ -24,12 +24,7 @@ function RecordRequestsViewModel(requests) {
 
     api.selectRequestToBePulled = function(request) {
         var indexOf = requests.indexOf(request);
-        for(var i=0; i <= indexOf; i++) {
-            requests[i].selected(true);
-        }
-        for(var i=indexOf+1; i<requests.length; i++) {
-            requests[i].selected(false);
-        }
+        api.selectNumber(indexOf + 1);
     };
 
     api.selectedRequests = ko.computed(function() {

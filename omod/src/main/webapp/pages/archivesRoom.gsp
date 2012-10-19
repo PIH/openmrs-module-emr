@@ -20,6 +20,8 @@
 
         var viewModel = RecordRequestsViewModel(requests);
         ko.applyBindings(viewModel);
+
+        viewModel.selectNumber(10);
     });
 </script>
 <style>
