@@ -64,7 +64,7 @@ public class PaperRecordServiceTest {
     }
 
     @Test
-    public void testCreatePaperRecordRequest() throws Exception {
+    public void testRequestPaperRecord() throws Exception {
 
         Patient patient = new Patient();
         patient.setId(15);
@@ -99,7 +99,7 @@ public class PaperRecordServiceTest {
     }
 
     @Test
-    public void testCreatePaperRecordRequestForPatientWithMultipleIdentifiersAtSameLocation() throws Exception {
+    public void testRequestPaperRecordForPatientWithMultipleIdentifiersAtSameLocation() throws Exception {
 
         Patient patient = new Patient();
         patient.setId(15);
@@ -144,7 +144,7 @@ public class PaperRecordServiceTest {
     }
 
     @Test
-    public void testCreatePaperRecordRequestForPatientWhenPatientHasNoValidIdentifier() throws Exception {
+    public void testRequestPaperRecordWhenPatientHasNoValidIdentifier() throws Exception {
 
         MessageSourceService messageSourceService = mock(MessageSourceService.class);
         when(messageSourceService.getMessage("emr.missingPaperRecordIdentifierCode")).thenReturn("UNKNOWN");
