@@ -19,8 +19,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.Person;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
+import org.openmrs.api.PersonService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.domain.PaperRecordRequest;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -37,6 +39,9 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     PatientService patientService;
 
     @Autowired
+    PersonService personService;
+
+    @Autowired
     LocationService locationService;
 
     @Before
@@ -51,7 +56,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     }
 
     @Test
-    public void testCreatePaperRecordRequest() {
+    public void testRequestPaperRecord() {
 
         // all these are from the standard test dataset
         Patient patient = patientService.getPatient(2) ;
@@ -73,9 +78,8 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
     }
 
-
     @Test
-    public void testCreatePaperRecordRequestWhenNoValidPatientIdentifierForPaperRecord() {
+    public void testRequestPaperRecordWhenNoValidPatientIdentifierForPaperRecord() {
 
         // all these are from the standard test dataset
         Patient patient = patientService.getPatient(2) ;
@@ -97,6 +101,23 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
     }
 
+    @Test
+    public void testGetOpenPaperRecordRequests() {
+
+        Assert.assertEquals(0, paperRecordService.getOpenPaperRecordRequests().size());
+
+        // all these are from the standard test dataset
+        Patient patient = patientService.getPatient(2) ;
+        Location medicalRecordLocation = locationService.getLocation(3);
+        Location requestLocation = locationService.getLocation(3);
+
+        // just make the request twice
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        // make sure both records are now is in the database
+        Assert.assertEquals(2, paperRecordService.getOpenPaperRecordRequests().size());
+    }
 
     @Test
     public void testGetPaperRecordRequestById() {
@@ -104,8 +125,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         PaperRecordRequest request = paperRecordService.getPaperRecordRequestById(1);
 
         Assert.assertNotNull(request);
-        //TODO: why is this giving a lazy loading exception?
-        //Assert.assertEquals(new Integer(3), request.getPatient().getId());
+        Assert.assertEquals(new Integer(7), request.getPatient().getId());
         Assert.assertEquals(new Integer(1), request.getRecordLocation().getId());
         Assert.assertEquals(new Integer(2), request.getRequestLocation().getId());
         Assert.assertEquals("CATBALL", request.getIdentifier());
@@ -114,6 +134,29 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
     }
 
+    @Test
+    public void testAssignRequest() {
 
+        // all these are from the standard test dataset
+        Patient patient = patientService.getPatient(2) ;
+        Location medicalRecordLocation = locationService.getLocation(3);
+        Location requestLocation = locationService.getLocation(3);
 
+        // request a record
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        // retrieve that record
+        List<PaperRecordRequest> paperRecordRequests = paperRecordService.getOpenPaperRecordRequests();
+        Assert.assertEquals(1, paperRecordRequests.size()); // sanity check
+
+        // assign the person to the request
+        Person person = personService.getPerson(7);
+        paperRecordService.assignRequests(paperRecordRequests, person);
+
+        // verify
+        PaperRecordRequest request = paperRecordRequests.get(0);
+        Assert.assertEquals(PaperRecordRequest.Status.ASSIGNED, request.getStatus());
+        Assert.assertEquals(new Integer(7), request.getAssignee().getId());
+
+    }
 }
