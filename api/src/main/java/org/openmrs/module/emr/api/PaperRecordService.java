@@ -14,11 +14,11 @@
 
 package org.openmrs.module.emr.api;
 
-import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.module.emr.domain.PaperRecordRequest;
 
+import javax.xml.stream.Location;
 import java.util.List;
 
 /**
@@ -26,10 +26,28 @@ import java.util.List;
  */
 public interface PaperRecordService {
 
+    /**
+     * Fetches the Paper Record Request with the specified id
+     *
+     * @param id primary key of the paper record request to retrieve
+     * @return the patient record request with the specified id
+     */
     PaperRecordRequest getPaperRecordRequestById(Integer id);
 
-    void requestPaperRecord(Patient patient, Location medicalRecordLocation, Location requestLocation);
+    /**
+     * Requests the paper record for the specified patient for the specified location
+     *
+     * @param patient the patient whose record we are requesting
+     * @param recordLocation the location of the record (ie, "Mirebalais Hospital")
+     * @param requestLocation the location where the record is to be sent
+     */
+    void requestPaperRecord(Patient patient, Location recordLocation, Location requestLocation);
 
+    /**
+     * Retrieves all records that are open (ie, have yet to be assigned to an archivist for retrieval)
+     *
+     * @return the list of all open paper record requests
+     */
     List<PaperRecordRequest> getOpenPaperRecordRequests();
 
     /**
