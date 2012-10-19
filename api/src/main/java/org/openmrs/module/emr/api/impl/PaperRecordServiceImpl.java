@@ -67,7 +67,7 @@ public class PaperRecordServiceImpl implements PaperRecordService {
 
     @Override
     @Transactional
-    public void requestPaperRecord(Patient patient, Location recordLocation,Location requestLocation) {
+    public PaperRecordRequest requestPaperRecord(Patient patient, Location recordLocation, Location requestLocation) {
 
         if (patient == null) {
             throw new IllegalStateException("Patient cannot be null");
@@ -104,6 +104,8 @@ public class PaperRecordServiceImpl implements PaperRecordService {
         request.setRequestLocation(requestLocation);
 
         paperRecordRequestDAO.saveOrUpdate(request);
+
+        return request;
     }
 
     @Override

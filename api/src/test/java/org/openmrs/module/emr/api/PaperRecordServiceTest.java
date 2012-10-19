@@ -92,10 +92,11 @@ public class PaperRecordServiceTest {
         expectedRequest.setPatient(patient);
         expectedRequest.setStatus(PaperRecordRequest.Status.OPEN);
 
-        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+        IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(expectedRequest);
 
-        verify(mockPaperRecordDAO).saveOrUpdate(argThat(new IsExpectedRequest(expectedRequest)));
-
+        PaperRecordRequest returnedRequest = paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+        verify(mockPaperRecordDAO).saveOrUpdate(argThat(expectedRequestMatcher));
+        expectedRequestMatcher.matches(returnedRequest);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -182,10 +183,11 @@ public class PaperRecordServiceTest {
         expectedRequest.setPatient(patient);
         expectedRequest.setStatus(PaperRecordRequest.Status.OPEN);
 
-        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+        IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(expectedRequest);
 
-        verify(mockPaperRecordDAO).saveOrUpdate(argThat(new IsExpectedRequest(expectedRequest)));
-
+        PaperRecordRequest returnedRequest = paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+        verify(mockPaperRecordDAO).saveOrUpdate(argThat(expectedRequestMatcher));
+        expectedRequestMatcher.matches(returnedRequest);
     }
 
     @Test
@@ -218,10 +220,11 @@ public class PaperRecordServiceTest {
         expectedRequest.setPatient(patient);
         expectedRequest.setStatus(PaperRecordRequest.Status.OPEN);
 
-        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+        IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(expectedRequest);
 
-        verify(mockPaperRecordDAO).saveOrUpdate(argThat(new IsExpectedRequest(expectedRequest)));
-
+        PaperRecordRequest returnedRequest = paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+        verify(mockPaperRecordDAO).saveOrUpdate(argThat(expectedRequestMatcher));
+        expectedRequestMatcher.matches(returnedRequest);
     }
 
     @Test
