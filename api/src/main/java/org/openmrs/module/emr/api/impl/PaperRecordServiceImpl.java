@@ -60,6 +60,7 @@ public class PaperRecordServiceImpl implements PaperRecordService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PaperRecordRequest getPaperRecordRequestById(Integer id) {
         return paperRecordRequestDAO.getById(id);
     }
@@ -96,6 +97,7 @@ public class PaperRecordServiceImpl implements PaperRecordService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PaperRecordRequest> getOpenPaperRecordRequests() {
         return paperRecordRequestDAO.getOpenPaperRecordRequests();
     }
