@@ -22,6 +22,7 @@ import org.openmrs.Person;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.api.PaperRecordService;
 import org.openmrs.module.emr.api.db.PaperRecordRequestDAO;
@@ -46,8 +47,16 @@ public class PaperRecordServiceImpl implements PaperRecordService {
     @Qualifier("patientService")
     private PatientService patientService;
 
+    @Autowired
+    @Qualifier("messageSourceService")
+    private MessageSourceService messageSourceService;
+
     public void setPaperRecordRequestDAO(PaperRecordRequestDAO paperRecordRequestDAO) {
         this.paperRecordRequestDAO = paperRecordRequestDAO;
+    }
+
+    public void setMessageSourceService(MessageSourceService messageSourceService) {
+        this.messageSourceService = messageSourceService;
     }
 
     @Override
@@ -62,13 +71,23 @@ public class PaperRecordServiceImpl implements PaperRecordService {
         //  TODO:  handle bogus parameters;
         // TODO: handle null case if no patient identifier found or patient has multiple identifiers
 
+        String identifier;
+
         // fetch the appropriate identifier
         PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient, getPaperRecordIdentifierType(), medicalRecordLocation);
+
+        if (paperRecordIdentifier != null) {
+            identifier = paperRecordIdentifier.getIdentifier();
+        }
+        else {
+            String missingIdentifierCode = messageSourceService.getMessage("emr.missingPaperRecordIdentifierCode");
+            identifier = missingIdentifierCode != "emr.missingPaperRecordIdentifierCode" ? missingIdentifierCode : "UNKNOWN" ;
+        }
 
         PaperRecordRequest request = new PaperRecordRequest();
         request.setCreator(Context.getAuthenticatedUser());
         request.setDateCreated(new Date());
-        request.setIdentifier(paperRecordIdentifier.getIdentifier());
+        request.setIdentifier(identifier);
         request.setRecordLocation(medicalRecordLocation);
         request.setPatient(patient);
         request.setRequestLocation(requestLocation);

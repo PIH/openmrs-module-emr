@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
+import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.api.db.PaperRecordRequestDAO;
 import org.openmrs.module.emr.api.impl.PaperRecordServiceImpl;
 import org.openmrs.module.emr.domain.PaperRecordRequest;
@@ -33,9 +34,9 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.*;
+import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Context.class)
@@ -132,6 +133,42 @@ public class PaperRecordServiceTest {
         expectedRequest.setAssignee(null);
         expectedRequest.setCreator(authenticatedUser);
         expectedRequest.setIdentifier("ABCZYX");
+        expectedRequest.setRecordLocation(medicalRecordLocation);
+        expectedRequest.setPatient(patient);
+        expectedRequest.setStatus(PaperRecordRequest.Status.OPEN);
+
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        verify(mockPaperRecordDAO).saveOrUpdate(argThat(new IsExpectedRequest(expectedRequest)));
+
+    }
+
+    @Test
+    public void testCreatePaperRecordRequestForPatientWhenPatientHasNoValidIdentifier() throws Exception {
+
+        MessageSourceService messageSourceService = mock(MessageSourceService.class);
+        when(messageSourceService.getMessage("emr.missingPaperRecordIdentifierCode")).thenReturn("UNKNOWN");
+        ((PaperRecordServiceImpl) paperRecordService).setMessageSourceService(messageSourceService);
+
+        Patient patient = new Patient();
+        patient.setId(15);
+
+        Location medicalRecordLocation = new Location();
+        medicalRecordLocation.setId(3);
+        medicalRecordLocation.setName("Mirebalais");
+
+        Location otherLocation = new Location();
+        otherLocation.setId(5);
+        otherLocation.setName("Cange");
+
+        Location requestLocation = new Location();
+        requestLocation.setId(4);
+        requestLocation.setName("Outpatient Clinic");
+
+        PaperRecordRequest expectedRequest = new PaperRecordRequest();
+        expectedRequest.setAssignee(null);
+        expectedRequest.setCreator(authenticatedUser);
+        expectedRequest.setIdentifier("UNKNOWN");
         expectedRequest.setRecordLocation(medicalRecordLocation);
         expectedRequest.setPatient(patient);
         expectedRequest.setStatus(PaperRecordRequest.Status.OPEN);

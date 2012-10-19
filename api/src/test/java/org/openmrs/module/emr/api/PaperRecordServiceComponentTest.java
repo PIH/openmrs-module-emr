@@ -73,6 +73,31 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
     }
 
+
+    @Test
+    public void testCreatePaperRecordRequestWhenNoValidPatientIdentifierForPaperRecord() {
+
+        // all these are from the standard test dataset
+        Patient patient = patientService.getPatient(2) ;
+        Location medicalRecordLocation = locationService.getLocation(3);
+        Location requestLocation = locationService.getLocation(3);
+
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        // make sure the record is in the database
+        List<PaperRecordRequest> requests = paperRecordService.getOpenPaperRecordRequests();
+        Assert.assertEquals(1, requests.size());
+        PaperRecordRequest request = requests.get(0);
+        Assert.assertEquals(new Integer(2), request.getPatient().getId());
+        Assert.assertEquals(new Integer(3), request.getRecordLocation().getId());
+        Assert.assertEquals(new Integer(3), request.getRequestLocation().getId());
+        Assert.assertEquals("UNKNOWN", request.getIdentifier());
+        Assert.assertEquals(PaperRecordRequest.Status.OPEN, request.getStatus());
+        Assert.assertNull(request.getAssignee());
+
+    }
+
+
     @Test
     public void testGetPaperRecordRequestById() {
 
