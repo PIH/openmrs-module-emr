@@ -1,10 +1,11 @@
-function RecordRequestModel(requestId, patientName, dossierNumber, sendToLocation, timeRequested) {
+function RecordRequestModel(requestId, patientName, dossierNumber, sendToLocation, timeRequested, timeRequestedSortable) {
     var model = {};
     model.requestId = requestId;
     model.patientName = patientName;
     model.dossierNumber = dossierNumber;
     model.sendToLocation = sendToLocation;
     model.timeRequested = timeRequested;
+    model.timeRequestedSortable = timeRequestedSortable;
     model.selected = ko.observable(false);
 
     return model;
@@ -24,6 +25,16 @@ function RecordRequestsViewModel(requests) {
             requests[i].selected(false);
         }
     };
+
+    api.selectedRequests = ko.computed(function() {
+        var selected = [];
+        for (var i = 0; i < this.requests.length; ++i) {
+            if (this.requests[i].selected()) {
+                selected.push(this.requests[i].requestId);
+            }
+        }
+        return selected.join(",");
+    });
 
     return api;
 }

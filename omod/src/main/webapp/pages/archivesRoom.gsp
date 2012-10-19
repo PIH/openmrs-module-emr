@@ -15,7 +15,7 @@
 
         <% openRequests.each { %>
             requests.push(RecordRequestModel(
-                    ${it.requestId}, "${ui.format(it.patient)}", "${it.identifier}", "${ui.format(it.requestLocation)}", ${timeFormat.format(it.dateCreated)}
+                ${it.requestId}, "${ui.format(it.patient)}", "${it.identifier}", "${ui.format(it.requestLocation)}", ${timeFormat.format(it.dateCreated)}, ${it.dateCreated.time}
             ));
         <% } %>
 
@@ -48,3 +48,10 @@
         </tr>
     </tbody>
 </table>
+
+<form method="post">
+    <span style="display: none" data-bind="foreach: selectedRequests">
+        <input type="hidden" name="requestId" data-bind="value: requestId"/>
+    </span>
+    <input type="submit" value="${ ui.message("emr.pullRecords.pullSelected") }"/>
+</form>
