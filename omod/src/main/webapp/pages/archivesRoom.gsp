@@ -49,7 +49,7 @@
 </table>
 
 <form method="post">
-    <span style="display: none" data-bind="foreach: viewModel.selectedRequests">
+    <span style="display: none" data-bind="foreach: selectedRequests">
         <input type="hidden" name="requestId" data-bind="value: requestId"/>
     </span>
     <input type="submit" value="${ ui.message("emr.pullRecords.pullSelected") }"/>

@@ -28,7 +28,7 @@ function RecordRequestsViewModel(requests) {
 
     api.selectedRequests = ko.computed(function() {
         var selected = [];
-        for (var i = 0; i < this.requests.length; ++i) {
+        for (var i = 0; i < api.requests.length; ++i) {
             if (this.requests[i].selected()) {
                 selected.push(this.requests[i].requestId);
             }
