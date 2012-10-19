@@ -1,6 +1,6 @@
 package org.openmrs.module.emr.page.controller;
 
-import org.openmrs.api.context.Context;
+import org.openmrs.Person;
 import org.openmrs.module.emr.api.PaperRecordService;
 import org.openmrs.module.emr.domain.PaperRecordRequest;
 import org.openmrs.ui.framework.UiUtils;
@@ -25,11 +25,12 @@ public class ArchivesRoomPageController {
      * @param requests
      */
     public String post(@RequestParam("requestId") List<PaperRecordRequest> requests,
+                       @RequestParam("assignTo") Person assignTo,
                        @SpringBean PaperRecordService paperRecordService,
                        UiUtils ui,
                        HttpSession session) {
         try {
-            paperRecordService.assignRequests(requests, Context.getAuthenticatedUser().getPerson());
+            paperRecordService.assignRequests(requests, assignTo);
         } catch (IllegalStateException ex) {
             session.setAttribute(WebConstants.OPENMRS_ERROR_ATTR, ui.message("emr.pullRecords.alreadyAssigned"));
         }

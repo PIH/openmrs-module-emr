@@ -16,6 +16,12 @@ function RecordRequestsViewModel(requests) {
     var api = {};
     api.requests = ko.observableArray(requests);
 
+    api.selectNumber = function(number) {
+        for (var i = 0; i < requests.length; ++i) {
+            requests[i].selected(i < number);
+        }
+    };
+
     api.selectRequestToBePulled = function(request) {
         var indexOf = requests.indexOf(request);
         for(var i=0; i <= indexOf; i++) {
@@ -28,12 +34,12 @@ function RecordRequestsViewModel(requests) {
 
     api.selectedRequests = ko.computed(function() {
         var selected = [];
-        for (var i = 0; i < api.requests.length; ++i) {
-            if (this.requests[i].selected()) {
-                selected.push(this.requests[i].requestId);
-            }
-        }
-        return selected.join(",");
+        ko.utils.arrayForEach(api.requests(), function(item) {
+           if (item.selected()) {
+               selected.push(item);
+           }
+        });
+        return selected;
     });
 
     return api;

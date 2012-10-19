@@ -35,4 +35,21 @@ describe("Tests for medical record requests", function() {
         viewModel.selectRequestToBePulled(secondRecord);
         verifySelectedRecords(2);
     });
+
+    it("should select by number", function() {
+        viewModel.selectNumber(4);
+        verifySelectedRecords(4);
+        viewModel.selectNumber(1);
+        verifySelectedRecords(1);
+    });
+
+    it("should compute when none are selected", function() {
+        viewModel.selectNumber(0);
+        expect(viewModel.selectedRequests().length).toBe(0);
+    });
+
+    it("should compute when some are selected", function() {
+        viewModel.selectNumber(2);
+        expect(viewModel.selectedRequests().length).toBe(2);
+    });
 })
