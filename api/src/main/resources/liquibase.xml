@@ -9,7 +9,7 @@
         for a list of supported elements and attributes
     -->
 
-    <changeSet id="2012101249-2" author="mgoodrich">
+    <changeSet id="2012101249-3" author="mgoodrich">
         <comment>Adds paper record request table</comment>
         <createTable tableName="emr_paper_record_request">
             <column name="request_id" type="int" autoIncrement="true">
@@ -30,9 +30,7 @@
             <column name="request_location_id" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="assignee_id" type="int">
-                <constraints nullable="false"/>
-            </column>
+            <column name="assignee_id" type="int"/>
             <column name="creator" type="int">
                 <constraints nullable="false"/>
             </column>
