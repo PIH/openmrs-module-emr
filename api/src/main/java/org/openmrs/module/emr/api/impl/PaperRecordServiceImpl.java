@@ -115,6 +115,15 @@ public class PaperRecordServiceImpl implements PaperRecordService {
     @Override
     @Transactional
     public synchronized List<PaperRecordRequest> assignRequests(List<PaperRecordRequest> requests, Person assignee) {
+
+        if (requests == null) {
+            throw new IllegalStateException("Requests cannot be null");
+        }
+
+        if (assignee == null) {
+            throw new IllegalStateException("Assignee cannot be null");
+        }
+
         // first verify that all of these requests are open, or else we can't assign them
         for (PaperRecordRequest request : requests) {
             if (request.getStatus() != PaperRecordRequest.Status.OPEN) {

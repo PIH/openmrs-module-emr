@@ -239,6 +239,25 @@ public class PaperRecordServiceTest {
     }
 
     @Test(expected = IllegalStateException.class)
+    public void testAssignRequestsShouldFailIfRequestsNull() throws Exception {
+
+        Person assignTo = new Person(15);
+        paperRecordService.assignRequests(null, assignTo);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testAssignRequestsShouldFailIfAssigneeNull() throws Exception {
+
+        List<PaperRecordRequest> requests = new ArrayList<PaperRecordRequest>();
+        requests.add(buildPaperRecordRequest());
+        requests.add(buildPaperRecordRequest());
+        requests.add(buildPaperRecordRequest());
+
+        paperRecordService.assignRequests(requests, null);
+    }
+
+
+    @Test(expected = IllegalStateException.class)
     public void testAssignRequestsShouldFailIfARequestIsNotOpen() throws Exception {
         Person assignTo = new Person(15);
 
