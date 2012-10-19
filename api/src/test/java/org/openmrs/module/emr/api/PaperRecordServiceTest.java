@@ -98,8 +98,53 @@ public class PaperRecordServiceTest {
 
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void testRequestPaperRecordShouldThrowExceptionIfPatientNull() throws Exception {
+
+        Location medicalRecordLocation = new Location();
+        medicalRecordLocation.setId(3);
+        medicalRecordLocation.setName("Mirebalais");
+
+        Location requestLocation = new Location();
+        requestLocation.setId(4);
+        requestLocation.setName("Outpatient Clinic");
+
+        paperRecordService.requestPaperRecord(null, medicalRecordLocation, requestLocation);
+
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testRequestPaperRecordShouldThrowExceptionIfRecordLocationNull() throws Exception {
+
+        Patient patient = new Patient();
+        patient.setId(15);
+
+        Location requestLocation = new Location();
+        requestLocation.setId(4);
+        requestLocation.setName("Outpatient Clinic");
+
+        paperRecordService.requestPaperRecord(patient, null, requestLocation);
+
+    }
+
+
+    @Test(expected = IllegalStateException.class)
+    public void testRequestPaperRecordShouldThrowExceptionIfRequestLocationNull() throws Exception {
+
+        Patient patient = new Patient();
+        patient.setId(15);
+
+        Location medicalRecordLocation = new Location();
+        medicalRecordLocation.setId(3);
+        medicalRecordLocation.setName("Mirebalais");
+
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, null);
+
+    }
+
+
     @Test
-    public void testRequestPaperRecordForPatientWithMultipleIdentifiersAtSameLocation() throws Exception {
+    public void testRequestPaperRecordForPatientWithMultipleIdentifiersOfSameTypeAtDifferentLocations() throws Exception {
 
         Patient patient = new Patient();
         patient.setId(15);

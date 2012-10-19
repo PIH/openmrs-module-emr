@@ -67,16 +67,26 @@ public class PaperRecordServiceImpl implements PaperRecordService {
 
     @Override
     @Transactional
-    public void requestPaperRecord(Patient patient, Location medicalRecordLocation, Location requestLocation) {
+    public void requestPaperRecord(Patient patient, Location recordLocation,Location requestLocation) {
 
-        //  TODO:  handle bogus parameters;
-        // TODO: handle null case if no patient identifier found or patient has multiple identifiers
+        if (patient == null) {
+            throw new IllegalStateException("Patient cannot be null");
+        }
+
+        if (recordLocation == null) {
+            throw new IllegalStateException("Record Location cannot be null");
+        }
+
+        if (requestLocation == null) {
+            throw new IllegalStateException("Request Location cannot be null");
+        }
 
         String identifier;
 
         // fetch the appropriate identifier
-        PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient, getPaperRecordIdentifierType(), medicalRecordLocation);
+        PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient, getPaperRecordIdentifierType(), recordLocation);
 
+        // if no identifier, set the specified "UKNOWN" code
         if (paperRecordIdentifier != null) {
             identifier = paperRecordIdentifier.getIdentifier();
         }
@@ -89,7 +99,7 @@ public class PaperRecordServiceImpl implements PaperRecordService {
         request.setCreator(Context.getAuthenticatedUser());
         request.setDateCreated(new Date());
         request.setIdentifier(identifier);
-        request.setRecordLocation(medicalRecordLocation);
+        request.setRecordLocation(recordLocation);
         request.setPatient(patient);
         request.setRequestLocation(requestLocation);
 
