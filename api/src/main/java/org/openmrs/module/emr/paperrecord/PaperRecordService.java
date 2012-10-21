@@ -12,14 +12,14 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.emr.api;
+package org.openmrs.module.emr.paperrecord;
 
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.module.emr.EmrConstants;
-import org.openmrs.module.emr.domain.PaperRecordRequest;
+import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 
 import java.util.List;
 

@@ -1,8 +1,8 @@
 package org.openmrs.module.emr.page.controller;
 
 import org.openmrs.Person;
-import org.openmrs.module.emr.api.PaperRecordService;
-import org.openmrs.module.emr.domain.PaperRecordRequest;
+import org.openmrs.module.emr.paperrecord.PaperRecordService;
+import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.WebConstants;
 import org.openmrs.ui.framework.annotation.SpringBean;

@@ -21,9 +21,10 @@ import org.mockito.ArgumentMatcher;
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
-import org.openmrs.module.emr.api.db.PaperRecordRequestDAO;
-import org.openmrs.module.emr.api.impl.PaperRecordServiceImpl;
-import org.openmrs.module.emr.domain.PaperRecordRequest;
+import org.openmrs.module.emr.paperrecord.db.PaperRecordRequestDAO;
+import org.openmrs.module.emr.paperrecord.PaperRecordServiceImpl;
+import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
+import org.openmrs.module.emr.paperrecord.PaperRecordService;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 

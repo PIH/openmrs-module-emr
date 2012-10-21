@@ -24,7 +24,8 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.emr.domain.PaperRecordRequest;
+import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
+import org.openmrs.module.emr.paperrecord.PaperRecordService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 

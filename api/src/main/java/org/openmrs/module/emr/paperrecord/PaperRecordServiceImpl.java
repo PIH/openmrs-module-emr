@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.emr.api.impl;
+package org.openmrs.module.emr.paperrecord;
 
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -24,9 +24,7 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrConstants;
-import org.openmrs.module.emr.api.PaperRecordService;
-import org.openmrs.module.emr.api.db.PaperRecordRequestDAO;
-import org.openmrs.module.emr.domain.PaperRecordRequest;
+import org.openmrs.module.emr.paperrecord.db.PaperRecordRequestDAO;
 import org.openmrs.module.emr.utils.GeneralUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

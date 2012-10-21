@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.emr.domain;
+package org.openmrs.module.emr.paperrecord;
 
 import org.openmrs.*;
 

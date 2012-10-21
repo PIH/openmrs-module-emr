@@ -52,9 +52,9 @@
             <ref bean="transactionManager" />
         </property>
         <property name="target">
-            <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.PaperRecordServiceImpl">
+            <bean class="${project.parent.groupId}.${project.parent.artifactId}.paperrecord.PaperRecordServiceImpl">
                 <property name="paperRecordRequestDAO">
-                    <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernatePaperRecordRequestDAO">
+                    <bean class="${project.parent.groupId}.${project.parent.artifactId}.paperrecord.db.HibernatePaperRecordRequestDAO">
                         <property name="sessionFactory"><ref bean="sessionFactory"/></property>
                     </bean>
                 </property>
@@ -71,7 +71,7 @@
     <bean parent="serviceContext">
         <property name="moduleService">
             <list merge="true">
-                <value>${project.parent.groupId}.${project.parent.artifactId}.api.PaperRecordService</value>
+                <value>${project.parent.groupId}.${project.parent.artifactId}.paperrecord.PaperRecordService</value>
                 <ref local="paperRecordService"/>
             </list>
         </property>

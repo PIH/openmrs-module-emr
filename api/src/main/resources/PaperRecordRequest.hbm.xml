@@ -4,7 +4,7 @@
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-    <class name="org.openmrs.module.emr.domain.PaperRecordRequest" table="emr_paper_record_request">
+    <class name="org.openmrs.module.emr.paperrecord.PaperRecordRequest" table="emr_paper_record_request">
         <id name="requestId" type="int" column="request_id" unsaved-value="0">
             <generator class="native"/>
         </id>
@@ -18,7 +18,7 @@
 
         <property name="status" column="status" length="50" not-null="true">
             <type name="org.openmrs.util.HibernateEnumType">
-                <param name="enumClassName">org.openmrs.module.emr.domain.PaperRecordRequest$Status</param>
+                <param name="enumClassName">org.openmrs.module.emr.paperrecord.PaperRecordRequest$Status</param>
             </type>
         </property>
 

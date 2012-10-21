@@ -12,9 +12,10 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.emr.api.db;
+package org.openmrs.module.emr.paperrecord.db;
 
-import org.openmrs.module.emr.domain.PaperRecordRequest;
+import org.openmrs.module.emr.api.db.SingleClassDAO;
+import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 
 import java.util.List;
 

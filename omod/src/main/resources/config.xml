@@ -79,7 +79,7 @@
     </privilege>
     <privilege>
         <name>Paper Records - Request Records</name>
-        <description>Gives API-level access within the Paper Record servi\ce to request records</description>
+        <description>Gives API-level access within the Paper Record service to request records</description>
     </privilege>
 
 </module>

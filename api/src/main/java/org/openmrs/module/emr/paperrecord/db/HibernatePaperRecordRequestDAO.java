@@ -12,13 +12,13 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.emr.api.db.hibernate;
+package org.openmrs.module.emr.paperrecord.db;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.openmrs.module.emr.api.db.PaperRecordRequestDAO;
-import org.openmrs.module.emr.domain.PaperRecordRequest;
+import org.openmrs.module.emr.api.db.hibernate.HibernateSingleClassDAO;
+import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 
 import java.util.List;
 
