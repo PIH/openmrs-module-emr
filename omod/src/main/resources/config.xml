@@ -38,6 +38,7 @@
 	</messages>
 	<!-- /Internationalization -->
 
+    <!-- Global Properties -->
     <globalProperty>
         <property>emr.placeOrdersEncounterType</property>
         <defaultValue></defaultValue>
@@ -69,5 +70,17 @@
             UUID of the Patient Identifier Type that represents the identifier for a patient's paper record
         </description>
     </globalProperty>
+
+
+    <!-- Privileges -->
+    <privilege>
+        <name>Paper Records - Manage Requests</name>
+        <description>Gives API-level access within the Paper Record service to fetch and assign paper rcord requests</description>
+    </privilege>
+    <privilege>
+        <name>Paper Records - Request Records</name>
+        <description>Gives API-level access within the Paper Record servi\ce to request records</description>
+    </privilege>
+
 </module>
 

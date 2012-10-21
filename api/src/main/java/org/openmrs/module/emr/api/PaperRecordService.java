@@ -18,6 +18,7 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.annotation.Authorized;
+import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.domain.PaperRecordRequest;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public interface PaperRecordService {
      * @param id primary key of the paper record request to retrieve
      * @return the patient record request with the specified id
      */
-    @Authorized
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     PaperRecordRequest getPaperRecordRequestById(Integer id);
 
     /**
@@ -43,7 +44,7 @@ public interface PaperRecordService {
      * @param recordLocation the location of the record (ie, "Mirebalais Hospital")
      * @param requestLocation the location where the record is to be sent
      */
-    @Authorized
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS)
     PaperRecordRequest requestPaperRecord(Patient patient, Location recordLocation, Location requestLocation);
 
     /**
@@ -51,7 +52,7 @@ public interface PaperRecordService {
      *
      * @return the list of all open paper record requests
      */
-    @Authorized
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     List<PaperRecordRequest> getOpenPaperRecordRequests();
 
     /**
@@ -61,7 +62,7 @@ public interface PaperRecordService {
      * @return the list that was passed in, but with assignees and status set
      * @throws IllegalStateException if any of the requests are not in the OPEN status
      */
-    @Authorized
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     List<PaperRecordRequest> assignRequests(List<PaperRecordRequest> requests, Person assignee);
 
 }
