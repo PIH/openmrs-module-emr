@@ -45,5 +45,15 @@
         <property name="labelCode" value="emr.task.orderXray.label"/>
         <property name="url" value="emr/orderXray.page"/>
     </bean>
-	
+    <bean id="emrOrderCTScanTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
+        <property name="id" value="emr.orderCTScan"/>
+        <property name="labelCode" value="emr.task.orderCTScan.label"/>
+        <property name="url" value="emr/orderCTScan.page"/>
+    </bean>
+    <bean id="emrOrderUltrasoundTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
+        <property name="id" value="emr.orderUltrasound"/>
+        <property name="labelCode" value="emr.task.orderUltrasound.label"/>
+        <property name="url" value="emr/orderUltrasound.page"/>
+    </bean>
+
 </beans>
