@@ -28,6 +28,12 @@ public class EmrConstants {
 
     public static final String GP_PAPER_RECORD_IDENTIFIER_TYPE = "emr.paperRecordIdentifierType";
 
+    public static final String GP_XRAY_ORDERABLE_CONCEPTS = "emr.xrayOrderablesConcept";
+
+    public static final String GP_CT_SCAN_ORDERABLE_CONCEPTS = "emr.ctScanOrderablesConcept";
+
+    public static final String GP_ULTRASOUND_ORDERABLE_CONCEPTS = "emr.ultrasoundOrderablesConcept";
+
     public static final String PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS = "Paper Records - Manage Requests";
 
     public static final String PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS = "Paper Records - Request Records";
