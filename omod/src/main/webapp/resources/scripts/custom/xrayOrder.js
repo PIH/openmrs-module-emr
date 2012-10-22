@@ -27,6 +27,10 @@ function StudiesViewModel(observables) {
         });
     };
 
+    api.isValid = function() {
+        return api.selectedStudies().length > 0;
+    }
+
     for(var i=0; i<observables.length; i++) {
         api.studies.push( Study(observables[i]["value"],
             observables[i]["label"]) );

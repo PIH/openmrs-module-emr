@@ -1,4 +1,5 @@
 describe("X-ray studies selection", function() {
+    var firstStudy = Study(1, "First Study");
     var viewModel = StudiesViewModel([
         {"value": 1, "label": "First Study"},
         {"value": 2, "label": "Second Study"},
@@ -10,7 +11,6 @@ describe("X-ray studies selection", function() {
     });
 
     it("should select and deselect a study", function() {
-        var firstStudy = Study(1, "First Study");
         viewModel.selectStudy(firstStudy);
 
         expect(viewModel.studies().length).toBe(2);
@@ -22,4 +22,12 @@ describe("X-ray studies selection", function() {
         expect(viewModel.selectedStudies().length).toBe(0);
     });
 
+    it("should asses that the viewModel is not valid", function() {
+       expect(viewModel.isValid()).toBe(false);
+    });
+
+    it("should asses that the viewModel is valid", function() {
+        viewModel.selectStudy(firstStudy);
+        expect(viewModel.isValid()).toBe(true);
+    });
 })
