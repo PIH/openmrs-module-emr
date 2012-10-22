@@ -15,6 +15,7 @@
 package org.openmrs.module.emr.api;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.hamcrest.Matcher;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,11 +36,11 @@ import org.openmrs.TestOrder;
 import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.api.impl.EmrServiceImpl;
 import org.openmrs.module.emr.domain.RadiologyRequisition;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -71,7 +72,6 @@ public class EmrServiceTest {
 
     VisitService mockVisitService;
     EncounterService mockEncounterService;
-    AdministrationService mockAdministrationService;
     private OrderType testOrderType;
     private EncounterRole clinicianEncounterRole;
     private EncounterType radiologyOrderEncounterType;
@@ -106,7 +106,14 @@ public class EmrServiceTest {
         mockStatic(Context.class);
         when(Context.getAuthenticatedUser()).thenReturn(authenticatedUser);
 
-        service = new EmrServiceStub(mockVisitService, mockEncounterService, radiologyOrderEncounterType, checkInEncounterType, clinicianEncounterRole, testOrderType, unspecifiedVisitType);
+        EmrProperties emrProperties = mock(EmrProperties.class);
+        when(emrProperties.getVisitExpireHours()).thenReturn(10);
+        when(emrProperties.getCheckInEncounterType()).thenReturn(checkInEncounterType);
+        when(emrProperties.getPlaceOrdersEncounterType()).thenReturn(radiologyOrderEncounterType);
+        when(emrProperties.getUnspecifiedVisitType()).thenReturn(unspecifiedVisitType);
+        when(emrProperties.getTestOrderType()).thenReturn(testOrderType);
+
+        service = new EmrServiceStub(mockVisitService, mockEncounterService, emrProperties);
     }
 
     @Test
@@ -114,7 +121,7 @@ public class EmrServiceTest {
         Visit visit = new Visit();
         visit.setStartDatetime(new Date());
 
-        Assert.assertThat(service.isActive(visit, null), is(true));
+        Assert.assertThat(service.isActive(visit), is(true));
     }
 
     @Test
@@ -122,7 +129,7 @@ public class EmrServiceTest {
         Visit visit = new Visit();
         visit.setStartDatetime(DateUtils.addDays(new Date(), -7));
 
-        Assert.assertThat(service.isActive(visit, null), is(false));
+        Assert.assertThat(service.isActive(visit), is(false));
     }
 
     @Test
@@ -134,7 +141,7 @@ public class EmrServiceTest {
         visit.setStartDatetime(DateUtils.addDays(new Date(), -7));
         visit.addEncounter(encounter);
 
-        Assert.assertThat(service.isActive(visit, null), is(true));
+        Assert.assertThat(service.isActive(visit), is(true));
     }
 
     @Test
@@ -143,15 +150,13 @@ public class EmrServiceTest {
 
         when(mockVisitService.getVisitsByPatient(patient)).thenReturn(new ArrayList<Visit>());
 
-        final Date when = new Date();
-        service.ensureActiveVisit(patient, outpatientDepartment, when);
+        service.ensureActiveVisit(patient, outpatientDepartment);
 
         verify(mockVisitService).saveVisit(argThat(new ArgumentMatcher<Visit>() {
             @Override
             public boolean matches(Object o) {
                 Visit actual = (Visit) o;
                 assertThat(actual.getVisitType(), is(unspecifiedVisitType));
-                assertThat(actual.getStartDatetime(), is(when));
                 assertThat(actual.getPatient(), is(patient));
                 assertThat(actual.getLocation(), is(mirebalaisHospital));
                 return true;
@@ -162,15 +167,14 @@ public class EmrServiceTest {
     @Test
     public void testEnsureActiveVisitFindsRecentVisit() throws Exception {
         final Patient patient = new Patient();
-        final Date when = new Date();
 
         Visit recentVisit = new Visit();
         recentVisit.setLocation(mirebalaisHospital);
-        recentVisit.setStartDatetime(DateUtils.addHours(when, -1));
+        recentVisit.setStartDatetime(DateUtils.addHours(new Date(), -1));
 
         when(mockVisitService.getVisitsByPatient(patient)).thenReturn(Collections.singletonList(recentVisit));
 
-        assertThat(service.ensureActiveVisit(patient, outpatientDepartment, when), is(recentVisit));
+        assertThat(service.ensureActiveVisit(patient, outpatientDepartment), is(recentVisit));
 
         verify(mockVisitService, times(0)).saveVisit(any(Visit.class));
     }
@@ -178,15 +182,14 @@ public class EmrServiceTest {
     @Test
     public void testEnsureActiveVisitDoesNotFindOldVisit() throws Exception {
         final Patient patient = new Patient();
-        final Date when = new Date();
 
         final Visit oldVisit = new Visit();
         oldVisit.setLocation(mirebalaisHospital);
-        oldVisit.setStartDatetime(DateUtils.addDays(when, -7));
+        oldVisit.setStartDatetime(DateUtils.addDays(new Date(), -7));
 
         when(mockVisitService.getVisitsByPatient(patient)).thenReturn(Collections.singletonList(oldVisit));
 
-        final Visit created = service.ensureActiveVisit(patient, outpatientDepartment, when);
+        final Visit created = service.ensureActiveVisit(patient, outpatientDepartment);
         assertNotNull(created);
         assertNotSame(oldVisit, created);
 
@@ -201,7 +204,6 @@ public class EmrServiceTest {
                 } else {
                     assertSame(created, actual);
                     assertThat(actual.getVisitType(), is(unspecifiedVisitType));
-                    assertThat(actual.getStartDatetime(), is(when));
                     assertThat(actual.getPatient(), is(patient));
                     assertThat(actual.getLocation(), is(mirebalaisHospital));
                     return true;
@@ -213,18 +215,16 @@ public class EmrServiceTest {
     @Test
     public void test_checkInPatient_forNewVisit() throws Exception {
         final Patient patient = new Patient();
-        final Date when = new Date();
 
         when(mockVisitService.getVisitsByPatient(patient)).thenReturn(new ArrayList<Visit>());
 
-        service.checkInPatient(patient, outpatientDepartment, when, null, null);
+        service.checkInPatient(patient, outpatientDepartment, null, null);
 
         verify(mockVisitService).saveVisit(argThat(new ArgumentMatcher<Visit>() {
             @Override
             public boolean matches(Object o) {
                 Visit actual = (Visit) o;
                 assertThat(actual.getVisitType(), is(unspecifiedVisitType));
-                assertThat(actual.getStartDatetime(), is(when));
                 assertThat(actual.getPatient(), is(patient));
                 assertThat(actual.getLocation(), is(mirebalaisHospital));
                 return true;
@@ -236,7 +236,6 @@ public class EmrServiceTest {
             public boolean matches(Object o) {
                 Encounter actual = (Encounter) o;
                 assertThat(actual.getEncounterType(), is(checkInEncounterType));
-                assertThat(actual.getEncounterDatetime(), is(when));
                 assertThat(actual.getPatient(), is(patient));
                 assertThat(actual.getLocation(), is(outpatientDepartment));
                 return true;
@@ -322,49 +321,13 @@ public class EmrServiceTest {
     }
 
     private class EmrServiceStub extends EmrServiceImpl {
-        private EncounterType radiologyOrderEncounterType;
-        private EncounterType checkInEncounterType;
-        private final EncounterRole clinicianEncounterRole;
-        private final OrderType testOrderType;
-        private VisitType unspecifiedVisitType;
 
-		public EmrServiceStub(VisitService mockVisitService, EncounterService mockEncounterService,
-                              EncounterType radiologyOrderEncounterType, EncounterType checkInEncounterType, EncounterRole clinicianEncounterRole, OrderType testOrderType,
-                              VisitType unspecifiedVisitType) {
-
+		public EmrServiceStub(VisitService mockVisitService, EncounterService mockEncounterService, EmrProperties emrProperties) {
             setVisitService(mockVisitService);
             setEncounterService(mockEncounterService);
-            this.radiologyOrderEncounterType = radiologyOrderEncounterType;
-            this.checkInEncounterType = checkInEncounterType;
-            this.clinicianEncounterRole = clinicianEncounterRole;
-            this.testOrderType = testOrderType;
-            this.unspecifiedVisitType = unspecifiedVisitType;
+            setEmrProperties(emrProperties);
         }
 
-        @Override
-        protected EncounterType getPlaceOrdersEncounterType() {
-            return radiologyOrderEncounterType;
-        }
-
-        @Override
-        protected EncounterRole getClinicianEncounterRole() {
-            return clinicianEncounterRole;
-        }
-
-        @Override
-        protected OrderType getTestOrderType() {
-            return testOrderType;
-        }
-
-        @Override
-        protected VisitType getUnspecifiedVisitType() {
-            return unspecifiedVisitType;
-        }
-
-        @Override
-        protected EncounterType getCheckInEncounterType() {
-            return checkInEncounterType;
-        }
     }
 
     private class IsExpectedOrder extends ArgumentMatcher<Order> {
@@ -388,5 +351,15 @@ public class EmrServiceTest {
 
             return true;
         }
+    }
+
+    private Matcher<Date> isJustNow() {
+        return new ArgumentMatcher<Date>() {
+            @Override
+            public boolean matches(Object o) {
+                // within the last second should be safe enough...
+                return System.currentTimeMillis() - ((Date) o).getTime() < 1000;
+            }
+        };
     }
 }

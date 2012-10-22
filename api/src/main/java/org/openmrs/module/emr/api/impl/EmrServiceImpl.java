@@ -25,12 +25,12 @@ import org.openmrs.OrderType;
 import org.openmrs.Patient;
 import org.openmrs.TestOrder;
 import org.openmrs.Visit;
-import org.openmrs.VisitType;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.OrderService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.api.EmrService;
 import org.openmrs.module.emr.api.db.EmrDAO;
 import org.openmrs.module.emr.domain.RadiologyRequisition;
@@ -45,6 +45,10 @@ import java.util.List;
 public class EmrServiceImpl implements EmrService {
 
     private EmrDAO dao;
+
+    @Autowired
+    @Qualifier("emrProperties")
+    private EmrProperties emrProperties;
 
     @Autowired
     @Qualifier("adminService")
@@ -64,6 +68,10 @@ public class EmrServiceImpl implements EmrService {
 
     public void setDao(EmrDAO dao) {
         this.dao = dao;
+    }
+
+    protected void setEmrProperties(EmrProperties emrProperties) {
+        this.emrProperties = emrProperties;
     }
 
     protected void setEncounterService(EncounterService encounterService) {
@@ -86,9 +94,9 @@ public class EmrServiceImpl implements EmrService {
     @Transactional
     @Override
     public Encounter placeRadiologyRequisition(RadiologyRequisition requisition) {
-        EncounterType placeOrdersEncounterType = getPlaceOrdersEncounterType();
-        EncounterRole clinicianEncounterRole = getClinicianEncounterRole();
-        OrderType testOrderType = getTestOrderType();
+        EncounterType placeOrdersEncounterType = emrProperties.getPlaceOrdersEncounterType();
+        EncounterRole clinicianEncounterRole = emrProperties.getClinicianEncounterRole();
+        OrderType testOrderType = emrProperties.getTestOrderType();
 
         Encounter encounter = new Encounter();
         encounter.setEncounterType(placeOrdersEncounterType);
@@ -114,11 +122,13 @@ public class EmrServiceImpl implements EmrService {
     }
 
     @Override
-    public boolean isActive(Visit visit, Date when) {
-        if (when == null) {
-            when = new Date();
+    public boolean isActive(Visit visit) {
+        if (visit.getStopDatetime() != null) {
+            return false;
         }
-        Date mustHaveSomethingAfter = DateUtils.addHours(when, -EmrConstants.VISIT_EXPIRE_HOURS);
+
+        Date now = new Date();
+        Date mustHaveSomethingAfter = DateUtils.addHours(now, -emrProperties.getVisitExpireHours());
 
         if (OpenmrsUtil.compare(visit.getStartDatetime(), mustHaveSomethingAfter) >= 0) {
             return true;
@@ -137,25 +147,26 @@ public class EmrServiceImpl implements EmrService {
 
     @Override
     @Transactional
-    public Visit ensureActiveVisit(Patient patient, Location department, Date when) {
-        if (when == null) {
-            when = new Date();
-        }
+    public Visit ensureActiveVisit(Patient patient, Location department) {
+        Date now = new Date();
+
         List<Visit> candidates = visitService.getVisitsByPatient(patient);
         Visit ret = null;
         for (Visit candidate : candidates) {
-            if (!isActive(candidate, when)) {
-                candidate.setStopDatetime(guessVisitStopDatetime(candidate));
-                visitService.saveVisit(candidate);
+            if (!isActive(candidate)) {
+                if (candidate.getStopDatetime() == null) {
+                    candidate.setStopDatetime(guessVisitStopDatetime(candidate));
+                    visitService.saveVisit(candidate);
+                }
                 continue;
             }
-            if (isSuitableVisit(candidate, department, when)) {
+            if (isSuitableVisit(candidate, department, now)) {
                 ret = candidate;
             }
         }
 
         if (ret == null) {
-            ret = buildVisit(patient, department, when);
+            ret = buildVisit(patient, department, now);
             visitService.saveVisit(ret);
         }
         return ret;
@@ -175,61 +186,17 @@ public class EmrServiceImpl implements EmrService {
             }
         }
         Date lastKnownDate = latest == null ? visit.getStartDatetime() : latest.getEncounterDatetime();
-        return DateUtils.addHours(lastKnownDate, EmrConstants.VISIT_EXPIRE_HOURS);
+        return DateUtils.addHours(lastKnownDate, emrProperties.getVisitExpireHours());
     }
 
     @Override
     @Transactional
-    public Encounter checkInPatient(Patient patient, Location where, Date when, List<Obs> obsForCheckInEncounter, List<Order> ordersForCheckInEncounter) {
-        Visit activeVisit = ensureActiveVisit(patient, where, when);
-        Encounter encounter = buildEncounter(getCheckInEncounterType(), patient, where, when, obsForCheckInEncounter, ordersForCheckInEncounter);
+    public Encounter checkInPatient(Patient patient, Location where, List<Obs> obsForCheckInEncounter, List<Order> ordersForCheckInEncounter) {
+        Visit activeVisit = ensureActiveVisit(patient, where);
+        Encounter encounter = buildEncounter(emrProperties.getCheckInEncounterType(), patient, where, new Date(), obsForCheckInEncounter, ordersForCheckInEncounter);
         encounter.setVisit(activeVisit);
         encounterService.saveEncounter(encounter);
         return encounter;
-    }
-
-    protected EncounterType getPlaceOrdersEncounterType() {
-        return getEncounterTypeByGlobalProperty(EmrConstants.GP_PLACE_ORDERS_ENCOUNTER_TYPE);
-    }
-
-    protected EncounterType getCheckInEncounterType() {
-        return getEncounterTypeByGlobalProperty(EmrConstants.GP_CHECK_IN_ENCOUNTER_TYPE);
-    }
-
-    protected EncounterRole getClinicianEncounterRole() {
-        String uuid = administrationService.getGlobalProperty(EmrConstants.GP_CLINICIAN_ENCOUNTER_ROLE);
-        EncounterRole encounterRole = encounterService.getEncounterRoleByUuid(uuid);
-        if (encounterRole == null) {
-            throw new IllegalStateException("Configuration required: " + EmrConstants.GP_CLINICIAN_ENCOUNTER_ROLE);
-        }
-        return encounterRole;
-    }
-
-    protected OrderType getTestOrderType() {
-        String uuid = administrationService.getGlobalProperty(EmrConstants.GP_TEST_ORDER_TYPE);
-        OrderType orderType = orderService.getOrderTypeByUuid(uuid);
-        if (orderType == null) {
-            throw new IllegalStateException("Configuration required: " + EmrConstants.GP_TEST_ORDER_TYPE);
-        }
-        return orderType;
-    }
-
-    protected VisitType getUnspecifiedVisitType() {
-        String uuid = administrationService.getGlobalProperty(EmrConstants.GP_UNSPECIFIED_VISIT_TYPE);
-        VisitType visitType = visitService.getVisitTypeByUuid(uuid);
-        if (visitType == null) {
-            throw new IllegalStateException("Configuration required: " + EmrConstants.GP_UNSPECIFIED_VISIT_TYPE);
-        }
-        return visitType;
-    }
-
-    private EncounterType getEncounterTypeByGlobalProperty(String globalPropertyName) {
-        String encounterTypeUuid = administrationService.getGlobalProperty(globalPropertyName);
-        EncounterType encounterType = encounterService.getEncounterTypeByUuid(encounterTypeUuid);
-        if (encounterType == null) {
-            throw new IllegalStateException("Configuration required: " + globalPropertyName);
-        }
-        return encounterType;
     }
 
     private Encounter buildEncounter(EncounterType encounterType, Patient patient, Location location, Date when, List<Obs> obsToCreate, List<Order> ordersToCreate) {
@@ -256,7 +223,7 @@ public class EmrServiceImpl implements EmrService {
         visit.setPatient(patient);
         visit.setLocation(getLocationThatSupportsVisits(location));
         visit.setStartDatetime(when);
-        visit.setVisitType(getUnspecifiedVisitType());
+        visit.setVisitType(emrProperties.getUnspecifiedVisitType());
         return visit;
     }
 

@@ -40,7 +40,5 @@ public class EmrConstants {
 
     public static final String LOCATION_TAG_SUPPORTS_VISITS = "Visit Location";
 
-    public static final int VISIT_EXPIRE_HOURS = 10;
-
 }
 

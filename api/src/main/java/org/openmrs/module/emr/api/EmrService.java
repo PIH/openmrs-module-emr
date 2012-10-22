@@ -46,43 +46,42 @@ public interface EmrService {
     Encounter placeRadiologyRequisition(RadiologyRequisition requisition);
 
     /**
-     * Ensures this patient has an <em>active</em> visit at the given location, starting on or before the given date.
+     * Ensures this patient has an <em>active</em> visit at the given location.
      * If the patient has any non-stopped visits that are not active, they are stopped as a side-effect.
-     * We always return either an existing active visit from the database, or a newly-persisted one.
+     * If this method creates a new Visit, it will also persist it to the database.
      * The visit's location will be a valid visit location per our business logic.
+     *
      * @param patient
      * @param department
-     * @param when
      * @return
      */
-    Visit ensureActiveVisit(Patient patient, Location department, Date when);
+    Visit ensureActiveVisit(Patient patient, Location department);
 
     /**
-     * Our business logic is that a visit has ended if it has no encounter in the last EmrConstants.VISIT_EXPIRE_HOURS
-     * hours.
-     * @param when optional, defaults to now
+     * Our business logic is that a visit has ended if it has no recent encounter.
+     * @see org.openmrs.module.emr.EmrProperties#getVisitExpireHours()
      * @return whether we think this visit has ended, according to our business logic
      */
-    boolean isActive(Visit visit, Date when);
+    boolean isActive(Visit visit);
 
     /**
-     * Unless we have other information, we say a visit ends EmrConstants.VISIT_EXPIRE_HOURS hours after its last
-     * encounter.
+     * If we have to guess, we say a visit ends a fixed number of hours after its last encounter.
+     * @see org.openmrs.module.emr.EmrProperties#getVisitExpireHours()
      * @param visit
      * @return when, according to our business logic, this visit ends
      */
     Date guessVisitStopDatetime(Visit visit);
 
     /**
-     * Creates a "check-in" encounter for the given patient, at the given where, and adds it to the active visit.
+     * Creates a "check-in" encounter for the given patient, at the location where, and adds it to the active visit.
      * (This method calls ensureActiveVisit.)
+     *
      * @param patient required
      * @param where required (must either support visits, or have an ancestor location that does)
-     * @param when optional, defaults to now
      * @param obsForCheckInEncounter optional
      * @param ordersForCheckInEncounter optional
      * @return the encounter created (with EncounterService.saveEncounter already called on it)
      */
-    Encounter checkInPatient(Patient patient, Location where, Date when, List<Obs> obsForCheckInEncounter, List<Order> ordersForCheckInEncounter);
+    Encounter checkInPatient(Patient patient, Location where, List<Obs> obsForCheckInEncounter, List<Order> ordersForCheckInEncounter);
 
 }

@@ -13,8 +13,10 @@
  */
 package org.openmrs.module.emr.api;
 
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 import org.openmrs.Encounter;
 import org.openmrs.GlobalProperty;
 import org.openmrs.Location;
@@ -31,6 +33,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -74,7 +77,6 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
     public void integrationTest_ADT_workflow() {
         LocationService locationService = Context.getLocationService();
 
-        Date now = new Date();
         Patient patient = Context.getPatientService().getPatient(7);
 
         // parent location should support visits
@@ -98,14 +100,25 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
         administrationService.saveGlobalProperty(new GlobalProperty(EmrConstants.GP_CHECK_IN_ENCOUNTER_TYPE, "61ae96f4-6afe-4351-b6f8-cd4fc383cce1"));
 
         // step 1: check in the patient (which should create a visit and an encounter)
-        Encounter checkInEncounter = service.checkInPatient(patient, outpatientDepartment, now, null, null);
+        Encounter checkInEncounter = service.checkInPatient(patient, outpatientDepartment, null, null);
 
+        assertThat(checkInEncounter.getVisit(), notNullValue());
         assertThat(checkInEncounter.getPatient(), is(patient));
-        assertThat(checkInEncounter.getEncounterDatetime(), is(now));
+        assertThat(checkInEncounter.getEncounterDatetime(), isJustNow());
         assertThat(checkInEncounter.getVisit().getPatient(), is(patient));
-        assertThat(checkInEncounter.getVisit().getStartDatetime(), is(now));
+        assertThat(checkInEncounter.getVisit().getStartDatetime(), isJustNow());
 
         // TODO once these are implemented, add Admission and Discharge to this test
+    }
+
+    private Matcher<Date> isJustNow() {
+        return new ArgumentMatcher<Date>() {
+            @Override
+            public boolean matches(Object o) {
+                // within the last second should be safe enough...
+                return System.currentTimeMillis() - ((Date) o).getTime() < 1000;
+            }
+        };
     }
 
 }

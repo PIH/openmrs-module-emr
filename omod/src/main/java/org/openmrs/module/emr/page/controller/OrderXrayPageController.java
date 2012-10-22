@@ -19,7 +19,7 @@ import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -35,19 +35,20 @@ public class OrderXrayPageController {
 
     public void controller(@RequestParam("patientId") Patient patient,
                            @SpringBean("conceptService") ConceptService conceptService,
+                           @SpringBean("emrProperties") EmrProperties emrProperties,
                            UiUtils ui,
                            PageModel model) {
 
         Collection<Provider> providers = Context.getProviderService().getProvidersByPerson(Context.getAuthenticatedUser().getPerson());
         model.addAttribute("currentProvider", providers.iterator().next());
 
-        model.addAttribute("xrayOrderables", ui.toJson(getXrayOrderables(conceptService, Context.getLocale())));
+        model.addAttribute("xrayOrderables", ui.toJson(getXrayOrderables(emrProperties, Context.getLocale())));
         model.addAttribute("patient", patient);
     }
 
-    private List<SimpleObject> getXrayOrderables(ConceptService conceptService, Locale locale) {
+    private List<SimpleObject> getXrayOrderables(EmrProperties emrProperties, Locale locale) {
         List<SimpleObject> items = new ArrayList<SimpleObject>();
-        Concept xrayOrderable = conceptService.getConceptByUuid(Context.getAdministrationService().getGlobalProperty(EmrConstants.GP_XRAY_ORDERABLES_CONCEPT));
+        Concept xrayOrderable = emrProperties.getXrayOrderablesConcept();
         for (Concept concept : xrayOrderable.getSetMembers()) {
             SimpleObject item = new SimpleObject();
             item.put("value", concept.getId());
