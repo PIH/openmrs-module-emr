@@ -51,7 +51,9 @@ public class OrderXrayPageController {
         for (Concept concept : xrayOrderable.getSetMembers()) {
             SimpleObject item = new SimpleObject();
             item.put("value", concept.getId());
-            item.put("label", concept.getFullySpecifiedName(locale).getName());
+
+            // TODO: this should really be fully specified name based on local
+            item.put("label", concept.getName().getName());
             items.add(item);
         }
         return items;
