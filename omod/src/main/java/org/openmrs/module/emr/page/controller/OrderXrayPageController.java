@@ -47,7 +47,7 @@ public class OrderXrayPageController {
 
     private List<SimpleObject> getXrayOrderables(ConceptService conceptService, Locale locale) {
         List<SimpleObject> items = new ArrayList<SimpleObject>();
-        Concept xrayOrderable = conceptService.getConceptByUuid(EmrConstants.GP_XRAY_ORDERABLES_CONCEPT);
+        Concept xrayOrderable = conceptService.getConceptByUuid(Context.getAdministrationService().getGlobalProperty(EmrConstants.GP_XRAY_ORDERABLES_CONCEPT));
         for (Concept concept : xrayOrderable.getSetMembers()) {
             SimpleObject item = new SimpleObject();
             item.put("value", concept.getId());
