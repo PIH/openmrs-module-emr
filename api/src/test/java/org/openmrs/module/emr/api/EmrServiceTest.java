@@ -39,6 +39,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.api.impl.EmrServiceImpl;
 import org.openmrs.module.emr.domain.RadiologyRequisition;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -93,7 +94,7 @@ public class EmrServiceTest {
         unspecifiedVisitType = new VisitType();
 
         supportsVisits = new LocationTag();
-        supportsVisits.setName(EmrService.LOCATION_TAG_SUPPORTS_VISITS);
+        supportsVisits.setName(EmrConstants.LOCATION_TAG_SUPPORTS_VISITS);
 
         mirebalaisHospital = new Location();
         mirebalaisHospital.addTag(supportsVisits);

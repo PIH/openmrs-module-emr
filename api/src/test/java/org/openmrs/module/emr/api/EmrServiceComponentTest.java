@@ -79,7 +79,7 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
 
         // parent location should support visits
         LocationTag supportsVisits = new LocationTag();
-        supportsVisits.setName(EmrService.LOCATION_TAG_SUPPORTS_VISITS);
+        supportsVisits.setName(EmrConstants.LOCATION_TAG_SUPPORTS_VISITS);
         locationService.saveLocationTag(supportsVisits);
 
         Location parentLocation = locationService.getLocation(2);

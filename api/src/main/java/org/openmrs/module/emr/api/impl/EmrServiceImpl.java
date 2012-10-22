@@ -118,7 +118,7 @@ public class EmrServiceImpl implements EmrService {
         if (when == null) {
             when = new Date();
         }
-        Date mustHaveSomethingAfter = DateUtils.addHours(when, -VISIT_EXPIRE_HOURS);
+        Date mustHaveSomethingAfter = DateUtils.addHours(when, -EmrConstants.VISIT_EXPIRE_HOURS);
 
         if (OpenmrsUtil.compare(visit.getStartDatetime(), mustHaveSomethingAfter) >= 0) {
             return true;
@@ -175,7 +175,7 @@ public class EmrServiceImpl implements EmrService {
             }
         }
         Date lastKnownDate = latest == null ? visit.getStartDatetime() : latest.getEncounterDatetime();
-        return DateUtils.addHours(lastKnownDate, VISIT_EXPIRE_HOURS);
+        return DateUtils.addHours(lastKnownDate, EmrConstants.VISIT_EXPIRE_HOURS);
     }
 
     @Override
@@ -270,7 +270,7 @@ public class EmrServiceImpl implements EmrService {
     private Location getLocationThatSupportsVisits(Location location) {
         if (location == null) {
             throw new IllegalArgumentException("Location does not support visits");
-        } else if (location.hasTag(EmrService.LOCATION_TAG_SUPPORTS_VISITS)) {
+        } else if (location.hasTag(EmrConstants.LOCATION_TAG_SUPPORTS_VISITS)) {
             return location;
         } else {
             return getLocationThatSupportsVisits(location.getParentLocation());
