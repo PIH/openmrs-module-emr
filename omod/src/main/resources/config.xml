@@ -87,6 +87,29 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>emr.xrayOrderablesConcept</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the concept whose set members are the orderable Xray studies
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>emr.ctScanOrderablesConcept</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the concept whose set members are the orderable CT scan studies
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>emr.ultrasoundOrderablesConcept</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the concept whose set members are the orderable ultrasound studies
+        </description>
+    </globalProperty>
 
     <!-- Privileges -->
     <privilege>
