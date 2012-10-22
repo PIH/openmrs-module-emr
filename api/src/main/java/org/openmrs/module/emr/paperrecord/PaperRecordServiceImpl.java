@@ -81,6 +81,10 @@ public class PaperRecordServiceImpl implements PaperRecordService {
 
         String identifier;
 
+        // TODO: might be valuable to switch this functionality so that if the recordLocation is not tagged as a
+        // TODO: medical record location, we search up the hierarchy until we find a location with that tag (so that the calling
+        // TODO: could just pass the request location, and this method would find the appropriate medical record location based on that location)
+
         // fetch the appropriate identifier
         PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient, getPaperRecordIdentifierType(), recordLocation);
 
