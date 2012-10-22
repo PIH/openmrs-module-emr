@@ -18,6 +18,10 @@ public class EmrConstants {
 
     public final static String GP_PLACE_ORDERS_ENCOUNTER_TYPE = "emr.placeOrdersEncounterType";
 
+    public static final String GP_CHECK_IN_ENCOUNTER_TYPE = "emr.checkInEncounterType";
+
+    public static final String GP_UNSPECIFIED_VISIT_TYPE = "emr.unspecifiedVisitType";
+    
     public static final String GP_CLINICIAN_ENCOUNTER_ROLE = "emr.clinicianEncounterRole";
 
     public static final String GP_TEST_ORDER_TYPE = "emr.testOrderType";

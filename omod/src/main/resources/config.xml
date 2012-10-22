@@ -48,6 +48,14 @@
     </globalProperty>
 
     <globalProperty>
+        <property>emr.checkInEncounterType</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the encounter type for checking in a patient
+        </description>
+    </globalProperty>
+
+    <globalProperty>
         <property>emr.clinicianEncounterRole</property>
         <defaultValue></defaultValue>
         <description>
@@ -60,6 +68,14 @@
         <defaultValue></defaultValue>
         <description>
             UUID of the OrderType that represents lab tests and radiology studies
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>emr.unspecifiedVisitType</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the VisitType that we use for newly-created visits
         </description>
     </globalProperty>
 
