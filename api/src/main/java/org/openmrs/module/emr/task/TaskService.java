@@ -15,7 +15,7 @@
 package org.openmrs.module.emr.task;
 
 import org.openmrs.Privilege;
-import org.openmrs.module.appframework.AppDescriptor;
+import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.emr.EmrContext;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +25,7 @@ import java.util.List;
  * API functionality related to Tasks
  * @see TaskDescriptor
  */
-public interface TaskService {
+public interface TaskService extends OpenmrsService {
 
     /**
      * @param context

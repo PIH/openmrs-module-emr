@@ -14,10 +14,13 @@
 package org.openmrs.module.emr;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.hamcrest.Matcher;
 import org.junit.Assert;
+import org.mockito.ArgumentMatcher;
 import org.openmrs.util.OpenmrsUtil;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 
@@ -120,5 +123,14 @@ public class TestUtils {
         return string;
     }
 
+    public static Matcher<Date> isJustNow() {
+        return new ArgumentMatcher<Date>() {
+            @Override
+            public boolean matches(Object o) {
+                // within the last second should be safe enough...
+                return System.currentTimeMillis() - ((Date) o).getTime() < 1000;
+            }
+        };
+    }
 
 }

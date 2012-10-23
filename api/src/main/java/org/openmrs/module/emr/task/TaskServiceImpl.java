@@ -16,6 +16,7 @@ package org.openmrs.module.emr.task;
 
 import org.openmrs.Privilege;
 import org.openmrs.api.UserService;
+import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,7 +26,7 @@ import java.util.List;
 /**
  * @see TaskService
  */
-public class TaskServiceImpl implements TaskService {
+public class TaskServiceImpl extends BaseOpenmrsService implements TaskService {
 
     @Autowired
     UserService userService;
