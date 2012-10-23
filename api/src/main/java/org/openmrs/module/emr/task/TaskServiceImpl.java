@@ -21,6 +21,8 @@ import org.openmrs.module.emr.EmrContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -34,13 +36,19 @@ public class TaskServiceImpl extends BaseOpenmrsService implements TaskService {
     List<TaskDescriptor> allTasks;
 
     @Override
-    public List<TaskDescriptor> getAvailableTasks(EmrContext context) {
+    public List<TaskDescriptor> getAvailableTasks(final EmrContext context) {
         List<TaskDescriptor> available = new ArrayList<TaskDescriptor>();
         for (TaskDescriptor candidate : allTasks) {
             if (candidate.isAvailable(context)) {
                 available.add(candidate);
             }
         }
+        Collections.sort(available, new Comparator<TaskDescriptor>() {
+            @Override
+            public int compare(TaskDescriptor left, TaskDescriptor right) {
+                return Double.compare(right.getPriority(context), left.getPriority(context));
+            }
+        });
         return available;
     }
 
