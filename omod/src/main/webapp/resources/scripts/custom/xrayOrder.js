@@ -45,6 +45,10 @@ ko.bindingHandlers.autocomplete = {
             source: function( request, response ) {
                 response($.ui.autocomplete.filter(viewModel.convertedStudies(), request.term));
             },
+            focus: function( event, ui ) {
+                $('#study-search').val(ui.item.label);
+                return false;
+            },
             select: function( event, ui ) {
                 viewModel.selectStudy(Study(ui.item.value, ui.item.label));
                 this.value = "";
