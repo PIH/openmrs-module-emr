@@ -11,6 +11,14 @@
 <script type="text/javascript">
     jq(document).ready( function() {
         ko.applyBindings( new StudiesViewModel(${xrayOrderables}) );
+
+        // Preventing form submission when pressing enter on study-search input field
+        jq('#study-search').bind('keypress', function(eventKey) {
+           if(event.keyCode == 13) {
+               event.preventDefault();
+               return false;
+           }
+        });
     });
 </script>
 <style type="text/css">
