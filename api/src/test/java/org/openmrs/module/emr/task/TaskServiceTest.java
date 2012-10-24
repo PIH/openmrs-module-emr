@@ -22,6 +22,7 @@ import org.openmrs.module.emr.EmrContext;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -36,7 +37,7 @@ public class TaskServiceTest {
         taskA.setId("A");
         allTasks.add(taskA);
         SimpleTaskDescriptor taskB = new SimpleTaskDescriptor();
-        taskA.setId("B");
+        taskB.setId("B");
         allTasks.add(taskB);
         service.setAllTasksInternal(allTasks);
 
@@ -50,6 +51,41 @@ public class TaskServiceTest {
         List<TaskDescriptor> availableTasks = service.getAvailableTasks(context);
         Assert.assertEquals(1, availableTasks.size());
         Assert.assertEquals(taskB, availableTasks.get(0));
+    }
+
+    @Test
+    public void shouldSortTasksBasedOnPriority() {
+        List<TaskDescriptor> allTasks = new ArrayList<TaskDescriptor>();
+
+        SimpleTaskDescriptor taskA = new SimpleTaskDescriptor();
+        taskA.setId("A");
+        taskA.setPriority(3);
+        allTasks.add(taskA);
+
+        SimpleTaskDescriptor taskC = new SimpleTaskDescriptor();
+        taskC.setId("C");
+        taskC.setPriority(1);
+        allTasks.add(taskC);
+
+        SimpleTaskDescriptor taskB = new SimpleTaskDescriptor();
+        taskB.setId("B");
+        taskB.setPriority(2);
+        allTasks.add(taskB);
+
+        TaskServiceImpl service = new TaskServiceImpl();
+        service.setAllTasksInternal(allTasks);
+
+        UserContext userContext = mock(UserContext.class);
+        when(userContext.hasPrivilege(anyString())).thenReturn(true);
+
+        EmrContext context = new EmrContext();
+        context.setUserContext(userContext);
+
+        List<TaskDescriptor> availableTasks = service.getAvailableTasks(context);
+        Assert.assertEquals(3, availableTasks.size());
+        Assert.assertEquals(taskA, availableTasks.get(0));
+        Assert.assertEquals(taskB, availableTasks.get(1));
+        Assert.assertEquals(taskC, availableTasks.get(2));
     }
 
 }

@@ -45,6 +45,10 @@ public class EmrProperties extends ModuleProperties {
         return getEncounterRoleByGlobalProperty(EmrConstants.GP_CLINICIAN_ENCOUNTER_ROLE);
     }
 
+    public EncounterRole getCheckInClerkEncounterRole() {
+        return getEncounterRoleByGlobalProperty(EmrConstants.GP_CHECK_IN_CLERK_ENCOUNTER_ROLE);
+    }
+
     public OrderType getTestOrderType() {
         return getOrderTypeByGlobalProperty(EmrConstants.GP_TEST_ORDER_TYPE);
     }

@@ -21,11 +21,15 @@ import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Order;
 import org.openmrs.Patient;
+import org.openmrs.Provider;
+import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.OrderService;
+import org.openmrs.api.ProviderService;
 import org.openmrs.api.VisitService;
+import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
@@ -34,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -60,6 +65,10 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
     @Qualifier("visitService")
     private VisitService visitService;
 
+    @Autowired
+    @Qualifier("providerService")
+    private ProviderService providerService;
+
     protected void setEmrProperties(EmrProperties emrProperties) {
         this.emrProperties = emrProperties;
     }
@@ -74,6 +83,10 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 
     protected void setAdministrationService(AdministrationService administrationService) {
         this.administrationService = administrationService;
+    }
+
+    protected void setProviderService(ProviderService providerService) {
+        this.providerService = providerService;
     }
 
     @Override
@@ -146,12 +159,28 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 
     @Override
     @Transactional
-    public Encounter checkInPatient(Patient patient, Location where, List<Obs> obsForCheckInEncounter, List<Order> ordersForCheckInEncounter) {
+    public Encounter checkInPatient(Patient patient, Location where, Provider checkInClerk,
+                                    List<Obs> obsForCheckInEncounter, List<Order> ordersForCheckInEncounter) {
+        if (checkInClerk == null) {
+            checkInClerk = getProvider(Context.getAuthenticatedUser());
+        }
         Visit activeVisit = ensureActiveVisit(patient, where);
         Encounter encounter = buildEncounter(emrProperties.getCheckInEncounterType(), patient, where, new Date(), obsForCheckInEncounter, ordersForCheckInEncounter);
+        encounter.addProvider(emrProperties.getCheckInClerkEncounterRole(), checkInClerk);
         encounter.setVisit(activeVisit);
         encounterService.saveEncounter(encounter);
         return encounter;
+    }
+
+    private Provider getProvider(User accountBelongingToUser) {
+        Collection<Provider> candidates = providerService.getProvidersByPerson(accountBelongingToUser.getPerson());
+        if (candidates.size() == 0) {
+            throw new IllegalStateException("User " + accountBelongingToUser.getUsername() + " does not have a Provider account");
+        } else if (candidates.size() > 1) {
+            throw new IllegalStateException("User " + accountBelongingToUser.getUsername() + " has more than one Provider account");
+        } else {
+            return candidates.iterator().next();
+        }
     }
 
     private Encounter buildEncounter(EncounterType encounterType, Patient patient, Location location, Date when, List<Obs> obsToCreate, List<Order> ordersToCreate) {

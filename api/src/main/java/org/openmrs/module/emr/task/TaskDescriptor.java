@@ -62,4 +62,12 @@ public interface TaskDescriptor {
      * @return whether this task is available, in a given context
      */
     boolean isAvailable(EmrContext context);
+
+    /**
+     * Double.MAX_VALUE is the highest-priority, 0d is standard priority
+     * @param context
+     * @return how high should this task appear in the list of available tasks, in a given context
+     */
+    double getPriority(EmrContext context);
+
 }

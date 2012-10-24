@@ -37,6 +37,8 @@ public class SimpleTaskDescriptor extends BaseTaskDescriptor implements TaskDesc
 
     private String tinyIconUrl;
 
+    private double priority = 0d;
+
     @Override
     public String getId() {
         return id;
@@ -88,4 +90,14 @@ public class SimpleTaskDescriptor extends BaseTaskDescriptor implements TaskDesc
     public void setLabelCode(String labelCode) {
         this.labelCode = labelCode;
     }
+
+    @Override
+    public double getPriority(EmrContext context) {
+        return priority;
+    }
+
+    public void setPriority(double priority) {
+        this.priority = priority;
+    }
+
 }

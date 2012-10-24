@@ -21,14 +21,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.openmrs.Encounter;
+import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Patient;
+import org.openmrs.Person;
+import org.openmrs.PersonName;
+import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.ProviderService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrConstants;
@@ -62,6 +67,12 @@ public class AdtServiceTest {
 
     VisitService mockVisitService;
     EncounterService mockEncounterService;
+    ProviderService mockProviderService;
+
+    private Person personForCurrentUser;
+    private Provider providerForCurrentUser;
+
+    private EncounterRole checkInClerkEncounterRole;
     private EncounterType checkInEncounterType;
     private VisitType atFacilityVisitType;
     private LocationTag supportsVisits;
@@ -70,13 +81,23 @@ public class AdtServiceTest {
 
     @Before
     public void setup() {
+        personForCurrentUser = new Person();
+        personForCurrentUser.addName(new PersonName("Current", "User", "Person"));
+
         User authenticatedUser = new User();
+        authenticatedUser.setPerson(personForCurrentUser);
         mockStatic(Context.class);
         when(Context.getAuthenticatedUser()).thenReturn(authenticatedUser);
+
+        providerForCurrentUser = new Provider();
+        providerForCurrentUser.setPerson(personForCurrentUser);
+        mockProviderService = mock(ProviderService.class);
+        when(mockProviderService.getProvidersByPerson(personForCurrentUser)).thenReturn(Collections.singletonList(providerForCurrentUser));
 
         mockVisitService = mock(VisitService.class);
         mockEncounterService = mock(EncounterService.class);
 
+        checkInClerkEncounterRole = new EncounterRole();
         checkInEncounterType = new EncounterType();
         atFacilityVisitType = new VisitType();
 
@@ -93,8 +114,10 @@ public class AdtServiceTest {
         when(emrProperties.getVisitExpireHours()).thenReturn(10);
         when(emrProperties.getCheckInEncounterType()).thenReturn(checkInEncounterType);
         when(emrProperties.getAtFacilityVisitType()).thenReturn(atFacilityVisitType);
+        when(emrProperties.getCheckInClerkEncounterRole()).thenReturn(checkInClerkEncounterRole);
+        when(emrProperties.getCheckInClerkEncounterRole()).thenReturn(checkInClerkEncounterRole);
 
-        service = new AdtServiceStub(mockVisitService, mockEncounterService, emrProperties);
+        service = new AdtServiceStub(mockVisitService, mockEncounterService, mockProviderService, emrProperties);
     }
 
 
@@ -202,7 +225,7 @@ public class AdtServiceTest {
 
         when(mockVisitService.getVisitsByPatient(patient)).thenReturn(new ArrayList<Visit>());
 
-        service.checkInPatient(patient, outpatientDepartment, null, null);
+        service.checkInPatient(patient, outpatientDepartment, null, null, null);
 
         verify(mockVisitService).saveVisit(argThat(new ArgumentMatcher<Visit>() {
             @Override
@@ -224,15 +247,19 @@ public class AdtServiceTest {
                 assertThat(actual.getPatient(), is(patient));
                 assertThat(actual.getLocation(), is(outpatientDepartment));
                 assertThat(actual.getEncounterDatetime(), isJustNow());
+                assertThat(actual.getProvidersByRoles().size(), is(1));
+                assertThat(actual.getProvidersByRole(checkInClerkEncounterRole).iterator().next(), is(providerForCurrentUser));
                 return true;
             }
         }));
     }
 
     private class AdtServiceStub extends AdtServiceImpl {
-        public AdtServiceStub(VisitService mockVisitService, EncounterService mockEncounterService, EmrProperties emrProperties) {
+        public AdtServiceStub(VisitService mockVisitService, EncounterService mockEncounterService,
+                              ProviderService mockProviderService, EmrProperties emrProperties) {
             setVisitService(mockVisitService);
             setEncounterService(mockEncounterService);
+            setProviderService(mockProviderService);
             setEmrProperties(emrProperties);
         }
     }

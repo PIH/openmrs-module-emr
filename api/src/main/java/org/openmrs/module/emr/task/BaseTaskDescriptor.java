@@ -43,4 +43,18 @@ public abstract class BaseTaskDescriptor implements TaskDescriptor {
         return "Task: " + getId();
     }
 
+    /**
+     * @param context
+     * @return Base implementation returns 0d
+     */
+    @Override
+    public double getPriority(EmrContext context) {
+        return 0d;
+    }
+
+    @Override
+    public String toString() {
+        return "Task: " + getId();
+    }
+
 }
