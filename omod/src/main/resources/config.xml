@@ -62,7 +62,14 @@
             UUID of the encounter role that represents the primary clinician who is seeing the patient
         </description>
     </globalProperty>
-
+    
+ 	<globalProperty>
+        <property>emr.checkInClerkEncounterRole</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the encounter role that represents the clerk who is checking in the patient
+        </description>
+    </globalProperty>
     <globalProperty>
         <property>emr.testOrderType</property>
         <defaultValue></defaultValue>
