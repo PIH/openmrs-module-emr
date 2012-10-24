@@ -30,16 +30,16 @@
         <property name="url" value="emr/orderXray.page"/>
         <property name="priority" value="20.2"/>
     </bean>
-    <bean id="emrOrderCTScanTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
-        <property name="id" value="emr.orderCTScan"/>
-        <property name="labelCode" value="emr.task.orderCTScan.label"/>
-        <property name="url" value="emr/orderCTScan.page"/>
-        <property name="priority" value="20.1"/>
-    </bean>
     <bean id="emrOrderUltrasoundTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
         <property name="id" value="emr.orderUltrasound"/>
         <property name="labelCode" value="emr.task.orderUltrasound.label"/>
         <property name="url" value="emr/orderUltrasound.page"/>
+        <property name="priority" value="20.1"/>
+    </bean>
+    <bean id="emrOrderCTScanTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
+        <property name="id" value="emr.orderCTScan"/>
+        <property name="labelCode" value="emr.task.orderCTScan.label"/>
+        <property name="url" value="emr/orderCTScan.page"/>
         <property name="priority" value="20"/>
     </bean>
 
