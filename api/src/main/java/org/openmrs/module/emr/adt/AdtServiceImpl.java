@@ -178,7 +178,7 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
         visit.setPatient(patient);
         visit.setLocation(getLocationThatSupportsVisits(location));
         visit.setStartDatetime(when);
-        visit.setVisitType(emrProperties.getUnspecifiedVisitType());
+        visit.setVisitType(emrProperties.getAtFacilityVisitType());
         return visit;
     }
 

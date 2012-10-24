@@ -62,7 +62,6 @@ public class EmrServiceTest {
     private EncounterRole clinicianEncounterRole;
     private EncounterType radiologyOrderEncounterType;
     private EncounterType checkInEncounterType;
-    private VisitType unspecifiedVisitType;
     private LocationTag supportsVisits;
     private Location mirebalaisHospital;
     private Location outpatientDepartment;
@@ -83,7 +82,6 @@ public class EmrServiceTest {
         when(emrProperties.getVisitExpireHours()).thenReturn(10);
         when(emrProperties.getCheckInEncounterType()).thenReturn(checkInEncounterType);
         when(emrProperties.getPlaceOrdersEncounterType()).thenReturn(radiologyOrderEncounterType);
-        when(emrProperties.getUnspecifiedVisitType()).thenReturn(unspecifiedVisitType);
         when(emrProperties.getTestOrderType()).thenReturn(testOrderType);
 
         service = new EmrServiceStub(mockEncounterService, emrProperties);

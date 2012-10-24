@@ -72,7 +72,7 @@
     </globalProperty>
 
     <globalProperty>
-        <property>emr.unspecifiedVisitType</property>
+        <property>emr.atFacilityVisitType</property>
         <defaultValue></defaultValue>
         <description>
             UUID of the VisitType that we use for newly-created visits

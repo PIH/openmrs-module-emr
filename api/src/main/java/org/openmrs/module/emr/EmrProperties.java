@@ -49,8 +49,8 @@ public class EmrProperties extends ModuleProperties {
         return getOrderTypeByGlobalProperty(EmrConstants.GP_TEST_ORDER_TYPE);
     }
 
-    public VisitType getUnspecifiedVisitType() {
-        return getVisitTypeByGlobalProperty(EmrConstants.GP_UNSPECIFIED_VISIT_TYPE);
+    public VisitType getAtFacilityVisitType() {
+        return getVisitTypeByGlobalProperty(EmrConstants.GP_AT_FACILITY_VISIT_TYPE);
     }
 
 }

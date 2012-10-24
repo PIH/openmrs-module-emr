@@ -63,7 +63,7 @@ public class AdtServiceTest {
     VisitService mockVisitService;
     EncounterService mockEncounterService;
     private EncounterType checkInEncounterType;
-    private VisitType unspecifiedVisitType;
+    private VisitType atFacilityVisitType;
     private LocationTag supportsVisits;
     private Location mirebalaisHospital;
     private Location outpatientDepartment;
@@ -78,7 +78,7 @@ public class AdtServiceTest {
         mockEncounterService = mock(EncounterService.class);
 
         checkInEncounterType = new EncounterType();
-        unspecifiedVisitType = new VisitType();
+        atFacilityVisitType = new VisitType();
 
         supportsVisits = new LocationTag();
         supportsVisits.setName(EmrConstants.LOCATION_TAG_SUPPORTS_VISITS);
@@ -92,7 +92,7 @@ public class AdtServiceTest {
         EmrProperties emrProperties = mock(EmrProperties.class);
         when(emrProperties.getVisitExpireHours()).thenReturn(10);
         when(emrProperties.getCheckInEncounterType()).thenReturn(checkInEncounterType);
-        when(emrProperties.getUnspecifiedVisitType()).thenReturn(unspecifiedVisitType);
+        when(emrProperties.getAtFacilityVisitType()).thenReturn(atFacilityVisitType);
 
         service = new AdtServiceStub(mockVisitService, mockEncounterService, emrProperties);
     }
@@ -138,7 +138,7 @@ public class AdtServiceTest {
             @Override
             public boolean matches(Object o) {
                 Visit actual = (Visit) o;
-                assertThat(actual.getVisitType(), is(unspecifiedVisitType));
+                assertThat(actual.getVisitType(), is(atFacilityVisitType));
                 assertThat(actual.getPatient(), is(patient));
                 assertThat(actual.getLocation(), is(mirebalaisHospital));
                 assertThat(actual.getStartDatetime(), isJustNow());
@@ -186,7 +186,7 @@ public class AdtServiceTest {
                     return true;
                 } else {
                     assertSame(created, actual);
-                    assertThat(actual.getVisitType(), is(unspecifiedVisitType));
+                    assertThat(actual.getVisitType(), is(atFacilityVisitType));
                     assertThat(actual.getPatient(), is(patient));
                     assertThat(actual.getLocation(), is(mirebalaisHospital));
                     assertThat(actual.getStartDatetime(), isJustNow());
@@ -208,7 +208,7 @@ public class AdtServiceTest {
             @Override
             public boolean matches(Object o) {
                 Visit actual = (Visit) o;
-                assertThat(actual.getVisitType(), is(unspecifiedVisitType));
+                assertThat(actual.getVisitType(), is(atFacilityVisitType));
                 assertThat(actual.getPatient(), is(patient));
                 assertThat(actual.getLocation(), is(mirebalaisHospital));
                 assertThat(actual.getStartDatetime(), isJustNow());
