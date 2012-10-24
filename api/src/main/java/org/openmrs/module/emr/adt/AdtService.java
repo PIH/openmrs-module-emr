@@ -19,6 +19,7 @@ import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Order;
 import org.openmrs.Patient;
+import org.openmrs.Provider;
 import org.openmrs.Visit;
 import org.openmrs.api.OpenmrsService;
 
@@ -75,11 +76,13 @@ public interface AdtService extends OpenmrsService {
      *
      * @param patient required
      * @param where required (must either support visits, or have an ancestor location that does)
+     * @param checkInClerk optional (defaults to Provider for currently-authenticated user)
      * @param obsForCheckInEncounter optional
      * @param ordersForCheckInEncounter optional
      * @return the encounter created (with EncounterService.saveEncounter already called on it)
      */
-    Encounter checkInPatient(Patient patient, Location where, List<Obs> obsForCheckInEncounter, List<Order> ordersForCheckInEncounter);
+    Encounter checkInPatient(Patient patient, Location where, Provider checkInClerk, List<Obs> obsForCheckInEncounter,
+                             List<Order> ordersForCheckInEncounter);
 
     /**
      * Looks at this location, then its ancestors in the location hierarchy, to find a location tagged with
