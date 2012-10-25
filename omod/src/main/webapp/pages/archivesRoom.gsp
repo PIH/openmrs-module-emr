@@ -53,7 +53,7 @@
 </form>
 
 
-<table class="dataTable">
+<table id="requests_table" class="dataTable">
     <thead>
         <tr>
             <th>Name</th>
