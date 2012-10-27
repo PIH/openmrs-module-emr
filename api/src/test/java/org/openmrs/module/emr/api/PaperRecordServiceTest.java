@@ -216,7 +216,7 @@ public class PaperRecordServiceTest {
         PaperRecordRequest expectedRequest = new PaperRecordRequest();
         expectedRequest.setAssignee(null);
         expectedRequest.setCreator(authenticatedUser);
-        expectedRequest.setIdentifier("UNKNOWN");
+        expectedRequest.setIdentifier(null);
         expectedRequest.setRecordLocation(medicalRecordLocation);
         expectedRequest.setPatient(patient);
         expectedRequest.setStatus(PaperRecordRequest.Status.OPEN);

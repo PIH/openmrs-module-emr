@@ -29,10 +29,21 @@ public class HibernatePaperRecordRequestDAO  extends HibernateSingleClassDAO<Pap
     }
 
     @Override
-    public List<PaperRecordRequest> getOpenPaperRecordRequests() {
+    public List<PaperRecordRequest> getOpenPaperRecordRequestsToPull() {
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(PaperRecordRequest.class);
         criteria.add(Restrictions.eq("status", PaperRecordRequest.Status.OPEN));
+        criteria.add(Restrictions.isNotNull("identifier"));
+        criteria.addOrder(Order.asc("dateCreated"));
+
+        return (List<PaperRecordRequest>) criteria.list();
+    }
+
+    @Override
+    public List<PaperRecordRequest> getOpenPaperRecordRequestsToCreate() {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(PaperRecordRequest.class);
+        criteria.add(Restrictions.eq("status", PaperRecordRequest.Status.OPEN));
+        criteria.add(Restrictions.isNull("identifier"));
         criteria.addOrder(Order.asc("dateCreated"));
 
         return (List<PaperRecordRequest>) criteria.list();

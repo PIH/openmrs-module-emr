@@ -79,23 +79,13 @@ public class PaperRecordServiceImpl implements PaperRecordService {
             throw new IllegalStateException("Request Location cannot be null");
         }
 
-        String identifier;
-
         // TODO: might be valuable to switch this functionality so that if the recordLocation is not tagged as a
         // TODO: medical record location, we search up the hierarchy until we find a location with that tag (so that the calling
         // TODO: could just pass the request location, and this method would find the appropriate medical record location based on that location)
 
-        // fetch the appropriate identifier
+        // fetch the appropriate identifier (if it exists)
         PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient, getPaperRecordIdentifierType(), recordLocation);
-
-        // if no identifier, set the specified "UKNOWN" code
-        if (paperRecordIdentifier != null) {
-            identifier = paperRecordIdentifier.getIdentifier();
-        }
-        else {
-            String missingIdentifierCode = messageSourceService.getMessage("emr.missingPaperRecordIdentifierCode");
-            identifier = missingIdentifierCode != "emr.missingPaperRecordIdentifierCode" ? missingIdentifierCode : "UNKNOWN" ;
-        }
+        String identifier = paperRecordIdentifier != null ? paperRecordIdentifier.getIdentifier() : null;
 
         PaperRecordRequest request = new PaperRecordRequest();
         request.setCreator(Context.getAuthenticatedUser());
@@ -112,8 +102,14 @@ public class PaperRecordServiceImpl implements PaperRecordService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PaperRecordRequest> getOpenPaperRecordRequests() {
-        return paperRecordRequestDAO.getOpenPaperRecordRequests();
+    public List<PaperRecordRequest> getOpenPaperRecordRequestsToPull() {
+        return paperRecordRequestDAO.getOpenPaperRecordRequestsToPull();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PaperRecordRequest> getOpenPaperRecordRequestsToCreate() {
+        return paperRecordRequestDAO.getOpenPaperRecordRequestsToCreate();
     }
 
     @Override
@@ -134,6 +130,8 @@ public class PaperRecordServiceImpl implements PaperRecordService {
                 throw new IllegalStateException("Cannot assign a request that is not open");
             }
         }
+
+        // TODO: we may want to assign identifiers to the requests here that don't have identifiers?
 
         for (PaperRecordRequest request : requests) {
             request.setStatus(PaperRecordRequest.Status.ASSIGNED);

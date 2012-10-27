@@ -19,7 +19,6 @@ import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.module.emr.EmrConstants;
-import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 
 import java.util.List;
 
@@ -49,11 +48,22 @@ public interface PaperRecordService {
 
     /**
      * Retrieves all records that are open (ie, have yet to be assigned to an archivist for retrieval)
+     * and need to be pulled (ie, already exist and just need to be pulled, not created)
      *
      * @return the list of all open paper record requests
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
-    List<PaperRecordRequest> getOpenPaperRecordRequests();
+    List<PaperRecordRequest> getOpenPaperRecordRequestsToPull();
+
+    /**
+     * Retrieves all records that are open (ie, have yet to be assigned to an archivist for retrieval)
+     * and need to be created (ie, do not yet exist)
+     *
+     * @return the list of all open paper record requests
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
+    List<PaperRecordRequest> getOpenPaperRecordRequestsToCreate();
+
 
     /**
      * Sets the status to ASSIGNED and the assignee to the given value, for the given requests.

@@ -64,5 +64,13 @@
 
     </changeSet>
 
+    <changeSet id="20121026" author="mgoodrich">
+        <comment>Removes the not-null constraint from the paper record request identifier field</comment>
+
+        <modifyColumn tableName="emr_paper_record_request">
+            <column name="identifier" type="varchar(50)"/>
+        </modifyColumn>
+
+    </changeSet>
 
 </databaseChangeLog>

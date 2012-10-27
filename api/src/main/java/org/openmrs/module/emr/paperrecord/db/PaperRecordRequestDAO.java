@@ -21,5 +21,7 @@ import java.util.List;
 
 public interface PaperRecordRequestDAO extends SingleClassDAO<PaperRecordRequest> {
 
-    public List<PaperRecordRequest> getOpenPaperRecordRequests();
+    List<PaperRecordRequest> getOpenPaperRecordRequestsToPull();
+
+    List<PaperRecordRequest> getOpenPaperRecordRequestsToCreate();
 }
