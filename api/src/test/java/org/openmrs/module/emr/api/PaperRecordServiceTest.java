@@ -19,12 +19,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.openmrs.*;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.paperrecord.db.PaperRecordRequestDAO;
 import org.openmrs.module.emr.paperrecord.PaperRecordServiceImpl;
 import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 import org.openmrs.module.emr.paperrecord.PaperRecordService;
+import org.openmrs.module.idgen.service.IdentifierSourceService;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -32,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;
@@ -43,10 +46,12 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @PrepareForTest(Context.class)
 public class PaperRecordServiceTest {
 
-    private PaperRecordService paperRecordService;
+    private PaperRecordServiceImpl paperRecordService;
     private PaperRecordRequestDAO mockPaperRecordDAO;
     private User authenticatedUser;
     private PatientIdentifierType paperRecordIdentifierType;
+    private IdentifierSourceService identifierSourceService;
+    private PatientService patientService;
 
     @Before
     public void setup() {
@@ -56,12 +61,16 @@ public class PaperRecordServiceTest {
         when(Context.getAuthenticatedUser()).thenReturn(authenticatedUser);
 
         mockPaperRecordDAO = mock(PaperRecordRequestDAO.class);
+        identifierSourceService = mock(IdentifierSourceService.class);
+        patientService = mock(PatientService.class);
 
         paperRecordIdentifierType = new PatientIdentifierType();
         paperRecordIdentifierType.setId(2);
 
         paperRecordService = new PaperRecordServiceStub(paperRecordIdentifierType);
-        ((PaperRecordServiceImpl) paperRecordService).setPaperRecordRequestDAO(mockPaperRecordDAO);
+        paperRecordService.setPaperRecordRequestDAO(mockPaperRecordDAO);
+        paperRecordService.setIdentifierSourceService(identifierSourceService);
+        paperRecordService.setPatientService(patientService);
     }
 
     @Test
@@ -70,13 +79,9 @@ public class PaperRecordServiceTest {
         Patient patient = new Patient();
         patient.setId(15);
 
-        Location medicalRecordLocation = new Location();
-        medicalRecordLocation.setId(3);
-        medicalRecordLocation.setName("Mirebalais");
+        Location medicalRecordLocation = createMedicalRecordLocation();
 
-        Location requestLocation = new Location();
-        requestLocation.setId(4);
-        requestLocation.setName("Outpatient Clinic");
+        Location requestLocation = createLocation(4, "Outpatient Clinic");
 
         PatientIdentifier identifer = new PatientIdentifier();
         identifer.setIdentifier("ABCZYX");
@@ -100,16 +105,23 @@ public class PaperRecordServiceTest {
         expectedRequestMatcher.matches(returnedRequest);
     }
 
+    private Location createLocation(int locationId, String locationName) {
+        Location requestLocation = new Location();
+        requestLocation.setId(locationId);
+        requestLocation.setName(locationName);
+        return requestLocation;
+    }
+
+    private Location createMedicalRecordLocation() {
+        return createLocation(3,"Mirebalais");
+    }
+
     @Test(expected = IllegalStateException.class)
     public void testRequestPaperRecordShouldThrowExceptionIfPatientNull() throws Exception {
 
-        Location medicalRecordLocation = new Location();
-        medicalRecordLocation.setId(3);
-        medicalRecordLocation.setName("Mirebalais");
+        Location medicalRecordLocation = createMedicalRecordLocation();
 
-        Location requestLocation = new Location();
-        requestLocation.setId(4);
-        requestLocation.setName("Outpatient Clinic");
+        Location requestLocation = createLocation(4, "Outpatient Clinic");
 
         paperRecordService.requestPaperRecord(null, medicalRecordLocation, requestLocation);
 
@@ -121,9 +133,7 @@ public class PaperRecordServiceTest {
         Patient patient = new Patient();
         patient.setId(15);
 
-        Location requestLocation = new Location();
-        requestLocation.setId(4);
-        requestLocation.setName("Outpatient Clinic");
+        Location requestLocation = createLocation(4, "Outpatient Clinic");
 
         paperRecordService.requestPaperRecord(patient, null, requestLocation);
 
@@ -136,9 +146,7 @@ public class PaperRecordServiceTest {
         Patient patient = new Patient();
         patient.setId(15);
 
-        Location medicalRecordLocation = new Location();
-        medicalRecordLocation.setId(3);
-        medicalRecordLocation.setName("Mirebalais");
+        Location medicalRecordLocation = createMedicalRecordLocation();
 
         paperRecordService.requestPaperRecord(patient, medicalRecordLocation, null);
 
@@ -151,17 +159,11 @@ public class PaperRecordServiceTest {
         Patient patient = new Patient();
         patient.setId(15);
 
-        Location medicalRecordLocation = new Location();
-        medicalRecordLocation.setId(3);
-        medicalRecordLocation.setName("Mirebalais");
+        Location medicalRecordLocation = createMedicalRecordLocation();
 
-        Location otherLocation = new Location();
-        otherLocation.setId(5);
-        otherLocation.setName("Cange");
+        Location otherLocation = createLocation(5, "Cange");
 
-        Location requestLocation = new Location();
-        requestLocation.setId(4);
-        requestLocation.setName("Outpatient Clinic");
+        Location requestLocation = createLocation(4, "Outpatient Clinic");
 
 
         PatientIdentifier wrongIdentifer = new PatientIdentifier();
@@ -201,17 +203,9 @@ public class PaperRecordServiceTest {
         Patient patient = new Patient();
         patient.setId(15);
 
-        Location medicalRecordLocation = new Location();
-        medicalRecordLocation.setId(3);
-        medicalRecordLocation.setName("Mirebalais");
+        Location medicalRecordLocation = createMedicalRecordLocation();
 
-        Location otherLocation = new Location();
-        otherLocation.setId(5);
-        otherLocation.setName("Cange");
-
-        Location requestLocation = new Location();
-        requestLocation.setId(4);
-        requestLocation.setName("Outpatient Clinic");
+        Location requestLocation = createLocation(4, "Outpatient Clinic");
 
         PaperRecordRequest expectedRequest = new PaperRecordRequest();
         expectedRequest.setAssignee(null);
@@ -258,6 +252,21 @@ public class PaperRecordServiceTest {
         requests.add(buildPaperRecordRequest());
 
         paperRecordService.assignRequests(requests, null);
+    }
+
+    @Test
+    public void whenPatientDoesNotHaveAnPaperMedicalRecordIdentifierShouldCreateAnPaperMedicalRecordNumberAndAssignToHim(){
+        when(identifierSourceService.generateIdentifier(paperRecordIdentifierType,"generating a new dossier number")).thenReturn("A000001");
+
+        Patient patient = new Patient();
+
+        PaperRecordRequest paperRecordRequest = new PaperRecordRequest();
+        paperRecordRequest.setRecordLocation(createMedicalRecordLocation());
+
+        Patient patientWithPaperMedicalRecordAssigned = paperRecordService.createPaperMedicalRecordNumberTo(patient, paperRecordRequest);
+        verify(patientService).savePatientIdentifier(any(PatientIdentifier.class));
+
+        assertEquals("A000001", patientWithPaperMedicalRecordAssigned.getPatientIdentifier().getIdentifier());
     }
 
 

@@ -26,6 +26,7 @@ import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.paperrecord.db.PaperRecordRequestDAO;
 import org.openmrs.module.emr.utils.GeneralUtils;
+import org.openmrs.module.idgen.service.IdentifierSourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +49,10 @@ public class PaperRecordServiceImpl implements PaperRecordService {
     @Autowired
     @Qualifier("messageSourceService")
     private MessageSourceService messageSourceService;
+
+    @Autowired
+    @Qualifier("identifierSourceService")
+    private IdentifierSourceService identifierSourceService;
 
     public void setPaperRecordRequestDAO(PaperRecordRequestDAO paperRecordRequestDAO) {
         this.paperRecordRequestDAO = paperRecordRequestDAO;
@@ -142,6 +147,24 @@ public class PaperRecordServiceImpl implements PaperRecordService {
         return requests;
     }
 
+    @Override
+    public Patient createPaperMedicalRecordNumberTo(Patient patient, PaperRecordRequest request) {
+        if (patient == null){
+            throw new IllegalArgumentException("Patient shouldn't be null");
+        }
+
+        PatientIdentifierType paperRecordIdentifierType = getPaperRecordIdentifierType();
+        String dossierNumber = identifierSourceService.generateIdentifier(paperRecordIdentifierType, "generating a new dossier number");
+
+        if (patient.getPatientIdentifier(paperRecordIdentifierType)==null){
+            PatientIdentifier paperRecordIdentifier = new PatientIdentifier(dossierNumber, paperRecordIdentifierType, request.getRecordLocation());
+            patientService.savePatientIdentifier(paperRecordIdentifier);
+            patient.addIdentifier(paperRecordIdentifier);
+        }
+
+        return patient;
+    }
+
     protected PatientIdentifierType getPaperRecordIdentifierType() {
         String uuid = administrationService.getGlobalProperty(EmrConstants.GP_PAPER_RECORD_IDENTIFIER_TYPE);
         PatientIdentifierType paperRecordIdentifierType = patientService.getPatientIdentifierTypeByUuid(uuid);
@@ -149,5 +172,13 @@ public class PaperRecordServiceImpl implements PaperRecordService {
             throw new IllegalStateException("Configuration required: " + EmrConstants.GP_PAPER_RECORD_IDENTIFIER_TYPE);
         }
         return paperRecordIdentifierType;
+    }
+
+    public void setIdentifierSourceService(IdentifierSourceService identifierSourceService) {
+        this.identifierSourceService = identifierSourceService;
+    }
+
+    public void setPatientService(PatientService patientService) {
+        this.patientService = patientService;
     }
 }
