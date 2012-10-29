@@ -16,7 +16,9 @@ public class ArchivesRoomPageController {
 
     public void get(PageModel model, @SpringBean PaperRecordService paperRecordService) {
         List<PaperRecordRequest> openPaperRecordRequests = paperRecordService.getOpenPaperRecordRequestsToPull();
+        List<PaperRecordRequest> openPaperRecordRequestsToCreate = paperRecordService.getOpenPaperRecordRequestsToCreate();
 
+        model.addAttribute("requestsToCreate", openPaperRecordRequestsToCreate);
         model.addAttribute("openRequests", openPaperRecordRequests);
     }
 

@@ -2,27 +2,27 @@ describe("Tests for medical record requests", function() {
 
     function verifySelectedRecords(numberSelected) {
         for (var i = 0; i < numberSelected; i++) {
-            expect(viewModel.requests()[i].selected()).toBe(true);
+            expect(viewModel.recordsToPull()[i].selected()).toBe(true);
         }
-        for (var i = numberSelected; i < viewModel.requests().length; i++) {
-            expect(viewModel.requests()[i].selected()).toBe(false);
+        for (var i = numberSelected; i < viewModel.recordsToPull().length; i++) {
+            expect(viewModel.recordsToPull()[i].selected()).toBe(false);
         }
     }
 
-    var thirdRecord = RecordRequestModel(3, "Darius", "A033", "Lacoline", "12:34 pm");
-    var secondRecord = RecordRequestModel(2, "Mark", "A021", "Lacoline", "12:34 pm");
+    var thirdRecord = RecordRequestModel(3, "Darius", 1, "A033", "Lacoline", "12:34 pm");
+    var secondRecord = RecordRequestModel(2, "Mark", 2, "A021", "Lacoline", "12:34 pm");
 
-    var recordRequests = [
-        RecordRequestModel(1, "Alex", "A001", "Mirebalais", "12:34 pm"),
+    var recordsToPull = [
+        RecordRequestModel(1, "Alex", 3, "A001", "Mirebalais", "12:34 pm"),
         secondRecord,
         thirdRecord,
-        RecordRequestModel(4, "Neil", "A045", "Lacoline", "12:34 pm"),
-        RecordRequestModel(5, "Mario", "A101", "Lacoline", "12:34 pm"),
-        RecordRequestModel(6, "Renee", "A121", "Lacoline", "12:34 pm"),
-        RecordRequestModel(7, "Ellen", "A234", "Lacoline", "12:34 pm"),
-        RecordRequestModel(8, "Mike", "A235", "Lacoline", "12:34 pm")
+        RecordRequestModel(4, "Neil", 4, "A045", "Lacoline", "12:34 pm"),
+        RecordRequestModel(5, "Mario", 5, "A101", "Lacoline", "12:34 pm"),
+        RecordRequestModel(6, "Renee", 6, "A121", "Lacoline", "12:34 pm"),
+        RecordRequestModel(7, "Ellen", 7, "A234", "Lacoline", "12:34 pm"),
+        RecordRequestModel(8, "Mike", 8, "A235", "Lacoline", "12:34 pm")
     ];
-    var viewModel = RecordRequestsViewModel(recordRequests);
+    var viewModel = RecordRequestsViewModel(recordsToPull);
 
 
     it("should select first three records", function() {
