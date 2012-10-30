@@ -64,6 +64,11 @@ public class EmrVisitAssignmentHandler extends BaseEncounterVisitHandler impleme
         if (encounter.getVisit() != null)
             return;
 
+        // TEMP HACK TO AVOID BREAKING RADIOLOGY REQUISITIONS WHILE WE FIGURE OUT HOW WE WANT TO HANDLE THIS
+        if (encounter.getLocation() == null) {
+            return;
+        }
+
         // Eventually allow some encounters to be visit-free, probably via a GP defining a list of EncounterTypes.
 
         Date when = encounter.getEncounterDatetime();
