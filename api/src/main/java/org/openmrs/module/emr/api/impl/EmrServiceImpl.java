@@ -80,7 +80,7 @@ public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
         OrderType testOrderType = emrProperties.getTestOrderType();
 
         // TODO this won't work if encounterDatetime is in the past; need to deal with retrospective entry in a comprehensive way
-        adtService.ensureActiveVisit(requisition.getPatient(), requisition.getEncounterLocation());
+        // TEMP HACK COMMENT OUT adtService.ensureActiveVisit(requisition.getPatient(), requisition.getEncounterLocation());
 
         if (requisition.getEncounterDatetime() == null) {
             requisition.setEncounterDatetime(new Date());
