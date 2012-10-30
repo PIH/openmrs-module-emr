@@ -51,7 +51,7 @@ public class PaperRecordServiceImpl implements PaperRecordService {
     private MessageSourceService messageSourceService;
 
     @Autowired
-    @Qualifier("identifierSourceService")
+    @Qualifier("baseIdentifierSourceService")
     private IdentifierSourceService identifierSourceService;
 
     public void setPaperRecordRequestDAO(PaperRecordRequestDAO paperRecordRequestDAO) {
@@ -136,8 +136,6 @@ public class PaperRecordServiceImpl implements PaperRecordService {
             }
         }
 
-        // TODO: we may want to assign identifiers to the requests here that don't have identifiers?
-
         for (PaperRecordRequest request : requests) {
             request.setStatus(PaperRecordRequest.Status.ASSIGNED);
             request.setAssignee(assignee);
@@ -148,7 +146,7 @@ public class PaperRecordServiceImpl implements PaperRecordService {
     }
 
     @Override
-    public Patient createPaperMedicalRecordNumberTo(Patient patient, PaperRecordRequest request) {
+    public String createPaperMedicalRecordNumberTo(Patient patient, Location medicalRecordLocation) {
         if (patient == null){
             throw new IllegalArgumentException("Patient shouldn't be null");
         }
@@ -157,12 +155,12 @@ public class PaperRecordServiceImpl implements PaperRecordService {
         String dossierNumber = identifierSourceService.generateIdentifier(paperRecordIdentifierType, "generating a new dossier number");
 
         if (patient.getPatientIdentifier(paperRecordIdentifierType)==null){
-            PatientIdentifier paperRecordIdentifier = new PatientIdentifier(dossierNumber, paperRecordIdentifierType, request.getRecordLocation());
-            patientService.savePatientIdentifier(paperRecordIdentifier);
+            PatientIdentifier paperRecordIdentifier = new PatientIdentifier(dossierNumber, paperRecordIdentifierType, medicalRecordLocation);
             patient.addIdentifier(paperRecordIdentifier);
+            patientService.savePatientIdentifier(paperRecordIdentifier);
         }
 
-        return patient;
+        return dossierNumber;
     }
 
     protected PatientIdentifierType getPaperRecordIdentifierType() {

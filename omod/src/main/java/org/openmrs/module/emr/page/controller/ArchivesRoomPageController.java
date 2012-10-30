@@ -27,11 +27,17 @@ public class ArchivesRoomPageController {
      * @param requests
      */
     public String post(@RequestParam("requestId") List<PaperRecordRequest> requests,
+                       @RequestParam(value = "createPaperMedicalRecord", required = false) boolean createPaperMedicalRecord,
                        @RequestParam("assignTo") Person assignTo,
                        @SpringBean PaperRecordService paperRecordService,
                        UiUtils ui,
                        HttpSession session) {
         try {
+            if (createPaperMedicalRecord){
+                for (PaperRecordRequest request : requests) {
+                    paperRecordService.createPaperMedicalRecordNumberTo(request.getPatient(), request.getRecordLocation());
+                }
+            }
             paperRecordService.assignRequests(requests, assignTo);
         } catch (IllegalStateException ex) {
             session.setAttribute(WebConstants.OPENMRS_ERROR_ATTR, ui.message("emr.pullRecords.alreadyAssigned"));

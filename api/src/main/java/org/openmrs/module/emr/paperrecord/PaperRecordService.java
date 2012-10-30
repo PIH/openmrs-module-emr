@@ -76,5 +76,5 @@ public interface PaperRecordService {
     List<PaperRecordRequest> assignRequests(List<PaperRecordRequest> requests, Person assignee);
 
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
-    Patient createPaperMedicalRecordNumberTo(Patient patient, PaperRecordRequest paperRecordRequest);
+    String createPaperMedicalRecordNumberTo(Patient patient, Location medicalRecordLocation);
 }

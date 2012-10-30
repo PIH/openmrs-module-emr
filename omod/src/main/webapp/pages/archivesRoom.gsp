@@ -17,7 +17,7 @@
         var requests = [];
         <% openRequests.each { %>
              requests.push(RecordRequestModel(
-                ${it.requestId}, "${ui.format(it.patient)}", "${it.patient.patientId}", "${it.identifier}", "${ui.format(it.requestLocation)}", "${timeFormat.format(it.dateCreated)}", ${it.dateCreated.time}
+                ${it.requestId}, "${ui.format(it.patient)}", "${ui.format(it.patient.getPatientIdentifier("ZL EMR ID").identifier)}", "${it.identifier}", "${ui.format(it.requestLocation)}", "${timeFormat.format(it.dateCreated)}", ${it.dateCreated.time}
             ));
         <% } %>
 
@@ -28,7 +28,7 @@
         var recordsToCreate = [];
         <% requestsToCreate.each { %>
         recordsToCreate.push(RecordRequestModel(
-                ${it.requestId}, "${ui.format(it.patient)}", "${it.patient.patientId}", "${it.identifier}", "${ui.format(it.requestLocation)}", "${timeFormat.format(it.dateCreated)}", ${it.dateCreated.time}
+                ${it.requestId}, "${ui.format(it.patient)}", "${ui.format(it.patient.getPatientIdentifier("ZL EMR ID").identifier)}", "${it.identifier}", "${ui.format(it.requestLocation)}", "${timeFormat.format(it.dateCreated)}", ${it.dateCreated.time}
         ));
         <% } %>
 
@@ -100,6 +100,7 @@
                 <span style="display: none" data-bind="foreach: selectedRequests()">
                     <input type="hidden" name="requestId" data-bind="value: requestId"/>
                 </span>
+                <input type="hidden" name="createPaperMedicalRecord" value="true">
                 <input type="submit" value="${ ui.message("emr.pullRecords.createSelected") }" data-bind="enable: selectedRequests().length > 0"/>
             </form>
 

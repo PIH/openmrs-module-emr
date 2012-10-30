@@ -251,13 +251,10 @@ public class PaperRecordServiceTest {
 
         Patient patient = new Patient();
 
-        PaperRecordRequest paperRecordRequest = new PaperRecordRequest();
-        paperRecordRequest.setRecordLocation(createMedicalRecordLocation());
-
-        Patient patientWithPaperMedicalRecordAssigned = paperRecordService.createPaperMedicalRecordNumberTo(patient, paperRecordRequest);
+        String dossierNumber = paperRecordService.createPaperMedicalRecordNumberTo(patient, createMedicalRecordLocation());
         verify(patientService).savePatientIdentifier(any(PatientIdentifier.class));
 
-        assertEquals("A000001", patientWithPaperMedicalRecordAssigned.getPatientIdentifier().getIdentifier());
+        assertEquals("A000001", dossierNumber);
     }
 
 
