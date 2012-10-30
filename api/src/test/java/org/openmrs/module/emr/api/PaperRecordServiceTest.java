@@ -25,7 +25,6 @@ import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.paperrecord.db.PaperRecordRequestDAO;
 import org.openmrs.module.emr.paperrecord.PaperRecordServiceImpl;
 import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
-import org.openmrs.module.emr.paperrecord.PaperRecordService;
 import org.openmrs.module.idgen.service.IdentifierSourceService;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -83,26 +82,25 @@ public class PaperRecordServiceTest {
 
         Location requestLocation = createLocation(4, "Outpatient Clinic");
 
-        PatientIdentifier identifer = new PatientIdentifier();
-        identifer.setIdentifier("ABCZYX");
-        identifer.setIdentifierType(paperRecordIdentifierType);
-        identifer.setLocation(medicalRecordLocation);
+        PatientIdentifier identifer = createIdentifier(medicalRecordLocation, "ABCZYX");
 
         patient.addIdentifier(identifer);
 
-        PaperRecordRequest expectedRequest = new PaperRecordRequest();
-        expectedRequest.setAssignee(null);
-        expectedRequest.setCreator(authenticatedUser);
-        expectedRequest.setIdentifier("ABCZYX");
-        expectedRequest.setRecordLocation(medicalRecordLocation);
-        expectedRequest.setPatient(patient);
-        expectedRequest.setStatus(PaperRecordRequest.Status.OPEN);
+        PaperRecordRequest expectedRequest = createExpectedRequest(patient, medicalRecordLocation, "ABCZYX");
 
         IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(expectedRequest);
 
         PaperRecordRequest returnedRequest = paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
         verify(mockPaperRecordDAO).saveOrUpdate(argThat(expectedRequestMatcher));
         expectedRequestMatcher.matches(returnedRequest);
+    }
+
+    private PatientIdentifier createIdentifier(Location medicalRecordLocation, String identifier) {
+        PatientIdentifier identifer = new PatientIdentifier();
+        identifer.setIdentifier(identifier);
+        identifer.setIdentifierType(paperRecordIdentifierType);
+        identifer.setLocation(medicalRecordLocation);
+        return identifer;
     }
 
     private Location createLocation(int locationId, String locationName) {
@@ -166,31 +164,30 @@ public class PaperRecordServiceTest {
         Location requestLocation = createLocation(4, "Outpatient Clinic");
 
 
-        PatientIdentifier wrongIdentifer = new PatientIdentifier();
-        wrongIdentifer.setIdentifier("ZYXCBA");
-        wrongIdentifer.setIdentifierType(paperRecordIdentifierType);
-        wrongIdentifer.setLocation(otherLocation);
+        PatientIdentifier wrongIdentifer = createIdentifier(otherLocation, "ZYXCBA");
         patient.addIdentifier(wrongIdentifer);
 
-        PatientIdentifier identifer = new PatientIdentifier();
-        identifer.setIdentifier("ABCZYX");
-        identifer.setIdentifierType(paperRecordIdentifierType);
-        identifer.setLocation(medicalRecordLocation);
+        PatientIdentifier identifer = createIdentifier(medicalRecordLocation, "ABCZYX");
         patient.addIdentifier(identifer);
 
-        PaperRecordRequest expectedRequest = new PaperRecordRequest();
-        expectedRequest.setAssignee(null);
-        expectedRequest.setCreator(authenticatedUser);
-        expectedRequest.setIdentifier("ABCZYX");
-        expectedRequest.setRecordLocation(medicalRecordLocation);
-        expectedRequest.setPatient(patient);
-        expectedRequest.setStatus(PaperRecordRequest.Status.OPEN);
+        PaperRecordRequest expectedRequest = createExpectedRequest(patient, medicalRecordLocation, "ABCZYX");
 
         IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(expectedRequest);
 
         PaperRecordRequest returnedRequest = paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
         verify(mockPaperRecordDAO).saveOrUpdate(argThat(expectedRequestMatcher));
         expectedRequestMatcher.matches(returnedRequest);
+    }
+
+    private PaperRecordRequest createExpectedRequest(Patient patient, Location medicalRecordLocation, String identifier) {
+        PaperRecordRequest expectedRequest = new PaperRecordRequest();
+        expectedRequest.setAssignee(null);
+        expectedRequest.setCreator(authenticatedUser);
+        expectedRequest.setIdentifier(identifier);
+        expectedRequest.setRecordLocation(medicalRecordLocation);
+        expectedRequest.setPatient(patient);
+        expectedRequest.setStatus(PaperRecordRequest.Status.OPEN);
+        return expectedRequest;
     }
 
     @Test
@@ -207,13 +204,7 @@ public class PaperRecordServiceTest {
 
         Location requestLocation = createLocation(4, "Outpatient Clinic");
 
-        PaperRecordRequest expectedRequest = new PaperRecordRequest();
-        expectedRequest.setAssignee(null);
-        expectedRequest.setCreator(authenticatedUser);
-        expectedRequest.setIdentifier(null);
-        expectedRequest.setRecordLocation(medicalRecordLocation);
-        expectedRequest.setPatient(patient);
-        expectedRequest.setStatus(PaperRecordRequest.Status.OPEN);
+        PaperRecordRequest expectedRequest = createExpectedRequest(patient, medicalRecordLocation, null);
 
         IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(expectedRequest);
 
