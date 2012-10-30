@@ -16,14 +16,16 @@ package org.openmrs.module.emr.order;
 
 import org.openmrs.Order;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.module.emr.LuhnMod10IdentifierValidator;
 
 public class EmrOrderServiceImpl extends BaseOpenmrsService implements EmrOrderService {
 	
 	@Override
 	public void ensureAccessionNumberAssignedTo(Order order) {
 		if (order.getAccessionNumber() == null) {
-			order.setAccessionNumber(order.getOrderId().toString());
-        }
+			order.setAccessionNumber(order.getOrderId().toString()
+			        + new LuhnMod10IdentifierValidator().getValidIdentifier(order.getOrderId().toString()));
+		}
 	}
-
+	
 }

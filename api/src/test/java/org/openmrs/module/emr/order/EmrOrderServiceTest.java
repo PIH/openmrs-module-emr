@@ -14,16 +14,18 @@
 
 package org.openmrs.module.emr.order;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.openmrs.Order;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.openmrs.Order;
 
 public class EmrOrderServiceTest {
 
@@ -39,6 +41,7 @@ public class EmrOrderServiceTest {
         Order order = new Order();
         order.setOrderId(1);
         emrOrderService.ensureAccessionNumberAssignedTo(order);
+        Assert.assertTrue(verifyCheckDigit(order.getAccessionNumber(), order.getOrderId().toString()));
         assertThat(order.getAccessionNumber(), is(notNullValue()));
     }
 
@@ -51,9 +54,44 @@ public class EmrOrderServiceTest {
             Order order = new Order();
             order.setOrderId(i);
             emrOrderService.ensureAccessionNumberAssignedTo(order);
+            Assert.assertTrue(verifyCheckDigit(order.getAccessionNumber(), order.getOrderId().toString()));
             accessionNumbers.add(order.getAccessionNumber());
         }
         assertThat(accessionNumbers.size(), is(TIMES));
     }
+    
+    /**
+     * Checks that the specified accessionNumber has a valid check digit assigned to it
+     * @param accessionNumber
+     * @param orderId
+     * @return
+     */
+    private static boolean verifyCheckDigit(String accessionNumber,
+			String orderId) {
+		String checkdigitString = accessionNumber.substring(accessionNumber
+				.indexOf(orderId) + orderId.length());
+		char[] charArray = checkdigitString.toCharArray();
+		int[] number = new int[charArray.length];
+		int total = 0;
+
+		for (int i = 0; i < charArray.length; i++) {
+			number[i] = Character.getNumericValue(charArray[i]);
+		}
+
+		for (int i = number.length - 2; i > -1; i -= 2) {
+			number[i] *= 2;
+
+			if (number[i] > 9)
+				number[i] -= 9;
+		}
+
+		for (int i = 0; i < number.length; i++)
+			total += number[i];
+
+		if (total % 10 != 0)
+			return false;
+
+		return true;
+	}
 
 }
