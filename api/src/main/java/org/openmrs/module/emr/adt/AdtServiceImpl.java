@@ -115,7 +115,7 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 
     @Override
     @Transactional
-    public Visit ensureActiveVisit(Patient patient, Location department) {
+    public Visit getActiveVisit(Patient patient, Location department) {
         Date now = new Date();
 
         List<Visit> candidates = visitService.getVisitsByPatient(patient);
@@ -133,11 +133,19 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
             }
         }
 
-        if (ret == null) {
-            ret = buildVisit(patient, department, now);
-            visitService.saveVisit(ret);
-        }
         return ret;
+    }
+
+    @Override
+    @Transactional
+    public Visit ensureActiveVisit(Patient patient, Location department) {
+        Visit activeVisit = getActiveVisit(patient, department);
+        if (activeVisit == null) {
+            Date now = new Date();
+            activeVisit = buildVisit(patient, department, now);
+            visitService.saveVisit(activeVisit);
+        }
+        return activeVisit;
     }
 
     @Override
@@ -154,7 +162,7 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
             }
         }
         Date lastKnownDate = latest == null ? visit.getStartDatetime() : latest.getEncounterDatetime();
-        return DateUtils.addHours(lastKnownDate, emrProperties.getVisitExpireHours());
+        return lastKnownDate;
     }
 
     @Override
@@ -165,9 +173,19 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
             checkInClerk = getProvider(Context.getAuthenticatedUser());
         }
         Visit activeVisit = ensureActiveVisit(patient, where);
+
+        if (activeVisit.getEncounters() != null) {
+            for (Encounter encounter : activeVisit.getEncounters()) {
+                if (encounter.getEncounterType().equals(emrProperties.getCheckInEncounterType())) {
+                    // TODO verify this is the behavior we want
+                    throw new IllegalStateException("Already checked in: encounterId = " + encounter.getEncounterId());
+                }
+            }
+        }
+
         Encounter encounter = buildEncounter(emrProperties.getCheckInEncounterType(), patient, where, new Date(), obsForCheckInEncounter, ordersForCheckInEncounter);
         encounter.addProvider(emrProperties.getCheckInClerkEncounterRole(), checkInClerk);
-        encounter.setVisit(activeVisit);
+        activeVisit.addEncounter(encounter);
         encounterService.saveEncounter(encounter);
         return encounter;
     }

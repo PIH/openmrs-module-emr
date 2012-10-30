@@ -24,6 +24,7 @@ import org.openmrs.TestOrder;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.adt.AdtService;
 import org.openmrs.module.emr.api.EmrService;
 import org.openmrs.module.emr.api.db.EmrDAO;
 import org.openmrs.module.emr.domain.RadiologyRequisition;
@@ -31,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
@@ -45,16 +47,24 @@ public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
     @Qualifier("encounterService")
     private EncounterService encounterService;
 
+    @Autowired
+    @Qualifier("adtService")
+    private AdtService adtService;
+
     public void setDao(EmrDAO dao) {
         this.dao = dao;
     }
 
-    protected void setEmrProperties(EmrProperties emrProperties) {
+    public void setEmrProperties(EmrProperties emrProperties) {
         this.emrProperties = emrProperties;
     }
 
-    protected void setEncounterService(EncounterService encounterService) {
+    public void setEncounterService(EncounterService encounterService) {
         this.encounterService = encounterService;
+    }
+
+    public void setAdtService(AdtService adtService) {
+        this.adtService = adtService;
     }
 
     @Override
@@ -68,6 +78,13 @@ public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
         EncounterType placeOrdersEncounterType = emrProperties.getPlaceOrdersEncounterType();
         EncounterRole clinicianEncounterRole = emrProperties.getClinicianEncounterRole();
         OrderType testOrderType = emrProperties.getTestOrderType();
+
+        // TODO this won't work if encounterDatetime is in the past; need to deal with retrospective entry in a comprehensive way
+        adtService.ensureActiveVisit(requisition.getPatient(), requisition.getEncounterLocation());
+
+        if (requisition.getEncounterDatetime() == null) {
+            requisition.setEncounterDatetime(new Date());
+        }
 
         Encounter encounter = new Encounter();
         encounter.setEncounterType(placeOrdersEncounterType);

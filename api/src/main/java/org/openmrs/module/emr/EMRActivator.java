@@ -14,13 +14,16 @@
 package org.openmrs.module.emr;
 
 
-import org.apache.commons.logging.Log; 
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.GlobalProperty;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ModuleActivator;
-import org.openmrs.module.appframework.AppDescriptor;
+import org.openmrs.module.emr.adt.EmrVisitAssignmentHandler;
 import org.openmrs.module.emr.task.TaskDescriptor;
 import org.openmrs.module.emr.task.TaskService;
+import org.openmrs.util.OpenmrsConstants;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -81,7 +84,17 @@ public class EMRActivator implements ModuleActivator {
 	 * @see ModuleActivator#started()
 	 */
 	public void started() {
-		log.info("EMR Module started");
+        // When https://tickets.openmrs.org/browse/TRUNK-3773 is resolved, refactor this
+        AdministrationService administrationService = Context.getAdministrationService();
+        GlobalProperty gp = administrationService.getGlobalPropertyObject(OpenmrsConstants.GP_VISIT_ASSIGNMENT_HANDLER);
+        if (gp == null) {
+            gp = new GlobalProperty();
+            gp.setProperty(OpenmrsConstants.GP_VISIT_ASSIGNMENT_HANDLER);
+        }
+        gp.setPropertyValue(EmrVisitAssignmentHandler.class.getName());
+        administrationService.saveGlobalProperty(gp);
+
+        log.info("EMR Module started");
 	}
 	
 	/**

@@ -31,10 +31,10 @@ import org.openmrs.Person;
 import org.openmrs.Provider;
 import org.openmrs.TestOrder;
 import org.openmrs.User;
-import org.openmrs.VisitType;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.adt.AdtService;
 import org.openmrs.module.emr.api.impl.EmrServiceImpl;
 import org.openmrs.module.emr.domain.RadiologyRequisition;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -57,7 +57,9 @@ public class EmrServiceTest {
 
     EmrService service;
 
-    EncounterService mockEncounterService;
+    private EncounterService mockEncounterService;
+    private AdtService mockAdtService;
+
     private OrderType testOrderType;
     private EncounterRole clinicianEncounterRole;
     private EncounterType radiologyOrderEncounterType;
@@ -84,7 +86,12 @@ public class EmrServiceTest {
         when(emrProperties.getPlaceOrdersEncounterType()).thenReturn(radiologyOrderEncounterType);
         when(emrProperties.getTestOrderType()).thenReturn(testOrderType);
 
-        service = new EmrServiceStub(mockEncounterService, emrProperties);
+        mockAdtService = mock(AdtService.class);
+
+        service = new EmrServiceImpl();
+        ((EmrServiceImpl) service).setEncounterService(mockEncounterService);
+        ((EmrServiceImpl) service).setEmrProperties(emrProperties);
+        ((EmrServiceImpl) service).setAdtService(mockAdtService);
     }
 
     @Test
@@ -136,6 +143,7 @@ public class EmrServiceTest {
         expected.setEncounterType(radiologyOrderEncounterType);
         expected.addOrder(expectedOrder);
 
+        verify(mockAdtService).ensureActiveVisit(patient, encounterLocation);
         verify(mockEncounterService).saveEncounter(argThat(new IsExpectedEncounter(expected)));
     }
 
@@ -162,15 +170,6 @@ public class EmrServiceTest {
 
             return true;
         }
-    }
-
-    private class EmrServiceStub extends EmrServiceImpl {
-
-		public EmrServiceStub(EncounterService mockEncounterService, EmrProperties emrProperties) {
-            setEncounterService(mockEncounterService);
-            setEmrProperties(emrProperties);
-        }
-
     }
 
     private class IsExpectedOrder extends ArgumentMatcher<Order> {

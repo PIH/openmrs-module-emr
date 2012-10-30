@@ -44,9 +44,17 @@ import java.util.List;
 public interface AdtService extends OpenmrsService {
 
     /**
-     * Ensures this patient has an <em>active</em> visit at the given location.
+     * Gets the patient's <em>active</em> visit at the given location, or null, if none exists.
      * If the patient has any non-stopped visits that are not active, they are stopped as a side-effect.
-     * If this method creates a new Visit, it will also persist it to the database.
+     * @param patient
+     * @param department
+     * @return
+     */
+    Visit getActiveVisit(Patient patient, Location department);
+
+    /**
+     * Like #getActiveVisit, but if the patient has no active visit, one is created (and persisted).
+     * (This has the same side-effects as #getActiveVisit.)
      * The visit's location will be a valid visit location per our business logic.
      *
      * @param patient

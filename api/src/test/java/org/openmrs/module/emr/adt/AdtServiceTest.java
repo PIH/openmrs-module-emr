@@ -199,21 +199,35 @@ public class AdtServiceTest {
         assertNotNull(created);
         assertNotSame(oldVisit, created);
 
-        // should be called once to save oldVisit (having stopped it) and once to create a new visit
-        verify(mockVisitService, times(2)).saveVisit(argThat(new ArgumentMatcher<Visit>() {
+        // should be called once to save oldVisit (having stopped it)
+        verify(mockVisitService).saveVisit(argThat(new ArgumentMatcher<Visit>() {
             @Override
             public boolean matches(Object o) {
                 Visit actual = (Visit) o;
                 if (actual == oldVisit) {
-                    assertNotNull(actual.getStopDatetime());
+                    // no encounters, so closed at the moment it started
+                    assertThat(actual.getStopDatetime(), is(oldVisit.getStartDatetime()));
                     return true;
                 } else {
+                    return false;
+                }
+            }
+        }));
+
+        // should be called once to create a new visit
+        verify(mockVisitService).saveVisit(argThat(new ArgumentMatcher<Visit>() {
+            @Override
+            public boolean matches(Object o) {
+                Visit actual = (Visit) o;
+                if (actual != oldVisit) {
                     assertSame(created, actual);
                     assertThat(actual.getVisitType(), is(atFacilityVisitType));
                     assertThat(actual.getPatient(), is(patient));
                     assertThat(actual.getLocation(), is(mirebalaisHospital));
                     assertThat(actual.getStartDatetime(), isJustNow());
                     return true;
+                } else {
+                    return false;
                 }
             }
         }));
