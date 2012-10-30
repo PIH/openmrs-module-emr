@@ -14,6 +14,13 @@
 
 package org.openmrs.module.emr.adt;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
@@ -37,10 +44,6 @@ import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
 
 
 public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
@@ -275,5 +278,47 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
         }
         return a.equals(b) || isSameOrAncestor(a, b.getParentLocation());
     }
+	
+	/**
+	 * @see org.openmrs.module.emr.adt.AdtService#getActiveVisitSummaries(org.openmrs.Location)
+	 */
+	@Override
+	public List<VisitSummary> getActiveVisitSummaries(Location location) {
+		List<Location> locations = new ArrayList<Location>();
+		locations.addAll(getChildLocationsRecursively(location, null));
+		List<Visit> candidates = visitService.getVisits(null, null, locations, null, null, null, null, null, null, false,
+		    false);
+		
+		List<VisitSummary> active = new ArrayList<VisitSummary>();
+		for (Visit candidate : candidates) {
+			if (isActive(candidate)) {
+				active.add(new VisitSummary(candidate, emrProperties));
+			}
+		}
+		
+		return active;
+	}
+	
+	/**
+	 * Utility method that returns all child locations and children of its child locations
+	 * recursively
+	 * 
+	 * @param location
+	 * @param foundLocations
+	 * @return
+	 */
+	private Set<Location> getChildLocationsRecursively(Location location, Set<Location> foundLocations) {
+		if (foundLocations == null)
+			foundLocations = new HashSet<Location>();
+		
+		if (location.getChildLocations() != null) {
+			for (Location l : location.getChildLocations()) {
+				foundLocations.add(l);
+				getChildLocationsRecursively(l, foundLocations);
+			}
+		}
+		
+		return foundLocations;
+	}
 
 }
