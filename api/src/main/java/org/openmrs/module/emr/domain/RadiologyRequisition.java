@@ -16,8 +16,6 @@ package org.openmrs.module.emr.domain;
 
 import org.openmrs.Concept;
 import org.openmrs.Location;
-import org.openmrs.Order;
-import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.TestOrder;
 import org.openmrs.Visit;
@@ -29,38 +27,17 @@ import java.util.Set;
 /**
  * Requisition of one or more radiology studies (XRay, CT, Ultrasound), with associated metadata about the entire group
  */
-public class RadiologyRequisition {
+public class RadiologyRequisition extends TestOrder {
 
     public enum Modality { XRAY;}
 
     private Modality modality;
 
-    private Patient patient;
-
     private Provider requestedBy;
 
     private String clinicalHistory;
 
-    private Order.Urgency urgency;
-
-    private TestOrder.Laterality laterality;
-
-    /**
-     * where the exam should take place
-     */
-    private Location examLocation;
-
-    private Concept transportation;
-
-    /**
-     * where the order is placed from
-     */
-    private Location encounterLocation;
-
-    /**
-     * when the order is placed
-     */
-    private Date encounterDatetime;
+    private Location portableExamLocation;
 
     private Set<Concept> studies = new LinkedHashSet<Concept>();
 
@@ -68,10 +45,6 @@ public class RadiologyRequisition {
 
     public Modality getModality() {
         return modality;
-    }
-
-    public Patient getPatient() {
-        return patient;
     }
 
     public Provider getRequestedBy() {
@@ -82,20 +55,8 @@ public class RadiologyRequisition {
         return clinicalHistory;
     }
 
-    public Order.Urgency getUrgency() {
-        return urgency;
-    }
-
-    public TestOrder.Laterality getLaterality() {
-        return laterality;
-    }
-
-    public Location getExamLocation() {
-        return examLocation;
-    }
-
-    public Concept getTransportation() {
-        return transportation;
+    public Location getPortableExamLocation() {
+        return portableExamLocation;
     }
 
     public Set<Concept> getStudies() {
@@ -118,36 +79,12 @@ public class RadiologyRequisition {
         studies.add(orderable);
     }
 
-    public void setUrgency(Order.Urgency urgency) {
-        this.urgency = urgency;
-    }
-
-    public void setLaterality(TestOrder.Laterality laterality) {
-        this.laterality = laterality;
-    }
-
-    public void setExamLocation(Location examLocation) {
-        this.examLocation = examLocation;
-    }
-
-    public void setTransportation(Concept transportation) {
-        this.transportation = transportation;
-    }
-
-    public void setPatient(Patient patient) {
-        this.patient = patient;
+    public void setPortableExamLocation(Location portableExamLocation) {
+        this.portableExamLocation = portableExamLocation;
     }
 
     public void setModality(Modality modality) {
         this.modality = modality;
-    }
-
-    public Location getEncounterLocation() {
-        return encounterLocation;
-    }
-
-    public void setEncounterLocation(Location encounterLocation) {
-        this.encounterLocation = encounterLocation;
     }
 
     public Visit getVisit() {
@@ -156,13 +93,5 @@ public class RadiologyRequisition {
 
     public void setVisit(Visit visit) {
         this.visit = visit;
-    }
-
-    public Date getEncounterDatetime() {
-        return encounterDatetime;
-    }
-
-    public void setEncounterDatetime(Date encounterDatetime) {
-        this.encounterDatetime = encounterDatetime;
     }
 }

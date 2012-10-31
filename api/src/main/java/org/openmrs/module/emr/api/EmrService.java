@@ -13,11 +13,9 @@
  */
 package org.openmrs.module.emr.api;
 
-import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.OpenmrsService;
-import org.openmrs.module.emr.domain.RadiologyRequisition;
 
 import java.util.List;
 
@@ -27,7 +25,5 @@ import java.util.List;
 public interface EmrService extends OpenmrsService {
 
     List<Patient> findPatients(String query, Location checkedInAt, Integer start, Integer length);
-
-    Encounter placeRadiologyRequisition(RadiologyRequisition requisition);
 
 }
