@@ -71,22 +71,22 @@ public class EmrOrderServiceTest {
 		String checkdigitString = accessionNumber.substring(accessionNumber
 				.indexOf(orderId) + orderId.length());
 		char[] charArray = checkdigitString.toCharArray();
-		int[] number = new int[charArray.length];
+		int[] numbers = new int[charArray.length];
 		int total = 0;
 
 		for (int i = 0; i < charArray.length; i++) {
-			number[i] = Character.getNumericValue(charArray[i]);
+			numbers[i] = Character.getNumericValue(charArray[i]);
 		}
 
-		for (int i = number.length - 2; i > -1; i -= 2) {
-			number[i] *= 2;
+		for (int i = numbers.length - 2; i > -1; i -= 2) {
+			numbers[i] *= 2;
 
-			if (number[i] > 9)
-				number[i] -= 9;
+			if (numbers[i] > 9)
+				numbers[i] -= 9;
 		}
 
-		for (int i = 0; i < number.length; i++)
-			total += number[i];
+		for (int i = 0; i < numbers.length; i++)
+			total += numbers[i];
 
 		if (total % 10 != 0)
 			return false;

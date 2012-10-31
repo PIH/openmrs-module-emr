@@ -16,7 +16,7 @@ package org.openmrs.module.emr.order;
 
 import org.openmrs.Order;
 import org.openmrs.api.impl.BaseOpenmrsService;
-import org.openmrs.module.emr.LuhnMod10IdentifierValidator;
+import org.openmrs.module.idgen.validator.LuhnMod10IdentifierValidator;
 
 public class EmrOrderServiceImpl extends BaseOpenmrsService implements EmrOrderService {
 	
