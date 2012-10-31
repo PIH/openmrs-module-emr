@@ -10,7 +10,7 @@
 
 <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
     jq(document).ready( function() {
-        ko.applyBindings( new StudiesViewModel(${xrayOrderables}, [{"value": "1", "label": "Clinic"}, {"value": "2", "label": "Emergency"}, {"value": "3", "label": "San Femme"}]) );
+        ko.applyBindings( new StudiesViewModel(${xrayOrderables}, ${portableLocations}) );
 
         // Preventing form submission when pressing enter on study-search input field
         jq('#study-search').bind('keypress', function(eventKey) {
