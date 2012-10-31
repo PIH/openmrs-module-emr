@@ -49,7 +49,7 @@
     Which patients?
     <%
         def opts = [] + [ id: null, label: "All Patients" ]
-        opts.addAll(context.locationService.getAllLocations(false).collect { [ id: it.id, label: "Checked in at: ${ ui.format(it) }" ] })
+        opts.addAll(locationsThatSupportVisits.collect { [ id: it.id, label: "Checked in at: ${ ui.format(it) }" ] })
 
         opts.each {
             def selected = it.id == checkedInAt?.id

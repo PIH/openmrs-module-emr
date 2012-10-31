@@ -102,6 +102,12 @@ public interface AdtService extends OpenmrsService {
     Location getLocationThatSupportsVisits(Location location);
 
     /**
+     * @see org.openmrs.module.emr.EmrConstants#LOCATION_TAG_SUPPORTS_VISITS
+     * @return all locations that are allowed to have visits assigned to them
+     */
+    List<Location> getAllLocationsThatSupportVisits();
+
+    /**
      * @param visit
      * @param location
      * @param when

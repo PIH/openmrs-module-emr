@@ -18,6 +18,7 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
+import org.openmrs.module.emr.adt.VisitSummary;
 
 import javax.servlet.http.HttpSession;
 
@@ -36,6 +37,10 @@ public class EmrContext {
 
     Patient currentPatient;
 
+    VisitSummary activeVisitSummary;
+
+    HttpSession session;
+
     public EmrContext() {
         try {
             userContext = Context.getUserContext();
@@ -46,9 +51,10 @@ public class EmrContext {
 
     public EmrContext(HttpSession session) {
         this();
-        String locationId = (String) session.getAttribute(LOCATION_SESSION_ATTRIBUTE);
+        this.session = session;
+        Integer locationId = (Integer) session.getAttribute(LOCATION_SESSION_ATTRIBUTE);
         if (locationId != null) {
-            this.sessionLocation = Context.getLocationService().getLocation(Integer.valueOf(locationId));
+            this.sessionLocation = Context.getLocationService().getLocation(locationId);
         }
     }
 
@@ -64,7 +70,14 @@ public class EmrContext {
         return sessionLocation;
     }
 
+    /**
+     * Will write this value back to the session
+     * @param sessionLocation
+     */
     public void setSessionLocation(Location sessionLocation) {
+        if (session != null) {
+            session.setAttribute(LOCATION_SESSION_ATTRIBUTE, sessionLocation.getId());
+        }
         this.sessionLocation = sessionLocation;
     }
 
@@ -74,6 +87,14 @@ public class EmrContext {
 
     public void setCurrentPatient(Patient currentPatient) {
         this.currentPatient = currentPatient;
+    }
+
+    public VisitSummary getActiveVisitSummary() {
+        return activeVisitSummary;
+    }
+
+    public void setActiveVisitSummary(VisitSummary activeVisitSummary) {
+        this.activeVisitSummary = activeVisitSummary;
     }
 
 }

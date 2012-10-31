@@ -14,13 +14,6 @@
 
 package org.openmrs.module.emr.adt;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
@@ -33,6 +26,7 @@ import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.OrderService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.VisitService;
@@ -44,6 +38,13 @@ import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 
 public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
@@ -72,23 +73,27 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
     @Qualifier("providerService")
     private ProviderService providerService;
 
-    protected void setEmrProperties(EmrProperties emrProperties) {
+    @Autowired
+    @Qualifier("locationService")
+    private LocationService locationService;
+
+    public void setEmrProperties(EmrProperties emrProperties) {
         this.emrProperties = emrProperties;
     }
 
-    protected void setEncounterService(EncounterService encounterService) {
+    public void setEncounterService(EncounterService encounterService) {
         this.encounterService = encounterService;
     }
 
-    protected void setVisitService(VisitService visitService) {
+    public void setVisitService(VisitService visitService) {
         this.visitService = visitService;
     }
 
-    protected void setAdministrationService(AdministrationService administrationService) {
+    public void setAdministrationService(AdministrationService administrationService) {
         this.administrationService = administrationService;
     }
 
-    protected void setProviderService(ProviderService providerService) {
+    public void setProviderService(ProviderService providerService) {
         this.providerService = providerService;
     }
 
@@ -250,6 +255,12 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
         }
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Location> getAllLocationsThatSupportVisits() {
+        return locationService.getLocationsByTag(emrProperties.getSupportsVisitsLocationTag());
+    }
+
     /**
      * @param visit
      * @param location
@@ -287,8 +298,7 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 		if(location == null){
 			throw new IllegalArgumentException("Location is required");
 		}
-		List<Location> locations = new ArrayList<Location>();
-		locations.addAll(getChildLocationsRecursively(location, null));
+		Set<Location> locations = getChildLocationsRecursively(location, null);
 		List<Visit> candidates = visitService.getVisits(null, null, locations, null, null, null, null, null, null, false,
 		    false);
 		
@@ -312,8 +322,10 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 	 */
 	private Set<Location> getChildLocationsRecursively(Location location, Set<Location> foundLocations) {
 		if (foundLocations == null)
-			foundLocations = new HashSet<Location>();
-		
+			foundLocations = new LinkedHashSet<Location>();
+
+        foundLocations.add(location);
+
 		if (location.getChildLocations() != null) {
 			for (Location l : location.getChildLocations()) {
 				foundLocations.add(l);

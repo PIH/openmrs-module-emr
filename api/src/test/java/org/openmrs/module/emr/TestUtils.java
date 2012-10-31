@@ -23,6 +23,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.regex.Pattern;
 
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Various utils to help with testing
@@ -50,6 +53,35 @@ public class TestUtils {
 		Assert.fail("Collection does not contain an element with " + property + " = " + value + ". Collection: "
 		        + collection);
 	}
+
+    public static <T> ArgumentMatcher<T> containsElementsWithProperties(final String property, final T... expectedPropertyValues) {
+        return new ArgumentMatcher<T>() {
+            @Override
+            public boolean matches(Object o) {
+                assertTrue(o instanceof Collection);
+                Collection actual = (Collection) o;
+                for (T expectedPropertyValue : expectedPropertyValues) {
+                    assertContainsElementWithProperty(actual, property, expectedPropertyValue);
+                }
+                return true;
+            }
+        };
+    }
+
+    public static <T> ArgumentMatcher<T> isCollectionOfExactlyElementsWithProperties(final String property, final Object... expectedPropertyValues) {
+        return new ArgumentMatcher<T>() {
+            @Override
+            public boolean matches(Object o) {
+                assertTrue(o instanceof Collection);
+                Collection actual = (Collection) o;
+                assertThat(actual.size(), is(expectedPropertyValues.length));
+                for (Object expectedPropertyValue : expectedPropertyValues) {
+                    assertContainsElementWithProperty(actual, property, expectedPropertyValue);
+                }
+                return true;
+            }
+        };
+    }
 
     /**
      * Tests whether the substring is contained in the actual string.

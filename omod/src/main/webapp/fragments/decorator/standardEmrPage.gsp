@@ -21,6 +21,8 @@
 		<span style="float: right">
 			${ ui.includeFragment("emr", "loginInfo") }
 			|
+            ${ ui.message("emr.emrContext.sessionLocation", ui.format(emrContext.sessionLocation)) }
+            |
 			<a href="/${ contextPath }/logout">Log Out</a>
 		</span>
 	<% } %>

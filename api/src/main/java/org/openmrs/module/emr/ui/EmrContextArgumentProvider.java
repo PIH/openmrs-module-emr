@@ -15,8 +15,14 @@
 package org.openmrs.module.emr.ui;
 
 import org.apache.commons.lang.StringUtils;
+import org.openmrs.Location;
+import org.openmrs.Patient;
+import org.openmrs.Visit;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.emr.EmrContext;
+import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.adt.AdtService;
+import org.openmrs.module.emr.adt.VisitSummary;
 import org.openmrs.ui.framework.fragment.FragmentContext;
 import org.openmrs.ui.framework.fragment.FragmentModelConfigurator;
 import org.openmrs.ui.framework.fragment.PossibleFragmentActionArgumentProvider;
@@ -43,6 +49,12 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
 
     @Autowired
     PatientService patientService;
+
+    @Autowired
+    AdtService adtService;
+
+    @Autowired
+    EmrProperties emrProperties;
 
     @Override
     public void configureModel(PageContext pageContext) {
@@ -93,7 +105,16 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
 
         if (StringUtils.isNotEmpty(patientId)) {
             try {
-                emrContext.setCurrentPatient(patientService.getPatient(Integer.valueOf(patientId)));
+                Patient patient = patientService.getPatient(Integer.valueOf(patientId));
+                if (patient != null) {
+                    emrContext.setCurrentPatient(patient);
+
+                    Location visitLocation = adtService.getLocationThatSupportsVisits(emrContext.getSessionLocation());
+                    Visit activeVisit = adtService.getActiveVisit(patient, visitLocation);
+                    if (activeVisit != null) {
+                        emrContext.setActiveVisitSummary(new VisitSummary(activeVisit, emrProperties));
+                    }
+                }
             } catch (Exception ex) {
                 // don't fail, even if the patientId or patient parameter isn't as expected
             }

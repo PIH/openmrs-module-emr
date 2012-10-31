@@ -1,7 +1,10 @@
 <%
     ui.decorateWith("emr", "standardEmrPage")
 %>
-<table>
+
+<h3>Active Visits</h3>
+
+<table width="100%" border="1" cellspacing="0" cellpadding="2">
 	<thead>
 		<tr>
 			<th>ID</th>
@@ -16,16 +19,28 @@
 			def latest = v.lastEncounter
 		%>
 			<tr>
-				<td>${ ui.format(v.patient.identifier) }</td>
-				<td>${ ui.format(v.patient) }</td>
+				<td>${ ui.format(v.visit.patient.patientIdentifier) }</td>
 				<td>
-					${ ui.format(checkIn.location) }
-					${ ui.format(checkIn.encounterDatetime) }
+                    <a href="${ ui.pageLink("emr", "patient", [ patientId: v.visit.patient.id ]) }">
+                        ${ ui.format(v.visit.patient) }
+                    </a>
+                </td>
+				<td>
+                    <% if (checkIn) { %>
+                        <small>
+                            ${ ui.format(checkIn.location) } @ ${ ui.format(checkIn.encounterDatetime) }
+                        </small>
+                    <% } %>
 				</td>
 				<td>
-					${ ui.format(latest.location) }
-					${ ui.format(latest.encounterDatetime)}
-					${ ui.format(latest.encounterType)}
+                    <% if (latest) { %>
+                        ${ ui.format(latest.encounterType) }
+                        <br/>
+                        <small>
+                            ${ ui.format(latest.location) } @ ${ ui.format(latest.encounterDatetime) }
+                        </small>
+
+                    <% } %>
 				</td>
 			</tr>
 		<% } %>

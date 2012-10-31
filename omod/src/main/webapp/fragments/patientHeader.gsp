@@ -3,12 +3,12 @@
         border-bottom: 1px gray solid;
     }
 
-    .patient-header .icon , .patient-header .demographics , .patient-header .identifiers {
+    .patient-header .icon , .patient-header .demographics , .patient-header .identifiers, .active-visit {
         float: left;
         margin-right: 2em;
     }
 
-    .patient-header .demographics , .patient-header .identifiers {
+    .patient-header .demographics , .patient-header .identifiers, .active-visit {
         padding-top: 1em;
     }
 
@@ -37,6 +37,13 @@
             ${ ui.format(it) } <br/>
         <% } %>
     </div>
+
+    <% if (emrContext.activeVisitSummary) { %>
+        <div class="active-visit">
+            <% def visit = emrContext.activeVisitSummary.visit %>
+            ${ ui.message("emr.activeVisit", ui.format(visit.startDatetime), ui.format(visit.location)) }
+        </div>
+    <% } %>
 
     <div class="close"></div>
 </div>

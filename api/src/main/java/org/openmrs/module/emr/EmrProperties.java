@@ -17,6 +17,7 @@ package org.openmrs.module.emr;
 import org.openmrs.Concept;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
+import org.openmrs.LocationTag;
 import org.openmrs.OrderType;
 import org.openmrs.VisitType;
 import org.openmrs.module.emr.utils.ModuleProperties;
@@ -55,6 +56,10 @@ public class EmrProperties extends ModuleProperties {
 
     public VisitType getAtFacilityVisitType() {
         return getVisitTypeByGlobalProperty(EmrConstants.GP_AT_FACILITY_VISIT_TYPE);
+    }
+
+    public LocationTag getSupportsVisitsLocationTag() {
+        return locationService.getLocationTagByName(EmrConstants.LOCATION_TAG_SUPPORTS_VISITS);
     }
 
 }

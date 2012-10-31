@@ -14,30 +14,7 @@
 
 package org.openmrs.module.emr.adt;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.openmrs.module.emr.TestUtils.isJustNow;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.time.DateUtils;
-import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,6 +40,32 @@ import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.openmrs.module.emr.TestUtils.isCollectionOfExactlyElementsWithProperties;
+import static org.openmrs.module.emr.TestUtils.isJustNow;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Context.class)
@@ -109,11 +112,11 @@ public class AdtServiceTest {
         supportsVisits = new LocationTag();
         supportsVisits.setName(EmrConstants.LOCATION_TAG_SUPPORTS_VISITS);
 
+        outpatientDepartment = new Location();
+
         mirebalaisHospital = new Location();
         mirebalaisHospital.addTag(supportsVisits);
-
-        outpatientDepartment = new Location();
-        outpatientDepartment.setParentLocation(mirebalaisHospital);
+        mirebalaisHospital.addChildLocation(outpatientDepartment);
 
         EmrProperties emrProperties = mock(EmrProperties.class);
         when(emrProperties.getVisitExpireHours()).thenReturn(10);
@@ -122,7 +125,12 @@ public class AdtServiceTest {
         when(emrProperties.getCheckInClerkEncounterRole()).thenReturn(checkInClerkEncounterRole);
         when(emrProperties.getCheckInClerkEncounterRole()).thenReturn(checkInClerkEncounterRole);
 
-        service = new AdtServiceStub(mockVisitService, mockEncounterService, mockProviderService, emrProperties);
+        AdtServiceImpl service = new AdtServiceImpl();
+        service.setVisitService(mockVisitService);
+        service.setEncounterService(mockEncounterService);
+        service.setProviderService(mockProviderService);
+        service.setEmrProperties(emrProperties);
+        this.service = service;
     }
 
 
@@ -273,16 +281,6 @@ public class AdtServiceTest {
         }));
     }
 
-    private class AdtServiceStub extends AdtServiceImpl {
-        public AdtServiceStub(VisitService mockVisitService, EncounterService mockEncounterService,
-                              ProviderService mockProviderService, EmrProperties emrProperties) {
-            setVisitService(mockVisitService);
-            setEncounterService(mockEncounterService);
-            setProviderService(mockProviderService);
-            setEmrProperties(emrProperties);
-        }
-    }
-	
 	@SuppressWarnings({ "unchecked" })
 	@Test
 	public void shouldGetAllVisitSummariesOfAllActiveVisit() throws Exception {
@@ -298,31 +296,19 @@ public class AdtServiceTest {
 		visit3.setStartDatetime(DateUtils.addDays(new Date(), -10));
 		visit3.setStopDatetime(DateUtils.addDays(new Date(), -8));
 		visit3.setLocation(mirebalaisHospital);
-		
+
+        Set<Location> expectedLocations = new HashSet<Location>();
+        expectedLocations.add(mirebalaisHospital);
+        expectedLocations.add(outpatientDepartment);
+
 		when(
-		    mockVisitService.getVisits(any(Collection.class), any(Collection.class), any(Collection.class),
+		    mockVisitService.getVisits(any(Collection.class), any(Collection.class), eq(expectedLocations),
 		        any(Collection.class), any(Date.class), any(Date.class), any(Date.class), any(Date.class), any(Map.class),
 		        any(Boolean.class), any(Boolean.class))).thenReturn(Arrays.asList(visit1, visit2, visit3));
 		
 		List<VisitSummary> activeVisitSummaries = service.getActiveVisitSummaries(mirebalaisHospital);
-		
-		Assert.assertEquals(2, activeVisitSummaries.size());
-		Assert.assertThat(activeVisitSummaries,
-		    IsIterableContainingInAnyOrder.containsInAnyOrder(new ArgumentMatcher<VisitSummary>() {
-			    
-			    @Override
-			    public boolean matches(Object argument) {
-				    VisitSummary actual = (VisitSummary) argument;
-				    return actual.getVisit().equals(visit1);
-			    }
-		    }, new ArgumentMatcher<VisitSummary>() {
-			    
-			    @Override
-			    public boolean matches(Object argument) {
-				    VisitSummary actual = (VisitSummary) argument;
-				    return actual.getVisit().equals(visit2);
-			    }
-		    }));
+
+        assertThat(activeVisitSummaries, isCollectionOfExactlyElementsWithProperties("visit", visit1, visit2));
 	}
 
 }
