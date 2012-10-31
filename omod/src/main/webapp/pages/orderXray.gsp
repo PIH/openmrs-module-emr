@@ -8,9 +8,9 @@
     ui.includeCss("emr", "cupertino/jquery-ui-1.8.23.custom.css")
 %>
 
-<script type="text/javascript">
+<script type="text/javascript" xmlns="http://www.w3.org/1999/html">
     jq(document).ready( function() {
-        ko.applyBindings( new StudiesViewModel(${xrayOrderables}) );
+        ko.applyBindings( new StudiesViewModel(${xrayOrderables}, [{"value": "1", "label": "Clinic"}, {"value": "2", "label": "Emergency"}, {"value": "3", "label": "San Femme"}]) );
 
         // Preventing form submission when pressing enter on study-search input field
         jq('#study-search').bind('keypress', function(eventKey) {
@@ -89,12 +89,23 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                     ]
             ]) }
         </div>
+        <div class="row">
+            <span class="radio-label">Do you need a portable x-ray?</span>
+            <div>
+                <input type="checkbox" class="field-value" name="studyLocation" value="portable" data-bind="checked: portable"/>
+                <span>Yes</span>
+            </div>
+            <input id="portable-location" type="text" placeholder="Type location ..."
+                   data-bind="visible:portable, autocomplete:searchLocationTerm, search:convertedPortableLocations, select:selectLocation"/>
+        </div>
     </div>
 
 
     <div class="left-column">
         <label for="study-search">Type the name of a study:</label><br/>
-        <input id="study-search" style="width: 430px; height: 2em; padding-left: 5px; margin-top: 5px;" type="text" size="40" data-bind="autocomplete: searchTerm" placeholder="eg. Chest x-ray"/>
+        <input id="study-search" style="width: 430px; height: 2em; padding-left: 5px; margin-top: 5px;" type="text" size="40"
+               data-bind="autocomplete:searchTerm, search:convertedStudies, select:selectStudy"
+               placeholder="eg. Chest x-ray"/>
     </div>
     <div class="right-column">
         <div data-bind="visible: selectedStudies().length == 0">
