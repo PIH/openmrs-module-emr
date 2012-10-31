@@ -41,6 +41,8 @@ public class EmrConstants {
     public static final String PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS = "Paper Records - Request Records";
 
     public static final String LOCATION_TAG_SUPPORTS_VISITS = "Visit Location";
+    
+    public static final String CAPABILITY_ROLE_PREFIX = "Capability-";
 
     public static final String PRIMARY_IDENTIFIER_TYPE = "emr.primaryIdentifierType";
 

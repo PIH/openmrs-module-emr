@@ -28,6 +28,13 @@
         <property name="homepageUrl" value="emr/activeVisits.page"/>
         <property name="iconUrl" value="moduleResources/uilibrary/images/home_back_32.png"/>
     </bean>
+    <bean id="systemAdministrationApp" class="org.openmrs.module.appframework.SimpleAppDescriptor">
+        <property name="id" value="emr.systemAdministration"/>
+        <property name="label" value="System Administration"/>
+        <property name="homepageUrl" value="emr/systemAdministration.page"/>
+        <property name="iconUrl" value="moduleResources/uilibrary/images/settings-32.png"/>
+    </bean>
+    
 
     <!-- Tasks -->
     <bean id="emrOrderXrayTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
