@@ -1,6 +1,8 @@
 package org.openmrs.module.emr.page.controller;
 
 import org.openmrs.Person;
+import org.openmrs.api.AdministrationService;
+import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.paperrecord.PaperRecordService;
 import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 import org.openmrs.ui.framework.UiUtils;
@@ -12,14 +14,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+import static org.openmrs.module.emr.EmrConstants.PRIMARY_IDENTIFIER_TYPE;
+
 public class ArchivesRoomPageController {
 
-    public void get(PageModel model, @SpringBean PaperRecordService paperRecordService) {
+    public void get(PageModel model, @SpringBean PaperRecordService paperRecordService, @SpringBean("adminService") AdministrationService administrationService) {
         List<PaperRecordRequest> openPaperRecordRequests = paperRecordService.getOpenPaperRecordRequestsToPull();
         List<PaperRecordRequest> openPaperRecordRequestsToCreate = paperRecordService.getOpenPaperRecordRequestsToCreate();
+        String primaryIdentifierType = administrationService.getGlobalProperty(PRIMARY_IDENTIFIER_TYPE);
 
         model.addAttribute("requestsToCreate", openPaperRecordRequestsToCreate);
         model.addAttribute("openRequests", openPaperRecordRequests);
+        model.addAttribute("primaryIdentifierType", primaryIdentifierType);
     }
 
     /**
@@ -35,7 +41,7 @@ public class ArchivesRoomPageController {
         try {
             if (createPaperMedicalRecord){
                 for (PaperRecordRequest request : requests) {
-                    paperRecordService.createPaperMedicalRecordNumberTo(request.getPatient(), request.getRecordLocation());
+                    paperRecordService.createPaperMedicalRecordNumberFor(request.getPatient(), request.getRecordLocation());
                 }
             }
             paperRecordService.assignRequests(requests, assignTo);

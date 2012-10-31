@@ -247,14 +247,19 @@ public class PaperRecordServiceTest {
 
     @Test
     public void whenPatientDoesNotHaveAnPaperMedicalRecordIdentifierShouldCreateAnPaperMedicalRecordNumberAndAssignToHim(){
-        when(identifierSourceService.generateIdentifier(paperRecordIdentifierType,"generating a new dossier number")).thenReturn("A000001");
+        String paperMedicalRecordNumberAsExpected = "A000001";
+        when(identifierSourceService.generateIdentifier(paperRecordIdentifierType,"generating a new dossier number")).thenReturn(paperMedicalRecordNumberAsExpected);
 
         Patient patient = new Patient();
 
-        String dossierNumber = paperRecordService.createPaperMedicalRecordNumberTo(patient, createMedicalRecordLocation());
+        PatientIdentifier identifier = new PatientIdentifier(paperMedicalRecordNumberAsExpected, paperRecordIdentifierType, createMedicalRecordLocation());
+
+        String paperMedicalRecordNumber = paperRecordService.createPaperMedicalRecordNumberFor(patient, createMedicalRecordLocation());
+
+        //cannot compare using one identifier because the equals is not implemented correctly
         verify(patientService).savePatientIdentifier(any(PatientIdentifier.class));
 
-        assertEquals("A000001", dossierNumber);
+        assertEquals(paperMedicalRecordNumberAsExpected, paperMedicalRecordNumber);
     }
 
 

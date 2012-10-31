@@ -7,6 +7,7 @@
     ui.includeJavascript("emr", "custom/recordRequest.js")
 
     def timeFormat = new java.text.SimpleDateFormat("HH:mm")
+
 %>
 
 <script type="text/javascript">
@@ -17,7 +18,7 @@
         var requests = [];
         <% openRequests.each { %>
              requests.push(RecordRequestModel(
-                ${it.requestId}, "${ui.format(it.patient)}", "${ui.format(it.patient.getPatientIdentifier("ZL EMR ID").identifier)}", "${it.identifier}", "${ui.format(it.requestLocation)}", "${timeFormat.format(it.dateCreated)}", ${it.dateCreated.time}
+                ${it.requestId}, "${ui.format(it.patient)}", "${ui.format(it.patient.getPatientIdentifier(primaryIdentifierType).identifier)}", "${it.identifier}", "${ui.format(it.requestLocation)}", "${timeFormat.format(it.dateCreated)}", ${it.dateCreated.time}
             ));
         <% } %>
 
@@ -28,7 +29,7 @@
         var recordsToCreate = [];
         <% requestsToCreate.each { %>
         recordsToCreate.push(RecordRequestModel(
-                ${it.requestId}, "${ui.format(it.patient)}", "${ui.format(it.patient.getPatientIdentifier("ZL EMR ID").identifier)}", "${it.identifier}", "${ui.format(it.requestLocation)}", "${timeFormat.format(it.dateCreated)}", ${it.dateCreated.time}
+                ${it.requestId}, "${ui.format(it.patient)}", "${ui.format(it.patient.getPatientIdentifier(primaryIdentifierType).identifier)}", "${it.identifier}", "${ui.format(it.requestLocation)}", "${timeFormat.format(it.dateCreated)}", ${it.dateCreated.time}
         ));
         <% } %>
 

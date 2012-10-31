@@ -146,21 +146,22 @@ public class PaperRecordServiceImpl implements PaperRecordService {
     }
 
     @Override
-    public String createPaperMedicalRecordNumberTo(Patient patient, Location medicalRecordLocation) {
+    public String createPaperMedicalRecordNumberFor(Patient patient, Location medicalRecordLocation) {
         if (patient == null){
             throw new IllegalArgumentException("Patient shouldn't be null");
         }
 
         PatientIdentifierType paperRecordIdentifierType = getPaperRecordIdentifierType();
-        String dossierNumber = identifierSourceService.generateIdentifier(paperRecordIdentifierType, "generating a new dossier number");
+        String paperMedicalRecord = "";
 
         if (patient.getPatientIdentifier(paperRecordIdentifierType)==null){
-            PatientIdentifier paperRecordIdentifier = new PatientIdentifier(dossierNumber, paperRecordIdentifierType, medicalRecordLocation);
+            paperMedicalRecord = identifierSourceService.generateIdentifier(paperRecordIdentifierType, "generating a new dossier number");
+            PatientIdentifier paperRecordIdentifier = new PatientIdentifier(paperMedicalRecord, paperRecordIdentifierType, medicalRecordLocation);
             patient.addIdentifier(paperRecordIdentifier);
             patientService.savePatientIdentifier(paperRecordIdentifier);
         }
 
-        return dossierNumber;
+        return paperMedicalRecord;
     }
 
     protected PatientIdentifierType getPaperRecordIdentifierType() {

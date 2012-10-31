@@ -119,6 +119,14 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>emr.primaryIdentifierType</property>
+        <defaultValue>ZL EMR ID</defaultValue>
+        <description>
+            Primary identifier type for looking up patients, generating barcodes, etc
+        </description>
+    </globalProperty>
+
     <!-- Privileges -->
     <privilege>
         <name>Paper Records - Manage Requests</name>
