@@ -284,6 +284,9 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 	 */
 	@Override
 	public List<VisitSummary> getActiveVisitSummaries(Location location) {
+		if(location == null){
+			throw new IllegalArgumentException("Location is required");
+		}
 		List<Location> locations = new ArrayList<Location>();
 		locations.addAll(getChildLocationsRecursively(location, null));
 		List<Visit> candidates = visitService.getVisits(null, null, locations, null, null, null, null, null, null, false,
