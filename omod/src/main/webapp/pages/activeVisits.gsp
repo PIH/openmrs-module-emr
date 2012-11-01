@@ -4,7 +4,7 @@
 
 <h3>Active Visits</h3>
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2">
+<table id="active-visits" width="100%" border="1" cellspacing="0" cellpadding="2">
 	<thead>
 		<tr>
 			<th>ID</th>
