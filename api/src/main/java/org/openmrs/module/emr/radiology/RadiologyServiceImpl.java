@@ -1,7 +1,7 @@
 package org.openmrs.module.emr.radiology;
 
+import org.openmrs.Concept;
 import org.openmrs.Encounter;
-import org.openmrs.Provider;
 import org.openmrs.api.EncounterService;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
@@ -19,19 +19,15 @@ public class RadiologyServiceImpl implements RadiologyService {
     private EmrProperties emrProperties;
 
     @Autowired
-    @Qualifier("emrContext")
-    private EmrContext emrContext;
-
-    @Autowired
     @Qualifier("encounterService")
     private EncounterService encounterService;
 
     @Transactional
     @Override
-    public Encounter placeRadiologyRequisition(RadiologyRequisition requisition, Provider clinician) {
+    public Encounter placeRadiologyRequisition(EmrContext emrContext, RadiologyRequisition requisition) {
         Encounter encounter = new Encounter();
         encounter.setEncounterType(emrProperties.getPlaceOrdersEncounterType());
-        encounter.setProvider(emrProperties.getClinicianEncounterRole(), clinician);
+        encounter.setProvider(emrProperties.getClinicianEncounterRole(), requisition.getRequestedBy());
         encounter.setPatient(requisition.getPatient());
         encounter.setLocation(emrContext.getSessionLocation());
         encounter.setVisit(emrContext.getActiveVisitSummary().getVisit());
@@ -40,7 +36,17 @@ public class RadiologyServiceImpl implements RadiologyService {
         encounter.setEncounterDatetime(currentDatetime);
         encounter.setDateCreated(currentDatetime);
 
-        encounter.addOrder(requisition);
+        for (Concept study : requisition.getStudies()) {
+            RadiologyOrder order = new RadiologyOrder();
+            order.setExamLocation(requisition.getExamLocation());
+            order.setClinicalHistory(requisition.getClinicalHistory());
+            order.setConcept(study);
+            order.setUrgency(requisition.getUrgency());
+            order.setStartDate(requisition.getEncounterDatetime());
+            order.setOrderType(emrProperties.getTestOrderType());
+            order.setPatient(requisition.getPatient());
+            encounter.addOrder(order);
+        }
 
         return encounterService.saveEncounter(encounter);
     }
@@ -53,18 +59,11 @@ public class RadiologyServiceImpl implements RadiologyService {
     public void onShutdown() {
     }
 
-    @Override
-    public void setEmrProperties(EmrProperties emrProperties) {
+    protected void setEmrProperties(EmrProperties emrProperties) {
         this.emrProperties = emrProperties;
     }
 
-    @Override
-    public void setEmrContext(EmrContext emrContext) {
-        this.emrContext = emrContext;
-    }
-
-    @Override
-    public void setEncounterService(EncounterService encounterService) {
+    protected void setEncounterService(EncounterService encounterService) {
         this.encounterService = encounterService;
     }
 }

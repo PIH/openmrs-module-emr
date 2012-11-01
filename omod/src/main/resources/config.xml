@@ -29,6 +29,7 @@
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
 	    PaperRecordRequest.hbm.xml
+        RadiologyOrder.hbm.xml
 	</mappingFiles>
 
 	<!-- Internationalization -->

@@ -10,11 +10,5 @@ import org.openmrs.module.emr.domain.RadiologyRequisition;
 
 public interface RadiologyService extends OpenmrsService {
 
-    Encounter placeRadiologyRequisition(RadiologyRequisition requisition, Provider clinician);
-
-    void setEmrProperties(EmrProperties emrProperties);
-
-    void setEncounterService(EncounterService encounterService);
-
-    void setEmrContext(EmrContext emrContext);
+    Encounter placeRadiologyRequisition(EmrContext emrContext, RadiologyRequisition requisition);
 }

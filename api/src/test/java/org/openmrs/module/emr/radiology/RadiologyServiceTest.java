@@ -3,6 +3,7 @@ package org.openmrs.module.emr.radiology;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openmrs.*;
@@ -19,12 +20,10 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.util.Date;
 import java.util.Set;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.contains;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Matchers.isA;
-import static org.mockito.Matchers.isNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,10 +31,15 @@ import static org.mockito.Mockito.when;
 @PrepareForTest(Context.class)
 public class RadiologyServiceTest {
 
-    private RadiologyService radiologyService;
+    private RadiologyServiceImpl radiologyService;
     private EmrProperties emrProperties;
     private EncounterService encounterService;
     private EmrContext emrContext;
+    private OrderType orderType;
+    private Patient patient;
+    private Concept study;
+    private Date encounterDate;
+    private String clinicalHistory;
 
     @Before
     public void setup() {
@@ -50,26 +54,35 @@ public class RadiologyServiceTest {
         radiologyService = new RadiologyServiceImpl();
         radiologyService.setEmrProperties(emrProperties);
         radiologyService.setEncounterService(encounterService);
-        radiologyService.setEmrContext(emrContext);
     }
 
     @Test
-    public void shouldPlaceARadiologyRequisitionWithOneStudy() {
+    public void shouldPlaceARadiologyRequisitionWithOneStudyOnFixedMachine() {
         Visit currentVisit = new Visit();
         VisitSummary currentVisitSummary = new VisitSummary(currentVisit, null);
         Location currentLocation = new Location();
         EncounterType placeOrdersEncounterType = new EncounterType();
         EncounterRole clinicianEncounterRole = new EncounterRole();
         Provider provider = new Provider();
-        Patient patient = new Patient();
+        patient = new Patient();
+        encounterDate = new Date();
+        study = new Concept();
+        orderType = new OrderType();
+        clinicalHistory = "Patient fell from a building";
 
-        RadiologyRequisition requisition = new RadiologyRequisition();
-        requisition.setPatient(patient);
+        RadiologyRequisition radiologyRequisition = new RadiologyRequisition();
+        radiologyRequisition.setPatient(patient);
+        radiologyRequisition.setRequestedBy(provider);
+        radiologyRequisition.setClinicalHistory(clinicalHistory);
+        radiologyRequisition.setEncounterDatetime(encounterDate);
+        radiologyRequisition.addStudy(study);
+        radiologyRequisition.setUrgency(Order.Urgency.STAT);
 
         when(emrContext.getActiveVisitSummary()).thenReturn(currentVisitSummary);
         when(emrContext.getSessionLocation()).thenReturn(currentLocation);
         when(emrProperties.getPlaceOrdersEncounterType()).thenReturn(placeOrdersEncounterType);
         when(emrProperties.getClinicianEncounterRole()).thenReturn(clinicianEncounterRole);
+        when(emrProperties.getTestOrderType()).thenReturn(orderType);
         when(encounterService.saveEncounter(isA(Encounter.class))).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -78,7 +91,7 @@ public class RadiologyServiceTest {
             }
         });
 
-        Encounter encounter = radiologyService.placeRadiologyRequisition(requisition, provider);
+        Encounter encounter = radiologyService.placeRadiologyRequisition(emrContext, radiologyRequisition);
 
         Set<Provider> providersByRole = encounter.getProvidersByRole(clinicianEncounterRole);
         assertThat(encounter.getEncounterType(), is(placeOrdersEncounterType));
@@ -89,6 +102,23 @@ public class RadiologyServiceTest {
         assertThat(encounter.getEncounterDatetime(), notNullValue());
         assertThat(encounter.getVisit(), is(currentVisit));
         assertThat(encounter.getOrders().size(), is(1));
-        assertThat(encounter.getOrders().contains(requisition), is(true));
+        assertThat(encounter.getOrders(), hasItem(new IsExpectedOrder()));
+    }
+
+    private class IsExpectedOrder extends ArgumentMatcher<Order> {
+        @Override
+        public boolean matches(Object o) {
+            RadiologyOrder actual = (RadiologyOrder) o;
+
+            assertThat(actual.getOrderType(), is(orderType));
+            assertThat(actual.getPatient(), is(patient));
+            assertThat(actual.getConcept(), is(study));
+            assertThat(actual.getStartDate(), is(encounterDate));
+            assertThat(actual.getUrgency(), is(Order.Urgency.STAT));
+            assertThat(actual.getClinicalHistory(), is(clinicalHistory));
+            assertThat(actual.getExamLocation(), is(nullValue()));
+
+            return true;
+        }
     }
 }
