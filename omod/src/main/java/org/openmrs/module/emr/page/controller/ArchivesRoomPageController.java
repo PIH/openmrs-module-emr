@@ -18,7 +18,7 @@ import static org.openmrs.module.emr.EmrConstants.PRIMARY_IDENTIFIER_TYPE;
 
 public class ArchivesRoomPageController {
 
-    public void get(PageModel model, @SpringBean PaperRecordService paperRecordService, @SpringBean("adminService") AdministrationService administrationService) {
+    public void get(PageModel model, @RequestParam(value = "createPaperMedicalRecord", required = false, defaultValue = "false") boolean createPaperMedicalRecord, @SpringBean PaperRecordService paperRecordService, @SpringBean("adminService") AdministrationService administrationService) {
         List<PaperRecordRequest> openPaperRecordRequests = paperRecordService.getOpenPaperRecordRequestsToPull();
         List<PaperRecordRequest> openPaperRecordRequestsToCreate = paperRecordService.getOpenPaperRecordRequestsToCreate();
         String primaryIdentifierType = administrationService.getGlobalProperty(PRIMARY_IDENTIFIER_TYPE);
@@ -26,6 +26,7 @@ public class ArchivesRoomPageController {
         model.addAttribute("requestsToCreate", openPaperRecordRequestsToCreate);
         model.addAttribute("openRequests", openPaperRecordRequests);
         model.addAttribute("primaryIdentifierType", primaryIdentifierType);
+        model.addAttribute("createPaperMedicalRecord", createPaperMedicalRecord);
     }
 
     /**
@@ -48,7 +49,7 @@ public class ArchivesRoomPageController {
         } catch (IllegalStateException ex) {
             session.setAttribute(WebConstants.OPENMRS_ERROR_ATTR, ui.message("emr.pullRecords.alreadyAssigned"));
         }
-        return "redirect:emr/archivesRoom.page";
+        return "redirect:emr/archivesRoom.page?createPaperMedicalRecord=" + createPaperMedicalRecord;
     }
 
 }

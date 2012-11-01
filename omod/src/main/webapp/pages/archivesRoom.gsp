@@ -15,6 +15,10 @@
 
         jq("#tabs").tabs();
 
+        <% if (createPaperMedicalRecord) {      %>
+            jq('#tabs').tabs('select', '#tab-createrequest');
+        <% }  %>
+
         var requests = [];
         <% openRequests.each { %>
              requests.push(RecordRequestModel(
