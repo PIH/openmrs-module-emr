@@ -42,7 +42,7 @@ public class RadiologyServiceImpl implements RadiologyService {
             order.setClinicalHistory(requisition.getClinicalHistory());
             order.setConcept(study);
             order.setUrgency(requisition.getUrgency());
-            order.setStartDate(requisition.getEncounterDatetime());
+            order.setStartDate(new Date());
             order.setOrderType(emrProperties.getTestOrderType());
             order.setPatient(requisition.getPatient());
             encounter.addOrder(order);

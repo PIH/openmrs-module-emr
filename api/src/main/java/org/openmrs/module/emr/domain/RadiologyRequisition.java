@@ -34,15 +34,7 @@ public class RadiologyRequisition {
 
     private Order.Urgency urgency;
 
-    /**
-     * where the exam should take place
-     */
     private Location examLocation;
-
-    /**
-     * when the order is placed
-     */
-    private Date encounterDatetime;
 
     private Set<Concept> studies = new LinkedHashSet<Concept>();
 
@@ -96,13 +88,5 @@ public class RadiologyRequisition {
 
     public void setPatient(Patient patient) {
         this.patient = patient;
-    }
-
-    public Date getEncounterDatetime() {
-        return encounterDatetime;
-    }
-
-    public void setEncounterDatetime(Date encounterDatetime) {
-        this.encounterDatetime = encounterDatetime;
     }
 }

@@ -92,11 +92,12 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
         <div class="row">
             <span class="radio-label">Do you need a portable x-ray?</span>
             <div>
-                <input type="checkbox" class="field-value" name="studyLocation" value="portable" data-bind="checked: portable"/>
+                <input type="checkbox" class="field-value" value="portable" data-bind="checked: portable"/>
                 <span>Yes</span>
             </div>
-            <input id="portable-location" type="text" placeholder="Type location ..."
-                   data-bind="visible:portable, autocomplete:searchLocationTerm, search:convertedPortableLocations, select:selectLocation"/>
+            <input type="text" placeholder="Type location ..."
+                   data-bind="visible:portable, autocomplete:searchLocationTerm, search:convertedPortableLocations, select:selectLocation, clearValue:function() { return false; }"/>
+            <input name="examLocation" type="hidden" data-bind="value:portableLocation"/>
         </div>
     </div>
 
@@ -104,7 +105,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
     <div class="left-column">
         <label for="study-search">Type the name of a study:</label><br/>
         <input id="study-search" style="width: 430px; height: 2em; padding-left: 5px; margin-top: 5px;" type="text" size="40"
-               data-bind="autocomplete:searchTerm, search:convertedStudies, select:selectStudy"
+               data-bind="autocomplete:searchTerm, search:convertedStudies, select:selectStudy, clearValue:function() { return true; }"
                placeholder="eg. Chest x-ray"/>
     </div>
     <div class="right-column">

@@ -11,6 +11,7 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.TestUtils;
 import org.openmrs.module.emr.adt.VisitSummary;
 import org.openmrs.module.emr.domain.RadiologyRequisition;
 import org.powermock.api.mockito.PowerMockito;
@@ -65,7 +66,6 @@ public class RadiologyServiceTest {
         EncounterRole clinicianEncounterRole = new EncounterRole();
         Provider provider = new Provider();
         patient = new Patient();
-        encounterDate = new Date();
         study = new Concept();
         orderType = new OrderType();
         clinicalHistory = "Patient fell from a building";
@@ -74,7 +74,6 @@ public class RadiologyServiceTest {
         radiologyRequisition.setPatient(patient);
         radiologyRequisition.setRequestedBy(provider);
         radiologyRequisition.setClinicalHistory(clinicalHistory);
-        radiologyRequisition.setEncounterDatetime(encounterDate);
         radiologyRequisition.addStudy(study);
         radiologyRequisition.setUrgency(Order.Urgency.STAT);
 
@@ -113,7 +112,7 @@ public class RadiologyServiceTest {
             assertThat(actual.getOrderType(), is(orderType));
             assertThat(actual.getPatient(), is(patient));
             assertThat(actual.getConcept(), is(study));
-            assertThat(actual.getStartDate(), is(encounterDate));
+            assertThat(actual.getStartDate(), TestUtils.isJustNow());
             assertThat(actual.getUrgency(), is(Order.Urgency.STAT));
             assertThat(actual.getClinicalHistory(), is(clinicalHistory));
             assertThat(actual.getExamLocation(), is(nullValue()));

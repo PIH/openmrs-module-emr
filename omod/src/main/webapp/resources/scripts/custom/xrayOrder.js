@@ -22,6 +22,7 @@ function StudiesViewModel(studies, locations) {
         api.selectedStudies.push(study);
         api.studies.remove( function(item) { return item.id == study.id } );
     };
+
     api.unselectStudy = function(study) {
         api.studies.push(study);
         api.selectedStudies.remove( function(item) { return item.id == study.id } );
@@ -41,7 +42,7 @@ function StudiesViewModel(studies, locations) {
     }
 
     api.selectLocation = function(location) {
-        api.portableLocation(location);
+        api.portableLocation(location.id);
     }
 
     api.isValid = function() {
@@ -72,7 +73,9 @@ ko.bindingHandlers.autocomplete = {
             },
             select: function( event, ui ) {
                 allBindingsAccessor().select(AutocompleteItem(ui.item.value, ui.item.label));
-                this.value = "";
+                if (allBindingsAccessor().clearValue()) {
+                    $(this).val("");
+                }
                 return false;
             }
         });
