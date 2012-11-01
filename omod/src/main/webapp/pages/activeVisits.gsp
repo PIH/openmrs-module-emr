@@ -18,7 +18,7 @@
 			def checkIn = v.checkInEncounter
 			def latest = v.lastEncounter
 		%>
-			<tr>
+			<tr id="visit-${ v.visit.id }">
 				<td>${ ui.format(v.visit.patient.patientIdentifier) }</td>
 				<td>
                     <a href="${ ui.pageLink("emr", "patient", [ patientId: v.visit.patient.id ]) }">
