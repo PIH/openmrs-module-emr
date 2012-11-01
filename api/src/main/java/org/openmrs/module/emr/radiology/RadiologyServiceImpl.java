@@ -5,6 +5,7 @@ import org.openmrs.Encounter;
 import org.openmrs.api.EncounterService;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.adt.VisitSummary;
 import org.openmrs.module.emr.domain.RadiologyRequisition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,7 +31,10 @@ public class RadiologyServiceImpl implements RadiologyService {
         encounter.setProvider(emrProperties.getClinicianEncounterRole(), requisition.getRequestedBy());
         encounter.setPatient(requisition.getPatient());
         encounter.setLocation(emrContext.getSessionLocation());
-        encounter.setVisit(emrContext.getActiveVisitSummary().getVisit());
+        VisitSummary activeVisitSummary = emrContext.getActiveVisitSummary();
+        if (activeVisitSummary != null) {
+            encounter.setVisit(activeVisitSummary.getVisit());
+        }
 
         Date currentDatetime = new Date();
         encounter.setEncounterDatetime(currentDatetime);

@@ -18,7 +18,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.Date;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -38,9 +37,12 @@ public class RadiologyServiceTest {
     private EmrContext emrContext;
     private OrderType orderType;
     private Patient patient;
-    private Concept study;
-    private Date encounterDate;
     private String clinicalHistory;
+    private EncounterRole clinicianEncounterRole;
+    private EncounterType placeOrdersEncounterType;
+    private Visit currentVisit;
+    private Provider provider;
+    private Location currentLocation;
 
     @Before
     public void setup() {
@@ -48,39 +50,33 @@ public class RadiologyServiceTest {
         User authenticatedUser = new User();
         PowerMockito.when(Context.getAuthenticatedUser()).thenReturn(authenticatedUser);
 
-        emrProperties = mock(EmrProperties.class);
-        encounterService = mock(EncounterService.class);
-        emrContext = mock(EmrContext.class);
+        patient = new Patient();
+        orderType = new OrderType();
+        clinicalHistory = "Patient fell from a building";
+        provider = new Provider();
+        currentLocation = new Location();
+
+        currentVisit = new Visit();
+        placeOrdersEncounterType = new EncounterType();
+        clinicianEncounterRole = new EncounterRole();
+
+        prepareMocks();
 
         radiologyService = new RadiologyServiceImpl();
         radiologyService.setEmrProperties(emrProperties);
         radiologyService.setEncounterService(encounterService);
     }
 
-    @Test
-    public void shouldPlaceARadiologyRequisitionWithOneStudyOnFixedMachine() {
-        Visit currentVisit = new Visit();
+    private void prepareMocks() {
+        emrProperties = mock(EmrProperties.class);
+        encounterService = mock(EncounterService.class);
+        emrContext = mock(EmrContext.class);
+
         VisitSummary currentVisitSummary = new VisitSummary(currentVisit, null);
-        Location currentLocation = new Location();
-        EncounterType placeOrdersEncounterType = new EncounterType();
-        EncounterRole clinicianEncounterRole = new EncounterRole();
-        Provider provider = new Provider();
-        patient = new Patient();
-        study = new Concept();
-        orderType = new OrderType();
-        clinicalHistory = "Patient fell from a building";
-
-        RadiologyRequisition radiologyRequisition = new RadiologyRequisition();
-        radiologyRequisition.setPatient(patient);
-        radiologyRequisition.setRequestedBy(provider);
-        radiologyRequisition.setClinicalHistory(clinicalHistory);
-        radiologyRequisition.addStudy(study);
-        radiologyRequisition.setUrgency(Order.Urgency.STAT);
-
         when(emrContext.getActiveVisitSummary()).thenReturn(currentVisitSummary);
-        when(emrContext.getSessionLocation()).thenReturn(currentLocation);
         when(emrProperties.getPlaceOrdersEncounterType()).thenReturn(placeOrdersEncounterType);
         when(emrProperties.getClinicianEncounterRole()).thenReturn(clinicianEncounterRole);
+        when(emrContext.getSessionLocation()).thenReturn(currentLocation);
         when(emrProperties.getTestOrderType()).thenReturn(orderType);
         when(encounterService.saveEncounter(isA(Encounter.class))).thenAnswer(new Answer<Object>() {
             @Override
@@ -89,33 +85,108 @@ public class RadiologyServiceTest {
                 return args[0];
             }
         });
+    }
+
+    @Test
+    public void shouldPlaceARadiologyRequisitionWithOneStudyOnFixedMachine() {
+        Concept study = new Concept();
+        RadiologyRequisition radiologyRequisition = new RadiologyRequisition();
+        radiologyRequisition.setPatient(patient);
+        radiologyRequisition.setRequestedBy(provider);
+        radiologyRequisition.setClinicalHistory(clinicalHistory);
+        radiologyRequisition.addStudy(study);
+        radiologyRequisition.setUrgency(Order.Urgency.STAT);
 
         Encounter encounter = radiologyService.placeRadiologyRequisition(emrContext, radiologyRequisition);
 
-        Set<Provider> providersByRole = encounter.getProvidersByRole(clinicianEncounterRole);
-        assertThat(encounter.getEncounterType(), is(placeOrdersEncounterType));
-        assertThat(providersByRole.size(), is(1));
-        assertThat(providersByRole.iterator().next(), is(provider));
-        assertThat(encounter.getPatient(), is(patient));
-        assertThat(encounter.getLocation(), is(currentLocation));
-        assertThat(encounter.getEncounterDatetime(), notNullValue());
-        assertThat(encounter.getVisit(), is(currentVisit));
-        assertThat(encounter.getOrders().size(), is(1));
-        assertThat(encounter.getOrders(), hasItem(new IsExpectedOrder()));
+        assertThat(encounter, is(new IsExpectedEncounter(null, study)));
+    }
+
+    @Test
+    public void shouldPlaceARadiologyRequisitionWithTwoStudiesOnPortableMachine() {
+        Location examLocation = new Location();
+        Concept study = new Concept();
+        Concept secondStudy = new Concept();
+
+        RadiologyRequisition radiologyRequisition = new RadiologyRequisition();
+        radiologyRequisition.setPatient(patient);
+        radiologyRequisition.setRequestedBy(provider);
+        radiologyRequisition.setClinicalHistory(clinicalHistory);
+        radiologyRequisition.addStudy(study);
+        radiologyRequisition.addStudy(secondStudy);
+        radiologyRequisition.setUrgency(Order.Urgency.STAT);
+        radiologyRequisition.setExamLocation(examLocation);
+
+        Encounter encounter = radiologyService.placeRadiologyRequisition(emrContext, radiologyRequisition);
+
+        assertThat(encounter, new IsExpectedEncounter(examLocation, study, secondStudy));
+    }
+
+    @Test
+    public void shouldPlaceOrderEvenIfThereIsNoVisit() {
+        RadiologyRequisition radiologyRequisition = new RadiologyRequisition();
+
+        when(emrContext.getActiveVisitSummary()).thenReturn(null);
+
+        Encounter encounter = radiologyService.placeRadiologyRequisition(emrContext, radiologyRequisition);
+
+        assertThat(encounter.getVisit(), is(nullValue()));
     }
 
     private class IsExpectedOrder extends ArgumentMatcher<Order> {
+        private Location expectedLocation;
+        private Concept expectedStudy;
+
+        public IsExpectedOrder(Location expectedLocation, Concept expectedStudy) {
+            this.expectedLocation = expectedLocation;
+            this.expectedStudy = expectedStudy;
+        }
+
         @Override
         public boolean matches(Object o) {
             RadiologyOrder actual = (RadiologyOrder) o;
 
-            assertThat(actual.getOrderType(), is(orderType));
-            assertThat(actual.getPatient(), is(patient));
-            assertThat(actual.getConcept(), is(study));
-            assertThat(actual.getStartDate(), TestUtils.isJustNow());
-            assertThat(actual.getUrgency(), is(Order.Urgency.STAT));
-            assertThat(actual.getClinicalHistory(), is(clinicalHistory));
-            assertThat(actual.getExamLocation(), is(nullValue()));
+            try {
+                assertThat(actual.getOrderType(), is(orderType));
+                assertThat(actual.getPatient(), is(patient));
+                assertThat(actual.getConcept(), is(expectedStudy));
+                assertThat(actual.getStartDate(), TestUtils.isJustNow());
+                assertThat(actual.getUrgency(), is(Order.Urgency.STAT));
+                assertThat(actual.getClinicalHistory(), is(clinicalHistory));
+                assertThat(actual.getExamLocation(), is(expectedLocation));
+                return true;
+            } catch (AssertionError e) {
+                return false;
+            }
+        }
+    }
+
+    private class IsExpectedEncounter extends ArgumentMatcher<Encounter> {
+        private Location expectedLocation;
+        private Concept[] expectedStudies;
+
+        public IsExpectedEncounter(Location expectedLocation, Concept... expectedStudies) {
+            this.expectedLocation = expectedLocation;
+            this.expectedStudies = expectedStudies;
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            Encounter encounter = (Encounter) o;
+
+            Set<Provider> providersByRole = encounter.getProvidersByRole(clinicianEncounterRole);
+            assertThat(encounter.getEncounterType(), is(placeOrdersEncounterType));
+            assertThat(providersByRole.size(), is(1));
+            assertThat(providersByRole.iterator().next(), is(provider));
+            assertThat(encounter.getPatient(), is(patient));
+            assertThat(encounter.getLocation(), is(currentLocation));
+            assertThat(encounter.getEncounterDatetime(), notNullValue());
+            assertThat(encounter.getVisit(), is(currentVisit));
+            assertThat(encounter.getOrders().size(), is(expectedStudies.length));
+
+            for (Concept expectedStudy : expectedStudies) {
+                assertThat(encounter.getOrders(), hasItem(new IsExpectedOrder(expectedLocation, expectedStudy)));
+            }
 
             return true;
         }
