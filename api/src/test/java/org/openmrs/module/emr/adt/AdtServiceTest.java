@@ -71,7 +71,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 @PrepareForTest(Context.class)
 public class AdtServiceTest {
 
-    private AdtService service;
+    private AdtServiceImpl service;
 
     VisitService mockVisitService;
     EncounterService mockEncounterService;
@@ -311,4 +311,37 @@ public class AdtServiceTest {
         assertThat(activeVisitSummaries, isCollectionOfExactlyElementsWithProperties("visit", visit1, visit2));
 	}
 
+    @Test
+    public void shouldCloseInactiveVisitWithLastEncounterDate() {
+        Visit visit = new Visit();
+        visit.setStartDatetime(DateUtils.addHours(new Date(), -14));
+
+        Encounter encounter1 = new Encounter();
+        encounter1.setEncounterDatetime(DateUtils.addHours(new Date(), -14));
+        visit.addEncounter(encounter1);
+
+        Date stopDatetime = DateUtils.addHours(new Date(), -14);
+        Encounter encounter2 = new Encounter();
+        encounter2.setEncounterDatetime(stopDatetime);
+        visit.addEncounter(encounter2);
+
+        when(mockVisitService.getVisitsByPatient(null)).thenReturn(Collections.singletonList(visit));
+
+        service.getActiveVisit(null, null);
+
+        assertThat(visit.getStopDatetime(), is(stopDatetime));
+    }
+
+    @Test
+    public void shouldCloseInactiveVisitWithStartDateIfNoEncounters() {
+        Visit visit = new Visit();
+        Date startDatetime = DateUtils.addHours(new Date(), -14);
+        visit.setStartDatetime(startDatetime);
+
+        when(mockVisitService.getVisitsByPatient(null)).thenReturn(Collections.singletonList(visit));
+
+        service.getActiveVisit(null, null);
+
+        assertThat(visit.getStopDatetime(), is(startDatetime));
+    }
 }
