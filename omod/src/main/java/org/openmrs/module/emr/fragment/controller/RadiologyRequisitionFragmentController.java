@@ -14,18 +14,13 @@
 
 package org.openmrs.module.emr.fragment.controller;
 
-import org.openmrs.Concept;
 import org.openmrs.module.emr.EmrContext;
-import org.openmrs.module.emr.api.EmrService;
-import org.openmrs.module.emr.domain.RadiologyRequisition;
+import org.openmrs.module.emr.radiology.RadiologyRequisition;
 import org.openmrs.module.emr.radiology.RadiologyService;
 import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 import org.openmrs.ui.framework.fragment.action.SuccessResult;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 public class RadiologyRequisitionFragmentController {
 

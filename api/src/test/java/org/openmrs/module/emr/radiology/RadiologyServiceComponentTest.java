@@ -16,7 +16,6 @@ package org.openmrs.module.emr.radiology;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.Order;
@@ -24,7 +23,6 @@ import org.openmrs.Patient;
 import org.openmrs.api.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrContext;
-import org.openmrs.module.emr.domain.RadiologyRequisition;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

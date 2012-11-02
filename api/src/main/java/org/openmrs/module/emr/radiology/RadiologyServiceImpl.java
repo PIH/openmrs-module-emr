@@ -6,7 +6,6 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.adt.VisitSummary;
-import org.openmrs.module.emr.domain.RadiologyRequisition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
