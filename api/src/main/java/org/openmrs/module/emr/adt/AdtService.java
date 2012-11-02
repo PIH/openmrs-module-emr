@@ -71,14 +71,6 @@ public interface AdtService extends OpenmrsService {
     boolean isActive(Visit visit);
 
     /**
-     * If we have to guess, we say a visit ends a fixed number of hours after its last encounter.
-     * @see org.openmrs.module.emr.EmrProperties#getVisitExpireHours()
-     * @param visit
-     * @return when, according to our business logic, this visit ends
-     */
-    Date guessVisitStopDatetime(Visit visit);
-
-    /**
      * Creates a "check-in" encounter for the given patient, at the location where, and adds it to the active visit.
      * (This method calls ensureActiveVisit.)
      *

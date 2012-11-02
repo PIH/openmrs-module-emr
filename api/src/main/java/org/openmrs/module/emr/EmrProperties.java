@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 public class EmrProperties extends ModuleProperties {
 
     public int getVisitExpireHours() {
-        return 10;
+        return 12;
     }
 
     public Concept getXrayOrderablesConcept() {

@@ -14,13 +14,8 @@
 
 package org.openmrs.module.emr.domain;
 
-import org.openmrs.Concept;
-import org.openmrs.Location;
-import org.openmrs.Order;
-import org.openmrs.Patient;
-import org.openmrs.Provider;
-import org.openmrs.TestOrder;
-import org.openmrs.Visit;
+import org.openmrs.*;
+import org.openmrs.module.emr.radiology.RadiologyOrder;
 
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -31,10 +26,6 @@ import java.util.Set;
  */
 public class RadiologyRequisition {
 
-    public enum Modality { XRAY;}
-
-    private Modality modality;
-
     private Patient patient;
 
     private Provider requestedBy;
@@ -43,32 +34,9 @@ public class RadiologyRequisition {
 
     private Order.Urgency urgency;
 
-    private TestOrder.Laterality laterality;
-
-    /**
-     * where the exam should take place
-     */
     private Location examLocation;
 
-    private Concept transportation;
-
-    /**
-     * where the order is placed from
-     */
-    private Location encounterLocation;
-
-    /**
-     * when the order is placed
-     */
-    private Date encounterDatetime;
-
     private Set<Concept> studies = new LinkedHashSet<Concept>();
-
-    private Visit visit;
-
-    public Modality getModality() {
-        return modality;
-    }
 
     public Patient getPatient() {
         return patient;
@@ -86,16 +54,8 @@ public class RadiologyRequisition {
         return urgency;
     }
 
-    public TestOrder.Laterality getLaterality() {
-        return laterality;
-    }
-
     public Location getExamLocation() {
         return examLocation;
-    }
-
-    public Concept getTransportation() {
-        return transportation;
     }
 
     public Set<Concept> getStudies() {
@@ -122,47 +82,11 @@ public class RadiologyRequisition {
         this.urgency = urgency;
     }
 
-    public void setLaterality(TestOrder.Laterality laterality) {
-        this.laterality = laterality;
-    }
-
     public void setExamLocation(Location examLocation) {
         this.examLocation = examLocation;
     }
 
-    public void setTransportation(Concept transportation) {
-        this.transportation = transportation;
-    }
-
     public void setPatient(Patient patient) {
         this.patient = patient;
-    }
-
-    public void setModality(Modality modality) {
-        this.modality = modality;
-    }
-
-    public Location getEncounterLocation() {
-        return encounterLocation;
-    }
-
-    public void setEncounterLocation(Location encounterLocation) {
-        this.encounterLocation = encounterLocation;
-    }
-
-    public Visit getVisit() {
-        return visit;
-    }
-
-    public void setVisit(Visit visit) {
-        this.visit = visit;
-    }
-
-    public Date getEncounterDatetime() {
-        return encounterDatetime;
-    }
-
-    public void setEncounterDatetime(Date encounterDatetime) {
-        this.encounterDatetime = encounterDatetime;
     }
 }

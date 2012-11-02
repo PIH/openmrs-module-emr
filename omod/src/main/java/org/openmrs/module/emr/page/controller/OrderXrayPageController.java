@@ -15,9 +15,11 @@
 package org.openmrs.module.emr.page.controller;
 
 import org.openmrs.Concept;
+import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.ui.framework.SimpleObject;
@@ -36,6 +38,7 @@ public class OrderXrayPageController {
     public void controller(@RequestParam("patientId") Patient patient,
                            @SpringBean("conceptService") ConceptService conceptService,
                            @SpringBean("emrProperties") EmrProperties emrProperties,
+                           @SpringBean("locationService") LocationService locationService,
                            UiUtils ui,
                            PageModel model) {
 
@@ -43,7 +46,21 @@ public class OrderXrayPageController {
         model.addAttribute("currentProvider", providers.iterator().next());
 
         model.addAttribute("xrayOrderables", ui.toJson(getXrayOrderables(emrProperties, Context.getLocale())));
+        model.addAttribute("portableLocations", ui.toJson(getPortableLocations(locationService)));
         model.addAttribute("patient", patient);
+    }
+
+    private List<SimpleObject> getPortableLocations(LocationService locationService) {
+        List<SimpleObject> items = new ArrayList<SimpleObject>();
+        List<Location> locations = locationService.getAllLocations(false);
+        for (Location location: locations) {
+            SimpleObject item = new SimpleObject();
+            item.put("value", location.getLocationId());
+            item.put("label", location.getName());
+            items.add(item);
+        }
+        return items;
+
     }
 
     private List<SimpleObject> getXrayOrderables(EmrProperties emrProperties, Locale locale) {

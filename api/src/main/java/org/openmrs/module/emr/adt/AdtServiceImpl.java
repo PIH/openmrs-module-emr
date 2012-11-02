@@ -15,21 +15,8 @@
 package org.openmrs.module.emr.adt;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.openmrs.Encounter;
-import org.openmrs.EncounterType;
-import org.openmrs.Location;
-import org.openmrs.Obs;
-import org.openmrs.Order;
-import org.openmrs.Patient;
-import org.openmrs.Provider;
-import org.openmrs.User;
-import org.openmrs.Visit;
-import org.openmrs.api.AdministrationService;
-import org.openmrs.api.EncounterService;
-import org.openmrs.api.LocationService;
-import org.openmrs.api.OrderService;
-import org.openmrs.api.ProviderService;
-import org.openmrs.api.VisitService;
+import org.openmrs.*;
+import org.openmrs.api.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
@@ -39,12 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
@@ -156,21 +138,20 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
         return activeVisit;
     }
 
-    @Override
-    public Date guessVisitStopDatetime(Visit visit) {
-        if (visit.getStopDatetime() != null) {
-            throw new IllegalStateException("Visit already stopped");
+    private Date guessVisitStopDatetime(Visit visit) {
+        if (visit.getEncounters() == null || visit.getEncounters().size() == 0) {
+            return visit.getStartDatetime();
         }
-        Encounter latest = null;
-        if (visit.getEncounters() != null) {
-            for (Encounter candidate : visit.getEncounters()) {
-                if (OpenmrsUtil.compareWithNullAsEarliest(candidate.getEncounterDatetime(), latest.getEncounterDatetime()) > 0) {
-                    latest = candidate;
-                }
+
+        Iterator<Encounter> iterator = visit.getEncounters().iterator();
+        Encounter latest = iterator.next();
+        while (iterator.hasNext()) {
+            Encounter candidate = iterator.next();
+            if (OpenmrsUtil.compare(candidate.getEncounterDatetime(), latest.getEncounterDatetime()) > 0) {
+                latest = candidate;
             }
         }
-        Date lastKnownDate = latest == null ? visit.getStartDatetime() : latest.getEncounterDatetime();
-        return lastKnownDate;
+        return latest.getEncounterDatetime();
     }
 
     @Override

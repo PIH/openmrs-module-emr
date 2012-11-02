@@ -26,11 +26,10 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
+import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 public class UserPageController {
@@ -52,6 +51,11 @@ public class UserPageController {
 					user = users.get(0);
 				else if (users.size() > 1)
 					throw new APIException("Found multiple users for person with id: " + provider.getPerson().getPersonId());
+				else {
+					//This provider has no user account, create one
+					user = new User();
+					user.setPerson(provider.getPerson());
+				}
 			} else if (StringUtils.isNotBlank(provider.getName())) {
 				//Create a Person object for the provider since they have none
 				PersonName personName = personService.parsePersonName(provider.getName());
@@ -68,15 +72,13 @@ public class UserPageController {
 		List<Role> candidateRoles = userService.getAllRoles();
 		List<Role> roles = new ArrayList<Role>();
 		for (Role candidate : candidateRoles) {
-			//TODO uncomment this
-			//if (candidate.getName().startsWith(EmrConstants.ROLE_PREFIX_CAPABILITY))
-			roles.add(candidate);
+			if (candidate.getName().startsWith(EmrConstants.ROLE_PREFIX_CAPABILITY))
+				roles.add(candidate);
 		}
 		model.addAttribute("roles", roles);
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
-	public String controller(@BindParams User user, @SpringBean("userService") UserService userService) {
+	public String post(@BindParams @RequestParam("userId") User user, @SpringBean("userService") UserService userService) {
 		//TODO  save the user
 		
 		return "redirect:/emr/userForm.page?userId=" + user.getUserId();

@@ -53,4 +53,3 @@ public class EmrConstants {
     public static final String PRIMARY_IDENTIFIER_TYPE = "emr.primaryIdentifierType";
 
 }
-

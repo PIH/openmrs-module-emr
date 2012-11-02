@@ -4,7 +4,7 @@
 
 <h3>Active Visits</h3>
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2">
+<table id="active-visits" width="100%" border="1" cellspacing="0" cellpadding="2">
 	<thead>
 		<tr>
 			<th>ID</th>
@@ -18,7 +18,7 @@
 			def checkIn = v.checkInEncounter
 			def latest = v.lastEncounter
 		%>
-			<tr>
+			<tr id="visit-${ v.visit.id }">
 				<td>${ ui.format(v.visit.patient.patientIdentifier) }</td>
 				<td>
                     <a href="${ ui.pageLink("emr", "patient", [ patientId: v.visit.patient.id ]) }">
