@@ -23,6 +23,7 @@ import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.emr.adt.EmrVisitAssignmentHandler;
 import org.openmrs.module.emr.task.TaskDescriptor;
 import org.openmrs.module.emr.task.TaskService;
+import org.openmrs.module.emr.utils.GeneralUtils;
 import org.openmrs.util.OpenmrsConstants;
 
 import java.util.ArrayList;
@@ -70,6 +71,9 @@ public class EMRActivator implements ModuleActivator {
         if (log.isDebugEnabled()) {
             for (TaskDescriptor task : allTasks)
                 log.debug(task.getId() + " (" + task.getClass().getName() + ")");
+        }
+        if(!GeneralUtils.addPrivilegeFullRole()){
+        	log.error("failed to add Privilege Level: Full role");
         }
 	}
 	

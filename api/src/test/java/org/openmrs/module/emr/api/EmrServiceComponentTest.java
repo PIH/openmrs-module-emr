@@ -13,13 +13,20 @@
  */
 package org.openmrs.module.emr.api;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.Privilege;
+import org.openmrs.Role;
+import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.TestUtils;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -27,12 +34,15 @@ import static org.junit.Assert.assertEquals;
 
 public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
 	
+	protected final Log log = LogFactory.getLog(getClass());
+	
 	EmrService service;
 	
 	Location where;
 
 	@Before
-	public void before() {
+	public void before() throws Exception{
+		executeDataSet("privilegeTestDataset.xml");
 		service = Context.getService(EmrService.class);
 		where = Context.getLocationService().getLocation(1);
 	}
@@ -59,6 +69,42 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
 		List<Patient> patients = service.findPatients("Hora", where, null, null);
 		assertEquals(1, patients.size());
 		TestUtils.assertContainsElementWithProperty(patients, "patientId", 2);
+	}
+	
+	@Test
+	public void testFindAPIPrivileges() throws Exception{
+		UserService userService = Context.getUserService();
+		List<Role> roles= userService.getAllRoles();
+		if(roles!=null && roles.size()>0){
+			for(Role role : roles){
+				log.debug("roleName:" +  role.getName());
+			}
+		}
+		Role fullRole = userService.getRole(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
+		if(fullRole==null){
+			fullRole = new Role();
+			fullRole.setName(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
+			fullRole.setRole(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
+			fullRole.setDescription(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
+			userService.saveRole(fullRole);
+		}
+		
+		List<Privilege> allPrivileges = userService.getAllPrivileges();
+		if(allPrivileges!=null && allPrivileges.size()>0){
+			for(Privilege privilege : allPrivileges){
+				log.debug("" + privilege.getName());
+				String privilegeName = privilege.getName();
+				if(!fullRole.hasPrivilege(privilegeName)){
+					if(!StringUtils.startsWithIgnoreCase(privilegeName, EmrConstants.PRIVILEGE_PREFIX_APP) && 
+							!StringUtils.startsWithIgnoreCase(privilegeName, EmrConstants.PRIVILEGE_PREFIX_TASK)){
+						fullRole.addPrivilege(privilege);
+					}
+				}
+			}
+		}
+		userService.saveRole(fullRole);
+		
+		assertEquals(fullRole.getName(), EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
 	}
 
 }

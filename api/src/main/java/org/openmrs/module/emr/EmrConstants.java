@@ -43,8 +43,13 @@ public class EmrConstants {
     public static final String LOCATION_TAG_SUPPORTS_VISITS = "Visit Location";
     
     public static final String ROLE_PREFIX_CAPABILITY = "Capability-";
-
+    
+    public static final String PRIVILEGE_LEVEL_FULL_ROLE= "Privilege Level: Full";
+    
+    public static final String PRIVILEGE_PREFIX_APP= "App:";
+    
+    public static final String PRIVILEGE_PREFIX_TASK= "Task:";
+    
     public static final String PRIMARY_IDENTIFIER_TYPE = "emr.primaryIdentifierType";
 
 }
-
