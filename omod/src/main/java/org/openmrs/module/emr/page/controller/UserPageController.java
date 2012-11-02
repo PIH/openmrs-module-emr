@@ -27,6 +27,8 @@ import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
 import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.emr.account.Account;
+import org.openmrs.module.emr.account.AccountService;
 import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
@@ -68,7 +70,7 @@ public class UserPageController {
 			}
 		}
 		
-		model.addAttribute("user", user);
+		model.addAttribute("account", new Account(user));
 		List<Role> candidateRoles = userService.getAllRoles();
 		List<Role> roles = new ArrayList<Role>();
 		for (Role candidate : candidateRoles) {
@@ -78,10 +80,9 @@ public class UserPageController {
 		model.addAttribute("roles", roles);
 	}
 	
-	public String post(@BindParams @RequestParam("userId") User user, @SpringBean("userService") UserService userService) {
-		//TODO  save the user
-		
-		return "redirect:/emr/userForm.page?userId=" + user.getUserId();
+	public String post(@RequestParam("userId") @BindParams Account account, @SpringBean("accountService") AccountService accountService) {
+		accountService.saveAccount(account);
+		return "redirect:/emr/user.page?userId=" + account.getUser().getUserId(); // "redirect:/emr/manageUsers.page";
 	}
 	
 }

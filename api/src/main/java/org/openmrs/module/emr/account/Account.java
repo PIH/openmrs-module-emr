@@ -320,4 +320,9 @@ public class Account {
 		return super.hashCode();
 	}
 	
+	public void syncProperties() {
+		user.setUsername(username);
+		person.getPersonName().setFamilyName(familyName);
+		person.getPersonName().setGivenName(givenName);
+	}
 }

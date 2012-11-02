@@ -6,20 +6,39 @@
 
 <form method="post">
 	<fieldset>
-		<legend>${ ui.message("emr.personDetails") }</legend>
-		${ ui.message("emr.person.givenName") } <input type="text" name="person.givenName" value="${user.person.givenName}" /> &nbsp;&nbsp;&nbsp; 
-		${ ui.message("emr.person.familyName") } <input type="text" name="person.familyName" value="${user.person.familyName}" />
+		<legend>${ ui.message("emr.person.details") }</legend>
+		${ ui.message("emr.person.givenName") } <input type="text" name="givenName" value="${account.givenName}" /> &nbsp;&nbsp;&nbsp; 
+		${ ui.message("emr.person.familyName") } <input type="text" name="familyName" value="${account.familyName}" />
 		
 		<br /><br />
 		${ ui.message("Person.gender") }
-		<input type="radio" name="person.gender" value="M" <% if(user.person.gender == 'M'){ %>checked=checked<% } %> /> ${ ui.message("Person.gender.male") }
-		<input type="radio" name="person.gender" value="F" <% if(user.person.gender == 'F'){ %>checked=checked<% } %> /> ${ ui.message("Person.gender.female") }
+		<input type="radio" name="gender" value="M" <% if(account.gender == 'M'){ %>checked=checked<% } %> /> ${ ui.message("Person.gender.male") }
+		<input type="radio" name="gender" value="F" <% if(account.gender == 'F'){ %>checked=checked<% } %> /> ${ ui.message("Person.gender.female") }
 		
 		<br /><br />
-		<% if(user.userId){ %>
-		<input type="hidden" name="userId" value="${ user.userId }" />
+		<% if(account.user.userId){ %>
+		<input type="hidden" name="userId" value="${ account.user.userId }" />
 		<% } %>
-		<input type="hidden" name="action" value="saveUser" />
-		<input type="submit" value="${ ui.message("general.save") }" />
 	</fieldset>
+	
+	<fieldset>
+		<legend>${ ui.message("emr.user.account.details") }</legend>
+		<input type="checkbox" name="retired" value="${account.retired}" <% if(!account.retired){ %>checked=checked<% } %> /> ${ ui.message("general.enabled") }
+		<br /><br />
+		${ ui.message("emr.user.username") } <input type="text" name="username" value="${account.username}" />
+		<br /><br /> 
+		${ ui.message("emr.user.password") } <input type="text" name="password" value="${account.password}" />
+		<br /><br />
+		${ ui.message("emr.user.confirmPassword") } <input type="text" name="confirmPassword" value="${account.confirmPassword}" />
+	</fieldset>
+	
+	<fieldset>
+		<legend>${ ui.message("emr.provider.details") }</legend>
+	</fieldset>
+	
+	<br /><br />
+	<input type="hidden" name="action" value="saveUser" />
+	<input type="submit" value="${ ui.message("general.save") }" /> &nbsp;&nbsp;&nbsp;
+	<input type="button" value="${ ui.message("general.cancel") }" />
+		
 </form>

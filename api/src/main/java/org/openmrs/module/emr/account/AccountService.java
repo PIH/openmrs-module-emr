@@ -26,4 +26,5 @@ public interface AccountService {
 	 */
 	public User getUserByProvider(Provider provider, boolean createNew);
 	
+	public Account saveAccount(Account account);
 }

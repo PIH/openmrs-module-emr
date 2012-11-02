@@ -99,4 +99,15 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 		return user;
 	}
 	
+	public Account saveAccount(Account account) {
+		account.syncProperties();
+		account.setUser(userService.saveUser(account.getUser(), null));
+		account.setPerson(personService.savePerson(account.getPerson()));
+		
+		if (account.getProvider() != null) {
+			account.setProvider(providerService.saveProvider(account.getProvider()));
+		}
+		
+		return account;
+	}
 }
