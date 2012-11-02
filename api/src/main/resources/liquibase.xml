@@ -9,70 +9,6 @@
         for a list of supported elements and attributes
     -->
 
-    <changeSet id="2012101249-3" author="mgoodrich">
-        <comment>Adds paper record request table</comment>
-        <createTable tableName="emr_paper_record_request">
-            <column name="request_id" type="int" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="identifier" type="varchar(50)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="status" type="varchar(50)" defaultValue="OPEN">
-                <constraints nullable="false" />
-            </column>
-            <column name="patient_id" type="int">
-                <constraints nullable="false"/>
-            </column>
-            <column name="record_location_id" type="int">
-                <constraints nullable="false"/>
-            </column>
-            <column name="request_location_id" type="int">
-                <constraints nullable="false"/>
-            </column>
-            <column name="assignee_id" type="int"/>
-            <column name="creator" type="int">
-                <constraints nullable="false"/>
-            </column>
-            <column name="date_created" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="uuid" type="char(38)">
-                <constraints nullable="false" unique="true"/>
-            </column>
-        </createTable>
-
-        <addForeignKeyConstraint constraintName="record_location_id_location_id_fk"
-                                 baseTableName="emr_paper_record_request" baseColumnNames="record_location_id"
-                                 referencedTableName="location" referencedColumnNames="location_id"/>
-
-        <addForeignKeyConstraint constraintName="request_location_id_location_id_fk"
-                                 baseTableName="emr_paper_record_request" baseColumnNames="request_location_id"
-                                 referencedTableName="location" referencedColumnNames="location_id" />
-
-        <addForeignKeyConstraint constraintName="assign_id_person_id_fk"
-                                 baseTableName="emr_paper_record_request" baseColumnNames="record_location_id"
-                                 referencedTableName="person" referencedColumnNames="person_id" />
-
-        <addForeignKeyConstraint constraintName="creator_user_id_fk"
-                                 baseTableName="emr_paper_record_request" baseColumnNames="creator"
-                                 referencedTableName="users" referencedColumnNames="user_id" />
-
-        <addForeignKeyConstraint constraintName="request_patient_id_patient_id_fk"
-                                 baseTableName="emr_paper_record_request" baseColumnNames="patient_id"
-                                 referencedTableName="patient" referencedColumnNames="patient_id" />
-
-    </changeSet>
-
-    <changeSet id="20121026" author="mgoodrich">
-        <comment>Removes the not-null constraint from the paper record request identifier field</comment>
-
-        <modifyColumn tableName="emr_paper_record_request">
-            <column name="identifier" type="varchar(50)"/>
-        </modifyColumn>
-
-    </changeSet>
-
     <changeSet id="20121101" author="abarbosa and ffreire">
         <preConditions onFail="MARK_RAN">
             <not>
@@ -92,6 +28,59 @@
         <addForeignKeyConstraint constraintName="emr_radiology_order_location_fk"
                                  baseTableName="emr_radiology_order" baseColumnNames="exam_location"
                                  referencedTableName="location" referencedColumnNames="location_id" />
+    </changeSet>
+
+    <changeSet id="201211020259-1" author="mgoodrich">
+        <comment>Adds paper record request table</comment>
+        <createTable tableName="emr_paper_record_request">
+            <column name="request_id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="identifier" type="varchar(50)"/>
+            <column name="status" type="varchar(50)" defaultValue="OPEN">
+                <constraints nullable="false" />
+            </column>
+            <column name="patient_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="record_location" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="request_location" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assignee" type="int"/>
+            <column name="creator" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="uuid" type="char(38)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="record_location_id_location_id_fk"
+                                 baseTableName="emr_paper_record_request" baseColumnNames="record_location"
+                                 referencedTableName="location" referencedColumnNames="location_id"/>
+
+        <addForeignKeyConstraint constraintName="request_location_id_location_id_fk"
+                                 baseTableName="emr_paper_record_request" baseColumnNames="request_location"
+                                 referencedTableName="location" referencedColumnNames="location_id" />
+
+        <addForeignKeyConstraint constraintName="assign_id_person_id_fk"
+                                 baseTableName="emr_paper_record_request" baseColumnNames="assignee"
+                                 referencedTableName="person" referencedColumnNames="person_id" />
+
+        <addForeignKeyConstraint constraintName="creator_user_id_fk"
+                                 baseTableName="emr_paper_record_request" baseColumnNames="creator"
+                                 referencedTableName="users" referencedColumnNames="user_id" />
+
+        <addForeignKeyConstraint constraintName="request_patient_id_patient_id_fk"
+                                 baseTableName="emr_paper_record_request" baseColumnNames="patient_id"
+                                 referencedTableName="patient" referencedColumnNames="patient_id" />
+
     </changeSet>
 
 </databaseChangeLog>

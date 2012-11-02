@@ -23,7 +23,7 @@
         </property>
 
         <many-to-one name="assignee" class="org.openmrs.Person">
-            <column name="assignee_id" />
+            <column name="assignee" />
         </many-to-one>
 
         <many-to-one name="creator" class="org.openmrs.User" not-null="true">
@@ -35,11 +35,11 @@
         </many-to-one>
 
         <many-to-one name="requestLocation" class="org.openmrs.Location" not-null="true">
-            <column name="request_location_id" />
+            <column name="request_location" />
         </many-to-one>
 
         <many-to-one name="recordLocation" class="org.openmrs.Location" not-null="true">
-            <column name="record_location_id" />
+            <column name="record_location" />
         </many-to-one>
 
     </class>
