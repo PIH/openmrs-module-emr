@@ -64,12 +64,13 @@ public class EmrVisitAssignmentHandler extends BaseEncounterVisitHandler impleme
         if (encounter.getVisit() != null)
             return;
 
-        // TEMP HACK TO AVOID BREAKING RADIOLOGY REQUISITIONS WHILE WE FIGURE OUT HOW WE WANT TO HANDLE THIS
+        // location-less encounters shouldn't belong to a visit
         if (encounter.getLocation() == null) {
             return;
         }
 
-        // Eventually allow some encounters to be visit-free, probably via a GP defining a list of EncounterTypes.
+        // Eventually we should explicitly allow some encounters to be visit-free, probably via a GP defining a list of EncounterTypes.
+        // If we do that, we'd return early from here, and re-enable the IllegalStateException below.
 
         Date when = encounter.getEncounterDatetime();
         if (when == null) {
@@ -91,7 +92,8 @@ public class EmrVisitAssignmentHandler extends BaseEncounterVisitHandler impleme
             }
         }
 
-        throw new IllegalStateException("Cannot create an encounter outside of a visit");
+        // TEMP HACK: allow visit-free encounters while we continue to discuss this
+        // throw new IllegalStateException("Cannot create an encounter outside of a visit");
     }
 
     public void setVisitService(VisitService visitService) {
