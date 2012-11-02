@@ -18,7 +18,10 @@ import static org.openmrs.module.emr.EmrConstants.PRIMARY_IDENTIFIER_TYPE;
 
 public class ArchivesRoomPageController {
 
-    public void get(PageModel model, @RequestParam(value = "createPaperMedicalRecord", required = false, defaultValue = "false") boolean createPaperMedicalRecord, @SpringBean PaperRecordService paperRecordService, @SpringBean("adminService") AdministrationService administrationService) {
+    public void get(PageModel model,
+                    @RequestParam(value="createPaperMedicalRecord", required=false, defaultValue="false") boolean createPaperMedicalRecord,
+                    @SpringBean PaperRecordService paperRecordService,
+                    @SpringBean("adminService") AdministrationService administrationService) {
         List<PaperRecordRequest> openPaperRecordRequests = paperRecordService.getOpenPaperRecordRequestsToPull();
         List<PaperRecordRequest> openPaperRecordRequestsToCreate = paperRecordService.getOpenPaperRecordRequestsToCreate();
         String primaryIdentifierType = administrationService.getGlobalProperty(PRIMARY_IDENTIFIER_TYPE);
@@ -34,7 +37,7 @@ public class ArchivesRoomPageController {
      * @param requests
      */
     public String post(@RequestParam("requestId") List<PaperRecordRequest> requests,
-                       @RequestParam(value = "createPaperMedicalRecord", required = false) boolean createPaperMedicalRecord,
+                       @RequestParam(value="currentTab", required=false, defaultValue="false") boolean createPaperMedicalRecord,
                        @RequestParam("assignTo") Person assignTo,
                        @SpringBean PaperRecordService paperRecordService,
                        UiUtils ui,

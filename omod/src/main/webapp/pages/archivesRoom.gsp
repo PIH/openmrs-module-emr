@@ -69,9 +69,9 @@
 
             <form id="post_requests" method="post">
                 <input type="hidden" name="assignTo" value="${ context.authenticatedUser.person.id }"/>
-                <span style="display: none" data-bind="foreach: selectedRequests()">
-                    <input type="hidden" name="requestId" data-bind="value: requestId"/>
-                </span>
+                <!-- ko foreach:selectedRequests -->
+                <input type="hidden" name="requestId" data-bind="value: requestId"/>
+                <!-- /ko -->
                 <input type="submit" value="${ ui.message("emr.pullRecords.pullSelected") }" data-bind="enable: selectedRequests().length > 0"/>
             </form>
 
