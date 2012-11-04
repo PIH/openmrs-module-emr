@@ -14,22 +14,25 @@
 package org.openmrs.module.emr;
 
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.GlobalProperty;
+import org.openmrs.Privilege;
+import org.openmrs.Role;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.emr.adt.EmrVisitAssignmentHandler;
 import org.openmrs.module.emr.task.TaskDescriptor;
 import org.openmrs.module.emr.task.TaskService;
-import org.openmrs.module.emr.utils.GeneralUtils;
 import org.openmrs.util.OpenmrsConstants;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
@@ -37,7 +40,7 @@ import java.util.Set;
 public class EMRActivator implements ModuleActivator {
 	
 	protected Log log = LogFactory.getLog(getClass());
-		
+	
 	/**
 	 * @see ModuleActivator#willRefreshContext()
 	 */
@@ -72,11 +75,42 @@ public class EMRActivator implements ModuleActivator {
             for (TaskDescriptor task : allTasks)
                 log.debug(task.getId() + " (" + task.getClass().getName() + ")");
         }
-        if(!GeneralUtils.addPrivilegeFullRole()){
-        	log.error("failed to add Privilege Level: Full role");
-        }
+        ensurePrivilegeLevelFullRole();
 	}
 	
+	/**
+	 * Creates role "Privilege Level: Full" if does not exist
+	 * 
+	 * @return
+	 */
+	public static void ensurePrivilegeLevelFullRole() {
+		UserService userService = Context.getUserService();
+		EmrProperties emrProperties = new EmrProperties();
+		Role fullRole = emrProperties.getFullPrivilegeLevel();
+		if (fullRole == null) {
+			fullRole = new Role();
+			fullRole.setName(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
+			fullRole.setRole(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
+			fullRole.setDescription(EmrConstants.PRIVILEGE_LEVEL_FULL_DESCRIPTION_ROLE);
+			userService.saveRole(fullRole);
+		}
+		
+		List<Privilege> allPrivileges = userService.getAllPrivileges();
+		if (allPrivileges != null && allPrivileges.size() > 0) {
+			for (Privilege privilege : allPrivileges) {
+				String privilegeName = privilege.getName();
+				if (!fullRole.hasPrivilege(privilegeName)) {
+					if (!StringUtils.startsWithIgnoreCase(privilegeName, EmrConstants.PRIVILEGE_PREFIX_APP)
+					        && !StringUtils.startsWithIgnoreCase(privilegeName, EmrConstants.PRIVILEGE_PREFIX_TASK)) {
+						fullRole.addPrivilege(privilege);
+					}
+				}
+			}
+			userService.saveRole(fullRole);
+		}
+		
+	}
+
 	/**
 	 * @see ModuleActivator#willStart()
 	 */

@@ -19,7 +19,10 @@ import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.LocationTag;
 import org.openmrs.OrderType;
+import org.openmrs.Role;
 import org.openmrs.VisitType;
+import org.openmrs.api.UserService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.utils.ModuleProperties;
 import org.springframework.stereotype.Component;
 
@@ -50,6 +53,10 @@ public class EmrProperties extends ModuleProperties {
         return getEncounterRoleByGlobalProperty(EmrConstants.GP_CHECK_IN_CLERK_ENCOUNTER_ROLE);
     }
 
+	public Role getFullPrivilegeLevel() {
+		UserService userService = Context.getUserService();
+		return userService.getRole(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
+	}
     public OrderType getTestOrderType() {
         return getOrderTypeByGlobalProperty(EmrConstants.GP_TEST_ORDER_TYPE);
     }

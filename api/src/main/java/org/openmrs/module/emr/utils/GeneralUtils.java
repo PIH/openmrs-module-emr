@@ -14,51 +14,24 @@
 
 package org.openmrs.module.emr.utils;
 
-import org.apache.commons.lang.StringUtils;
-import org.openmrs.*;
-import org.openmrs.api.UserService;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.emr.EmrConstants;
-
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.openmrs.Concept;
+import org.openmrs.Location;
+import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.Person;
+import org.openmrs.Program;
+import org.openmrs.ProgramWorkflow;
+import org.openmrs.ProgramWorkflowState;
+import org.openmrs.User;
+import org.openmrs.api.context.Context;
 
 public class GeneralUtils {
 
-	/**
-	 * 
-	 * Creates role "Privilege Level: Full" if does not exist
-	 * 
-	 * @return
-	 */
-	public static boolean addPrivilegeFullRole(){
-		UserService userService = Context.getUserService();
-		
-		Role fullRole = userService.getRole(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
-		if(fullRole==null){
-			fullRole = new Role();
-			fullRole.setName(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
-			fullRole.setRole(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
-			fullRole.setDescription(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
-			userService.saveRole(fullRole);
-		}
-		
-		List<Privilege> allPrivileges = userService.getAllPrivileges();
-		if(allPrivileges!=null && allPrivileges.size()>0){
-			for(Privilege privilege : allPrivileges){				
-				String privilegeName = privilege.getName();
-				if(!fullRole.hasPrivilege(privilegeName)){
-					if(!StringUtils.startsWithIgnoreCase(privilegeName, EmrConstants.PRIVILEGE_PREFIX_APP) && 
-							!StringUtils.startsWithIgnoreCase(privilegeName, EmrConstants.PRIVILEGE_PREFIX_TASK)){
-						fullRole.addPrivilege(privilege);
-					}
-				}
-			}
-		}
-		if(userService.saveRole(fullRole) !=null){
-			return true;
-		}
-		return false;
-	}
+	
 	
     /***
      * Get the concept by id, the id can either be 1)an integer id like 5090 or 2)mapping type id
