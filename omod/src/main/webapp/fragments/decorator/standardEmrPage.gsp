@@ -23,7 +23,7 @@
 			|
             ${ ui.message("emr.emrContext.sessionLocation", ui.format(emrContext.sessionLocation)) }
             |
-			<a href="/${ contextPath }/logout">Log Out</a>
+			<a id="logout-button" href="/${ contextPath }/logout">Log Out</a>
 		</span>
 	<% } %>
 </div>
