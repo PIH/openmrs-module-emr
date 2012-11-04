@@ -249,7 +249,7 @@ public class Account {
 	/**
 	 * @return the interactsWithPatients
 	 */
-	public boolean isInteractsWithPatients() {
+	public boolean getInteractsWithPatients() {
 		return interactsWithPatients;
 	}
 	
@@ -289,8 +289,10 @@ public class Account {
 		}
 		
 		if (provider != null) {
+			if (provider.getPerson() == null)
+				provider.setPerson(person);
 			provider.setIdentifier(providerIdentifier);
-			provider.setRetired(interactsWithPatients);
+			provider.setRetired(!interactsWithPatients);
 		}
 	}
 	

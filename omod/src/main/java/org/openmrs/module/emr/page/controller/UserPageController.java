@@ -14,6 +14,7 @@
 package org.openmrs.module.emr.page.controller;
 
 import org.openmrs.Person;
+import org.openmrs.Provider;
 import org.openmrs.api.APIException;
 import org.openmrs.module.emr.account.Account;
 import org.openmrs.module.emr.account.AccountService;
@@ -37,10 +38,23 @@ public class UserPageController {
 	}
 	
 	public String post(@RequestParam("personId") @BindParams Account account,
+	                   @RequestParam(value = "enabled", required = false) Boolean enabled,
+	                   @RequestParam(value = "interactsWithPatients", required = false) Boolean interactsWithPatients,
+	                   @RequestParam(value = "createProviderAccount", required = false) Boolean createProviderAccount,
 	                   @SpringBean("accountService") AccountService accountService) {
 		
 		//TODO Invoke validator
+		if (enabled == null && account.getEnabled())
+			account.setEnabled(false);
+		if (createProviderAccount) {
+			Provider provider = new Provider();
+			account.setProvider(provider);
+		}
+		if (interactsWithPatients == null && account.getInteractsWithPatients())
+			account.setInteractsWithPatients(false);
+		
 		accountService.saveAccount(account);
+		
 		return "redirect:/emr/user.page?personId=" + account.getPerson().getPersonId();
 	}
 	

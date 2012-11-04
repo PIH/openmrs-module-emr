@@ -6,6 +6,11 @@
 function emr_cancel(){
 	window.location='/${contextPath}/emr/manageAccounts.page';
 }
+function emr_createProviderAccount(){
+	jQuery('.emr_providerDetails').toggle();
+	jQuery('#createProviderAccount').val('true');
+	jQuery('#interactsWithPatients').attr('checked','checked');
+}
 </script>
 
 <h3>${ ui.message("emr.editAccount") }</h3>
@@ -27,7 +32,7 @@ function emr_cancel(){
 	<fieldset>
 		<legend>${ ui.message("emr.user.account.details") }</legend>
 		<% if(account.user){ %>
-		<input type="checkbox" name="retired" value="${account.retired}" <% if(!account.retired){ %>checked='checked'<% } %> /> ${ ui.message("emr.user.enabled") }
+		<input type="checkbox" name="enabled" value="${account.enabled}" <% if(!account.enabled){ %>checked='checked'<% } %> /> ${ ui.message("emr.user.enabled") }
 		
 		<br /><br />
 		<table cellpadding="0" cellspacing="5" border="0">
@@ -65,17 +70,25 @@ function emr_cancel(){
 		<% } %>
 		</div>
 		<% } else {%>
-			<input type="button" value="${ ui.message("emr.user.createUserAccount") }" onclick="javascript:window.location='/${ contextPath }/emr/manageUsers.page'" />
+			<input type="button" value="${ ui.message("emr.user.createUserAccount") }" onclick="javascript:window.location='/${ contextPath }/admin/users/user.form?person_id=${ account.person.personId }'" />
 		<% } %>
 	</fieldset>
 	
 	<br />
 	<fieldset>
 		<legend>${ ui.message("emr.provider.details") }</legend>
-		<input type="checkbox" name="interactsWithPatients" value="true" <% if(account.interactsWithPatients){ %>checked='checked'<% } %> /> ${ ui.message("emr.provider.interactsWithPatients") }  
+		<div class="emr_providerDetails" ${ (!account.provider) ? "style='display: none'" : "" }>
+		<input id="interactsWithPatients" type="checkbox" name="interactsWithPatients" value="true" <% if(account.interactsWithPatients){ %>checked='checked'<% } %> /> ${ ui.message("emr.provider.interactsWithPatients") }  
 		
 		<br /><br />
 		${ ui.message("emr.provider.identifier") } <input type="text" name="providerIdentifier" value="${(account.providerIdentifier) ? account.providerIdentifier : ""}" />
+		</div>
+		<div class="emr_providerDetails">
+		<% if(!account.provider) { %>
+			<input type="button" value="${ ui.message("emr.provider.createProviderAccount") }" onclick="javascript:emr_createProviderAccount()" />
+		<% } %>
+		<input id="createProviderAccount" type="hidden" name="createProviderAccount" value="false" />
+		</div>
 	</fieldset>
 	
 	<br /><br />

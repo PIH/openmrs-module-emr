@@ -15,6 +15,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
+import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,15 +99,24 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 			}
 			if (account.getPrivilegeLevel() != null && !user.hasRole(account.getPrivilegeLevel().getRole()))
 				user.addRole(account.getPrivilegeLevel());
+			
 			for (Role capability : account.getCapabilities()) {
 				user.addRole(capability);
 			}
 			
+			if (user.isRetired())
+				user.setRetireReason(Context.getMessageSourceService().getMessage("general.default.retireReason"));
+			
 			account.setUser(userService.saveUser(user, account.getPassword()));
 		}
 		
-		if (account.getProvider() != null)
-			account.setProvider(providerService.saveProvider(account.getProvider()));
+		if (account.getProvider() != null) {
+			Provider provider = account.getProvider();
+			if (provider.isRetired())
+				provider.setRetireReason(Context.getMessageSourceService().getMessage("general.default.retireReason"));
+			
+			account.setProvider(providerService.saveProvider(provider));
+		}
 		
 		return account;
 	}
@@ -156,10 +166,13 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 	private User getUserByPerson(Person person) {
 		User user = null;
 		List<User> users = userService.getUsersByPerson(person, false);
+		//exclude daemon user
 		for (Iterator<User> i = users.iterator(); i.hasNext();) {
 			User candidate = i.next();
-			if (EmrConstants.DAEMON_USER_UUID.equals(candidate.getUuid()))
+			if (EmrConstants.DAEMON_USER_UUID.equals(candidate.getUuid())) {
 				i.remove();
+				break;
+			}
 		}
 		//return a retired account if they have none
 		if (users.size() == 0)
@@ -178,8 +191,10 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 		Collection<Provider> providers = providerService.getProvidersByPerson(person, false);
 		for (Iterator<Provider> i = providers.iterator(); i.hasNext();) {
 			Provider candidate = i.next();
-			if (EmrConstants.DAEMON_USER_UUID.equals(candidate.getUuid()))
+			if (EmrConstants.DAEMON_USER_UUID.equals(candidate.getUuid())) {
 				i.remove();
+				break;
+			}
 		}
 		//see if they have a retired account
 		if (providers.size() == 0)
