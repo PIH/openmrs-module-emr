@@ -16,6 +16,7 @@ package org.openmrs.module.emr;
 
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
 import org.openmrs.module.emr.adt.VisitSummary;
@@ -95,6 +96,19 @@ public class EmrContext {
 
     public void setActiveVisitSummary(VisitSummary activeVisitSummary) {
         this.activeVisitSummary = activeVisitSummary;
+    }
+
+    public boolean isAuthenticated() {
+        return userContext.isAuthenticated();
+    }
+
+    /**
+     * @throws APIAuthenticationException if no user is authenticated
+     */
+    public void requireAuthentication() throws APIAuthenticationException  {
+        if (!isAuthenticated()) {
+            throw new APIAuthenticationException();
+        }
     }
 
 }

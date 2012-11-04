@@ -16,6 +16,7 @@ package org.openmrs.module.emr.api.impl;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.adt.AdtService;
@@ -23,6 +24,7 @@ import org.openmrs.module.emr.api.EmrService;
 import org.openmrs.module.emr.api.db.EmrDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -41,6 +43,10 @@ public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
     @Autowired
     @Qualifier("adtService")
     private AdtService adtService;
+
+    @Autowired
+    @Qualifier("locationService")
+    private LocationService locationService;
 
     public void setDao(EmrDAO dao) {
         this.dao = dao;
@@ -61,6 +67,12 @@ public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
     @Override
     public List<Patient> findPatients(String query, Location checkedInAt, Integer start, Integer length) {
         return dao.findPatients(query, checkedInAt, start, length);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Location> getLoginLocations() {
+        return locationService.getLocationsByTag(emrProperties.getSupportsLoginLocationTag());
     }
 
 }

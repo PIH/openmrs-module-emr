@@ -69,4 +69,8 @@ public class EmrProperties extends ModuleProperties {
         return locationService.getLocationTagByName(EmrConstants.LOCATION_TAG_SUPPORTS_VISITS);
     }
 
+    public LocationTag getSupportsLoginLocationTag() {
+        return locationService.getLocationTagByName(EmrConstants.LOCATION_TAG_SUPPORTS_LOGIN);
+    }
+
 }

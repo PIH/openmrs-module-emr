@@ -26,4 +26,10 @@ public interface EmrService extends OpenmrsService {
 
     List<Patient> findPatients(String query, Location checkedInAt, Integer start, Integer length);
 
+    /**
+     * @see org.openmrs.module.emr.EmrConstants#LOCATION_TAG_SUPPORTS_LOGIN
+     * @return all locations that you can choose as a sessionLocation when logging in
+     */
+    List<Location> getLoginLocations();
+
 }

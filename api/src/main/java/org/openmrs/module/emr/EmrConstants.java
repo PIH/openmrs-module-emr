@@ -41,6 +41,8 @@ public class EmrConstants {
     public static final String PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS = "Paper Records - Request Records";
 
     public static final String LOCATION_TAG_SUPPORTS_VISITS = "Visit Location";
+
+    public static final String LOCATION_TAG_SUPPORTS_LOGIN = "Login Location";
     
     public static final String ROLE_PREFIX_CAPABILITY = "Capability";
 
@@ -51,11 +53,16 @@ public class EmrConstants {
     public static final String PRIVILEGE_LEVEL_FULL_DESCRIPTION_ROLE= "A role that has all API privileges";
     
     public static final String PRIVILEGE_PREFIX_APP= "App:";
-    
+
     public static final String PRIVILEGE_PREFIX_TASK= "Task:";
-    
+
     public static final String PRIMARY_IDENTIFIER_TYPE = "emr.primaryIdentifierType";
     
     public static final String DAEMON_USER_UUID = "A4F30A1B-5EB9-11DF-A648-37A07F9C90FB";
 
+    public static final String COOKIE_NAME_LAST_SESSION_LOCATION = "emr.lastSessionLocation";
+
+    public static final String SESSION_ATTRIBUTE_ERROR_MESSAGE = "emr.errorMessage";
+
+    public static final String SESSION_ATTRIBUTE_INFO_MESSAGE = "emr.infoMessage";
 }

@@ -28,6 +28,8 @@
 	<% } %>
 </div>
 
+${ ui.includeFragment("emr", "infoAndErrorMessage") }
+
 <div id="content" class="container">
 	<%= config.content %>
 </div>
