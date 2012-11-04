@@ -13,24 +13,29 @@
  */
 package org.openmrs.module.emr.converter;
 
-import org.openmrs.api.context.Context;
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.module.emr.account.Account;
+import org.openmrs.module.emr.account.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
-
 
 /**
  * Converts String to Account, interpreting it as a user.id
  */
 @Component
 public class StringToAccountConverter implements Converter<String, Account> {
-
-	/**
-     * @see org.springframework.core.convert.converter.Converter#convert(Object)
-     */
-    @Override
-    public Account convert(String source) {
-	    return new Account(Context.getUserService().getUser(Integer.valueOf(source)));
-    }
 	
+	@Autowired
+	private AccountService accountService;
+	
+	/**
+	 * @see org.springframework.core.convert.converter.Converter#convert(Object)
+	 */
+	@Override
+	public Account convert(String personId) {
+		if (StringUtils.isNotBlank(personId))
+			return accountService.getAccount(Integer.valueOf(personId));
+		return null;
+	}
 }

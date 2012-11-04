@@ -13,20 +13,8 @@
  */
 package org.openmrs.module.emr.page.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
 import org.openmrs.Person;
-import org.openmrs.PersonName;
-import org.openmrs.Provider;
-import org.openmrs.Role;
-import org.openmrs.User;
 import org.openmrs.api.APIException;
-import org.openmrs.api.PersonService;
-import org.openmrs.api.ProviderService;
-import org.openmrs.api.UserService;
-import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.account.Account;
 import org.openmrs.module.emr.account.AccountService;
 import org.openmrs.ui.framework.annotation.BindParams;
@@ -36,53 +24,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public class UserPageController {
 	
-	public void get(PageModel model, @RequestParam(value = "userId", required = false) User user,
-	                @RequestParam(value = "providerId", required = false) Provider provider,
-	                @SpringBean("userService") UserService userService,
-	                @SpringBean("providerService") ProviderService providerService,
-	                @SpringBean("personService") PersonService personService) {
+	public void get(PageModel model, @RequestParam(value = "personId", required = false) Person person,
+	                @SpringBean("accountService") AccountService accountService) {
 		
-		if (user == null) {
-			if (provider == null)
-				throw new IllegalArgumentException("userId  or providerId id required");
-			
-			//If the associated person has a user account, use that
-			if (provider.getPerson() != null) {
-				List<User> users = userService.getUsersByPerson(provider.getPerson(), false);
-				if (users.size() == 1)
-					user = users.get(0);
-				else if (users.size() > 1)
-					throw new APIException("Found multiple users for person with id: " + provider.getPerson().getPersonId());
-				else {
-					//This provider has no user account, create one
-					user = new User();
-					user.setPerson(provider.getPerson());
-				}
-			} else if (StringUtils.isNotBlank(provider.getName())) {
-				//Create a Person object for the provider since they have none
-				PersonName personName = personService.parsePersonName(provider.getName());
-				Person person = new Person();
-				person.addName(personName);
-				user = new User();
-				user.setPerson(person);
-			} else {
-				throw new APIException("Provider has no name and is not associated to a person");
-			}
-		}
+		Account account = accountService.getAccountByPerson(person);
+		if (account == null)
+			throw new APIException("Failed to find user account matching person with id:" + person.getPersonId());
 		
-		model.addAttribute("account", new Account(user));
-		List<Role> candidateRoles = userService.getAllRoles();
-		List<Role> roles = new ArrayList<Role>();
-		for (Role candidate : candidateRoles) {
-			if (candidate.getName().startsWith(EmrConstants.ROLE_PREFIX_CAPABILITY))
-				roles.add(candidate);
-		}
-		model.addAttribute("roles", roles);
+		model.addAttribute("account", account);
+		model.addAttribute("capabilities", accountService.getAllCapabilities());
+		model.addAttribute("privilegeLevels", accountService.getAllPrivilegeLevels());
 	}
 	
-	public String post(@RequestParam("userId") @BindParams Account account, @SpringBean("accountService") AccountService accountService) {
+	public String post(@RequestParam("personId") @BindParams Account account,
+	                   @SpringBean("accountService") AccountService accountService) {
+		
+		//TODO Invoke validator
 		accountService.saveAccount(account);
-		return "redirect:/emr/user.page?userId=" + account.getUser().getUserId(); // "redirect:/emr/manageUsers.page";
+		return "redirect:/emr/user.page?personId=" + account.getPerson().getPersonId();
 	}
 	
 }

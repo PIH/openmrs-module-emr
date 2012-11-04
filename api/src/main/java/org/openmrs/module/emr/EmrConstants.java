@@ -42,7 +42,9 @@ public class EmrConstants {
 
     public static final String LOCATION_TAG_SUPPORTS_VISITS = "Visit Location";
     
-    public static final String ROLE_PREFIX_CAPABILITY = "Capability-";
+    public static final String ROLE_PREFIX_CAPABILITY = "Capability";
+
+	public static final String ROLE_PREFIX_PRIVILEGE_LEVEL = "Privilege Level";
     
     public static final String PRIVILEGE_LEVEL_FULL_ROLE= "Privilege Level: Full";
     
@@ -51,5 +53,7 @@ public class EmrConstants {
     public static final String PRIVILEGE_PREFIX_TASK= "Task:";
     
     public static final String PRIMARY_IDENTIFIER_TYPE = "emr.primaryIdentifierType";
+    
+    public static final String DAEMON_USER_UUID = "A4F30A1B-5EB9-11DF-A648-37A07F9C90FB";
 
 }

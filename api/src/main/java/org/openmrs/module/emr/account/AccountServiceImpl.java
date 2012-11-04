@@ -1,18 +1,22 @@
 package org.openmrs.module.emr.account;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.openmrs.Person;
-import org.openmrs.PersonName;
 import org.openmrs.Provider;
+import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.module.emr.EmrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AccountServiceImpl extends BaseOpenmrsService implements AccountService {
@@ -52,62 +56,140 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 	 */
 	@Override
 	public List<Account> getAllAccounts() {
-		List<Account> accounts = new ArrayList<Account>();
+		Map<Person, Account> byPerson = new LinkedHashMap<Person, Account>();
 		for (User user : userService.getAllUsers()) {
-			accounts.add(new Account(user));
+			//exclude daemon user
+			if (EmrConstants.DAEMON_USER_UUID.equals(user.getUuid()))
+				continue;
+			
+			Provider provider = getProviderByPerson(user.getPerson());
+			byPerson.put(user.getPerson(), new Account(user, provider));
 		}
 		for (Provider provider : providerService.getAllProviders()) {
-			accounts.add(new Account(provider));
+			if (provider.getPerson() == null)
+				throw new APIException("Providers not associated to a person are not supported");
+			
+			Account account = byPerson.get(provider.getPerson());
+			if (account == null) {
+				User user = getUserByPerson(provider.getPerson());
+				byPerson.put(provider.getPerson(), new Account(user, provider));
+			}
+		}
+		
+		List<Account> accounts = new ArrayList<Account>();
+		for (Account account : byPerson.values()) {
+			accounts.add(account);
 		}
 		
 		return accounts;
 	}
 	
+	public Account saveAccount(Account account) {
+		account.syncProperties();
+		account.setPerson(personService.savePerson(account.getPerson()));
+		
+		if (account.getUser() != null) {
+			User user = account.getUser();
+			//only include capabilities and privilege level set on the account
+			if (user.getRoles() != null) {
+				//TODO Figure out how to unset inherited roles
+				user.getRoles().removeAll(getAllPrivilegeLevels());
+				user.getRoles().removeAll(getAllCapabilities());
+			}
+			if (account.getPrivilegeLevel() != null && !user.hasRole(account.getPrivilegeLevel().getRole()))
+				user.addRole(account.getPrivilegeLevel());
+			for (Role capability : account.getCapabilities()) {
+				user.addRole(capability);
+			}
+			
+			account.setUser(userService.saveUser(user, account.getPassword()));
+		}
+		
+		if (account.getProvider() != null)
+			account.setProvider(providerService.saveProvider(account.getProvider()));
+		
+		return account;
+	}
+	
 	/**
-	 * @see org.openmrs.module.emr.account.AccountService#getUserByProvider(org.openmrs.Provider,
-	 *      boolean)
+	 * @see org.openmrs.module.emr.account.AccountService#getAccount(java.lang.Integer)
 	 */
 	@Override
-	public User getUserByProvider(Provider provider, boolean createNew) {
+	public Account getAccount(Integer personId) {
+		return getAccountByPerson(personService.getPerson(personId));
+	}
+	
+	/**
+	 * @see org.openmrs.module.emr.account.AccountService#getAccountByPerson(org.openmrs.Person)
+	 */
+	@Override
+	public Account getAccountByPerson(Person person) {
+		return new Account(getUserByPerson(person), getProviderByPerson(person));
+	}
+	
+	/**
+	 * @see org.openmrs.module.emr.account.AccountService#getAllCapabilities()
+	 */
+	@Override
+	public List<Role> getAllCapabilities() {
+		List<Role> capabilities = new ArrayList<Role>();
+		for (Role candidate : userService.getAllRoles()) {
+			if (candidate.getName().startsWith(EmrConstants.ROLE_PREFIX_CAPABILITY))
+				capabilities.add(candidate);
+		}
+		return capabilities;
+	}
+	
+	/**
+	 * @see org.openmrs.module.emr.account.AccountService#getAllPrivilegeLevels()
+	 */
+	@Override
+	public List<Role> getAllPrivilegeLevels() {
+		List<Role> privilegeLevels = new ArrayList<Role>();
+		for (Role candidate : userService.getAllRoles()) {
+			if (candidate.getName().startsWith(EmrConstants.ROLE_PREFIX_PRIVILEGE_LEVEL))
+				privilegeLevels.add(candidate);
+		}
+		return privilegeLevels;
+	}
+	
+	private User getUserByPerson(Person person) {
 		User user = null;
-		if (provider.getPerson() != null) {
-			List<User> users = userService.getUsersByPerson(provider.getPerson(), false);
-			if (users.size() == 0)
-				users = userService.getUsersByPerson(provider.getPerson(), true);
-			
-			if (users.size() == 1)
-				user = users.get(0);
-			else if (users.size() > 1)
-				throw new APIException("Found multiple users associated to the provider with id: "
-				        + provider.getProviderId());
+		List<User> users = userService.getUsersByPerson(person, false);
+		for (Iterator<User> i = users.iterator(); i.hasNext();) {
+			User candidate = i.next();
+			if (EmrConstants.DAEMON_USER_UUID.equals(candidate.getUuid()))
+				i.remove();
 		}
-		if (user == null && createNew) {
-			//This provider has no user account, create one
-			user = new User();
-			if (provider.getPerson() != null) {
-				user.setPerson(provider.getPerson());
-			} else if (StringUtils.isNotBlank(provider.getName())) {
-				//Create a Person object with the name matching provider.name
-				PersonName personName = personService.parsePersonName(provider.getName());
-				Person person = new Person();
-				person.addName(personName);
-				user = new User();
-				user.setPerson(person);
-			}
-		}
+		//return a retired account if they have none
+		if (users.size() == 0)
+			users = userService.getUsersByPerson(person, true);
+		
+		if (users.size() == 1)
+			user = users.get(0);
+		else if (users.size() > 1)
+			throw new APIException("Found multiple users associated to the person with id: " + person.getPersonId());
 		
 		return user;
 	}
 	
-	public Account saveAccount(Account account) {
-		account.syncProperties();
-		account.setUser(userService.saveUser(account.getUser(), null));
-		account.setPerson(personService.savePerson(account.getPerson()));
-		
-		if (account.getProvider() != null) {
-			account.setProvider(providerService.saveProvider(account.getProvider()));
+	private Provider getProviderByPerson(Person person) {
+		Provider provider = null;
+		Collection<Provider> providers = providerService.getProvidersByPerson(person, false);
+		for (Iterator<Provider> i = providers.iterator(); i.hasNext();) {
+			Provider candidate = i.next();
+			if (EmrConstants.DAEMON_USER_UUID.equals(candidate.getUuid()))
+				i.remove();
 		}
+		//see if they have a retired account
+		if (providers.size() == 0)
+			providers = providerService.getProvidersByPerson(person, true);
 		
-		return account;
+		if (providers.size() == 1)
+			provider = providers.iterator().next();
+		else if (providers.size() > 1)
+			throw new APIException("Found multiple providers associated to the person with id: " + person.getPersonId());
+		
+		return provider;
 	}
 }

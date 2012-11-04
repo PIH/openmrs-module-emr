@@ -2,8 +2,9 @@ package org.openmrs.module.emr.account;
 
 import java.util.List;
 
-import org.openmrs.Provider;
-import org.openmrs.User;
+import org.openmrs.Person;
+import org.openmrs.Role;
+import org.openmrs.module.emr.EmrConstants;
 
 public interface AccountService {
 	
@@ -14,17 +15,44 @@ public interface AccountService {
 	public List<Account> getAllAccounts();
 	
 	/**
-	 * Gets the user account associated to the provider or creates an unsaved User instance for the
-	 * provider and returns it
+	 * Save the account details to the database
 	 * 
-	 * @param provider
-	 * @param createNew specifies if a new User instance should be created if none is found
+	 * @param account
 	 * @return
-	 * @should get the user associated to the provider
-	 * @should return a new user instance if createNew is set to true and no matching user is found
-	 * @should return null if createNew is set to false and no matching user is found
 	 */
-	public User getUserByProvider(Provider provider, boolean createNew);
-	
 	public Account saveAccount(Account account);
+	
+	/**
+	 * Gets an account for the person with the specified personId
+	 * 
+	 * @return
+	 * @should return the account for the person with the specified personId
+	 */
+	public Account getAccount(Integer personId);
+	
+	/**
+	 * Gets an account for the Specified person object
+	 * 
+	 * @return
+	 * @should return the account for the specified person if they are associated to a user
+	 * @should return the account for the specified person if they are associated to a provider
+	 */
+	public Account getAccountByPerson(Person person);
+	
+	/**
+	 * Gets all Capabilities, i.e roles with the {@link EmrConstants#ROLE_PREFIX_CAPABILITY} prefix
+	 * 
+	 * @return a list of Roles
+	 * @should return all roles with the capability prefix
+	 */
+	public List<Role> getAllCapabilities();
+	
+	/**
+	 * Gets all Privilege Levels, i.e roles with the
+	 * {@link EmrConstants#ROLE_PREFIX_PRIVILEGE_LEVEL} prefix
+	 * 
+	 * @return a list of Roles
+	 * @should return all roles with the privilege level prefix
+	 */
+	public List<Role> getAllPrivilegeLevels();
 }

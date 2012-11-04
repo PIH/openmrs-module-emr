@@ -5,11 +5,14 @@
 <h3>${  ui.message("emr.manageUsers") }</h3>
 
 <ul>
-	<% users.each{  %>
- 	<li><a href="/${ contextPath }/emr/user.page?userId=${ it.userId }">${ ui.format(it) }</a></li>
-	<% } %>
-	
-	<% providers.each{  %>
- 	<li><a href="/${ contextPath }/emr/user.page?providerId=${ it.providerId }">${ ui.format(it) }</a></li>
+	<% accounts.each{  %>
+ 	<li>
+		<a href="/${ contextPath }/emr/user.page?personId=${ it.person.personId }">
+		 	${ ui.format(it.person.personName) }
+			<% if(it.username && it.username != '') {%>
+			(${ ui.format(it.username) })
+			<% } %>
+		 </a>
+	</li>
 	<% } %>
 </ul>

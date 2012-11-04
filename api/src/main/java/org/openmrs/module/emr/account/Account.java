@@ -1,11 +1,14 @@
 package org.openmrs.module.emr.account;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import org.openmrs.Person;
 import org.openmrs.Provider;
 import org.openmrs.Role;
 import org.openmrs.User;
+import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.util.OpenmrsUtil;
 
 /**
  * Acts a wrapper for a Person, User and Provider
@@ -24,7 +27,7 @@ public class Account {
 	
 	private String gender;
 	
-	private boolean retired;
+	private boolean enabled;
 	
 	private String username;
 	
@@ -32,33 +35,47 @@ public class Account {
 	
 	private String confirmPassword;
 	
-	private HashSet<String> capabilities;
+	private Set<Role> capabilities;
 	
-	private String privilegeLevel;
+	private Role privilegeLevel;
 	
 	private boolean interactsWithPatients;
 	
 	private String providerIdentifier;
-	
-	private String type;
 	
 	public Account(Person person) {
 		this.person = person;
 		setPersonDetails();
 	}
 	
-	public Account(User user) {
-		this.user = user;
-		person = user.getPerson();
-		setUserDetails();
+	public Account(User user, Provider provider) {
+		if (user == null && provider == null)
+			throw new IllegalArgumentException("Both user and provider cannot be null");
+		else if (user != null && provider != null) {
+			if (!OpenmrsUtil.nullSafeEquals(user.getPerson(), provider.getPerson()))
+				throw new IllegalArgumentException("The person objects for user and provider should match");
+		}
+		
+		person = (user != null) ? user.getPerson() : provider.getPerson();
 		setPersonDetails();
-	}
-	
-	public Account(Provider provider) {
-		this.provider = provider;
-		person = provider.getPerson();
-		setProviderDetails();
-		setPersonDetails();
+		if (user != null) {
+			this.user = user;
+			setUsername(user.getUsername());
+			setEnabled(!user.isRetired());
+			
+			setCapabilities(new HashSet<Role>());
+			for (Role role : user.getAllRoles()) {
+				if (role.getName().startsWith(EmrConstants.ROLE_PREFIX_CAPABILITY))
+					getCapabilities().add(role);
+				else if (role.getName().startsWith(EmrConstants.ROLE_PREFIX_PRIVILEGE_LEVEL))
+					setPrivilegeLevel(role);
+			}
+		}
+		if (provider != null) {
+			this.provider = provider;
+			interactsWithPatients = !provider.isRetired();
+			providerIdentifier = provider.getIdentifier();
+		}
 	}
 	
 	/**
@@ -104,6 +121,20 @@ public class Account {
 	}
 	
 	/**
+	 * @return the enabled
+	 */
+	public boolean getEnabled() {
+		return enabled;
+	}
+	
+	/**
+	 * @param enabled the enabled to set
+	 */
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+	
+	/**
 	 * @return the person
 	 */
 	public Person getPerson() {
@@ -143,20 +174,6 @@ public class Account {
 	 */
 	public void setProvider(Provider provider) {
 		this.provider = provider;
-	}
-	
-	/**
-	 * @return the disabled
-	 */
-	public boolean getRetired() {
-		return retired;
-	}
-	
-	/**
-	 * @param retired
-	 */
-	public void setRetired(boolean retired) {
-		this.retired = retired;
 	}
 	
 	/**
@@ -204,28 +221,28 @@ public class Account {
 	/**
 	 * @return the capabilities
 	 */
-	public HashSet<String> getCapabilities() {
+	public Set<Role> getCapabilities() {
 		return capabilities;
 	}
 	
 	/**
 	 * @param capabilities the capabilities to set
 	 */
-	public void setCapabilities(HashSet<String> capabilities) {
+	public void setCapabilities(Set<Role> capabilities) {
 		this.capabilities = capabilities;
 	}
 	
 	/**
 	 * @return the privilegeLevel
 	 */
-	public String getPrivilegeLevel() {
+	public Role getPrivilegeLevel() {
 		return privilegeLevel;
 	}
 	
 	/**
 	 * @param privilegeLevel the privilegeLevel to set
 	 */
-	public void setPrivilegeLevel(String privilegeLevel) {
+	public void setPrivilegeLevel(Role privilegeLevel) {
 		this.privilegeLevel = privilegeLevel;
 	}
 	
@@ -258,47 +275,29 @@ public class Account {
 	}
 	
 	/**
-	 * @return the type
+	 * Synchronizes the account properties with their corresponding ones on the underlying Provider,
+	 * Person and User instances except the capabilities
 	 */
-	public String getType() {
-		return type;
-	}
-	
-	/**
-	 * @param type the type to set
-	 */
-	public void setType(String type) {
-		this.type = type;
+	public void syncProperties() {
+		person.getPersonName().setFamilyName(familyName);
+		person.getPersonName().setGivenName(givenName);
+		person.setGender(gender);
+		
+		if (user != null) {
+			user.setUsername(username);
+			user.setRetired(!enabled);
+		}
+		
+		if (provider != null) {
+			provider.setIdentifier(providerIdentifier);
+			provider.setRetired(interactsWithPatients);
+		}
 	}
 	
 	private void setPersonDetails() {
-		if (person != null) {
-			givenName = person.getGivenName();
-			familyName = person.getFamilyName();
-			gender = person.getGender();
-		}
-	}
-	
-	private void setUserDetails() {
-		if (user != null) {
-			setUsername(user.getUsername());
-			setRetired(user.isRetired());
-			
-			//TODO set privilege level
-			
-			setCapabilities(new HashSet<String>());
-			for (Role role : user.getAllRoles()) {
-				getCapabilities().add(role.getName());
-			}
-		}
-	}
-	
-	private void setProviderDetails() {
-		if (provider != null) {
-			//TODO set interacts with users and type
-			
-			setProviderIdentifier(provider.getIdentifier());
-		}
+		givenName = person.getGivenName();
+		familyName = person.getFamilyName();
+		gender = person.getGender();
 	}
 	
 	/**
@@ -306,9 +305,9 @@ public class Account {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		// TODO Add some smarter code that will prevent duplicate 
-		//accounts in case the provider has a user account
-		return super.equals(obj);
+		if (obj == null)
+			return false;
+		return OpenmrsUtil.nullSafeEquals(this.getPerson(), ((Account) obj).getPerson());
 	}
 	
 	/**
@@ -316,13 +315,8 @@ public class Account {
 	 */
 	@Override
 	public int hashCode() {
-		// TODO implement this as per equals() method above
-		return super.hashCode();
-	}
-	
-	public void syncProperties() {
-		user.setUsername(username);
-		person.getPersonName().setFamilyName(familyName);
-		person.getPersonName().setGivenName(givenName);
+		if (getPerson() == null)
+			return super.hashCode();
+		return getPerson().hashCode();
 	}
 }
