@@ -23,7 +23,7 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
-public class UserPageController {
+public class AccountPageController {
 	
 	public void get(PageModel model, @RequestParam(value = "personId", required = false) Person person,
 	                @SpringBean("accountService") AccountService accountService) {
@@ -55,7 +55,7 @@ public class UserPageController {
 		
 		accountService.saveAccount(account);
 		
-		return "redirect:/emr/user.page?personId=" + account.getPerson().getPersonId();
+		return "redirect:/emr/account.page?personId=" + account.getPerson().getPersonId();
 	}
 	
 }

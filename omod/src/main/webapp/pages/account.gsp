@@ -32,7 +32,7 @@ function emr_createProviderAccount(){
 	<fieldset>
 		<legend>${ ui.message("emr.user.account.details") }</legend>
 		<% if(account.user){ %>
-		<input type="checkbox" name="enabled" value="${account.enabled}" <% if(!account.enabled){ %>checked='checked'<% } %> /> ${ ui.message("emr.user.enabled") }
+		<input type="checkbox" name="enabled" value="true" <% if(account.enabled){ %>checked='checked'<% } %> /> ${ ui.message("emr.user.enabled") }
 		
 		<br /><br />
 		<table cellpadding="0" cellspacing="5" border="0">
@@ -94,6 +94,6 @@ function emr_createProviderAccount(){
 	<br /><br />
 	<input type="hidden" name="personId" value="${ account.person.personId }" />
 	<input type="submit" value="${ ui.message("general.save") }" /> &nbsp;&nbsp;&nbsp;
-	<input type="button" value="${ ui.message("general.cancel") }" onclick="javascript:window.location='/${ contextPath }/emr/manageUsers.page'" />
+	<input type="button" value="${ ui.message("general.cancel") }" onclick="javascript:window.location='/${ contextPath }/emr/manageAccounts.page'" />
 		
 </form>
