@@ -86,7 +86,7 @@
                     </tr>
                 </thead>
                 <tbody data-bind="foreach: recordsToPull">
-                    <tr data-bind="css:{ selected: selected(), even: (\$index() % 2 == 0) }, click: \$root.selectRequestToBePulled" >
+                    <tr data-bind="attr:{'id': dossierNumber}, css:{ selected: selected(), even: (\$index() % 2 == 0) }, click: \$root.selectRequestToBePulled" >
                         <td><span data-bind="text: patientName"></span></td>
                         <td><span data-bind="text: dossierNumber"></span></td>
                         <td><span data-bind="text: sendToLocation"></span></td>
@@ -120,7 +120,7 @@
                 </tr>
                 </thead>
                 <tbody data-bind="foreach: recordsToCreate">
-                <tr data-bind="css:{ selected: selected(), even: (\$index() % 2 == 0) }, click: \$root.selectRecordsToBeCreated" >
+                <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), even: (\$index() % 2 == 0) }, click: \$root.selectRecordsToBeCreated" >
                     <td><span data-bind="text: patientName"></span></td>
                     <td><span data-bind="text: patientId"></span></td>
                     <td><span data-bind="text: sendToLocation"></span></td>
