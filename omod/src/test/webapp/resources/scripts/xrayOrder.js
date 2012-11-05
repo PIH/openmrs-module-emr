@@ -4,10 +4,13 @@ describe("X-ray studies selection", function() {
         {"value": 1, "label": "First Study"},
         {"value": 2, "label": "Second Study"},
         {"value": 3, "label": "Third Study"}];
+
+    var emergencyLocation = AutocompleteItem(1, "Emergency");
     var locations = [
         {"value": 1, "label": "Emergency"},
         {"value": 2, "label": "Clinics"},
         {"value": 3, "label": "Sant Femme"}];
+
     var viewModel = StudiesViewModel(studies, locations);
 
 
@@ -30,12 +33,26 @@ describe("X-ray studies selection", function() {
         expect(viewModel.selectedStudies().length).toBe(0);
     });
 
-    it("should asses that the viewModel is not valid", function() {
-       expect(viewModel.isValid()).toBe(false);
+    it("should clear portable location after setting not portable", function() {
+        viewModel.portable(true);
+        viewModel.portableLocation(emergencyLocation);
+        viewModel.portable(false);
+        expect(viewModel.portableLocation()).toBe(null);
     });
 
-    it("should asses that the viewModel is valid", function() {
+    it("should asses that the viewModel without selected studies is not valid", function() {
+        expect(viewModel.isValid()).toBe(false);
+    });
+
+    it("should asses that viewModel with selected study, marked as portable without a location is not valid", function() {
         viewModel.selectStudy(firstStudy);
+        viewModel.portable(true);
+        expect(viewModel.isValid()).toBe(false);
+    });
+
+    it("should asses that viewModel not portable is valid", function() {
+        viewModel.selectStudy(firstStudy);
+        viewModel.portable(false);
         expect(viewModel.isValid()).toBe(true);
     });
 

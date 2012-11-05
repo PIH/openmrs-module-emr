@@ -17,7 +17,14 @@ function StudiesViewModel(studies, locations) {
     api.locations = ko.observableArray([])
     api.portableLocation = ko.observable();
 
+    api.isValid = ko.computed(function() {
+        var studiesAreValid = api.selectedStudies().length > 0;
+        var portableIsValid = api.portable() ? api.portableLocation() != null : true;
+        return studiesAreValid && portableIsValid;
+    });
+
     /* Function related to studies selection */
+
     api.selectStudy = function(study) {
         api.selectedStudies.push(study);
         api.studies.remove( function(item) { return item.id == study.id } );
@@ -33,20 +40,22 @@ function StudiesViewModel(studies, locations) {
             return { "label": element.name, "value": element.id };
         });
     };
-
     /* Functions related to portable */
+
     api.convertedPortableLocations = function() {
         return $.map( api.locations(), function(element) {
             return { "label": element.name, "value": element.id };
         });
     }
 
+    api.portable.subscribe(function(value) {
+        if( !value ) {
+            api.portableLocation(null);
+        }
+    })
+
     api.selectLocation = function(location) {
         api.portableLocation(location.id);
-    }
-
-    api.isValid = function() {
-        return api.selectedStudies().length > 0;
     }
 
     for(var i=0; i<studies.length; i++) {
@@ -81,5 +90,8 @@ ko.bindingHandlers.autocomplete = {
         });
     },
     update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        // It's invoked everytime we update the observable associated to the element
+        // In this cases, we assume we'll always want to reset it
+        $(element).val("");
     }
 };
