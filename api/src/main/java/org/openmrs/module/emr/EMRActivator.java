@@ -14,12 +14,8 @@
 package org.openmrs.module.emr;
 
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.GlobalProperty;
@@ -32,14 +28,23 @@ import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.emr.adt.EmrVisitAssignmentHandler;
 import org.openmrs.module.emr.task.TaskDescriptor;
 import org.openmrs.module.emr.task.TaskService;
+import org.openmrs.scheduler.SchedulerException;
+import org.openmrs.scheduler.SchedulerService;
+import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.util.OpenmrsConstants;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
  */
 public class EMRActivator implements ModuleActivator {
-	
-	protected Log log = LogFactory.getLog(getClass());
+
+    protected Log log = LogFactory.getLog(getClass());
 	
 	/**
 	 * @see ModuleActivator#willRefreshContext()
@@ -75,15 +80,47 @@ public class EMRActivator implements ModuleActivator {
             for (TaskDescriptor task : allTasks)
                 log.debug(task.getId() + " (" + task.getClass().getName() + ")");
         }
+
         ensurePrivilegeLevelFullRole();
+
+        ensureScheduledTasks();
 	}
-	
-	/**
+
+    private void ensureScheduledTasks() {
+        SchedulerService schedulerService = Context.getSchedulerService();
+        TaskDefinition task = schedulerService.getTaskByName(EmrConstants.TASK_CLOSE_STALE_VISITS_NAME);
+        if (task == null) {
+            task = new TaskDefinition();
+            task.setName(EmrConstants.TASK_CLOSE_STALE_VISITS_NAME);
+            task.setDescription(EmrConstants.TASK_CLOSE_STALE_VISITS_DESCRIPTION);
+            task.setTaskClass("org.openmrs.module.emr.adt.CloseStaleVisitsTask");
+            task.setStartTime(DateUtils.addMinutes(new Date(), 5));
+            task.setRepeatInterval(EmrConstants.TASK_CLOSE_STALE_VISITS_REPEAT_INTERVAL);
+            task.setStartOnStartup(true);
+            try {
+                schedulerService.scheduleTask(task);
+            } catch (SchedulerException e) {
+                throw new RuntimeException("Failed to schedule close stale visits task", e);
+            }
+        }
+        else {
+            if (!task.getStarted()) {
+                task.setStarted(true);
+                try {
+                    schedulerService.scheduleTask(task);
+                } catch (SchedulerException e) {
+                    throw new RuntimeException("Failed to schedule close stale visits task", e);
+                }
+            }
+        }
+    }
+
+    /**
 	 * Creates role "Privilege Level: Full" if does not exist
 	 * 
 	 * @return
 	 */
-	public static void ensurePrivilegeLevelFullRole() {
+	public void ensurePrivilegeLevelFullRole() {
 		UserService userService = Context.getUserService();
 		EmrProperties emrProperties = new EmrProperties();
 		Role fullRole = emrProperties.getFullPrivilegeLevel();

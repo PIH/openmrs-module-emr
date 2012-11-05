@@ -15,8 +15,23 @@
 package org.openmrs.module.emr.adt;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.openmrs.*;
-import org.openmrs.api.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
+import org.openmrs.Location;
+import org.openmrs.Obs;
+import org.openmrs.Order;
+import org.openmrs.Patient;
+import org.openmrs.Provider;
+import org.openmrs.User;
+import org.openmrs.Visit;
+import org.openmrs.api.AdministrationService;
+import org.openmrs.api.EncounterService;
+import org.openmrs.api.LocationService;
+import org.openmrs.api.OrderService;
+import org.openmrs.api.ProviderService;
+import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
@@ -26,10 +41,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 
 public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
+
+    private final Log log = LogFactory.getLog(getClass());
 
     @Autowired
     @Qualifier("emrProperties")
@@ -104,6 +127,22 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
     }
 
     @Override
+    public void closeInactiveVisits() {
+        List<Visit> openVisits = visitService.getVisits(null, null, null, null, null, null, null, null, null, false, false);
+        for (Visit visit : openVisits) {
+            if (!isActive(visit)) {
+                try {
+                    closeAndSaveVisit(visit);
+                }
+                catch (Exception ex) {
+                    log.warn("Failed to close inactive visit " + visit, ex);
+                }
+            }
+        }
+
+    }
+
+    @Override
     @Transactional
     public Visit getActiveVisit(Patient patient, Location department) {
         Date now = new Date();
@@ -113,8 +152,7 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
         for (Visit candidate : candidates) {
             if (!isActive(candidate)) {
                 if (candidate.getStopDatetime() == null) {
-                    candidate.setStopDatetime(guessVisitStopDatetime(candidate));
-                    visitService.saveVisit(candidate);
+                    closeAndSaveVisit(candidate);
                 }
                 continue;
             }
@@ -124,6 +162,11 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
         }
 
         return ret;
+    }
+
+    private void closeAndSaveVisit(Visit visit) {
+        visit.setStopDatetime(guessVisitStopDatetime(visit));
+        visitService.saveVisit(visit);
     }
 
     @Override

@@ -54,12 +54,17 @@ import java.util.Set;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyCollection;
+import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -343,5 +348,32 @@ public class AdtServiceTest {
         service.getActiveVisit(null, null);
 
         assertThat(visit.getStopDatetime(), is(startDatetime));
+    }
+
+    @Test
+    public void shouldCloseAnyInactiveButOpenVisits() {
+        Visit old1 = new Visit();
+        old1.setStartDatetime(DateUtils.addDays(new Date(), -2));
+
+        Encounter oldEncounter = new Encounter();
+        oldEncounter.setEncounterDatetime(DateUtils.addHours(DateUtils.addDays(new Date(), -2), 6));
+
+        Visit old2 = new Visit();
+        old2.setStartDatetime(DateUtils.addDays(new Date(), -2));
+        old2.addEncounter(oldEncounter);
+
+        Visit new1 = new Visit();
+        new1.setStartDatetime(DateUtils.addHours(new Date(), -2));
+
+        when(mockVisitService.getVisits(anyCollection(), anyCollection(), anyCollection(), anyCollection(), any(Date.class), any(Date.class), any(Date.class), any(Date.class), anyMap(), anyBoolean(), anyBoolean())).thenReturn(Arrays.asList(old1, old2, new1));
+
+        service.closeInactiveVisits();
+
+        verify(mockVisitService).saveVisit(old1);
+        verify(mockVisitService).saveVisit(old2);
+        verify(mockVisitService, never()).saveVisit(new1);
+        assertNull(new1.getStopDatetime());
+        assertNotNull(old1.getStopDatetime());
+        assertNotNull(old2.getStopDatetime());
     }
 }

@@ -114,4 +114,9 @@ public interface AdtService extends OpenmrsService {
 	 */
 	List<VisitSummary> getActiveVisitSummaries(Location location);
 
+    /**
+     * If any currently-open visits are now inactive per our business logic, close them
+     */
+    void closeInactiveVisits();
+
 }

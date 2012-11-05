@@ -65,4 +65,10 @@ public class EmrConstants {
     public static final String SESSION_ATTRIBUTE_ERROR_MESSAGE = "emr.errorMessage";
 
     public static final String SESSION_ATTRIBUTE_INFO_MESSAGE = "emr.infoMessage";
+
+    public static final String TASK_CLOSE_STALE_VISITS_NAME = "EMR module - Close Stale Visits";
+
+    public static final String TASK_CLOSE_STALE_VISITS_DESCRIPTION = "Closes any open visits that are no longer active";
+
+    public static final long TASK_CLOSE_STALE_VISITS_REPEAT_INTERVAL = 5 * 60; // 5 minutes
 }
