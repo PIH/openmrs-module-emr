@@ -50,6 +50,13 @@ describe("X-ray studies selection", function() {
         expect(viewModel.isValid()).toBe(false);
     });
 
+    it("should asses that viewModel with selected study, marked as portable with a location is valid", function() {
+        viewModel.selectStudy(firstStudy);
+        viewModel.portable(true);
+        viewModel.portableLocation(emergencyLocation);
+        expect(viewModel.isValid()).toBe(true);
+    });
+
     it("should asses that viewModel not portable is valid", function() {
         viewModel.selectStudy(firstStudy);
         viewModel.portable(false);
