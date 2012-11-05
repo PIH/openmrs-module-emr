@@ -72,7 +72,8 @@
                 <!-- ko foreach:selectedRequests -->
                 <input type="hidden" name="requestId" data-bind="value: requestId"/>
                 <!-- /ko -->
-                <input type="submit" value="${ ui.message("emr.pullRecords.pullSelected") }" data-bind="enable: selectedRequests().length > 0"/>
+                <input id="pull_record_requests_button" type="submit" value="${ ui.message("emr.pullRecords.pullSelected") }"
+                       data-bind="enable: selectedRequests().length > 0"/>
             </form>
 
 
@@ -106,7 +107,8 @@
                     <input type="hidden" name="requestId" data-bind="value: requestId"/>
                 </span>
                 <input type="hidden" name="createPaperMedicalRecord" value="true">
-                <input type="submit" value="${ ui.message("emr.pullRecords.createSelected") }" data-bind="enable: selectedRequests().length > 0"/>
+                <input id="create_record_requests_button" type="submit" value="${ ui.message("emr.pullRecords.createSelected") }"
+                       data-bind="enable: selectedRequests().length > 0"/>
             </form>
 
 
