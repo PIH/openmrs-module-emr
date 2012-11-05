@@ -129,7 +129,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             <img src="${ ui.resourceLink("uilibrary", "images/close_32.png") }"/> <br/>
             ${ ui.message("emr.cancel") }
         </button>
-        <button type="submit" style="float: right;" data-bind="visible: isValid">
+        <button type="submit" style="float: right;" data-bind="visible: isValid()">
             <img src="${ ui.resourceLink("uilibrary", "images/arrow_right_32.png") }"/> <br/>
             ${ ui.message("emr.next") }
         </button>
