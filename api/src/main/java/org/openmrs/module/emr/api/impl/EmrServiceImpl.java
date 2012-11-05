@@ -72,7 +72,11 @@ public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
     @Override
     @Transactional(readOnly = true)
     public List<Location> getLoginLocations() {
-        return locationService.getLocationsByTag(emrProperties.getSupportsLoginLocationTag());
+        List<Location> locations = locationService.getLocationsByTag(emrProperties.getSupportsLoginLocationTag());
+        if (locations.size() == 0) {
+            locations = locationService.getAllLocations(false);
+        }
+        return locations;
     }
 
 }

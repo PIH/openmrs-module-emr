@@ -27,6 +27,8 @@ public interface EmrService extends OpenmrsService {
     List<Patient> findPatients(String query, Location checkedInAt, Integer start, Integer length);
 
     /**
+     * If any locations are tagged as supporting logins, we return only those. If no locations have this tag, we
+     * return all non-retired ones.
      * @see org.openmrs.module.emr.EmrConstants#LOCATION_TAG_SUPPORTS_LOGIN
      * @return all locations that you can choose as a sessionLocation when logging in
      */
