@@ -17,11 +17,11 @@ function StudiesViewModel(studies, locations) {
     api.locations = ko.observableArray([])
     api.portableLocation = ko.observable();
 
-    api.isValid = ko.computed(function() {
+    api.isValid = function() {
         var studiesAreValid = api.selectedStudies().length > 0;
         var portableIsValid = api.portable() ? api.portableLocation() != null : true;
         return studiesAreValid && portableIsValid;
-    });
+    };
 
     /* Function related to studies selection */
 
