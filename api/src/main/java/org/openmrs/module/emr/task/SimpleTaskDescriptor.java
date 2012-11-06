@@ -59,11 +59,19 @@ public class SimpleTaskDescriptor extends BaseTaskDescriptor implements TaskDesc
 
     @Override
     public String getUrl(EmrContext context) {
+
+        String returnUrl = url;
+
         if (context.getCurrentPatient() != null) {
-            return url + (url.indexOf("?") >= 0 ? "&" : "?") + "patientId=" + context.getCurrentPatient().getId();
-        } else {
-            return url;
+            returnUrl = returnUrl + (returnUrl.indexOf("?") >= 0 ? "&" : "?") + "patientId=" + context.getCurrentPatient().getId();
         }
+
+
+        if (context.getCurrentApp() != null) {
+           returnUrl = returnUrl + (returnUrl.indexOf("?") >= 0 ? "&" : "?") + "appId=" + context.getCurrentApp().getId();
+        }
+
+        return returnUrl;
     }
 
     public void setUrl(String url) {
