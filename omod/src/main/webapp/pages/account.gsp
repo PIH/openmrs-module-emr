@@ -48,17 +48,16 @@ function emr_createProviderAccount(){
 					${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "username" ])} &nbsp;
 					<input class="emr_passwordDetails" type="button" value="${ ui.message("emr.user.changeUserPassword") }" 
 						onclick="javascript:jQuery('.emr_passwordDetails').toggle()" />
-					${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "password" ])}
 				</td>
 			</tr>
-			<tr class="emr_passwordDetails" style="display: none">
+			<tr class="emr_passwordDetails" <% if(!showPasswordFields) { %>style="display: none"<% } %>>
 				<td>${ ui.message("emr.user.password") }</td>
 				<td>
 					<input type="password" name="password" value="" autocomplete="off" />
 					${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "password" ])}
 				</td>
 			</tr>
-			<tr class="emr_passwordDetails" style="display: none">
+			<tr class="emr_passwordDetails" <% if(!showPasswordFields) { %>style="display: none"<% } %>>
 				<td>${ ui.message("emr.user.confirmPassword") }</td>
 				<td>
 					<input type="password" name="confirmPassword" value="" autocomplete="off" />
@@ -111,7 +110,7 @@ function emr_createProviderAccount(){
 			<input type="button" value="${ ui.message("emr.provider.createProviderAccount") }" 
 				onclick="javascript:emr_createProviderAccount()" />
 		<% } %>
-		<input id="createProviderAccount" type="hidden" name="createProviderAccount" value="false" />
+		<input id="createProviderAccount" type="hidden" name="createProviderAccount" value="${account.provider != null && account.provider.providerId == null}" />
 		</div>
 	</fieldset>
 	

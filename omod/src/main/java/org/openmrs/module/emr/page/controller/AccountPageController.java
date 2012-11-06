@@ -15,6 +15,7 @@ package org.openmrs.module.emr.page.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Person;
@@ -44,6 +45,7 @@ public class AccountPageController {
 		model.addAttribute("account", account);
 		model.addAttribute("capabilities", accountService.getAllCapabilities());
 		model.addAttribute("privilegeLevels", accountService.getAllPrivilegeLevels());
+		model.addAttribute("showPasswordFields", false);
 	}
 	
 	public String post(@RequestParam("personId") @BindParams Account account, BindingResult errors,
@@ -54,17 +56,18 @@ public class AccountPageController {
 	                   @SpringBean("accountValidator") AccountValidator accountValidator, PageModel model,
 	                   HttpServletRequest request) {
 		
+		if (enabled == null && account.getEnabled())
+			account.setEnabled(false);
+		if (createProviderAccount && account.getProvider() == null) {
+			Provider provider = new Provider();
+			account.setProvider(provider);
+		}
+		if (interactsWithPatients == null && account.getInteractsWithPatients())
+			account.setInteractsWithPatients(false);
+		
 		accountValidator.validate(account, errors);
 		
 		if (!errors.hasErrors()) {
-			if (enabled == null && account.getEnabled())
-				account.setEnabled(false);
-			if (createProviderAccount) {
-				Provider provider = new Provider();
-				account.setProvider(provider);
-			}
-			if (interactsWithPatients == null && account.getInteractsWithPatients())
-				account.setInteractsWithPatients(false);
 			
 			try {
 				accountService.saveAccount(account);
@@ -86,6 +89,8 @@ public class AccountPageController {
 		model.addAttribute("capabilities", accountService.getAllCapabilities());
 		model.addAttribute("privilegeLevels", accountService.getAllPrivilegeLevels());
 		model.addAttribute("errors", errors);
+		model.addAttribute("showPasswordFields",
+		    StringUtils.isNotBlank(account.getPassword()) || StringUtils.isNotBlank(account.getConfirmPassword()));
 		//redisplay the form
 		return null;
 	}
