@@ -12,7 +12,6 @@ function StudiesViewModel(studies, locations) {
     api.selectedStudies = ko.observableArray([]);
     api.studies = ko.observableArray([]);
 
-    api.searchLocationTerm = ko.observable(true);
     api.portable = ko.observable(false);
     api.locations = ko.observableArray([])
     api.portableLocation = ko.observable();
@@ -41,22 +40,11 @@ function StudiesViewModel(studies, locations) {
         });
     };
     /* Functions related to portable */
-
-    api.convertedPortableLocations = function() {
-        return $.map( api.locations(), function(element) {
-            return { "label": element.name, "value": element.id };
-        });
-    }
-
     api.portable.subscribe(function(value) {
         if( !value ) {
             api.portableLocation(null);
         }
-    })
-
-    api.selectLocation = function(location) {
-        api.portableLocation(location.id);
-    }
+    });
 
     for(var i=0; i<studies.length; i++) {
         api.studies.push( AutocompleteItem(studies[i]["value"],

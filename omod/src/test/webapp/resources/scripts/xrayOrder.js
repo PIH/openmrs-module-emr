@@ -19,6 +19,7 @@ describe("X-ray studies selection", function() {
         expect(viewModel.selectedStudies().length).toBe(0);
 
         expect(viewModel.portable(), false);
+        expect(viewModel.portableLocation()).toBe(undefined);
     });
 
     it("should select and deselect a study", function() {
@@ -41,6 +42,7 @@ describe("X-ray studies selection", function() {
     });
 
     it("should asses that the viewModel without selected studies is not valid", function() {
+        expect(viewModel.selectedStudies().length).toBe(0);
         expect(viewModel.isValid()).toBe(false);
     });
 

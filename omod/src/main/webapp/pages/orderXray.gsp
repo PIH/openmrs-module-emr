@@ -95,9 +95,8 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 <input type="checkbox" class="field-value" value="portable" data-bind="checked: portable"/>
                 <span>Yes</span>
             </div>
-            <input type="text" placeholder="Type location ..."
-                   data-bind="visible:portable, autocomplete:searchLocationTerm, search:convertedPortableLocations, select:selectLocation, clearValue:function() { return false; }"/>
-            <input name="examLocation" type="hidden" data-bind="value:portableLocation"/>
+            <select name="examLocation" data-bind="visible:portable, options:locations, optionsText:'name', optionsValue:'id', optionsCaption:'Choose a location ...', value:portableLocation">
+            </select>
         </div>
     </div>
 
