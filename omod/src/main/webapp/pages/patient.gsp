@@ -4,7 +4,12 @@
 
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
-${ ui.includeFragment("emr", "availableTasks") }
+Actions:
+<ul>
+    <% availableTasks.each { %>
+        <li><a href="/${ contextPath }/${ it.getUrl(emrContext) }">${ it.getLabel(emrContext) }</a></li>
+    <% } %>
+</ul>
 
 Orders:
 <ul>

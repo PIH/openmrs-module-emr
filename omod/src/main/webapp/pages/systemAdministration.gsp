@@ -4,4 +4,4 @@
 
 <h3>${ ui.message("emr.systemAdministration") }</h3>
 
-${ ui.includeFragment("emr", "availableTasks") }
+<a href="/${ contextPath }/emr/manageAccounts.page">${ ui.message("emr.manageAccounts") }</a>

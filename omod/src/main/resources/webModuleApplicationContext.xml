@@ -55,12 +55,5 @@
         <property name="url" value="emr/orderCTScan.page"/>
         <property name="priority" value="20"/>
     </bean>
-    <bean id="emrAccountManagement" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
-        <property name="id" value="emr.accountManagement"/>
-        <property name="labelCode" value="emr.task.accountManagement.label"/>
-        <property name="url" value="emr/manageAccounts.page"/>
-        <property name="priority" value="20"/>
-    </bean>
-
 
 </beans>
