@@ -44,7 +44,7 @@ public class EmrConstants {
 
     public static final String LOCATION_TAG_SUPPORTS_LOGIN = "Login Location";
     
-    public static final String ROLE_PREFIX_CAPABILITY = "Capability";
+    public static final String ROLE_PREFIX_CAPABILITY = "Capability: ";
 
 	public static final String ROLE_PREFIX_PRIVILEGE_LEVEL = "Privilege Level: ";
     
