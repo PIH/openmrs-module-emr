@@ -60,6 +60,11 @@
         <property name="labelCode" value="emr.task.accountManagement.label"/>
         <property name="url" value="emr/manageAccounts.page"/>
         <property name="priority" value="20"/>
+        <property name="appIds">
+            <list>
+                <value>emr.systemAdministration</value>
+            </list>
+        </property>
     </bean>
 
 

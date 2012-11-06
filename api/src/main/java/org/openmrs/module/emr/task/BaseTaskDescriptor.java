@@ -23,15 +23,24 @@ public abstract class BaseTaskDescriptor implements TaskDescriptor {
 
     /**
      * @param context
-     * @return Base implementation returns true if the authenticated user has the privilege given by getRequiredPrivilegeName()
+     * @return Base implementation returns true if the authenticated user has the privilege given by getRequiredPrivilegeName() and the task is valid for the current app
      */
     @Override
     public boolean isAvailable(EmrContext context) {
+
+        // see if the user has the proper privilege
         String requiredPrivilege = getRequiredPrivilegeName();
-        if (requiredPrivilege != null) {
-            return context.getUserContext().hasPrivilege(requiredPrivilege);
-        } else {
+        if (requiredPrivilege != null && !context.getUserContext().hasPrivilege(requiredPrivilege)) {
+            return false;
+        }
+
+        // see if the task is available in this app context
+        if ((context.getCurrentApp() == null && (this.getAppIds() == null || this.getAppIds().size() == 0))
+                || (this.getAppIds() != null && context.getCurrentApp() !=null && this.getAppIds().contains(context.getCurrentApp().getId()))) {
             return true;
+        }
+        else {
+            return false;
         }
     }
 

@@ -19,6 +19,7 @@ import org.openmrs.Patient;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
+import org.openmrs.module.appframework.AppDescriptor;
 import org.openmrs.module.emr.adt.VisitSummary;
 
 import javax.servlet.http.HttpSession;
@@ -37,6 +38,8 @@ public class EmrContext {
     Location sessionLocation;
 
     Patient currentPatient;
+
+    AppDescriptor currentApp;
 
     VisitSummary activeVisitSummary;
 
@@ -88,6 +91,14 @@ public class EmrContext {
 
     public void setCurrentPatient(Patient currentPatient) {
         this.currentPatient = currentPatient;
+    }
+
+    public AppDescriptor getCurrentApp() {
+        return currentApp;
+    }
+
+    public void setCurrentApp(AppDescriptor currentApp) {
+        this.currentApp = currentApp;
     }
 
     public VisitSummary getActiveVisitSummary() {

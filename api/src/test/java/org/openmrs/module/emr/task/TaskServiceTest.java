@@ -17,9 +17,11 @@ package org.openmrs.module.emr.task;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.api.context.UserContext;
+import org.openmrs.module.appframework.SimpleAppDescriptor;
 import org.openmrs.module.emr.EmrContext;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Matchers.anyString;
@@ -86,6 +88,39 @@ public class TaskServiceTest {
         Assert.assertEquals(taskA, availableTasks.get(0));
         Assert.assertEquals(taskB, availableTasks.get(1));
         Assert.assertEquals(taskC, availableTasks.get(2));
+    }
+
+    @Test
+    public void shouldGetAvailableTasksByCurrentApp() {
+        TaskServiceImpl service = new TaskServiceImpl();
+
+        List<TaskDescriptor> allTasks = new ArrayList<TaskDescriptor>();
+
+        SimpleTaskDescriptor taskA = new SimpleTaskDescriptor();
+        taskA.setId("A");
+        taskA.setAppIds(Arrays.asList("appA"));
+        allTasks.add(taskA);
+
+        SimpleTaskDescriptor taskB = new SimpleTaskDescriptor();
+        taskB.setId("B");
+        taskB.setAppIds(Arrays.asList("appB"));
+        allTasks.add(taskB);
+        service.setAllTasksInternal(allTasks);
+
+        UserContext userContext = mock(UserContext.class);
+        when(userContext.hasPrivilege(taskA.getRequiredPrivilegeName())).thenReturn(true);
+        when(userContext.hasPrivilege(taskB.getRequiredPrivilegeName())).thenReturn(true);
+
+        SimpleAppDescriptor appDescriptor = new SimpleAppDescriptor();
+        appDescriptor.setId("appA");
+
+        EmrContext context = mock(EmrContext.class);
+        when(context.getUserContext()).thenReturn(userContext);
+        when(context.getCurrentApp()).thenReturn(appDescriptor);
+
+        List<TaskDescriptor> availableTasks = service.getAvailableTasks(context);
+        Assert.assertEquals(1, availableTasks.size());
+        Assert.assertEquals(taskA, availableTasks.get(0));
     }
 
 }

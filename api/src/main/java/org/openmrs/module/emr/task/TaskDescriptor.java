@@ -16,6 +16,8 @@ package org.openmrs.module.emr.task;
 
 import org.openmrs.module.emr.EmrContext;
 
+import java.util.List;
+
 /**
  * Describes a "task", vaguely defined as something displayed in the UI as an icon and label, on pages like a patient
  * dashboard that let the end user choose between multiple actions. These are typically enabled for certain roles.
@@ -31,6 +33,11 @@ public interface TaskDescriptor {
      * @return the privilege required to run this task (if any)
      */
     String getRequiredPrivilegeName();
+
+    /**
+     * @return the id of the apps that this task is applicable for
+     */
+    List<String> getAppIds();
 
     /**
      * @param context

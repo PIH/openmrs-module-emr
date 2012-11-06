@@ -19,6 +19,8 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.PatientService;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.appframework.api.AppFrameworkService;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.adt.AdtService;
@@ -32,6 +34,7 @@ import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.ui.framework.page.PageModelConfigurator;
 import org.openmrs.ui.framework.page.PossiblePageControllerArgumentProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -119,6 +122,14 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
                 // don't fail, even if the patientId or patient parameter isn't as expected
             }
         }
+
+        // if the request has a "appId" parameter, apply that
+        String appId = request.getParameter("appId");
+        if(StringUtils.isNotEmpty("appId")) {
+            // TODO: figure out why I couldn't autowire this service
+            emrContext.setCurrentApp(Context.getService(AppFrameworkService.class).getAppById(appId));
+        }
+
         return emrContext;
     }
 

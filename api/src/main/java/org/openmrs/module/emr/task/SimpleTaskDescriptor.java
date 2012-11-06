@@ -18,6 +18,8 @@ import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 /**
  * Simple implementation of TaskDescriptor. Typically you'd instantiate one or more of these as Spring beans in your
  * moduleApplicationContext.xml file.
@@ -38,6 +40,8 @@ public class SimpleTaskDescriptor extends BaseTaskDescriptor implements TaskDesc
     private String tinyIconUrl;
 
     private double priority = 0d;
+
+    private List<String> appIds;
 
     @Override
     public String getId() {
@@ -100,4 +104,12 @@ public class SimpleTaskDescriptor extends BaseTaskDescriptor implements TaskDesc
         this.priority = priority;
     }
 
+    @Override
+    public List<String> getAppIds() {
+        return appIds;
+    }
+
+    public void setAppIds(List<String> appIds) {
+        this.appIds = appIds;
+    }
 }
