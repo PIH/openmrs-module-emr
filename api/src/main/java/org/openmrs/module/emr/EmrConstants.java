@@ -48,7 +48,7 @@ public class EmrConstants {
 
 	public static final String ROLE_PREFIX_PRIVILEGE_LEVEL = "Privilege Level: ";
     
-    public static final String PRIVILEGE_LEVEL_FULL_ROLE = ROLE_PREFIX_PRIVILEGE_LEVEL + "Full";
+    public static final String PRIVILEGE_LEVEL_FULL_ROLE= ROLE_PREFIX_PRIVILEGE_LEVEL+": Full";
     
     public static final String PRIVILEGE_LEVEL_FULL_DESCRIPTION = "A role that has all API privileges";
     

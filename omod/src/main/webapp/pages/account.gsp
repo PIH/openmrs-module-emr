@@ -18,8 +18,13 @@ function emr_createProviderAccount(){
 <form method="post">
 	<fieldset>
 		<legend>${ ui.message("emr.person.details") }</legend>
-		${ ui.message("emr.person.givenName") } <input type="text" name="givenName" value="${(account.givenName) ? account.givenName : ""}" /> &nbsp;&nbsp;&nbsp; 
-		${ ui.message("emr.person.familyName") } <input type="text" name="familyName" value="${(account.familyName) ? account.familyName : ""}" />
+		${ ui.message("emr.person.givenName") } 
+		<input type="text" name="givenName" value="${(account.givenName) ? account.givenName : ""}" /> &nbsp;&nbsp;&nbsp; 
+		${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "givenName" ])}
+		
+		${ ui.message("emr.person.familyName") } 
+		<input type="text" name="familyName" value="${(account.familyName) ? account.familyName : ""}" />
+		${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "familyName" ])}
 		
 		<br /><br />
 		${ ui.message("Person.gender") } &nbsp;
@@ -38,15 +43,27 @@ function emr_createProviderAccount(){
 		<table cellpadding="0" cellspacing="5" border="0">
 			<tr>
 				<td>${ ui.message("emr.user.username") }</td>
-				<td><input type="text" name="username" value="${(account.username) ? account.username : ""}" /></td>
-			</tr> 
-			<tr>
-				<td>${ ui.message("emr.user.password") }</td>
-				<td class="label"><input type="password" name="password" value="" autocomplete="off" /></td>
+				<td>
+					<input type="text" name="username" value="${(account.username) ? account.username : ""}" />
+					${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "username" ])} &nbsp;
+					<input class="emr_passwordDetails" type="button" value="${ ui.message("emr.user.changeUserPassword") }" 
+						onclick="javascript:jQuery('.emr_passwordDetails').toggle()" />
+					${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "password" ])}
+				</td>
 			</tr>
-			<tr>
+			<tr class="emr_passwordDetails" style="display: none">
+				<td>${ ui.message("emr.user.password") }</td>
+				<td>
+					<input type="password" name="password" value="" autocomplete="off" />
+					${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "password" ])}
+				</td>
+			</tr>
+			<tr class="emr_passwordDetails" style="display: none">
 				<td>${ ui.message("emr.user.confirmPassword") }</td>
-				<td><input type="password" name="confirmPassword" value="" autocomplete="off" /></td>
+				<td>
+					<input type="password" name="confirmPassword" value="" autocomplete="off" />
+					${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "confirmPassword" ])}
+				</td>
 			</tr>
 			<tr>
 				<td>${ ui.message("emr.user.privilegeLevel") }</td>
@@ -57,6 +74,7 @@ function emr_createProviderAccount(){
 					<option value="${ it.name }" <% if(account.privilegeLevel == it){ %>selected='selected'<% } %>>${ it.name }</option>
 					<% } %>
 					</select>
+					${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "privilegeLevel" ])}
 				</td>
 			</tr> 
 		</table>
@@ -67,10 +85,12 @@ function emr_createProviderAccount(){
 		<% capabilities.each{ %>
 			<br />
 			<input type="checkbox" name="capabilities" value="${ it.name }" <% if(account.capabilities.contains(it)){ %>checked='checked'<% } %> /> ${ it.name }
-		<% } %>
+			${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "capabilities" ])}
+			<% } %>
 		</div>
 		<% } else {%>
-			<input type="button" value="${ ui.message("emr.user.createUserAccount") }" onclick="javascript:window.location='/${ contextPath }/admin/users/user.form?person_id=${ account.person.personId }'" />
+			<input type="button" value="${ ui.message("emr.user.createUserAccount") }" 
+				onclick="javascript:window.location='/${ contextPath }/admin/users/user.form?person_id=${ account.person.personId }'" />
 		<% } %>
 	</fieldset>
 	
@@ -78,14 +98,18 @@ function emr_createProviderAccount(){
 	<fieldset>
 		<legend>${ ui.message("emr.provider.details") }</legend>
 		<div class="emr_providerDetails" ${ (!account.provider) ? "style='display: none'" : "" }>
-		<input id="interactsWithPatients" type="checkbox" name="interactsWithPatients" value="true" <% if(account.interactsWithPatients){ %>checked='checked'<% } %> /> ${ ui.message("emr.provider.interactsWithPatients") }  
+			<input id="interactsWithPatients" type="checkbox" name="interactsWithPatients" value="true" 
+				<% if(account.interactsWithPatients){ %>checked='checked'<% } %> /> ${ ui.message("emr.provider.interactsWithPatients") }  
 		
-		<br /><br />
-		${ ui.message("emr.provider.identifier") } <input type="text" name="providerIdentifier" value="${(account.providerIdentifier) ? account.providerIdentifier : ""}" />
+			<br /><br />
+			${ ui.message("emr.provider.identifier") } 
+			<input type="text" name="providerIdentifier" value="${(account.providerIdentifier) ? account.providerIdentifier : ""}" />
+			${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "providerIdentifier" ])}
 		</div>
 		<div class="emr_providerDetails">
 		<% if(!account.provider) { %>
-			<input type="button" value="${ ui.message("emr.provider.createProviderAccount") }" onclick="javascript:emr_createProviderAccount()" />
+			<input type="button" value="${ ui.message("emr.provider.createProviderAccount") }" 
+				onclick="javascript:emr_createProviderAccount()" />
 		<% } %>
 		<input id="createProviderAccount" type="hidden" name="createProviderAccount" value="false" />
 		</div>

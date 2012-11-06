@@ -1,5 +1,13 @@
 package org.openmrs.module.emr.account;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Person;
 import org.openmrs.Privilege;
 import org.openmrs.Provider;
@@ -13,14 +21,9 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+@Transactional
 public class AccountServiceImpl extends BaseOpenmrsService implements AccountService {
 	
 	@Autowired
@@ -57,6 +60,7 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 	 * @see org.openmrs.module.emr.account.AccountService#getAllAccounts()
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List<Account> getAllAccounts() {
 		Map<Person, Account> byPerson = new LinkedHashMap<Person, Account>();
 		for (User user : userService.getAllUsers()) {
@@ -86,8 +90,11 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 		return accounts;
 	}
 	
+	/**
+	 * @see org.openmrs.module.emr.account.AccountService#saveAccount(org.openmrs.module.emr.account.Account)
+	 */
 	public Account saveAccount(Account account) {
-		account.syncProperties();
+		//account.syncProperties();//This is not necessary since the validator calls it
 		account.setPerson(personService.savePerson(account.getPerson()));
 		
 		if (account.getUser() != null) {
@@ -108,7 +115,11 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 			if (user.isRetired())
 				user.setRetireReason(Context.getMessageSourceService().getMessage("general.default.retireReason"));
 			
-			account.setUser(userService.saveUser(user, account.getPassword()));
+			String password = null;
+			if (StringUtils.isNotBlank(account.getPassword()))
+				password = account.getPassword();
+			
+			account.setUser(userService.saveUser(user, password));
 		}
 		
 		if (account.getProvider() != null) {
@@ -126,6 +137,7 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 	 * @see org.openmrs.module.emr.account.AccountService#getAccount(java.lang.Integer)
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public Account getAccount(Integer personId) {
 		return getAccountByPerson(personService.getPerson(personId));
 	}
@@ -134,6 +146,7 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 	 * @see org.openmrs.module.emr.account.AccountService#getAccountByPerson(org.openmrs.Person)
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public Account getAccountByPerson(Person person) {
 		return new Account(getUserByPerson(person), getProviderByPerson(person));
 	}
@@ -142,6 +155,7 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 	 * @see org.openmrs.module.emr.account.AccountService#getAllCapabilities()
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List<Role> getAllCapabilities() {
 		List<Role> capabilities = new ArrayList<Role>();
 		for (Role candidate : userService.getAllRoles()) {
@@ -155,6 +169,7 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 	 * @see org.openmrs.module.emr.account.AccountService#getAllPrivilegeLevels()
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List<Role> getAllPrivilegeLevels() {
 		List<Role> privilegeLevels = new ArrayList<Role>();
 		for (Role candidate : userService.getAllRoles()) {
@@ -163,35 +178,35 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 		}
 		return privilegeLevels;
 	}
-
-    @Override
-    public List<Privilege> getApiPrivileges() {
-        List<Privilege> privileges = new ArrayList<Privilege>();
-        for (Privilege candidate : userService.getAllPrivileges()) {
-            if (!isApplicationPrivilege(candidate)) {
-                privileges.add(candidate);
-            }
-        }
-        return privileges;
-    }
-
-    @Override
-    public List<Privilege> getApplicationPrivileges() {
-        List<Privilege> privileges = new ArrayList<Privilege>();
-        for (Privilege candidate : userService.getAllPrivileges()) {
-            if (isApplicationPrivilege(candidate)) {
-                privileges.add(candidate);
-            }
-        }
-        return privileges;
-    }
-
-    private boolean isApplicationPrivilege(Privilege privilege) {
-        return privilege.getPrivilege().startsWith(EmrConstants.PRIVILEGE_PREFIX_APP) ||
-                privilege.getPrivilege().startsWith(EmrConstants.PRIVILEGE_PREFIX_TASK);
-    }
-
-    private User getUserByPerson(Person person) {
+	
+	@Override
+	public List<Privilege> getApiPrivileges() {
+		List<Privilege> privileges = new ArrayList<Privilege>();
+		for (Privilege candidate : userService.getAllPrivileges()) {
+			if (!isApplicationPrivilege(candidate)) {
+				privileges.add(candidate);
+			}
+		}
+		return privileges;
+	}
+	
+	@Override
+	public List<Privilege> getApplicationPrivileges() {
+		List<Privilege> privileges = new ArrayList<Privilege>();
+		for (Privilege candidate : userService.getAllPrivileges()) {
+			if (isApplicationPrivilege(candidate)) {
+				privileges.add(candidate);
+			}
+		}
+		return privileges;
+	}
+	
+	private boolean isApplicationPrivilege(Privilege privilege) {
+		return privilege.getPrivilege().startsWith(EmrConstants.PRIVILEGE_PREFIX_APP)
+		        || privilege.getPrivilege().startsWith(EmrConstants.PRIVILEGE_PREFIX_TASK);
+	}
+	
+	private User getUserByPerson(Person person) {
 		User user = null;
 		List<User> users = userService.getUsersByPerson(person, false);
 		//exclude daemon user

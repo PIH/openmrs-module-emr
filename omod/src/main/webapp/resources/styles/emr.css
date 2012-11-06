@@ -35,3 +35,15 @@ div.container {
     background-color: #8b0000;
     color: #ffffff;
 }
+
+.field-error{
+	background-color: lightpink;
+}
+
+span.field-error {
+	border: 1px dashed darkred;
+	padding: 1px 6px 1px 6px;
+	margin-left: 4px;
+	margin-right: 4px;
+	vertical-align: middle;
+}
