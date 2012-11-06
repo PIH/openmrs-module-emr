@@ -24,13 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class SimpleTaskDescriptor extends BaseTaskDescriptor implements TaskDescriptor {
 
-    @Autowired
-    MessageSourceService messageSourceService;
-
-    private String id;
-
-    private String labelCode;
-
     private String url;
 
     private String iconUrl;
@@ -38,20 +31,6 @@ public class SimpleTaskDescriptor extends BaseTaskDescriptor implements TaskDesc
     private String tinyIconUrl;
 
     private double priority = 0d;
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    @Override
-    public String getLabel(EmrContext context) {
-        return messageSourceService.getMessage(labelCode);
-    }
 
     @Override
     public String getUrl(EmrContext context) {
@@ -82,13 +61,6 @@ public class SimpleTaskDescriptor extends BaseTaskDescriptor implements TaskDesc
 
     public void setTinyIconUrl(String tinyIconUrl) {
         this.tinyIconUrl = tinyIconUrl;
-    }
-
-    /**
-     * @param labelCode code a messages.properties file for this task's label
-     */
-    public void setLabelCode(String labelCode) {
-        this.labelCode = labelCode;
     }
 
     @Override

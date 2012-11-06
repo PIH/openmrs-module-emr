@@ -14,12 +14,19 @@
 
 package org.openmrs.module.emr.task;
 
+import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Base implementation of TaskDescriptor
  */
 public abstract class BaseTaskDescriptor implements TaskDescriptor {
+
+    private String id;
+    @Autowired
+    MessageSourceService messageSourceService;
+    private String labelCode;
 
     /**
      * @param context
@@ -57,4 +64,24 @@ public abstract class BaseTaskDescriptor implements TaskDescriptor {
         return "Task: " + getId();
     }
 
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public String getLabel(EmrContext context) {
+        return messageSourceService.getMessage(labelCode);
+    }
+
+    /**
+     * @param labelCode code a messages.properties file for this task's label
+     */
+    public void setLabelCode(String labelCode) {
+        this.labelCode = labelCode;
+    }
 }

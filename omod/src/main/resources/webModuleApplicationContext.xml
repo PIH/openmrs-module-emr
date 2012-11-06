@@ -56,4 +56,49 @@
         <property name="priority" value="20"/>
     </bean>
 
+    <!-- spike on implementing patientregistration as tasks -->
+    <bean id="emrErCheckIn" class="org.openmrs.module.emr.task.EncounterWizardTaskDescriptor">
+        <property name="id" value="patientregistration.erCheckIn"/>
+        <property name="labelCode" value="emr.task.erCheckIn.label"/>
+        <property name="configurationAsJson">
+            <value>
+                {
+                    "titleCode": "patientregistration.erCheckIn",
+                    "steps": [
+                        {
+                            "stepType": "pointOfCareChooseVisit"
+                        },
+                        {
+                            "stepType": "obs",
+                            "labelCode": "patientregistration.visitReason",
+                            "concept": "GP:patientregistration.primaryCareReceptionVisitReasonConcept",
+                            "questionType": "options",
+                            "options": [
+                                { "value": "3905ed77-c41c-400e-ba1f-67cee367d4fd", "labelCode": "patientregistration.medicalCertificateWithoutDiagnosis" },
+                                { "value": "980a5495-0ee2-4050-9eee-ccff53561e13", "labelCode": "patientregistration.standardDentalVisit" }
+                            ]
+                        }
+                    ]
+                }
+            </value>
+        </property>
+        <!--
+        <property name="configurationAsXml">
+            <value>
+                <steps>
+                    <emr:chooseVisit  titleCode="...">
+                        <allowedVisitTypes></allowedVisitTypes>
+                        <mode>POINT_OF_CARE</mode>
+                    </emr:chooseVisit>
+                    ...
+                    <patientRegistration:printIdCard> -> org.openmrs.module.patientregistration.PrintIdCardStep
+                        ...
+                    </patientRegistration:printIdCard>
+                </steps>
+
+            </value>
+        </property>
+        -->
+    </bean>
+
 </beans>

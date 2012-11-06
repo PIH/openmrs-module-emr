@@ -53,4 +53,11 @@ public interface TaskService extends OpenmrsService {
      */
     void setAllTasksInternal(List<TaskDescriptor> tasks);
 
+    /**
+     * Gets the task with the given taskId
+     *
+     * @param taskId
+     */
+    TaskDescriptor getTask(String taskId);
+
 }

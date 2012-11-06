@@ -53,6 +53,16 @@ public class TaskServiceImpl extends BaseOpenmrsService implements TaskService {
     }
 
     @Override
+    public TaskDescriptor getTask(String taskId) {
+        for (TaskDescriptor candidate : allTasks) {
+            if (candidate.getId().equals(taskId)) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public Privilege ensurePrivilegeExistsInternal(TaskDescriptor task) {
         String privName = task.getRequiredPrivilegeName();
         if (privName == null) {
