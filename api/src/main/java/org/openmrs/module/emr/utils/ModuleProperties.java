@@ -24,6 +24,7 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.OrderService;
+import org.openmrs.api.UserService;
 import org.openmrs.api.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -57,6 +58,10 @@ public abstract class ModuleProperties {
     @Qualifier("locationService")
     protected LocationService locationService;
 
+    @Autowired
+    @Qualifier("userService")
+    protected UserService userService;
+
     public void setConceptService(ConceptService conceptService) {
         this.conceptService = conceptService;
     }
@@ -79,6 +84,10 @@ public abstract class ModuleProperties {
 
     public void setLocationService(LocationService locationService) {
         this.locationService = locationService;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
     protected Concept getConceptByGlobalProperty(String globalPropertyName) {

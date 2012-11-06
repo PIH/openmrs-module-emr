@@ -1,10 +1,11 @@
 package org.openmrs.module.emr.account;
 
-import java.util.List;
-
 import org.openmrs.Person;
+import org.openmrs.Privilege;
 import org.openmrs.Role;
 import org.openmrs.module.emr.EmrConstants;
+
+import java.util.List;
 
 public interface AccountService {
 	
@@ -55,4 +56,17 @@ public interface AccountService {
 	 * @should return all roles with the privilege level prefix
 	 */
 	public List<Role> getAllPrivilegeLevels();
+
+    /**
+     * By convention, anything not defined as #getApplicationPrivileges() is an API-level privilege
+     * @return all privileges that represent API-level actions
+     */
+    List<Privilege> getApiPrivileges();
+
+    /**
+     * By convention, privileges starting with "App:" or "Task:" are Application-level
+     * @return all privileges that represent Application-level actions
+     */
+    List<Privilege> getApplicationPrivileges();
+
 }

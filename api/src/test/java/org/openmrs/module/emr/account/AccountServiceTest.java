@@ -1,12 +1,5 @@
 package org.openmrs.module.emr.account;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.openmrs.Person;
+import org.openmrs.Privilege;
 import org.openmrs.Provider;
 import org.openmrs.Role;
 import org.openmrs.User;
@@ -23,6 +17,16 @@ import org.openmrs.api.UserService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.TestUtils;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 public class AccountServiceTest {
@@ -64,8 +68,8 @@ public class AccountServiceTest {
 		
 		List<Account> accounts = accountService.getAllAccounts();
 		Assert.assertEquals(3, accounts.size());
-		Assert.assertThat(accounts,
-		    TestUtils.isCollectionOfExactlyElementsWithProperties("person", person1, person2, person3));
+		assertThat(accounts,
+                TestUtils.isCollectionOfExactlyElementsWithProperties("person", person1, person2, person3));
 	}
 	
 	/**
@@ -149,8 +153,8 @@ public class AccountServiceTest {
 		when(userService.getAllRoles()).thenReturn(Arrays.asList(role1, role2, role3));
 		List<Role> capabilities = accountService.getAllCapabilities();
 		Assert.assertEquals(2, capabilities.size());
-		Assert.assertThat(capabilities, TestUtils.isCollectionOfExactlyElementsWithProperties("role",
-		    EmrConstants.ROLE_PREFIX_CAPABILITY + "role1", EmrConstants.ROLE_PREFIX_CAPABILITY + "role3"));
+		assertThat(capabilities, TestUtils.isCollectionOfExactlyElementsWithProperties("role",
+                EmrConstants.ROLE_PREFIX_CAPABILITY + "role1", EmrConstants.ROLE_PREFIX_CAPABILITY + "role3"));
 	}
 	
 	/**
@@ -166,7 +170,36 @@ public class AccountServiceTest {
 		when(userService.getAllRoles()).thenReturn(Arrays.asList(role1, role2, role3));
 		List<Role> privilegeLevels = accountService.getAllPrivilegeLevels();
 		Assert.assertEquals(2, privilegeLevels.size());
-		Assert.assertThat(privilegeLevels, TestUtils.isCollectionOfExactlyElementsWithProperties("role",
-		    EmrConstants.ROLE_PREFIX_PRIVILEGE_LEVEL + "role1", EmrConstants.ROLE_PREFIX_PRIVILEGE_LEVEL + "role3"));
+		assertThat(privilegeLevels, TestUtils.isCollectionOfExactlyElementsWithProperties("role",
+                EmrConstants.ROLE_PREFIX_PRIVILEGE_LEVEL + "role1", EmrConstants.ROLE_PREFIX_PRIVILEGE_LEVEL + "role3"));
 	}
+
+    @Test
+    public void getApiPrivileges_shouldExcludeApplicationPrivileges() throws Exception {
+        Privilege getPatients = new Privilege("Get Patients");
+        Privilege deletePatients = new Privilege("Delete Patients");
+        Privilege vitalsApp = new Privilege(EmrConstants.PRIVILEGE_PREFIX_APP + " emr.vitals");
+        Privilege orderEntryTask = new Privilege(EmrConstants.PRIVILEGE_PREFIX_TASK + " emr.orderEntry");
+
+        when(userService.getAllPrivileges()).thenReturn(Arrays.asList(getPatients, deletePatients, vitalsApp, orderEntryTask));
+
+        List<Privilege> apiPrivileges = accountService.getApiPrivileges();
+        assertThat(apiPrivileges.size(), is(2));
+        assertThat(apiPrivileges, containsInAnyOrder(getPatients, deletePatients));
+    }
+
+    @Test
+    public void getApplicationPrivileges_shouldIncludeOnlyApplicationPrivileges() throws Exception {
+        Privilege getPatients = new Privilege("Get Patients");
+        Privilege deletePatients = new Privilege("Delete Patients");
+        Privilege vitalsApp = new Privilege(EmrConstants.PRIVILEGE_PREFIX_APP + " emr.vitals");
+        Privilege orderEntryTask = new Privilege(EmrConstants.PRIVILEGE_PREFIX_TASK + " emr.orderEntry");
+
+        when(userService.getAllPrivileges()).thenReturn(Arrays.asList(getPatients, deletePatients, vitalsApp, orderEntryTask));
+
+        List<Privilege> applicationPrivileges = accountService.getApplicationPrivileges();
+        assertThat(applicationPrivileges.size(), is(2));
+        assertThat(applicationPrivileges, containsInAnyOrder(vitalsApp, orderEntryTask));
+    }
+
 }

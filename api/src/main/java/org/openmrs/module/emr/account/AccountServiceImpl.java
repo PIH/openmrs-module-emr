@@ -1,13 +1,7 @@
 package org.openmrs.module.emr.account;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.openmrs.Person;
+import org.openmrs.Privilege;
 import org.openmrs.Provider;
 import org.openmrs.Role;
 import org.openmrs.User;
@@ -19,6 +13,13 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AccountServiceImpl extends BaseOpenmrsService implements AccountService {
 	
@@ -162,8 +163,35 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 		}
 		return privilegeLevels;
 	}
-	
-	private User getUserByPerson(Person person) {
+
+    @Override
+    public List<Privilege> getApiPrivileges() {
+        List<Privilege> privileges = new ArrayList<Privilege>();
+        for (Privilege candidate : userService.getAllPrivileges()) {
+            if (!isApplicationPrivilege(candidate)) {
+                privileges.add(candidate);
+            }
+        }
+        return privileges;
+    }
+
+    @Override
+    public List<Privilege> getApplicationPrivileges() {
+        List<Privilege> privileges = new ArrayList<Privilege>();
+        for (Privilege candidate : userService.getAllPrivileges()) {
+            if (isApplicationPrivilege(candidate)) {
+                privileges.add(candidate);
+            }
+        }
+        return privileges;
+    }
+
+    private boolean isApplicationPrivilege(Privilege privilege) {
+        return privilege.getPrivilege().startsWith(EmrConstants.PRIVILEGE_PREFIX_APP) ||
+                privilege.getPrivilege().startsWith(EmrConstants.PRIVILEGE_PREFIX_TASK);
+    }
+
+    private User getUserByPerson(Person person) {
 		User user = null;
 		List<User> users = userService.getUsersByPerson(person, false);
 		//exclude daemon user

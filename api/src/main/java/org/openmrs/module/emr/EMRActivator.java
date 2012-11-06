@@ -14,7 +14,6 @@
 package org.openmrs.module.emr;
 
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +24,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.emr.account.AccountService;
 import org.openmrs.module.emr.adt.EmrVisitAssignmentHandler;
 import org.openmrs.module.emr.task.TaskDescriptor;
 import org.openmrs.module.emr.task.TaskService;
@@ -81,7 +81,7 @@ public class EMRActivator implements ModuleActivator {
                 log.debug(task.getId() + " (" + task.getClass().getName() + ")");
         }
 
-        ensurePrivilegeLevelFullRole();
+        ensurePrivilegeLevelRoles();
 
         ensureScheduledTasks();
 	}
@@ -120,32 +120,25 @@ public class EMRActivator implements ModuleActivator {
 	 * 
 	 * @return
 	 */
-	public void ensurePrivilegeLevelFullRole() {
+	private void ensurePrivilegeLevelRoles() {
 		UserService userService = Context.getUserService();
-		EmrProperties emrProperties = new EmrProperties();
-		Role fullRole = emrProperties.getFullPrivilegeLevel();
-		if (fullRole == null) {
-			fullRole = new Role();
-			fullRole.setName(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
-			fullRole.setRole(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
-			fullRole.setDescription(EmrConstants.PRIVILEGE_LEVEL_FULL_DESCRIPTION_ROLE);
-			userService.saveRole(fullRole);
+        AccountService accountService = Context.getService(AccountService.class);
+		EmrProperties emrProperties = Context.getRegisteredComponents(EmrProperties.class).iterator().next();
+
+		Role fullPrivilegeLevel = emrProperties.getFullPrivilegeLevel();
+		if (fullPrivilegeLevel == null) {
+			fullPrivilegeLevel = new Role();
+			fullPrivilegeLevel.setRole(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
+			fullPrivilegeLevel.setDescription(EmrConstants.PRIVILEGE_LEVEL_FULL_DESCRIPTION);
+			userService.saveRole(fullPrivilegeLevel);
 		}
-		
-		List<Privilege> allPrivileges = userService.getAllPrivileges();
-		if (allPrivileges != null && allPrivileges.size() > 0) {
-			for (Privilege privilege : allPrivileges) {
-				String privilegeName = privilege.getName();
-				if (!fullRole.hasPrivilege(privilegeName)) {
-					if (!StringUtils.startsWithIgnoreCase(privilegeName, EmrConstants.PRIVILEGE_PREFIX_APP)
-					        && !StringUtils.startsWithIgnoreCase(privilegeName, EmrConstants.PRIVILEGE_PREFIX_TASK)) {
-						fullRole.addPrivilege(privilege);
-					}
-				}
-			}
-			userService.saveRole(fullRole);
-		}
-		
+
+        for (Privilege candidate : accountService.getApiPrivileges()) {
+            if (!fullPrivilegeLevel.hasPrivilege(candidate.getName())) {
+                fullPrivilegeLevel.addPrivilege(candidate);
+            }
+        }
+        userService.saveRole(fullPrivilegeLevel);
 	}
 
 	/**

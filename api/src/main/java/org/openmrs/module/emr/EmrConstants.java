@@ -48,13 +48,13 @@ public class EmrConstants {
 
 	public static final String ROLE_PREFIX_PRIVILEGE_LEVEL = "Privilege Level";
     
-    public static final String PRIVILEGE_LEVEL_FULL_ROLE= "Privilege Level: Full";
+    public static final String PRIVILEGE_LEVEL_FULL_ROLE = "Privilege Level: Full";
     
-    public static final String PRIVILEGE_LEVEL_FULL_DESCRIPTION_ROLE= "A role that has all API privileges";
+    public static final String PRIVILEGE_LEVEL_FULL_DESCRIPTION = "A role that has all API privileges";
     
-    public static final String PRIVILEGE_PREFIX_APP= "App:";
+    public static final String PRIVILEGE_PREFIX_APP = "App:";
 
-    public static final String PRIVILEGE_PREFIX_TASK= "Task:";
+    public static final String PRIVILEGE_PREFIX_TASK = "Task:";
 
     public static final String PRIMARY_IDENTIFIER_TYPE = "emr.primaryIdentifierType";
     
