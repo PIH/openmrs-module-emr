@@ -176,8 +176,8 @@
                     <jsSrcDir>${project.basedir}/src/main/webapp/resources/scripts/custom</jsSrcDir>
                     <jsTestSrcDir>${project.basedir}/src/test/webapp/resources/scripts</jsTestSrcDir>
                     <preloadSources>
-                        <source>src/main/webapp/resources/scripts/jquery-1.8.1.min.js</source>
-                        <source>src/main/webapp/resources/scripts/knockout-2.1.0.js</source>
+                        <source>${project.basedir}/src/main/webapp/resources/scripts/jquery-1.8.1.min.js</source>
+                        <source>${project.basedir}/src/main/webapp/resources/scripts/knockout-2.1.0.js</source>
                     </preloadSources>
                     <serverPort>7234</serverPort>
                     <skipTests>false</skipTests>
