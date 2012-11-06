@@ -34,7 +34,6 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
 	<build>
@@ -181,7 +180,7 @@
                         <source>src/main/webapp/resources/scripts/knockout-2.1.0.js</source>
                     </preloadSources>
                     <serverPort>7234</serverPort>
-                    <skipTests>true</skipTests>
+                    <skipTests>false</skipTests>
                 </configuration>
 		    </plugin>
         </plugins>
