@@ -46,7 +46,7 @@ public class AccountPageController {
 		model.addAttribute("account", account);
 		model.addAttribute("capabilities", accountService.getAllCapabilities());
 		model.addAttribute("privilegeLevels", accountService.getAllPrivilegeLevels());
-		model.addAttribute("showPasswordFields", false);model.addAttribute("errors", null);
+		model.addAttribute("showPasswordFields", false);
 	}
 	
 	public String post(@RequestParam("personId") @BindParams Account account, BindingResult errors,
