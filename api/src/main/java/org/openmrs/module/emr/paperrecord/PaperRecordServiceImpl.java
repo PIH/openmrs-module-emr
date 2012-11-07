@@ -14,6 +14,7 @@
 
 package org.openmrs.module.emr.paperrecord;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -108,13 +109,13 @@ public class PaperRecordServiceImpl implements PaperRecordService {
     @Override
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getOpenPaperRecordRequestsToPull() {
-        return paperRecordRequestDAO.getOpenPaperRecordRequestsToPull();
+        return paperRecordRequestDAO.findPaperRecordRequests(PaperRecordRequest.Status.OPEN, true);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getOpenPaperRecordRequestsToCreate() {
-        return paperRecordRequestDAO.getOpenPaperRecordRequestsToCreate();
+        return paperRecordRequestDAO.findPaperRecordRequests(PaperRecordRequest.Status.OPEN, false);
     }
 
     @Override
@@ -137,7 +138,22 @@ public class PaperRecordServiceImpl implements PaperRecordService {
         }
 
         for (PaperRecordRequest request : requests) {
-            request.setStatus(PaperRecordRequest.Status.ASSIGNED);
+             // first do a sanity check, in case an identifier has been created since the request was placed
+            if (StringUtils.isBlank(request.getIdentifier())) {
+               request.setIdentifier(getPaperMedicalRecordNumberFor(request.getPatient(), request.getRecordLocation()));
+            }
+
+            // if there is still no identifier, assign an identifier and mark it as to create, otherwise mark to pull
+            if (StringUtils.isBlank(request.getIdentifier())) {
+                String identifier = createPaperMedicalRecordNumberFor(request.getPatient(), request.getRecordLocation());
+                request.setIdentifier(identifier);
+                request.setStatus(PaperRecordRequest.Status.ASSIGNED_TO_CREATE);
+            }
+            else {
+                request.setStatus(PaperRecordRequest.Status.ASSIGNED_TO_PULL);
+            }
+
+            // set the assignee and save the record
             request.setAssignee(assignee);
             paperRecordRequestDAO.saveOrUpdate(request);
         }
@@ -146,22 +162,32 @@ public class PaperRecordServiceImpl implements PaperRecordService {
     }
 
     @Override
+    @Transactional
     public String createPaperMedicalRecordNumberFor(Patient patient, Location medicalRecordLocation) {
         if (patient == null){
             throw new IllegalArgumentException("Patient shouldn't be null");
         }
 
-        PatientIdentifierType paperRecordIdentifierType = getPaperRecordIdentifierType();
-        String paperMedicalRecord = "";
-
-        if (patient.getPatientIdentifier(paperRecordIdentifierType)==null){
-            paperMedicalRecord = identifierSourceService.generateIdentifier(paperRecordIdentifierType, "generating a new dossier number");
-            PatientIdentifier paperRecordIdentifier = new PatientIdentifier(paperMedicalRecord, paperRecordIdentifierType, medicalRecordLocation);
-            patient.addIdentifier(paperRecordIdentifier);
-            patientService.savePatientIdentifier(paperRecordIdentifier);
+        if (StringUtils.isNotBlank(getPaperMedicalRecordNumberFor(patient, medicalRecordLocation))) {
+            // TODO: we probably want to actually throw an exception here, but we should wait until this method is removed from patient registration and made protected
+            //throw new IllegalStateException("Cannot create paper record number for patient.  Paper record number already exists for patient:" + patient);
+            return "";
         }
 
-        return paperMedicalRecord;
+        PatientIdentifierType paperRecordIdentifierType = getPaperRecordIdentifierType();
+        String paperRecordId = "";
+
+        paperRecordId = identifierSourceService.generateIdentifier(paperRecordIdentifierType, "generating a new dossier number");
+        PatientIdentifier paperRecordIdentifier = new PatientIdentifier(paperRecordId, paperRecordIdentifierType, medicalRecordLocation);
+        patient.addIdentifier(paperRecordIdentifier);
+        patientService.savePatientIdentifier(paperRecordIdentifier);
+
+        return paperRecordId;
+    }
+
+    protected String getPaperMedicalRecordNumberFor(Patient patient, Location medicalRecordLocation) {
+        PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient, getPaperRecordIdentifierType(), medicalRecordLocation);
+        return paperRecordIdentifier != null ? paperRecordIdentifier.getIdentifier() : null;
     }
 
     protected PatientIdentifierType getPaperRecordIdentifierType() {

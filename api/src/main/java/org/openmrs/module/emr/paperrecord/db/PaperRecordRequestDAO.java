@@ -21,7 +21,8 @@ import java.util.List;
 
 public interface PaperRecordRequestDAO extends SingleClassDAO<PaperRecordRequest> {
 
-    List<PaperRecordRequest> getOpenPaperRecordRequestsToPull();
+    List<PaperRecordRequest> findPaperRecordRequests(PaperRecordRequest.Status status);
 
-    List<PaperRecordRequest> getOpenPaperRecordRequestsToCreate();
+    List<PaperRecordRequest> findPaperRecordRequests(PaperRecordRequest.Status status, Boolean hasIdentifier);
+
 }

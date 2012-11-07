@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.emr.api;
+package org.openmrs.module.emr.paperrecord;
 
 import junit.framework.Assert;
 import org.junit.Before;
@@ -165,14 +165,14 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
         // all these are from the standard test dataset
         Patient patient = patientService.getPatient(2) ;
-        Location medicalRecordLocation = locationService.getLocation(3);
+        Location medicalRecordLocation = locationService.getLocation(1);
         Location requestLocation = locationService.getLocation(3);
 
         // request a record
         paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
 
         // retrieve that record
-        List<PaperRecordRequest> paperRecordRequests = paperRecordService.getOpenPaperRecordRequestsToCreate();
+        List<PaperRecordRequest> paperRecordRequests = paperRecordService.getOpenPaperRecordRequestsToPull();
         Assert.assertEquals(1, paperRecordRequests.size()); // sanity check
 
         // assign the person to the request
@@ -181,8 +181,9 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
         // verify
         PaperRecordRequest request = paperRecordRequests.get(0);
-        Assert.assertEquals(PaperRecordRequest.Status.ASSIGNED, request.getStatus());
+        Assert.assertEquals(PaperRecordRequest.Status.ASSIGNED_TO_PULL, request.getStatus());
         Assert.assertEquals(new Integer(7), request.getAssignee().getId());
+        Assert.assertEquals("101", request.getIdentifier());
 
     }
 }

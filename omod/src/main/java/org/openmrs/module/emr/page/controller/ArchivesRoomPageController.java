@@ -2,9 +2,8 @@ package org.openmrs.module.emr.page.controller;
 
 import org.openmrs.Person;
 import org.openmrs.api.AdministrationService;
-import org.openmrs.module.emr.EmrConstants;
-import org.openmrs.module.emr.paperrecord.PaperRecordService;
 import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
+import org.openmrs.module.emr.paperrecord.PaperRecordService;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.WebConstants;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -43,11 +42,6 @@ public class ArchivesRoomPageController {
                        UiUtils ui,
                        HttpSession session) {
         try {
-            if (createPaperMedicalRecord){
-                for (PaperRecordRequest request : requests) {
-                    paperRecordService.createPaperMedicalRecordNumberFor(request.getPatient(), request.getRecordLocation());
-                }
-            }
             paperRecordService.assignRequests(requests, assignTo);
         } catch (IllegalStateException ex) {
             session.setAttribute(WebConstants.OPENMRS_ERROR_ATTR, ui.message("emr.pullRecords.alreadyAssigned"));

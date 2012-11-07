@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.emr.api;
+package org.openmrs.module.emr.paperrecord;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,8 +23,6 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.paperrecord.db.PaperRecordRequestDAO;
-import org.openmrs.module.emr.paperrecord.PaperRecordServiceImpl;
-import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 import org.openmrs.module.idgen.service.IdentifierSourceService;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -33,9 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
@@ -79,15 +75,12 @@ public class PaperRecordServiceTest {
         patient.setId(15);
 
         Location medicalRecordLocation = createMedicalRecordLocation();
-
         Location requestLocation = createLocation(4, "Outpatient Clinic");
 
         PatientIdentifier identifer = createIdentifier(medicalRecordLocation, "ABCZYX");
-
         patient.addIdentifier(identifer);
 
         PaperRecordRequest expectedRequest = createExpectedRequest(patient, medicalRecordLocation, "ABCZYX");
-
         IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(expectedRequest);
 
         PaperRecordRequest returnedRequest = paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
@@ -214,18 +207,33 @@ public class PaperRecordServiceTest {
     }
 
     @Test
-    public void testAssignRequests() throws Exception {
+    public void testAssignRequestsWithoutIdentifiers() throws Exception {
         Person assignTo = new Person(15);
 
         List<PaperRecordRequest> requests = new ArrayList<PaperRecordRequest>();
-        requests.add(buildPaperRecordRequest());
-        requests.add(buildPaperRecordRequest());
-        requests.add(buildPaperRecordRequest());
+        requests.add(buildPaperRecordRequestWithoutIdentifier());
+        requests.add(buildPaperRecordRequestWithoutIdentifier());
+        requests.add(buildPaperRecordRequestWithoutIdentifier());
 
         paperRecordService.assignRequests(requests, assignTo);
 
-        verify(mockPaperRecordDAO, times(3)).saveOrUpdate(argThat(new IsAssignedTo(assignTo)));
+        verify(mockPaperRecordDAO, times(3)).saveOrUpdate(argThat(new IsAssignedTo(assignTo, PaperRecordRequest.Status.ASSIGNED_TO_CREATE)));
     }
+
+    @Test
+    public void testAssignRequestsWithIdentifiers() throws Exception {
+        Person assignTo = new Person(15);
+
+        List<PaperRecordRequest> requests = new ArrayList<PaperRecordRequest>();
+        requests.add(buildPaperRecordRequestWithIdentifier());
+        requests.add(buildPaperRecordRequestWithIdentifier());
+        requests.add(buildPaperRecordRequestWithIdentifier());
+
+        paperRecordService.assignRequests(requests, assignTo);
+
+        verify(mockPaperRecordDAO, times(3)).saveOrUpdate(argThat(new IsAssignedTo(assignTo, PaperRecordRequest.Status.ASSIGNED_TO_PULL)));
+    }
+
 
     @Test(expected = IllegalStateException.class)
     public void testAssignRequestsShouldFailIfRequestsNull() throws Exception {
@@ -238,12 +246,54 @@ public class PaperRecordServiceTest {
     public void testAssignRequestsShouldFailIfAssigneeNull() throws Exception {
 
         List<PaperRecordRequest> requests = new ArrayList<PaperRecordRequest>();
-        requests.add(buildPaperRecordRequest());
-        requests.add(buildPaperRecordRequest());
-        requests.add(buildPaperRecordRequest());
+        requests.add(buildPaperRecordRequestWithoutIdentifier());
+        requests.add(buildPaperRecordRequestWithoutIdentifier());
+        requests.add(buildPaperRecordRequestWithoutIdentifier());
 
         paperRecordService.assignRequests(requests, null);
     }
+
+    @Test
+    public void testAssignRequestsShouldSetToPullIfPatientHasValidIdentifierEvenIfRequestDoesNot() throws Exception {
+        Person assignTo = new Person(15);
+
+        List<PaperRecordRequest> requests = new ArrayList<PaperRecordRequest>();
+        requests.add(buildPaperRecordRequestWithoutIdentifier());
+
+        // add an identifier to this patient
+        Patient patient = requests.get(0).getPatient();
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setIdentifier("ABC");
+        patientIdentifier.setIdentifierType(paperRecordIdentifierType);
+        patientIdentifier.setLocation(requests.get(0).getRecordLocation());
+        patient.addIdentifier(patientIdentifier);
+
+        paperRecordService.assignRequests(requests, assignTo);
+
+        verify(mockPaperRecordDAO, times(1)).saveOrUpdate(argThat(new IsAssignedTo(assignTo, PaperRecordRequest.Status.ASSIGNED_TO_PULL, "ABC")));
+    }
+
+    private PaperRecordRequest buildPaperRecordRequestWithoutIdentifier() {
+        Patient patient = new Patient(1);
+        Location location = new Location(1);
+        PaperRecordRequest request = new PaperRecordRequest();
+        request.setPatient(patient);
+        request.setStatus(PaperRecordRequest.Status.OPEN);
+        request.setRecordLocation(location);
+        return request;
+    }
+
+    private PaperRecordRequest buildPaperRecordRequestWithIdentifier() {
+        Patient patient = new Patient(1);
+        Location location = new Location(1);
+        PaperRecordRequest request = new PaperRecordRequest();
+        request.setPatient(patient);
+        request.setStatus(PaperRecordRequest.Status.OPEN);
+        request.setRecordLocation(location);
+        request.setIdentifier("ABC");
+        return request;
+    }
+
 
     @Test
     public void whenPatientDoesNotHaveAnPaperMedicalRecordIdentifierShouldCreateAnPaperMedicalRecordNumberAndAssignToHim(){
@@ -262,23 +312,19 @@ public class PaperRecordServiceTest {
         assertEquals(paperMedicalRecordNumberAsExpected, paperMedicalRecordNumber);
     }
 
+    private class PaperRecordServiceStub extends PaperRecordServiceImpl {
 
-    @Test(expected = IllegalStateException.class)
-    public void testAssignRequestsShouldFailIfARequestIsNotOpen() throws Exception {
-        Person assignTo = new Person(15);
+        private PatientIdentifierType paperRecordIdentifierType;
 
-        List<PaperRecordRequest> requests = new ArrayList<PaperRecordRequest>();
-        requests.add(buildPaperRecordRequest());
-        requests.add(buildPaperRecordRequest());
-        requests.get(0).setStatus(PaperRecordRequest.Status.CANCELLED);
+        public PaperRecordServiceStub(PatientIdentifierType paperRecordIdentifierType) {
+            this.paperRecordIdentifierType = paperRecordIdentifierType;
+        }
 
-        paperRecordService.assignRequests(requests, assignTo);
-    }
+        @Override
+        protected PatientIdentifierType getPaperRecordIdentifierType()  {
+            return paperRecordIdentifierType;
+        }
 
-    private PaperRecordRequest buildPaperRecordRequest() {
-        PaperRecordRequest request = new PaperRecordRequest();
-        request.setStatus(PaperRecordRequest.Status.OPEN);
-        return request;
     }
 
     private class IsExpectedRequest extends ArgumentMatcher<PaperRecordRequest> {
@@ -307,34 +353,36 @@ public class PaperRecordServiceTest {
 
     }
 
-    private class PaperRecordServiceStub extends PaperRecordServiceImpl {
-
-        private PatientIdentifierType paperRecordIdentifierType;
-
-        public PaperRecordServiceStub(PatientIdentifierType paperRecordIdentifierType) {
-            this.paperRecordIdentifierType = paperRecordIdentifierType;
-        }
-
-        @Override
-        protected PatientIdentifierType getPaperRecordIdentifierType()  {
-            return paperRecordIdentifierType;
-        }
-
-    }
-
     private class IsAssignedTo extends ArgumentMatcher<PaperRecordRequest> {
 
         private Person shouldBeAssignedTo;
 
-        public IsAssignedTo(Person shouldBeAssignedTo) {
+        private PaperRecordRequest.Status assignmentStatus;
+
+        private String identifier;
+
+        public IsAssignedTo(Person shouldBeAssignedTo, PaperRecordRequest.Status assignmentStatus) {
             this.shouldBeAssignedTo = shouldBeAssignedTo;
+            this.assignmentStatus = assignmentStatus;
+        }
+
+
+        public IsAssignedTo(Person shouldBeAssignedTo, PaperRecordRequest.Status assignmentStatus, String identifier) {
+            this.shouldBeAssignedTo = shouldBeAssignedTo;
+            this.assignmentStatus = assignmentStatus;
+            this.identifier = identifier;
         }
 
         @Override
         public boolean matches(Object o) {
             PaperRecordRequest request = (PaperRecordRequest) o;
-            assertThat(request.getStatus(), is(PaperRecordRequest.Status.ASSIGNED));
+            assertThat(request.getStatus(), is(assignmentStatus));
             assertThat(request.getAssignee(), is(shouldBeAssignedTo));
+
+            if (identifier != null) {
+                assertThat(request.getIdentifier(), is(identifier));
+            }
+
             return true;
         }
     }

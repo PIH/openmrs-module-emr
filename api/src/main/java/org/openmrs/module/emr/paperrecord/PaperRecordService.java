@@ -66,7 +66,7 @@ public interface PaperRecordService {
 
 
     /**
-     * Sets the status to ASSIGNED and the assignee to the given value, for the given requests.
+     * Sets the status to ASSIGNED_TO_PULL and the assignee to the given value, for the given requests.
      * @param requests
      * @param assignee
      * @return the list that was passed in, but with assignees and status set
@@ -75,6 +75,7 @@ public interface PaperRecordService {
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     List<PaperRecordRequest> assignRequests(List<PaperRecordRequest> requests, Person assignee);
 
+    // TODO: we can probably remove this as a public method after we remove it from the Patient registration module
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     String createPaperMedicalRecordNumberFor(Patient patient, Location medicalRecordLocation);
 }
