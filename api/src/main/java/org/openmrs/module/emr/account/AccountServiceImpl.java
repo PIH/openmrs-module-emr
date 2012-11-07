@@ -132,7 +132,7 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 				secretAnswer = null;
 			
 			if (secretQuestion == null || (secretQuestion != null && secretAnswer != null)) {
-				userService.changeQuestionAnswer(user, account.getSecretQuestion(), account.getSecretAnswer());
+				userService.changeQuestionAnswer(user, secretQuestion, secretAnswer);
 			}
 		}
 		
