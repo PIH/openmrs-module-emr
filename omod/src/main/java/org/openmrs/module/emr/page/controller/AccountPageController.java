@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Person;
 import org.openmrs.Provider;
+import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.account.Account;
@@ -51,11 +52,16 @@ public class AccountPageController {
 	public String post(@RequestParam("personId") @BindParams Account account, BindingResult errors,
 	                   @RequestParam(value = "enabled", required = false) Boolean enabled,
 	                   @RequestParam(value = "interactsWithPatients", required = false) Boolean interactsWithPatients,
-	                   @RequestParam(value = "createProviderAccount", required = false) Boolean createProviderAccount,
+	                   @RequestParam(value = "createProviderAccount") boolean createProviderAccount,
+	                   @RequestParam(value = "createUserAccount") boolean createUserAccount,
 	                   @SpringBean("accountService") AccountService accountService,
 	                   @SpringBean("accountValidator") AccountValidator accountValidator, PageModel model,
 	                   HttpServletRequest request) {
 		
+		if (createUserAccount && account.getUser() == null) {
+			User user = new User();
+			account.setUser(user);
+		}
 		if (enabled == null && account.getEnabled())
 			account.setEnabled(false);
 		if (createProviderAccount && account.getProvider() == null) {
@@ -90,7 +96,8 @@ public class AccountPageController {
 		model.addAttribute("privilegeLevels", accountService.getAllPrivilegeLevels());
 		model.addAttribute("errors", errors);
 		model.addAttribute("showPasswordFields",
-		    StringUtils.isNotBlank(account.getPassword()) || StringUtils.isNotBlank(account.getConfirmPassword()));
+		    StringUtils.isNotBlank(account.getPassword()) || StringUtils.isNotBlank(account.getConfirmPassword())
+		            || createUserAccount);
 		//redisplay the form
 		return null;
 	}

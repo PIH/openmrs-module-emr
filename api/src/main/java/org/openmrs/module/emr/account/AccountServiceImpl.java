@@ -120,6 +120,9 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 				password = account.getPassword();
 			
 			account.setUser(userService.saveUser(user, password));
+			if (StringUtils.isNotBlank(account.getSecretQuestion()) && StringUtils.isNotBlank(account.getSecretAnswer())) {
+				userService.changeQuestionAnswer(user, account.getSecretQuestion(), account.getSecretAnswer());
+			}
 		}
 		
 		if (account.getProvider() != null) {

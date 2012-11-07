@@ -169,6 +169,7 @@ public class AccountValidatorTest {
 		Person person = new Person();
 		person.addName(new PersonName());
 		Account account = new Account(person);
+		account.setUser(new User());
 		account.setUsername("username");
 		account.setGivenName("give name");
 		account.setFamilyName("family name");
@@ -196,5 +197,26 @@ public class AccountValidatorTest {
 		Errors errors = new BindException(account, "account");
 		validator.validate(account, errors);
 		assertFalse(errors.hasErrors());
+	}
+	
+	/**
+	 * @see AccountValidator#validate(Object,Errors)
+	 * @verifies require passwords for a new a user account
+	 */
+	@Test
+	public void validate_shouldRequirePasswordsForANewAUserAccount() throws Exception {
+		Person person = new Person();
+		person.addName(new PersonName());
+		Account account = new Account(person);
+		account.setGivenName("give name");
+		account.setFamilyName("family name");
+		account.setUser(new User());
+		account.setUsername("username");
+		account.setPrivilegeLevel(new Role(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE));
+		
+		Errors errors = new BindException(account, "account");
+		validator.validate(account, errors);
+		assertTrue(errors.hasFieldErrors("password"));
+		assertTrue(errors.hasFieldErrors("confirmPassword"));
 	}
 }

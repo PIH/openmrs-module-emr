@@ -11,6 +11,11 @@ function emr_createProviderAccount(){
 	jQuery('#createProviderAccount').val('true');
 	jQuery('#interactsWithPatients').attr('checked','checked');
 }
+function emr_createUserAccount(){
+	jQuery('.emr_userDetails').toggle();
+	jQuery('#createUserAccount').val('true');
+	jQuery('#enabled').attr('checked','checked');
+}
 </script>
 
 <h3>${ ui.message("emr.editAccount") }</h3>
@@ -36,61 +41,78 @@ function emr_createProviderAccount(){
 	
 	<fieldset>
 		<legend>${ ui.message("emr.user.account.details") }</legend>
-		<% if(account.user){ %>
-		<input type="checkbox" name="enabled" value="true" <% if(account.enabled){ %>checked='checked'<% } %> /> ${ ui.message("emr.user.enabled") }
+		<div class="emr_userDetails" <% if (!account.user) { %> style="display: none" <% } %>>
+			<input id="enabled" type="checkbox" name="enabled" value="true" <% if(account.enabled){ %>checked='checked'<% } %> /> ${ ui.message("emr.user.enabled") }
 		
-		<br /><br />
-		<table cellpadding="0" cellspacing="5" border="0">
-			<tr>
-				<td>${ ui.message("emr.user.username") }</td>
-				<td>
-					<input type="text" name="username" value="${(account.username) ? account.username : ""}" />
-					${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "username" ])} &nbsp;
-					<input class="emr_passwordDetails" type="button" value="${ ui.message("emr.user.changeUserPassword") }" 
-						onclick="javascript:jQuery('.emr_passwordDetails').toggle()" />
-				</td>
-			</tr>
-			<tr class="emr_passwordDetails" <% if(!showPasswordFields) { %>style="display: none"<% } %>>
-				<td>${ ui.message("emr.user.password") }</td>
-				<td>
-					<input type="password" name="password" value="" autocomplete="off" />
-					${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "password" ])}
-				</td>
-			</tr>
-			<tr class="emr_passwordDetails" <% if(!showPasswordFields) { %>style="display: none"<% } %>>
-				<td>${ ui.message("emr.user.confirmPassword") }</td>
-				<td>
-					<input type="password" name="confirmPassword" value="" autocomplete="off" />
-					${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "confirmPassword" ])}
-				</td>
-			</tr>
-			<tr>
-				<td>${ ui.message("emr.user.privilegeLevel") }</td>
-				<td>
-					<select name="privilegeLevel">
-					<option></option>
-					<% privilegeLevels.each{ %>
-					<option value="${ it.name }" <% if(account.privilegeLevel == it){ %>selected='selected'<% } %>>${ it.name }</option>
-					<% } %>
-					</select>
-					${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "privilegeLevel" ])}
-				</td>
-			</tr> 
-		</table>
+			<br /><br />
+			<table cellpadding="0" cellspacing="5" border="0">
+				<tr>
+					<td>${ ui.message("emr.user.username") }</td>
+					<td>
+						<input type="text" name="username" value="${(account.username) ? account.username : ""}" />
+						${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "username" ])} &nbsp;
+						<% if (!showPasswordFields) { %>
+						<input class="emr_passwordDetails emr_userDetails" type="button" value="${ ui.message("emr.user.changeUserPassword") }" 
+							onclick="javascript:jQuery('.emr_passwordDetails').toggle()" />
+						<% } %>
+					</td>
+				</tr>
+				<tr class="emr_passwordDetails" <% if(!showPasswordFields && account.user) { %>style="display: none"<% } %>>
+					<td>${ ui.message("emr.user.password") }</td>
+					<td>
+						<input type="password" name="password" value="" autocomplete="off" />
+						${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "password" ])}
+					</td>
+				</tr>
+				<tr class="emr_passwordDetails" <% if(!showPasswordFields && account.user) { %>style="display: none"<% } %>>
+					<td>${ ui.message("emr.user.confirmPassword") }</td>
+					<td>
+						<input type="password" name="confirmPassword" value="" autocomplete="off" />
+						${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "confirmPassword" ])}
+					</td>
+				</tr>
+				<tr>
+					<td>${ ui.message("emr.user.privilegeLevel") }</td>
+					<td>
+						<select name="privilegeLevel">
+						<option></option>
+						<% privilegeLevels.each{ %>
+						<option value="${ it.name }" <% if(account.privilegeLevel == it){ %>selected='selected'<% } %>>${ it.name }</option>
+						<% } %>
+						</select>
+						${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "privilegeLevel" ])}
+					</td>
+				</tr> 
+			</table>
 		
-		<br />
-		${ ui.message("emr.user.Capabilities") } 
-		<div style="padding-left: 20px">
-		<% capabilities.each{ %>
 			<br />
-			<input type="checkbox" name="capabilities" value="${ it.name }" <% if(account.capabilities.contains(it)){ %>checked='checked'<% } %> /> ${ it.name }
-			${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "capabilities" ])}
+			${ ui.message("emr.user.Capabilities") } 
+			<div style="padding-left: 20px">
+			<% capabilities.each{ %>
+				<br />
+				<input type="checkbox" name="capabilities" value="${ it.name }" <% if(account.capabilities.contains(it)){ %>checked='checked'<% } %> /> ${ it.name }
+				${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "capabilities" ])}
+				<% } %>
+			</div>
+			
+			<br />
+			<a href="javascript:void(0)" onclick="javascript:jQuery('.advancedOptions').toggle()">
+				<span class="advancedOptions">${ ui.message("emr.user.showAdvancedOptions") }</span>
+				<span class="advancedOptions" style="display: none">${ ui.message("emr.user.hideAdvancedOptions") }</span>
+			</a>
+			<br /><br />
+			<span class="advancedOptions" style="display: none">
+				<input type="text" name="secretQuestion" size="50" value="${ (account.secretQuestion) ? account.secretQuestion : "" }" /> ${ ui.message("general.optional") }
+				<br />
+				<input type="password" name="secretAnswer" size="50" value="" autocomplete="off" /> ${ ui.message("general.optional") }
+			</span>
+		</div>
+		<div class="emr_userDetails">
+			<% if(!account.user) { %>
+				<input type="button" value="${ ui.message("emr.user.createUserAccount") }" 
+					onclick="javascript:emr_createUserAccount()" />
 			<% } %>
 		</div>
-		<% } else {%>
-			<input type="button" value="${ ui.message("emr.user.createUserAccount") }" 
-				onclick="javascript:window.location='/${ contextPath }/admin/users/user.form?person_id=${ account.person.personId }'" />
-		<% } %>
 	</fieldset>
 	
 	<br />
@@ -110,13 +132,15 @@ function emr_createProviderAccount(){
 			<input type="button" value="${ ui.message("emr.provider.createProviderAccount") }" 
 				onclick="javascript:emr_createProviderAccount()" />
 		<% } %>
-		<input id="createProviderAccount" type="hidden" name="createProviderAccount" value="${account.provider != null && account.provider.providerId == null}" />
 		</div>
 	</fieldset>
 	
 	<br /><br />
 	<input type="hidden" name="personId" value="${ account.person.personId }" />
+	<input id="createUserAccount" type="hidden" name="createUserAccount" value="${account.user != null && account.user.userId == null}" />
+	<input id="createProviderAccount" type="hidden" name="createProviderAccount" value="${account.provider != null && account.provider.providerId == null}" />
 	<input type="submit" value="${ ui.message("general.save") }" /> &nbsp;&nbsp;&nbsp;
 	<input type="button" value="${ ui.message("general.cancel") }" onclick="javascript:window.location='/${ contextPath }/emr/manageAccounts.page'" />
 		
 </form>
+<br /><br />

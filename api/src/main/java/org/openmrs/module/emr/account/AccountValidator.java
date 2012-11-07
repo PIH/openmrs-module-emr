@@ -40,6 +40,12 @@ public class AccountValidator implements Validator {
 	 * @should reject password and confirm password if they dont match
 	 * @should pass for a valid account
 	 * @should pass for a valid account with only person property
+	 * @should require a username for a new user account
+	 * @should require a password for a new user account
+	 * @should require a confirm password for a new user account
+	 * @should require a privilege level for a new user account
+	 * @should ensure password and confirm password match for a new user account
+	 * @should require passwords for a new a user account
 	 */
 	@Override
 	public void validate(Object obj, Errors errors) {
@@ -67,15 +73,19 @@ public class AccountValidator implements Validator {
 			    new Object[] { messageSourceService.getMessage("emr.user.privilegeLevel") }, null);
 		}
 		
-		//If the any password field was changed, validate them
-		if (!(StringUtils.isBlank(account.getPassword()) && StringUtils.isBlank(account.getConfirmPassword()))) {
+		//If new user account has been added or any password field was changed, validate them
+		if ((account.getUser() != null && account.getUser().getUserId() == null)
+		        || !(StringUtils.isBlank(account.getPassword()) && StringUtils.isBlank(account.getConfirmPassword()))) {
 			if (StringUtils.isBlank(account.getPassword())) {
 				errors.rejectValue("password", "error.required",
 				    new Object[] { messageSourceService.getMessage("emr.user.password") }, null);
-			} else if (StringUtils.isBlank(account.getConfirmPassword())) {
+			}
+			if (StringUtils.isBlank(account.getConfirmPassword())) {
 				errors.rejectValue("confirmPassword", "error.required",
 				    new Object[] { messageSourceService.getMessage("emr.user.confirmPassword") }, null);
-			} else if (!account.getPassword().equals(account.getConfirmPassword())) {
+			}
+			if (StringUtils.isNotBlank(account.getPassword()) && StringUtils.isNotBlank(account.getConfirmPassword())
+			        && !account.getPassword().equals(account.getConfirmPassword())) {
 				errors.rejectValue("password", "emr.account.error.passwordDontMatch",
 				    new Object[] { messageSourceService.getMessage("emr.user.password") }, null);
 				errors.rejectValue("confirmPassword", "emr.account.error.passwordDontMatch",

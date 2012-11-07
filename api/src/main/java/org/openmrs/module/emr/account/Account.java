@@ -39,6 +39,10 @@ public class Account {
 	
 	private Role privilegeLevel;
 	
+	private String secretQuestion;
+	
+	private String secretAnswer;
+	
 	private boolean interactsWithPatients;
 	
 	private String providerIdentifier;
@@ -62,6 +66,7 @@ public class Account {
 			this.user = user;
 			setUsername(user.getUsername());
 			setEnabled(!user.isRetired());
+			setSecretQuestion(user.getSecretQuestion());
 			
 			setCapabilities(new HashSet<Role>());
 			for (Role role : user.getAllRoles()) {
@@ -222,6 +227,8 @@ public class Account {
 	 * @return the capabilities
 	 */
 	public Set<Role> getCapabilities() {
+		if (capabilities == null)
+			capabilities = new HashSet<Role>();
 		return capabilities;
 	}
 	
@@ -244,6 +251,34 @@ public class Account {
 	 */
 	public void setPrivilegeLevel(Role privilegeLevel) {
 		this.privilegeLevel = privilegeLevel;
+	}
+	
+	/**
+	 * @return the secretQuestion
+	 */
+	public String getSecretQuestion() {
+		return secretQuestion;
+	}
+	
+	/**
+	 * @param secretQuestion the secretQuestion to set
+	 */
+	public void setSecretQuestion(String secretQuestion) {
+		this.secretQuestion = secretQuestion;
+	}
+	
+	/**
+	 * @return the secretAnswer
+	 */
+	public String getSecretAnswer() {
+		return secretAnswer;
+	}
+	
+	/**
+	 * @param secretAnswer the secretAnswer to set
+	 */
+	public void setSecretAnswer(String secretAnswer) {
+		this.secretAnswer = secretAnswer;
 	}
 	
 	/**
@@ -284,6 +319,8 @@ public class Account {
 		person.setGender(gender);
 		
 		if (user != null) {
+			if (user.getPerson() == null)
+				user.setPerson(person);
 			user.setUsername(username);
 			user.setRetired(!enabled);
 		}
