@@ -323,6 +323,7 @@ public class Account {
 				user.setPerson(person);
 			user.setUsername(username);
 			user.setRetired(!enabled);
+			user.setSecretQuestion(secretQuestion);
 		}
 		
 		if (provider != null) {

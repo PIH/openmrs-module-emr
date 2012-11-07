@@ -82,7 +82,22 @@ function emr_createUserAccount(){
 						</select>
 						${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "privilegeLevel" ])}
 					</td>
-				</tr> 
+				</tr>
+				<tr>
+					<td>${ ui.message("emr.user.secretQuestion") }</td>
+					<td>
+						<input type="text" name="secretQuestion" size="50" 
+							value="${ (account.secretQuestion) ? account.secretQuestion : "" }" /> ${ ui.message("general.optional") }
+					</td>
+				</tr>
+				<tr>
+					<td>${ ui.message("emr.user.secretAnswer") }</td>
+					<td>
+						<input type="password" name="secretAnswer" size="50" 
+							value="" autocomplete="off" /> ${ ui.message("general.optional") } 
+						${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "secretAnswer" ])}
+					</td>
+				</tr>
 			</table>
 		
 			<br />
@@ -94,18 +109,6 @@ function emr_createUserAccount(){
 				${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "capabilities" ])}
 				<% } %>
 			</div>
-			
-			<br />
-			<a href="javascript:void(0)" onclick="javascript:jQuery('.advancedOptions').toggle()">
-				<span class="advancedOptions">${ ui.message("emr.user.showAdvancedOptions") }</span>
-				<span class="advancedOptions" style="display: none">${ ui.message("emr.user.hideAdvancedOptions") }</span>
-			</a>
-			<br /><br />
-			<span class="advancedOptions" style="display: none">
-				<input type="text" name="secretQuestion" size="50" value="${ (account.secretQuestion) ? account.secretQuestion : "" }" /> ${ ui.message("general.optional") }
-				<br />
-				<input type="password" name="secretAnswer" size="50" value="" autocomplete="off" /> ${ ui.message("general.optional") }
-			</span>
 		</div>
 		<div class="emr_userDetails">
 			<% if(!account.user) { %>

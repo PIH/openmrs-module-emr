@@ -40,11 +40,6 @@ public class AccountValidator implements Validator {
 	 * @should reject password and confirm password if they dont match
 	 * @should pass for a valid account
 	 * @should pass for a valid account with only person property
-	 * @should require a username for a new user account
-	 * @should require a password for a new user account
-	 * @should require a confirm password for a new user account
-	 * @should require a privilege level for a new user account
-	 * @should ensure password and confirm password match for a new user account
 	 * @should require passwords for a new a user account
 	 */
 	@Override

@@ -120,7 +120,18 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 				password = account.getPassword();
 			
 			account.setUser(userService.saveUser(user, password));
-			if (StringUtils.isNotBlank(account.getSecretQuestion()) && StringUtils.isNotBlank(account.getSecretAnswer())) {
+			String secretQuestion = null;
+			String secretAnswer = null;
+			if (StringUtils.isNotBlank(account.getSecretQuestion()))
+				secretQuestion = account.getSecretQuestion();
+			if (StringUtils.isNotBlank(account.getSecretAnswer()))
+				secretAnswer = account.getSecretAnswer();
+			
+			//If the we have no question, always clear the answer
+			if (secretQuestion == null)
+				secretAnswer = null;
+			
+			if (secretQuestion == null || (secretQuestion != null && secretAnswer != null)) {
 				userService.changeQuestionAnswer(user, account.getSecretQuestion(), account.getSecretAnswer());
 			}
 		}
