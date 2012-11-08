@@ -13,8 +13,6 @@
  */
 package org.openmrs.module.emr.page.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,6 +30,8 @@ import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+
 public class AccountPageController {
 	
 	protected final Log log = LogFactory.getLog(getClass());
@@ -46,6 +46,7 @@ public class AccountPageController {
 		model.addAttribute("account", account);
 		model.addAttribute("capabilities", accountService.getAllCapabilities());
 		model.addAttribute("privilegeLevels", accountService.getAllPrivilegeLevels());
+        model.addAttribute("rolePrefix", EmrConstants.ROLE_PREFIX_CAPABILITY);
 		model.addAttribute("showPasswordFields", false);
 	}
 	
