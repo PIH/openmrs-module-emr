@@ -1,11 +1,11 @@
 package org.openmrs.module.emr.account;
 
-import java.util.List;
-
 import org.openmrs.Person;
 import org.openmrs.Privilege;
 import org.openmrs.Role;
 import org.openmrs.module.emr.EmrConstants;
+
+import java.util.List;
 
 public interface AccountService {
 	

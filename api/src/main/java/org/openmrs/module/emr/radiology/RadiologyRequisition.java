@@ -14,10 +14,12 @@
 
 package org.openmrs.module.emr.radiology;
 
-import org.openmrs.*;
-import org.openmrs.module.emr.radiology.RadiologyOrder;
+import org.openmrs.Concept;
+import org.openmrs.Location;
+import org.openmrs.Order;
+import org.openmrs.Patient;
+import org.openmrs.Provider;
 
-import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 

@@ -14,7 +14,11 @@
 
 package org.openmrs.module.emr.paperrecord;
 
-import org.openmrs.*;
+import org.openmrs.BaseOpenmrsObject;
+import org.openmrs.Location;
+import org.openmrs.Patient;
+import org.openmrs.Person;
+import org.openmrs.User;
 
 import java.util.Date;
 

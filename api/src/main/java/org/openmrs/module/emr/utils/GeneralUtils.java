@@ -14,8 +14,6 @@
 
 package org.openmrs.module.emr.utils;
 
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Concept;
 import org.openmrs.Location;
@@ -28,6 +26,8 @@ import org.openmrs.ProgramWorkflow;
 import org.openmrs.ProgramWorkflowState;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
+
+import java.util.List;
 
 public class GeneralUtils {
 

@@ -1,14 +1,14 @@
 package org.openmrs.module.emr.account;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.openmrs.Person;
 import org.openmrs.Provider;
 import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.util.OpenmrsUtil;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Acts a wrapper for a Person, User and Provider

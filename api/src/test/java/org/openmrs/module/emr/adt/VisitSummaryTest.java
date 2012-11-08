@@ -1,8 +1,5 @@
 package org.openmrs.module.emr.adt;
 
-import java.util.Date;
-import java.util.LinkedHashSet;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.hamcrest.core.Is;
 import org.junit.Assert;
@@ -12,6 +9,9 @@ import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Visit;
 import org.openmrs.module.emr.EmrProperties;
+
+import java.util.Date;
+import java.util.LinkedHashSet;
 
 public class VisitSummaryTest {
 	

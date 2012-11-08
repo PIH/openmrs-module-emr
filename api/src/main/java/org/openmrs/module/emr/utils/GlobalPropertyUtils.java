@@ -16,7 +16,6 @@
 package org.openmrs.module.emr.utils;
 
 import org.openmrs.Concept;
-import org.openmrs.GlobalProperty;
 import org.openmrs.OrderType;
 import org.openmrs.api.context.Context;
 

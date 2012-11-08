@@ -14,18 +14,17 @@
 
 package org.openmrs.module.emr.order;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import junit.framework.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.openmrs.Order;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.Assert;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.openmrs.Order;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
 public class EmrOrderServiceTest {
 
