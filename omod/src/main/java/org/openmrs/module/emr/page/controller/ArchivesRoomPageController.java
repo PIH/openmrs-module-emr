@@ -36,7 +36,7 @@ public class ArchivesRoomPageController {
      * @param requests
      */
     public String post(@RequestParam("requestId") List<PaperRecordRequest> requests,
-                       @RequestParam(value="currentTab", required=false, defaultValue="false") boolean createPaperMedicalRecord,
+                       @RequestParam(value="createPaperMedicalRecord", required=false, defaultValue="false") boolean createPaperMedicalRecord,
                        @RequestParam("assignTo") Person assignTo,
                        @SpringBean PaperRecordService paperRecordService,
                        UiUtils ui,
