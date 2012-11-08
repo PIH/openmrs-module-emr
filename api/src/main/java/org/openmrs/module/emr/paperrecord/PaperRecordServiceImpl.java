@@ -187,7 +187,7 @@ public class PaperRecordServiceImpl implements PaperRecordService {
 
     protected String getPaperMedicalRecordNumberFor(Patient patient, Location medicalRecordLocation) {
         PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient, getPaperRecordIdentifierType(), medicalRecordLocation);
-        return paperRecordIdentifier != null ? paperRecordIdentifier.getIdentifier() : null;
+        return paperRecordIdentifier != null ? paperRecordIdentifier.getIdentifier() : "";
     }
 
     protected PatientIdentifierType getPaperRecordIdentifierType() {
