@@ -23,6 +23,6 @@ public interface PaperRecordRequestDAO extends SingleClassDAO<PaperRecordRequest
 
     List<PaperRecordRequest> findPaperRecordRequests(PaperRecordRequest.Status status);
 
-    List<PaperRecordRequest> findPaperRecordRequests(PaperRecordRequest.Status status, Boolean hasIdentifier);
+    List<PaperRecordRequest> findPaperRecordRequests(PaperRecordRequest.Status status, boolean hasIdentifier);
 
 }

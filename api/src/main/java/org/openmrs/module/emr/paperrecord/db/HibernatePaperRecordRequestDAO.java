@@ -30,26 +30,44 @@ public class HibernatePaperRecordRequestDAO  extends HibernateSingleClassDAO<Pap
 
     @Override
     public List<PaperRecordRequest> findPaperRecordRequests(PaperRecordRequest.Status status) {
-        return findPaperRecordRequests(status, null);
-    }
 
-    @Override
-    public List<PaperRecordRequest> findPaperRecordRequests(PaperRecordRequest.Status status, Boolean hasIdentifier) {
-
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(PaperRecordRequest.class);
-        criteria.add(Restrictions.eq("status", status));
-
-        if (hasIdentifier != null) {
-            if (hasIdentifier) {
-                criteria.add(Restrictions.isNotNull("identifier"));
-            }
-            else {
-                criteria.add(Restrictions.isNull("identifier"));
-            }
-        }
-
-        criteria.addOrder(Order.asc("dateCreated"));
+        Criteria criteria = createPaperRecordCriteria();
+        addStatusRestriction(criteria, status);
+        addOrderByDate(criteria);
 
         return (List<PaperRecordRequest>) criteria.list();
     }
+
+    @Override
+    public List<PaperRecordRequest> findPaperRecordRequests(PaperRecordRequest.Status status, boolean hasIdentifier) {
+
+        Criteria criteria = createPaperRecordCriteria();
+        addStatusRestriction(criteria, status);
+        addHasIdentifierRestriction(criteria, hasIdentifier);
+        addOrderByDate(criteria);
+
+        return (List<PaperRecordRequest>) criteria.list();
+    }
+
+    private Criteria createPaperRecordCriteria() {
+        return sessionFactory.getCurrentSession().createCriteria(PaperRecordRequest.class);
+    }
+
+    private void addStatusRestriction(Criteria criteria, PaperRecordRequest.Status status) {
+        criteria.add(Restrictions.eq("status", status));
+    }
+
+    private void addHasIdentifierRestriction(Criteria criteria, boolean hasIdentifier) {
+        if (hasIdentifier) {
+            criteria.add(Restrictions.isNotNull("identifier"));
+        }
+        else {
+            criteria.add(Restrictions.isNull("identifier"));
+        }
+    }
+
+    private void addOrderByDate(Criteria criteria) {
+        criteria.addOrder(Order.asc("dateCreated"));
+    }
+
 }
