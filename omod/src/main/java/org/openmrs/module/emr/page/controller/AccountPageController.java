@@ -14,8 +14,6 @@
 package org.openmrs.module.emr.page.controller;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -45,10 +43,7 @@ public class AccountPageController {
         Account account;
         if (person == null) {
             Person newPerson = new Person();
-            Set<PersonName> personNames = new TreeSet<PersonName>();
-            personNames.add(new PersonName());
-
-            newPerson.setNames(personNames);
+            person.addName(new PersonName());
             account = new Account(newPerson);
         }
         else {

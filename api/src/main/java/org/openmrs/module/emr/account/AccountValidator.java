@@ -3,6 +3,7 @@ package org.openmrs.module.emr.account;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.annotation.Handler;
 import org.openmrs.messagesource.MessageSourceService;
+import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -79,12 +80,15 @@ public class AccountValidator implements Validator {
 				errors.rejectValue("confirmPassword", "error.required",
 				    new Object[] { messageSourceService.getMessage("emr.user.confirmPassword") }, null);
 			}
-			if (StringUtils.isNotBlank(account.getPassword()) && StringUtils.isNotBlank(account.getConfirmPassword())
-			        && !account.getPassword().equals(account.getConfirmPassword())) {
-				errors.rejectValue("password", "emr.account.error.passwordDontMatch",
-				    new Object[] { messageSourceService.getMessage("emr.user.password") }, null);
-				errors.rejectValue("confirmPassword", "emr.account.error.passwordDontMatch",
-				    new Object[] { messageSourceService.getMessage("emr.user.confirmPassword") }, null);
+			if (StringUtils.isNotBlank(account.getPassword()) && StringUtils.isNotBlank(account.getConfirmPassword())) {
+			    if (!account.getPassword().equals(account.getConfirmPassword())) {
+                    errors.rejectValue("password", "emr.account.error.passwordDontMatch",
+                        new Object[] { messageSourceService.getMessage("emr.user.password") }, null);
+                    errors.rejectValue("confirmPassword", "emr.account.error.passwordDontMatch",
+                        new Object[] { messageSourceService.getMessage("emr.user.confirmPassword") }, null);
+                } else {
+                    OpenmrsUtil.validatePassword(account.getUsername(), account.getPassword(), account.getUser().getSystemId());
+                }
 			}
 		}
 	}
