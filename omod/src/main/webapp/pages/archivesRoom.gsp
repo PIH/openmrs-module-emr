@@ -70,9 +70,9 @@
 <div id="tabs">
 
         <ul>
-            <li><a href="#tab-createrequest">${ ui.message("emr.archivesRoom.openCreateRequests.label") }</a></li>
-            <li><a href="#tab-pullrequest">${ ui.message("emr.archivesRoom.openPullRequests.label") }</a></li>
-            <li><a href="#tab-assignedpullrequest">${ ui.message("emr.archivesRoom.assignedPullRequests.label") }</a></li>
+            <li><a id="tab-selector-createrequest" href="#tab-createrequest">${ ui.message("emr.archivesRoom.openCreateRequests.label") }</a></li>
+            <li><a id="tab-selector-pullrequest" href="#tab-pullrequest">${ ui.message("emr.archivesRoom.openPullRequests.label") }</a></li>
+            <li><a id="tab-selector-assignedpullrequest" href="#tab-assignedpullrequest">${ ui.message("emr.archivesRoom.assignedPullRequests.label") }</a></li>
         </ul>
 
 
