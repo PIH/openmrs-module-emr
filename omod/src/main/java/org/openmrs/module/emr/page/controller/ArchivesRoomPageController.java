@@ -21,12 +21,14 @@ public class ArchivesRoomPageController {
                     @RequestParam(value="createPaperMedicalRecord", required=false, defaultValue="false") boolean createPaperMedicalRecord,
                     @SpringBean PaperRecordService paperRecordService,
                     @SpringBean("adminService") AdministrationService administrationService) {
-        List<PaperRecordRequest> openPaperRecordRequests = paperRecordService.getOpenPaperRecordRequestsToPull();
+        List<PaperRecordRequest> openPaperRecordRequestsToPull = paperRecordService.getOpenPaperRecordRequestsToPull();
         List<PaperRecordRequest> openPaperRecordRequestsToCreate = paperRecordService.getOpenPaperRecordRequestsToCreate();
+        List<PaperRecordRequest> assignedPaperRecordRequestsToPull = paperRecordService.getAssignedPaperRecordRequestsToPull();
         String primaryIdentifierType = administrationService.getGlobalProperty(PRIMARY_IDENTIFIER_TYPE);
 
-        model.addAttribute("requestsToCreate", openPaperRecordRequestsToCreate);
-        model.addAttribute("openRequests", openPaperRecordRequests);
+        model.addAttribute("openRequestsToCreate", openPaperRecordRequestsToCreate);
+        model.addAttribute("openRequestsToPull", openPaperRecordRequestsToPull);
+        model.addAttribute("assignedRequestsToPull", assignedPaperRecordRequestsToPull);
         model.addAttribute("primaryIdentifierType", primaryIdentifierType);
         model.addAttribute("createPaperMedicalRecord", createPaperMedicalRecord);
     }
@@ -44,7 +46,7 @@ public class ArchivesRoomPageController {
         try {
             paperRecordService.assignRequests(requests, assignTo);
         } catch (IllegalStateException ex) {
-            session.setAttribute(WebConstants.OPENMRS_ERROR_ATTR, ui.message("emr.pullRecords.alreadyAssigned"));
+            session.setAttribute(WebConstants.OPENMRS_ERROR_ATTR, ui.message("emr.archivesRoom.alreadyAssigned"));
         }
         return "redirect:emr/archivesRoom.page?createPaperMedicalRecord=" + createPaperMedicalRecord;
     }

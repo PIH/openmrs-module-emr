@@ -162,6 +162,12 @@ public class PaperRecordServiceImpl implements PaperRecordService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<PaperRecordRequest> getAssignedPaperRecordRequestsToPull() {
+        return paperRecordRequestDAO.findPaperRecordRequests(PaperRecordRequest.Status.ASSIGNED_TO_PULL);
+    }
+
+    @Override
     @Transactional
     public String createPaperMedicalRecordNumberFor(Patient patient, Location medicalRecordLocation) {
         if (patient == null){

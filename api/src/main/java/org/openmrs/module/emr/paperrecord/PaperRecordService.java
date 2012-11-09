@@ -50,7 +50,7 @@ public interface PaperRecordService {
      * Retrieves all records that are open (ie, have yet to be assigned to an archivist for retrieval)
      * and need to be pulled (ie, already exist and just need to be pulled, not created)
      *
-     * @return the list of all open paper record requests
+     * @return the list of all open paper record requests that need to be pulled
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     List<PaperRecordRequest> getOpenPaperRecordRequestsToPull();
@@ -59,7 +59,7 @@ public interface PaperRecordService {
      * Retrieves all records that are open (ie, have yet to be assigned to an archivist for retrieval)
      * and need to be created (ie, do not yet exist)
      *
-     * @return the list of all open paper record requests
+     * @return the list of all open paper record requests that need to be created
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     List<PaperRecordRequest> getOpenPaperRecordRequestsToCreate();
@@ -75,7 +75,17 @@ public interface PaperRecordService {
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     List<PaperRecordRequest> assignRequests(List<PaperRecordRequest> requests, Person assignee);
 
+
+    /**
+     * Retrieves all records that have been assigned and need to be pulled
+     *
+     * @return the list of all assigned paper record requests that need to be pulled
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
+    List<PaperRecordRequest> getAssignedPaperRecordRequestsToPull();
+
     // TODO: we can probably remove this as a public method after we remove it from the Patient registration module
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     String createPaperMedicalRecordNumberFor(Patient patient, Location medicalRecordLocation);
+
 }

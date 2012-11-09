@@ -23,7 +23,7 @@ describe("Tests to create medical records", function() {
         RecordRequestModel(8, "Mike", 8, null, "Lacoline", "12:34 pm")
     ];
 
-    var viewModel = RecordsCreationViewModel(recordsToPull);
+    var viewModel = CreateRequestsViewModel(recordsToPull);
 
     it("should select first three records", function() {
         viewModel.selectRecordsToBeCreated(thirdRecord);

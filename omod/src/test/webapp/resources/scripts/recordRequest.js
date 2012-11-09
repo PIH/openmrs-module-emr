@@ -22,7 +22,7 @@ describe("Tests for medical record requests", function() {
         RecordRequestModel(7, "Ellen", 7, "A234", "Lacoline", "12:34 pm"),
         RecordRequestModel(8, "Mike", 8, "A235", "Lacoline", "12:34 pm")
     ];
-    var viewModel = RecordRequestsViewModel(recordsToPull);
+    var viewModel = PullRequestsViewModel(recordsToPull);
 
 
     it("should select first three records", function() {

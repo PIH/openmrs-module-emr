@@ -13,7 +13,7 @@ function RecordRequestModel(requestId, patientName, patientId, dossierNumber, se
 }
 
 
-function RecordRequestsViewModel(recordsToPull) {
+function PullRequestsViewModel(recordsToPull) {
     var api = {};
     api.recordsToPull = ko.observableArray(recordsToPull);
 
@@ -38,7 +38,7 @@ function RecordRequestsViewModel(recordsToPull) {
 }
 
 
-function RecordsCreationViewModel(recordsToCreate) {
+function CreateRequestsViewModel(recordsToCreate) {
     var api = {};
     api.recordsToCreate = ko.observableArray(recordsToCreate);
 
@@ -54,6 +54,13 @@ function RecordsCreationViewModel(recordsToCreate) {
             return item.selected();
         });
     });
+
+    return api;
+}
+
+function AssignedPullRequestsViewModel(assignedRecordsToPull) {
+    var api = {};
+    api.assignedRecordsToPull = ko.observableArray(assignedRecordsToPull);
 
     return api;
 }

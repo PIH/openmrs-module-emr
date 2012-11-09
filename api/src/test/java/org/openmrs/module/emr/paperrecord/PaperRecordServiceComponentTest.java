@@ -178,6 +178,8 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         paperRecordService.assignRequests(paperRecordRequests, person);
 
         // verify
+        paperRecordRequests = paperRecordService.getAssignedPaperRecordRequestsToPull();
+        Assert.assertEquals(1, paperRecordRequests.size());
         PaperRecordRequest request = paperRecordRequests.get(0);
         Assert.assertEquals(PaperRecordRequest.Status.ASSIGNED_TO_PULL, request.getStatus());
         Assert.assertEquals(new Integer(7), request.getAssignee().getId());
