@@ -13,10 +13,15 @@
  */
 package org.openmrs.module.emr.page.controller;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Person;
+import org.openmrs.PersonName;
 import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
@@ -25,24 +30,39 @@ import org.openmrs.module.emr.account.Account;
 import org.openmrs.module.emr.account.AccountService;
 import org.openmrs.module.emr.account.AccountValidator;
 import org.openmrs.ui.framework.annotation.BindParams;
+import org.openmrs.ui.framework.annotation.MethodParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-
 public class AccountPageController {
 	
 	protected final Log log = LogFactory.getLog(getClass());
-	
-	public void get(PageModel model, @RequestParam(value = "personId", required = false) Person person,
+
+    public Account getAccount(@RequestParam(value = "personId", required = false) Person person,
+                                @SpringBean("accountService") AccountService accountService) {
+        Account account;
+        if (person == null) {
+            Person newPerson = new Person();
+            Set<PersonName> personNames = new TreeSet<PersonName>();
+            personNames.add(new PersonName());
+
+            newPerson.setNames(personNames);
+            account = new Account(newPerson);
+        }
+        else {
+            account = accountService.getAccountByPerson(person);
+            if (account == null)
+                throw new APIException("Failed to find user account matching person with id:" + person.getPersonId());
+        }
+
+        return account;
+    }
+
+	public void get(PageModel model, @MethodParam("getAccount") Account account,
 	                @SpringBean("accountService") AccountService accountService) {
-		
-		Account account = accountService.getAccountByPerson(person);
-		if (account == null)
-			throw new APIException("Failed to find user account matching person with id:" + person.getPersonId());
-		
+
 		model.addAttribute("account", account);
 		model.addAttribute("capabilities", accountService.getAllCapabilities());
 		model.addAttribute("privilegeLevels", accountService.getAllPrivilegeLevels());
@@ -50,9 +70,9 @@ public class AccountPageController {
 		model.addAttribute("showPasswordFields", false);
 	}
 	
-	public String post(@RequestParam("personId") @BindParams Account account, BindingResult errors,
-	                   @RequestParam(value = "enabled", required = false) Boolean enabled,
-	                   @RequestParam(value = "interactsWithPatients", required = false) Boolean interactsWithPatients,
+	public String post(@MethodParam("getAccount") @BindParams Account account, BindingResult errors,
+                       @RequestParam(value = "enabled", defaultValue = "false") boolean enabled,
+                       @RequestParam(value = "interactsWithPatients", defaultValue = "false") boolean interactsWithPatients,
 	                   @RequestParam(value = "createProviderAccount") boolean createProviderAccount,
 	                   @RequestParam(value = "createUserAccount") boolean createUserAccount,
 	                   @SpringBean("accountService") AccountService accountService,
@@ -63,15 +83,15 @@ public class AccountPageController {
 			User user = new User();
 			account.setUser(user);
 		}
-		if (enabled == null && account.getEnabled())
-			account.setEnabled(false);
+
 		if (createProviderAccount && account.getProvider() == null) {
 			Provider provider = new Provider();
 			account.setProvider(provider);
 		}
-		if (interactsWithPatients == null && account.getInteractsWithPatients())
-			account.setInteractsWithPatients(false);
-		
+
+        account.setEnabled(enabled);
+        account.setInteractsWithPatients(interactsWithPatients);
+
 		accountValidator.validate(account, errors);
 		
 		if (!errors.hasErrors()) {

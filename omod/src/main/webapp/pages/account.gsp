@@ -25,7 +25,7 @@ function emr_createUserAccount(){
 	<fieldset>
 		<legend>${ ui.message("emr.person.details") }</legend>
 		${ ui.message("emr.person.givenName") } 
-		<input type="text" name="givenName" value="${(account.givenName) ? account.givenName : ""}" /> &nbsp;&nbsp;&nbsp; 
+		<input type="text" name="givenName" value="${(account.givenName) ? account.givenName : ""}" /> &nbsp;&nbsp;&nbsp;
 		${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "givenName" ])}
 		
 		${ ui.message("emr.person.familyName") } 
@@ -140,7 +140,6 @@ function emr_createUserAccount(){
 	</fieldset>
 	
 	<br /><br />
-	<input type="hidden" name="personId" value="${ account.person.personId }" />
 	<input id="createUserAccount" type="hidden" name="createUserAccount" value="${account.user != null && account.user.userId == null}" />
 	<input id="createProviderAccount" type="hidden" name="createProviderAccount" value="${account.provider != null && account.provider.providerId == null}" />
 	<input type="submit" value="${ ui.message("general.save") }" /> &nbsp;&nbsp;&nbsp;
