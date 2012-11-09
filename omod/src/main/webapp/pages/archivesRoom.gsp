@@ -99,7 +99,7 @@
                     <th>${ ui.message("emr.time") }</th>
                 </tr>
                 </thead>
-                <tbody data-bind="foreach: recordsToCreate">             em
+                <tbody data-bind="foreach: recordsToCreate">
                 <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), even: (\$index() % 2 == 0) }, click: \$root.selectRecordsToBeCreated" >
                     <td><span data-bind="text: patientName"></span></td>
                     <td><span data-bind="text: patientId"></span></td>
