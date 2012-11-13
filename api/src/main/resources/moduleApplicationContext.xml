@@ -183,4 +183,34 @@
             </list>
         </property>
     </bean>
+
+    <bean id="printerService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="${project.parent.groupId}.${project.parent.artifactId}.printer.PrinterServiceImpl">
+                <property name="printerDAO">
+                    <bean class="${project.parent.groupId}.${project.parent.artifactId}.printer.db.HibernatePrinterDAO">
+                        <property name="sessionFactory"><ref bean="sessionFactory"/></property>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>
+
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list merge="true">
+                <value>${project.parent.groupId}.${project.parent.artifactId}.printer.PrinterService</value>
+                <ref local="printerService"/>
+            </list>
+        </property>
+    </bean>
 </beans>
