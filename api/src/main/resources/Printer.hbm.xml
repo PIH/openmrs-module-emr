@@ -24,7 +24,7 @@
             </type>
         </property>
 
-        <many-to-one name="location" class="org.openmrs.Location" not-null="true">
+        <many-to-one name="location" class="org.openmrs.Location">
             <column name="location_id" />
         </many-to-one>
 
