@@ -14,7 +14,7 @@
 
         <property name="name" type="java.lang.String" column="name" length="255" not-null="true" />
 
-        <property name="ipAddress" type="java.lang.String" column="ip_address" length="25" not-null="true" />
+        <property name="ipAddress" type="java.lang.String" column="ip_address" length="50" not-null="true" />
 
         <property name="port" type="java.lang.String" column="port" length="10" not-null="true" />
 
@@ -24,8 +24,8 @@
             </type>
         </property>
 
-        <many-to-one name="location" class="org.openmrs.Location">
-            <column name="location_id" />
+        <many-to-one name="physicalLocation" class="org.openmrs.Location">
+            <column name="physical_location" />
         </many-to-one>
 
         <property name="dateCreated" type="java.util.Date" column="date_created"/>

@@ -34,7 +34,7 @@ public class Printer extends BaseOpenmrsObject {
 
     private Type type;
 
-    private Location location;
+    private Location physicalLocation;
 
     private User creator;
 
@@ -95,12 +95,12 @@ public class Printer extends BaseOpenmrsObject {
         this.port = port;
     }
 
-    public Location getLocation() {
-        return location;
+    public Location getPhysicalLocation() {
+        return physicalLocation;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void setPhysicalLocation(Location physicalLocation) {
+        this.physicalLocation = physicalLocation;
     }
 
     public User getCreator() {
