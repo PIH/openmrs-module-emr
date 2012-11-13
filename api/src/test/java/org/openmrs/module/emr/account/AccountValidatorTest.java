@@ -1,5 +1,6 @@
 package org.openmrs.module.emr.account;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,15 +9,23 @@ import org.openmrs.Person;
 import org.openmrs.PersonName;
 import org.openmrs.Role;
 import org.openmrs.User;
+import org.openmrs.api.PasswordException;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.util.OpenmrsUtil;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
@@ -200,18 +209,47 @@ public class AccountValidatorTest {
 	}
 
     @Test
-    public void shouldValidateShortPassword() {
+    public void shouldVerifyIfPasswordIsBeingValidated() {
         mockStatic(OpenmrsUtil.class);
 
-        account.setUsername("username");
-        account.setPassword("password");
-        User user = new User();
-        user.setSystemId("systemId");
-        account.setUser(user);
+        createAccount();
 
         Errors errors = new BindException(account, "account");
         validator.validate(account, errors);
 
-//        PowerMockito.verifyStatic(OpenmrsUtil.validatePassword("username", "password", "systemId"));
+        PowerMockito.verifyStatic();
+        OpenmrsUtil.validatePassword("username", "password", "systemId");
+    }
+
+    private void createAccount() {
+        account.setUsername("username");
+        account.setPassword("password");
+        account.setConfirmPassword("password");
+        User user = createUser();
+        account.setUser(user);
+    }
+
+    @Test
+    public void shouldCreateAnErrorMessageWhenPasswordIsWrong(){
+        mockStatic(OpenmrsUtil.class);
+        PowerMockito.doThrow(new PasswordException("Your Password is too short")).when(OpenmrsUtil.class);
+        OpenmrsUtil.validatePassword("username", "password", "systemId");
+
+        createAccount();
+
+        Errors errors = new BindException(account, "account");
+        validator.validate(account, errors);
+
+        assertTrue(errors.hasErrors());
+
+        List<FieldError> errorList = errors.getFieldErrors("password");
+
+        assertThat(errorList.size(), is(1));
+    }
+
+    private User createUser() {
+        User user = new User();
+        user.setSystemId("systemId");
+        return user;
     }
 }

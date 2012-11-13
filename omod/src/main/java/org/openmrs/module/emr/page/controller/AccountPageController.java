@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Person;
 import org.openmrs.PersonName;
 import org.openmrs.Provider;
+import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.module.emr.EmrConstants;
@@ -34,6 +35,9 @@ import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class AccountPageController {
 	
 	protected final Log log = LogFactory.getLog(getClass());
@@ -43,7 +47,7 @@ public class AccountPageController {
         Account account;
         if (person == null) {
             Person newPerson = new Person();
-            person.addName(new PersonName());
+            newPerson.addName(new PersonName());
             account = new Account(newPerson);
         }
         else {
@@ -84,6 +88,8 @@ public class AccountPageController {
 			account.setProvider(provider);
 		}
 
+        /*Set<Role> capabilities = new HashSet<Role>();
+        account.setCapabilities(capabilities);*/
         account.setEnabled(enabled);
         account.setInteractsWithPatients(interactsWithPatients);
 

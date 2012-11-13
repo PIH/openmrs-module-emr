@@ -2,6 +2,7 @@ package org.openmrs.module.emr.account;
 
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.annotation.Handler;
+import org.openmrs.api.PasswordException;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,9 +90,19 @@ public class AccountValidator implements Validator {
                     errors.rejectValue("confirmPassword", "emr.account.error.passwordDontMatch",
                         new Object[] { messageSourceService.getMessage("emr.user.confirmPassword") }, null);
                 } else {
-                    OpenmrsUtil.validatePassword(account.getUsername(), account.getPassword(), account.getUser().getSystemId());
+                    validatePassword(errors, account);
                 }
 			}
 		}
 	}
+
+    private void validatePassword(Errors errors, Account account) {
+
+        try{
+            OpenmrsUtil.validatePassword(account.getUsername(), account.getPassword(), account.getUser().getSystemId());
+        }catch (PasswordException e){
+            errors.rejectValue("password", "emr.account.error.passwordDoNotMatchOneRequirement", new Object[] { e.getMessage() }, null);
+        }
+
+    }
 }
