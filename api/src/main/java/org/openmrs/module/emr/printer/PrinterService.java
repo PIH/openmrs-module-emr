@@ -14,6 +14,9 @@
 
 package org.openmrs.module.emr.printer;
 
+import org.openmrs.annotation.Authorized;
+import org.openmrs.module.emr.EmrConstants;
+
 import java.util.List;
 
 public interface PrinterService {
@@ -21,8 +24,21 @@ public interface PrinterService {
 
     // TODO: add permissions
 
+
+    /**
+     * Saves a printer
+     *
+     * @param printer
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
     void savePrinter(Printer printer);
 
+    /**
+     * Fetches all printers in the system
+     *
+     * @return all printers in the systesm
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
     List<Printer> getAllPrinters();
 
 }

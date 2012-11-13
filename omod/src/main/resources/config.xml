@@ -138,6 +138,10 @@
         <name>Paper Records - Request Records</name>
         <description>Gives API-level access within the Paper Record service to request records</description>
     </privilege>
+    <privilege>
+        <name>Printers - Manage Printers</name>
+        <description>Gives API-level access within the Printer service to manage printers</description>
+    </privilege>
 
 </module>
 

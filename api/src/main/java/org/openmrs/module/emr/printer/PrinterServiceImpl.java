@@ -15,6 +15,7 @@
 package org.openmrs.module.emr.printer;
 
 import org.openmrs.module.emr.printer.db.PrinterDAO;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,11 +30,13 @@ public class PrinterServiceImpl implements PrinterService  {
     // TODO: add a printer validator?
 
     @Override
+    @Transactional
     public void savePrinter(Printer printer) {
         printerDAO.saveOrUpdate(printer);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Printer> getAllPrinters() {
        return printerDAO.getAll();
     }

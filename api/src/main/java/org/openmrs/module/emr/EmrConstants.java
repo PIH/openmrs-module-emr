@@ -40,6 +40,8 @@ public class EmrConstants {
 
     public static final String PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS = "Paper Records - Request Records";
 
+    public static final String PRIVILEGE_PRINTERS_MANAGE_PRINTERS = "Printers - Manage Printers";
+
     public static final String LOCATION_TAG_SUPPORTS_VISITS = "Visit Location";
 
     public static final String LOCATION_TAG_SUPPORTS_LOGIN = "Login Location";
