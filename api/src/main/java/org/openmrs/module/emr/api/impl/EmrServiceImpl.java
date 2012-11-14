@@ -13,8 +13,6 @@
  */
 package org.openmrs.module.emr.api.impl;
 
-import java.util.List;
-
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.EncounterService;
@@ -25,6 +23,8 @@ import org.openmrs.module.emr.adt.AdtService;
 import org.openmrs.module.emr.api.EmrService;
 import org.openmrs.module.emr.api.db.EmrDAO;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
 
@@ -60,6 +60,9 @@ public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
 
 	@Override
     public List<Patient> findPatients(String query, Location checkedInAt, Integer start, Integer length) {
+        if (checkedInAt != null) {
+            checkedInAt = adtService.getLocationThatSupportsVisits(checkedInAt);
+        }
         return dao.findPatients(query, checkedInAt, start, length);
     }
 
