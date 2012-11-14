@@ -17,6 +17,7 @@ package org.openmrs.module.emr.task;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Simple implementation of TaskDescriptor. Typically you'd instantiate one or more of these as Spring beans in your
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class SimpleTaskDescriptor extends BaseTaskDescriptor implements TaskDescriptor {
 
     @Autowired
+    @Qualifier("messageSourceService")
     MessageSourceService messageSourceService;
 
     private String id;
