@@ -34,7 +34,7 @@
 	
 	<properties>
 		<openMRSVersion>1.9.2-SNAPSHOT</openMRSVersion>
-        <uiframeworkVersion>1.10</uiframeworkVersion>
+        <uiframeworkVersion>2.1.1</uiframeworkVersion>
         <appframeworkVersion>1.3</appframeworkVersion>
         <idgenVersion>2.4-SNAPSHOT</idgenVersion>
         <springVersion>3.0.5.RELEASE</springVersion>
@@ -103,6 +103,13 @@
         <!-- End OpenMRS modules -->
 
         <!-- start other dependencies -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>13.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito</artifactId>

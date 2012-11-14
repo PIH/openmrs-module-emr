@@ -119,4 +119,10 @@ public interface AdtService extends OpenmrsService {
      */
     void closeInactiveVisits();
 
+    /**
+     * @param patient
+     * @return the most recent encounter for the given patient
+     */
+    Encounter getLastEncounter(Patient patient);
+
 }

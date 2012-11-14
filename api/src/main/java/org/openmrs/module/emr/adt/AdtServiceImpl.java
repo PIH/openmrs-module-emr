@@ -37,8 +37,6 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.util.OpenmrsUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -330,8 +328,19 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 		
 		return active;
 	}
-	
-	/**
+
+    @Override
+    public Encounter getLastEncounter(Patient patient) {
+        // this could be sped up by implementing it directly in a DAO
+        List<Encounter> byPatient = encounterService.getEncountersByPatient(patient);
+        if (byPatient.size() == 0) {
+            return null;
+        } else {
+            return byPatient.get(byPatient.size() - 1);
+        }
+    }
+
+    /**
 	 * Utility method that returns all child locations and children of its child locations
 	 * recursively
 	 * 
