@@ -25,6 +25,7 @@ import org.openmrs.Program;
 import org.openmrs.ProgramWorkflow;
 import org.openmrs.ProgramWorkflowState;
 import org.openmrs.User;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 
 import java.util.List;
@@ -289,18 +290,23 @@ public class GeneralUtils {
         return null;
     }
 
+    public static PatientIdentifierType getPatientIdentifierType(String id) {
+        return getPatientIdentifierType(id, Context.getPatientService());
+    }
+
     /***
      * Get the patient identifier type by: 1)an integer id like 5090 or 2) uuid like
      * "a3e12268-74bf-11df-9768-17cfc9833272" or 3) a name like "Temporary Identifier"
      *
      * @param id
+     * @param patientService
      * @return the identifier type if exist, else null
      * @should find an identifier type by its id
      * @should find an identifier type by its uuid
      * @should find an identifier type by its name
      * @should return null otherwise
      */
-    public static PatientIdentifierType getPatientIdentifierType(String id) {
+    public static PatientIdentifierType getPatientIdentifierType(String id, PatientService patientService) {
         PatientIdentifierType identifierType = null;
 
         if (id != null) {
@@ -308,7 +314,7 @@ public class GeneralUtils {
             // see if this is parseable int; if so, try looking up by id
             try { //handle integer: id
                 int identifierTypeId = Integer.parseInt(id);
-                identifierType = Context.getPatientService().getPatientIdentifierType(identifierTypeId);
+                identifierType = patientService.getPatientIdentifierType(identifierTypeId);
 
                 if (identifierType != null) {
                     return identifierType;
@@ -320,7 +326,7 @@ public class GeneralUtils {
 
             //handle uuid id: "a3e1302b-74bf-11df-9768-17cfc9833272", if id matches uuid format
             if (isValidUuidFormat(id)) {
-                identifierType = Context.getPatientService().getPatientIdentifierTypeByUuid(id);
+                identifierType = patientService.getPatientIdentifierTypeByUuid(id);
 
                 if (identifierType != null) {
                     return identifierType;
@@ -329,7 +335,7 @@ public class GeneralUtils {
             // handle name
             else {
                 // if it's neither a uuid or id, try identifier type name
-                identifierType = Context.getPatientService().getPatientIdentifierTypeByName(id);
+                identifierType = patientService.getPatientIdentifierTypeByName(id);
             }
         }
         return identifierType;

@@ -14,16 +14,19 @@
 
 package org.openmrs.module.emr.utils;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Concept;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.OrderType;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.VisitType;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.OrderService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +65,10 @@ public abstract class ModuleProperties {
     @Qualifier("userService")
     protected UserService userService;
 
+    @Autowired
+    @Qualifier("patientService")
+    protected PatientService patientService;
+
     public void setConceptService(ConceptService conceptService) {
         this.conceptService = conceptService;
     }
@@ -88,6 +95,10 @@ public abstract class ModuleProperties {
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public void setPatientService(PatientService patientService) {
+        this.patientService = patientService;
     }
 
     protected Concept getConceptByGlobalProperty(String globalPropertyName) {
@@ -134,4 +145,22 @@ public abstract class ModuleProperties {
         }
         return orderType;
     }
+
+    protected PatientIdentifierType getPatientIdentifierTypeByGlobalProperty(String globalPropertyName, boolean required) {
+        String globalProperty = getGlobalProperty(globalPropertyName, required);
+        PatientIdentifierType patientIdentifierType = GeneralUtils.getPatientIdentifierType(globalProperty, patientService);
+        if (required && patientIdentifierType == null) {
+            throw new IllegalStateException("Configuration required: " + globalPropertyName);
+        }
+        return patientIdentifierType;
+    }
+
+    private String getGlobalProperty(String globalPropertyName, boolean required) {
+        String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
+        if (required && StringUtils.isEmpty(globalProperty)) {
+            throw new IllegalStateException("Configuration required: " + globalPropertyName);
+        }
+        return globalProperty;
+    }
+
 }

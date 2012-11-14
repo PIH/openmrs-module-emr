@@ -19,6 +19,7 @@ import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.LocationTag;
 import org.openmrs.OrderType;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.Role;
 import org.openmrs.VisitType;
 import org.openmrs.module.emr.utils.ModuleProperties;
@@ -69,6 +70,14 @@ public class EmrProperties extends ModuleProperties {
 
     public LocationTag getSupportsLoginLocationTag() {
         return locationService.getLocationTagByName(EmrConstants.LOCATION_TAG_SUPPORTS_LOGIN);
+    }
+
+    public PatientIdentifierType getPrimaryIdentifierType() {
+        return getPatientIdentifierTypeByGlobalProperty(EmrConstants.PRIMARY_IDENTIFIER_TYPE, true);
+    }
+
+    public PatientIdentifierType getPaperRecordIdentifierType() {
+        return getPatientIdentifierTypeByGlobalProperty(EmrConstants.GP_PAPER_RECORD_IDENTIFIER_TYPE, false);
     }
 
 }
