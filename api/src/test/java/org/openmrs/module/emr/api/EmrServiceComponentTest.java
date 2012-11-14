@@ -18,14 +18,18 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Location;
+import org.openmrs.LocationTag;
 import org.openmrs.Patient;
 import org.openmrs.Privilege;
 import org.openmrs.Role;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.TestUtils;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -40,11 +44,22 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
 	
 	Location where;
 
+    @Autowired
+    EmrProperties emrProperties;
+
 	@Before
 	public void before() throws Exception{
 		executeDataSet("privilegeTestDataset.xml");
 		service = Context.getService(EmrService.class);
-		where = Context.getLocationService().getLocation(1);
+
+        LocationService locationService = Context.getLocationService();
+
+        LocationTag supportsVisits = new LocationTag(EmrConstants.LOCATION_TAG_SUPPORTS_VISITS, "no description");
+        locationService.saveLocationTag(supportsVisits);
+
+        where = locationService.getLocation(1);
+        where.addTag(supportsVisits);
+        locationService.saveLocation(where);
 	}
 	
 	@Test
