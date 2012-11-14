@@ -1,25 +1,19 @@
 package org.openmrs.module.emr.radiology;
 
+import java.util.Date;
+
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.api.EncounterService;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.adt.VisitSummary;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
 
 public class RadiologyServiceImpl implements RadiologyService {
 
-    @Autowired
-    @Qualifier("emrProperties")
     private EmrProperties emrProperties;
 
-    @Autowired
-    @Qualifier("encounterService")
     private EncounterService encounterService;
 
     @Transactional
@@ -62,11 +56,11 @@ public class RadiologyServiceImpl implements RadiologyService {
     public void onShutdown() {
     }
 
-    protected void setEmrProperties(EmrProperties emrProperties) {
+    public void setEmrProperties(EmrProperties emrProperties) {
         this.emrProperties = emrProperties;
     }
 
-    protected void setEncounterService(EncounterService encounterService) {
+    public void setEncounterService(EncounterService encounterService) {
         this.encounterService = encounterService;
     }
 }

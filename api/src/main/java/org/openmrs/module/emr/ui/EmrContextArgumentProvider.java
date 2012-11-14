@@ -32,6 +32,7 @@ import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.ui.framework.page.PageModelConfigurator;
 import org.openmrs.ui.framework.page.PossiblePageControllerArgumentProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,12 +49,15 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
         PossibleFragmentActionArgumentProvider {
 
     @Autowired
+    @Qualifier("patientService")
     PatientService patientService;
 
     @Autowired
+    @Qualifier("adtService")
     AdtService adtService;
 
     @Autowired
+    @Qualifier("emrProperties")
     EmrProperties emrProperties;
 
     @Override

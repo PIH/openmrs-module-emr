@@ -19,6 +19,7 @@ import org.openmrs.api.UserService;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,12 +31,15 @@ import java.util.List;
  */
 public class TaskServiceImpl extends BaseOpenmrsService implements TaskService {
 
-    @Autowired
     UserService userService;
 
     List<TaskDescriptor> allTasks;
+    
+    public void setUserService(UserService userService) {
+    	this.userService = userService;
+    }
 
-    @Override
+	@Override
     public List<TaskDescriptor> getAvailableTasks(final EmrContext context) {
         List<TaskDescriptor> available = new ArrayList<TaskDescriptor>();
         for (TaskDescriptor candidate : allTasks) {
