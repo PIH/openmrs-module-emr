@@ -221,14 +221,6 @@ public class AccountValidatorTest {
         OpenmrsUtil.validatePassword("username", "password", "systemId");
     }
 
-    private void createAccount() {
-        account.setUsername("username");
-        account.setPassword("password");
-        account.setConfirmPassword("password");
-        User user = createUser();
-        account.setUser(user);
-    }
-
     @Test
     public void shouldCreateAnErrorMessageWhenPasswordIsWrong(){
         mockStatic(OpenmrsUtil.class);
@@ -245,6 +237,14 @@ public class AccountValidatorTest {
         List<FieldError> errorList = errors.getFieldErrors("password");
 
         assertThat(errorList.size(), is(1));
+    }
+
+    private void createAccount() {
+        account.setUsername("username");
+        account.setPassword("password");
+        account.setConfirmPassword("password");
+        User user = createUser();
+        account.setUser(user);
     }
 
     private User createUser() {

@@ -24,6 +24,8 @@ import org.openmrs.Provider;
 import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
+import org.openmrs.api.context.Context;
+import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.account.Account;
 import org.openmrs.module.emr.account.AccountService;
@@ -32,10 +34,14 @@ import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.annotation.MethodParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class AccountPageController {
@@ -74,6 +80,8 @@ public class AccountPageController {
                        @RequestParam(value = "interactsWithPatients", defaultValue = "false") boolean interactsWithPatients,
 	                   @RequestParam(value = "createProviderAccount") boolean createProviderAccount,
 	                   @RequestParam(value = "createUserAccount") boolean createUserAccount,
+                       @SpringBean("messageSource") MessageSource messageSource,
+                       @SpringBean("messageSourceService") MessageSourceService messageSourceService,
 	                   @SpringBean("accountService") AccountService accountService,
 	                   @SpringBean("accountValidator") AccountValidator accountValidator, PageModel model,
 	                   HttpServletRequest request) {
@@ -88,8 +96,6 @@ public class AccountPageController {
 			account.setProvider(provider);
 		}
 
-        /*Set<Role> capabilities = new HashSet<Role>();
-        account.setCapabilities(capabilities);*/
         account.setEnabled(enabled);
         account.setInteractsWithPatients(interactsWithPatients);
 
@@ -99,18 +105,19 @@ public class AccountPageController {
 			
 			try {
 				accountService.saveAccount(account);
-				request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, "emr.account.saved");
+				request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
+                        messageSourceService.getMessage("emr.account.saved"));
 				
 				return "redirect:/emr/account.page?personId=" + account.getPerson().getPersonId();
 			}
 			catch (Exception e) {
 				log.warn("Some error occured while saving account details:", e);
 				request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE,
-				    "emr.account.error.save.fail");
+                        messageSourceService.getMessage("emr.account.error.save.fail"));
 			}
 		} else {
-			request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE,
-			    "emr.error.foundValidationErrors");
+
+            sendErrorMessage(errors, messageSource, request);
 		}
 		
 		model.addAttribute("account", account);
@@ -120,7 +127,41 @@ public class AccountPageController {
 		model.addAttribute("showPasswordFields",
 		    StringUtils.isNotBlank(account.getPassword()) || StringUtils.isNotBlank(account.getConfirmPassword())
 		            || createUserAccount);
-		//redisplay the form
-		return null;
+
+        return "redirect:/emr/account.page" + returnParameters(account);
 	}
+
+    private String returnParameters(Account account) {
+        Person person = account.getPerson();
+        Integer personId = person.getPersonId();
+        if (personId==null){
+            return "";
+        }
+        return "?personId=" + personId;
+    }
+
+    private void sendErrorMessage(BindingResult errors, MessageSource messageSource, HttpServletRequest request) {
+        List<ObjectError> allErrors = errors.getAllErrors();
+        String message = getMessageErrors(messageSource, allErrors);
+        request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE,
+                message);
+    }
+
+    private String getMessageErrors(MessageSource messageSource, List<ObjectError> allErrors) {
+        String message="";
+        for (ObjectError error : allErrors) {
+            Object[] arguments = error.getArguments();
+            String errorMessage = messageSource.getMessage(error.getCode(), arguments, Context.getLocale());
+            message = message.concat(replaceArguments(errorMessage, arguments).concat("<br>"));
+        }
+        return message;
+    }
+
+    private String replaceArguments(String message, Object[] arguments){
+        for (int i = 0 ; i < arguments.length ; i++){
+            String argument = (String) arguments[i];
+            message = message.replaceAll("\\{" + i + "\\}", argument);
+        }
+        return message;
+    }
 }

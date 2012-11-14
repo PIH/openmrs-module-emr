@@ -1,6 +1,8 @@
 
 <%
     ui.decorateWith("emr", "standardEmrPage")
+
+    def createAccount = (account.person.personId == null ? true : false);
 %>
 
 <script type="text/javascript">
@@ -20,7 +22,6 @@ function emr_createUserAccount(){
 </script>
 
 <h3>${ ui.message("emr.editAccount") }</h3>
-
 <form method="post">
 	<fieldset>
 		<legend>${ ui.message("emr.person.details") }</legend>
@@ -34,7 +35,7 @@ function emr_createUserAccount(){
 		
 		<br /><br />
 		${ ui.message("Person.gender") } &nbsp;
-		<input type="radio" name="gender" value="M" <% if(account.gender == 'M'){ %>checked=checked<% } %> /> ${ ui.message("Person.gender.male") }
+		<input type="radio" name="gender" value="M" <% if(account.gender == 'M'|| createAccount){ %>checked=checked<% } %> /> ${ ui.message("Person.gender.male") }
 		<input type="radio" name="gender" value="F" <% if(account.gender == 'F'){ %>checked=checked<% } %> /> ${ ui.message("Person.gender.female") }
 	</fieldset>
 	
@@ -143,7 +144,7 @@ function emr_createUserAccount(){
 	<input id="createUserAccount" type="hidden" name="createUserAccount" value="${account.user != null && account.user.userId == null}" />
 	<input id="createProviderAccount" type="hidden" name="createProviderAccount" value="${account.provider != null && account.provider.providerId == null}" />
 	<input type="submit" value="${ ui.message("general.save") }" /> &nbsp;&nbsp;&nbsp;
-	<input type="button" value="${ ui.message("general.cancel") }" onclick="javascript:window.location='/${ contextPath }/emr/manageAccounts.page'" />
+	<input type="button" value="${ ui.message("general.cancel") }" onclick="javascript:window.location='/${ contextPath }/emr/systemAdministration.page'" />
 		
 </form>
 <br /><br />
