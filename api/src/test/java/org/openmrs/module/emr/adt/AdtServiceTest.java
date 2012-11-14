@@ -257,7 +257,7 @@ public class AdtServiceTest {
 
         when(mockVisitService.getVisitsByPatient(patient)).thenReturn(new ArrayList<Visit>());
 
-        service.checkInPatient(patient, outpatientDepartment, null, null, null);
+        service.checkInPatient(patient, outpatientDepartment, null, null, null, false);
 
         verify(mockVisitService).saveVisit(argThat(new ArgumentMatcher<Visit>() {
             @Override

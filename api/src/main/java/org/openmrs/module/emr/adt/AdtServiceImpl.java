@@ -193,12 +193,22 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
     @Override
     @Transactional
     public Encounter checkInPatient(Patient patient, Location where, Provider checkInClerk,
-                                    List<Obs> obsForCheckInEncounter, List<Order> ordersForCheckInEncounter) {
+                                    List<Obs> obsForCheckInEncounter, List<Order> ordersForCheckInEncounter, boolean newVisit) {
         if (checkInClerk == null) {
             checkInClerk = getProvider(Context.getAuthenticatedUser());
         }
-        Visit activeVisit = ensureActiveVisit(patient, where);
-
+        
+        Visit activeVisit = getActiveVisit(patient, where);
+        
+        if (newVisit) {
+        	closeAndSaveVisit(activeVisit);
+        	activeVisit = null;
+        }
+        
+        if (activeVisit == null) {
+        	activeVisit = ensureActiveVisit(patient, where);
+        }
+        
         if (activeVisit.getEncounters() != null) {
             for (Encounter encounter : activeVisit.getEncounters()) {
                 if (encounter.getEncounterType().equals(emrProperties.getCheckInEncounterType())) {

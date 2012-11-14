@@ -79,10 +79,11 @@ public interface AdtService extends OpenmrsService {
      * @param checkInClerk optional (defaults to Provider for currently-authenticated user)
      * @param obsForCheckInEncounter optional
      * @param ordersForCheckInEncounter optional
+     * @param newVisit says whether create a new visit or not
      * @return the encounter created (with EncounterService.saveEncounter already called on it)
      */
     Encounter checkInPatient(Patient patient, Location where, Provider checkInClerk, List<Obs> obsForCheckInEncounter,
-                             List<Order> ordersForCheckInEncounter);
+                             List<Order> ordersForCheckInEncounter, boolean newVisit);
 
     /**
      * Looks at this location, then its ancestors in the location hierarchy, to find a location tagged with

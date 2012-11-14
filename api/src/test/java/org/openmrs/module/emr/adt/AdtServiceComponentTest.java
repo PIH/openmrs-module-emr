@@ -69,7 +69,7 @@ public class AdtServiceComponentTest extends BaseModuleContextSensitiveTest {
         administrationService.saveGlobalProperty(new GlobalProperty(EmrConstants.GP_CHECK_IN_CLERK_ENCOUNTER_ROLE, "a0b03050-c99b-11e0-9572-0800200c9a66"));
 
         // step 1: check in the patient (which should create a visit and an encounter)
-        Encounter checkInEncounter = service.checkInPatient(patient, outpatientDepartment, null, null, null);
+        Encounter checkInEncounter = service.checkInPatient(patient, outpatientDepartment, null, null, null, false);
 
         assertThat(checkInEncounter.getVisit(), notNullValue());
         assertThat(checkInEncounter.getPatient(), is(patient));
