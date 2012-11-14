@@ -14,6 +14,9 @@
 
 package org.openmrs.module.emr.paperrecord;
 
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -28,31 +31,18 @@ import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.paperrecord.db.PaperRecordRequestDAO;
 import org.openmrs.module.emr.utils.GeneralUtils;
 import org.openmrs.module.idgen.service.IdentifierSourceService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.List;
 
 public class PaperRecordServiceImpl implements PaperRecordService {
 
     private PaperRecordRequestDAO paperRecordRequestDAO;
 
-    @Autowired
-    @Qualifier("adminService")
     private AdministrationService administrationService;
 
-    @Autowired
-    @Qualifier("patientService")
     private PatientService patientService;
 
-    @Autowired
-    @Qualifier("messageSourceService")
     private MessageSourceService messageSourceService;
 
-    @Autowired
-    @Qualifier("baseIdentifierSourceService")
     private IdentifierSourceService identifierSourceService;
 
     public void setPaperRecordRequestDAO(PaperRecordRequestDAO paperRecordRequestDAO) {
@@ -62,8 +52,12 @@ public class PaperRecordServiceImpl implements PaperRecordService {
     public void setMessageSourceService(MessageSourceService messageSourceService) {
         this.messageSourceService = messageSourceService;
     }
+    
+    public void setAdministrationService(AdministrationService administrationService) {
+    	this.administrationService = administrationService;
+    }
 
-    @Override
+	@Override
     @Transactional(readOnly = true)
     public PaperRecordRequest getPaperRecordRequestById(Integer id) {
         return paperRecordRequestDAO.getById(id);

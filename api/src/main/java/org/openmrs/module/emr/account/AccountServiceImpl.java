@@ -14,6 +14,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -26,13 +27,10 @@ import java.util.Map;
 @Transactional
 public class AccountServiceImpl extends BaseOpenmrsService implements AccountService {
 	
-	@Autowired
 	private UserService userService;
 	
-	@Autowired
 	private ProviderService providerService;
 	
-	@Autowired
 	private PersonService personService;
 	
 	/**

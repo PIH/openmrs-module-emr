@@ -15,6 +15,10 @@
                         <property name="sessionFactory"><ref bean="sessionFactory"/></property>
                     </bean>
                 </property>
+                <property name="emrProperties" ref="emrProperties" />
+                <property name="encounterService" ref="encounterService" />
+                <property name="adtService" ref="adtService" />
+                <property name="locationService" ref="locationService" />
             </bean>
         </property>
         <property name="preInterceptors">
@@ -45,6 +49,10 @@
                         <property name="sessionFactory"><ref bean="sessionFactory"/></property>
                     </bean>
                 </property>
+                <property name="administrationService" ref="adminService" />
+                <property name="patientService" ref="patientService" />
+                <property name="messageSourceService" ref="messageSourceService" />
+                <property name="identifierSourceService" ref="baseIdentifierSourceService" />
             </bean>
         </property>
         <property name="preInterceptors">
@@ -69,7 +77,9 @@
             <ref bean="transactionManager" />
         </property>
         <property name="target">
-            <bean class="${project.parent.groupId}.${project.parent.artifactId}.task.TaskServiceImpl"/>
+            <bean class="${project.parent.groupId}.${project.parent.artifactId}.task.TaskServiceImpl">
+            	<property name="userService" ref="userService" />
+            </bean>
         </property>
         <property name="preInterceptors">
             <ref bean="serviceInterceptors" />
@@ -93,7 +103,15 @@
             <ref bean="transactionManager" />
         </property>
         <property name="target">
-            <bean class="${project.parent.groupId}.${project.parent.artifactId}.adt.AdtServiceImpl"/>
+            <bean class="${project.parent.groupId}.${project.parent.artifactId}.adt.AdtServiceImpl">
+            	<property name="emrProperties" ref="emrProperties" />
+            	<property name="administrationService" ref="adminService" />
+            	<property name="encounterService" ref="encounterService" />
+            	<property name="orderService" ref="orderService" />
+            	<property name="visitService" ref="visitService" />
+            	<property name="locationService" ref="locationService" />
+            	<property name="providerService" ref="providerService" />
+            </bean>
         </property>
         <property name="preInterceptors">
             <ref bean="serviceInterceptors" />
@@ -141,7 +159,11 @@
             <ref bean="transactionManager" />
         </property>
         <property name="target">
-            <bean class="${project.parent.groupId}.${project.parent.artifactId}.account.AccountServiceImpl"/>
+            <bean class="${project.parent.groupId}.${project.parent.artifactId}.account.AccountServiceImpl">
+            	<property name="userService" ref="userService" />
+            	<property name="providerService" ref="providerService" />
+            	<property name="personService" ref="personService" />
+            </bean>
         </property>
         <property name="preInterceptors">
             <ref bean="serviceInterceptors" />
@@ -165,7 +187,10 @@
             <ref bean="transactionManager" />
         </property>
         <property name="target">
-            <bean class="${project.parent.groupId}.${project.parent.artifactId}.radiology.RadiologyServiceImpl"/>
+            <bean class="${project.parent.groupId}.${project.parent.artifactId}.radiology.RadiologyServiceImpl">
+            	<property name="emrProperties" ref="emrProperties" />
+            	<property name="encounterService" ref="encounterService" />
+            </bean>
         </property>
         <property name="preInterceptors">
             <ref bean="serviceInterceptors" />

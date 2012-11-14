@@ -5,6 +5,7 @@ import org.openmrs.annotation.Handler;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
@@ -12,6 +13,7 @@ import org.springframework.validation.Validator;
 public class AccountValidator implements Validator {
 	
 	@Autowired
+	@Qualifier("messageSourceService")
 	private MessageSourceService messageSourceService;
 	
 	/**

@@ -54,34 +54,29 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 
     private final Log log = LogFactory.getLog(getClass());
 
-    @Autowired
-    @Qualifier("emrProperties")
     private EmrProperties emrProperties;
 
-    @Autowired
-    @Qualifier("adminService")
     private AdministrationService administrationService;
 
-    @Autowired
-    @Qualifier("encounterService")
     private EncounterService encounterService;
 
-    @Autowired
-    @Qualifier("orderService")
     private OrderService orderService;
 
-    @Autowired
-    @Qualifier("visitService")
     private VisitService visitService;
 
-    @Autowired
-    @Qualifier("providerService")
     private ProviderService providerService;
 
-    @Autowired
-    @Qualifier("locationService")
     private LocationService locationService;
 
+	public void setOrderService(OrderService orderService) {
+		this.orderService = orderService;
+	}
+	
+	
+	public void setLocationService(LocationService locationService) {
+		this.locationService = locationService;
+	}
+	
     public void setEmrProperties(EmrProperties emrProperties) {
         this.emrProperties = emrProperties;
     }
