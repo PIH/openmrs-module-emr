@@ -23,8 +23,13 @@ import java.util.List;
 public interface PrinterService extends OpenmrsService {
 
 
-    // TODO: add permissions
-
+    /**
+     * Fetches a printer by id
+     *
+     * @param id
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
+    Printer getPrinterById(Integer id);
 
     /**
      * Saves a printer

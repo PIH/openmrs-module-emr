@@ -30,6 +30,12 @@ public class PrinterServiceImpl extends BaseOpenmrsService implements PrinterSer
 
     // TODO: add a printer validator?
 
+
+    @Override
+    public Printer getPrinterById(Integer id) {
+        return printerDAO.getById(id);
+    }
+
     @Override
     @Transactional
     public void savePrinter(Printer printer) {
