@@ -15,11 +15,12 @@
 package org.openmrs.module.emr.printer;
 
 import org.openmrs.annotation.Authorized;
+import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
 
 import java.util.List;
 
-public interface PrinterService {
+public interface PrinterService extends OpenmrsService {
 
 
     // TODO: add permissions

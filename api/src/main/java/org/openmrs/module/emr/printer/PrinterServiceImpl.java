@@ -14,12 +14,13 @@
 
 package org.openmrs.module.emr.printer;
 
+import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.printer.db.PrinterDAO;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public class PrinterServiceImpl implements PrinterService  {
+public class PrinterServiceImpl extends BaseOpenmrsService implements PrinterService  {
 
     private PrinterDAO printerDAO;
 

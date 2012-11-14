@@ -1,16 +1,17 @@
 package org.openmrs.module.emr.radiology;
 
-import java.util.Date;
-
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.adt.VisitSummary;
 import org.springframework.transaction.annotation.Transactional;
 
-public class RadiologyServiceImpl implements RadiologyService {
+import java.util.Date;
+
+public class RadiologyServiceImpl extends BaseOpenmrsService implements RadiologyService {
 
     private EmrProperties emrProperties;
 

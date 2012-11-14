@@ -14,9 +14,6 @@
 
 package org.openmrs.module.emr.paperrecord;
 
-import java.util.Date;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -26,6 +23,7 @@ import org.openmrs.Person;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.paperrecord.db.PaperRecordRequestDAO;
@@ -33,7 +31,10 @@ import org.openmrs.module.emr.utils.GeneralUtils;
 import org.openmrs.module.idgen.service.IdentifierSourceService;
 import org.springframework.transaction.annotation.Transactional;
 
-public class PaperRecordServiceImpl implements PaperRecordService {
+import java.util.Date;
+import java.util.List;
+
+public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperRecordService {
 
     private PaperRecordRequestDAO paperRecordRequestDAO;
 

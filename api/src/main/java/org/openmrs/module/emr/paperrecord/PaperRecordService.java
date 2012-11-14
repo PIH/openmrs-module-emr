@@ -18,6 +18,7 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.annotation.Authorized;
+import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
 
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.List;
 /**
  * Public API for functionality relating to paper medical records
  */
-public interface PaperRecordService {
+public interface PaperRecordService extends OpenmrsService {
 
     /**
      * Fetches the Paper Record Request with the specified id
