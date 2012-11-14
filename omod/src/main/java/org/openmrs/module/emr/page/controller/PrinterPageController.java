@@ -16,6 +16,7 @@ package org.openmrs.module.emr.page.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.LocationService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.printer.Printer;
 import org.openmrs.module.emr.printer.PrinterService;
@@ -43,12 +44,14 @@ public class PrinterPageController {
         return printer;
     }
 
-    public void get(PageModel model, @MethodParam("getPrinter") Printer printer) {
+    public void get(PageModel model, @MethodParam("getPrinter") Printer printer, @SpringBean("locationService")LocationService locationService) {
+        model.addAttribute("locations", locationService.getAllLocations());
+        model.addAttribute("printerTypeOptions", Printer.Type.values());
         model.addAttribute("printer", printer);
     }
 
     public String post(PageModel model, @MethodParam("getPrinter") @BindParams Printer printer, BindingResult errors,
-                       @SpringBean("printerService")PrinterService printerService,
+                       @SpringBean("printerService") PrinterService printerService,
                        HttpServletRequest request) {
 
 

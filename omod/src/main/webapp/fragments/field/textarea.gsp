@@ -10,4 +10,4 @@
 
 <textarea class="field-value" rows="${ rows }" cols="${ cols }" name="${ config.formFieldName }">${ config.initialValue ?: "" }</textarea>
 
-<span class="field-error" style="display: none"></span>
+${ ui.includeFragment("emr", "fieldErrors", [ fieldName: config.formFieldName ]) }
