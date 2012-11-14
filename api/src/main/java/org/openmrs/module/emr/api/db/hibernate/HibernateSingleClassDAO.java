@@ -9,7 +9,6 @@ import java.util.List;
 
 public abstract class HibernateSingleClassDAO<T> implements SingleClassDAO<T> {
 
-    @Autowired
     protected SessionFactory sessionFactory;
 
     protected Class<T> mappedClass;
