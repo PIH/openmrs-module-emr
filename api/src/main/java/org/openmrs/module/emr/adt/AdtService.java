@@ -114,6 +114,16 @@ public interface AdtService extends OpenmrsService {
 	 * @return
 	 */
 	List<VisitSummary> getActiveVisitSummaries(Location location);
+	
+	/**
+	 * 
+	 * Gets a summary of the active visit for a given patient at a given location
+	 * 
+	 * @param patient
+	 * @param location
+	 * @return
+	 */
+	VisitSummary getActiveVisitSummary(Patient patient, Location location);
 
     /**
      * If any currently-open visits are now inactive per our business logic, close them

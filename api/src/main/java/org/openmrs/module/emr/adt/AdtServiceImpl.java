@@ -200,7 +200,7 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
         
         Visit activeVisit = getActiveVisit(patient, where);
         
-        if (newVisit) {
+        if (activeVisit!=null && newVisit) {
         	closeAndSaveVisit(activeVisit);
         	activeVisit = null;
         }
@@ -209,15 +209,6 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
         	activeVisit = ensureActiveVisit(patient, where);
         }
         
-        if (activeVisit.getEncounters() != null) {
-            for (Encounter encounter : activeVisit.getEncounters()) {
-                if (encounter.getEncounterType().equals(emrProperties.getCheckInEncounterType())) {
-                    // TODO verify this is the behavior we want
-                    throw new IllegalStateException("Already checked in: encounterId = " + encounter.getEncounterId());
-                }
-            }
-        }
-
         Encounter encounter = buildEncounter(emrProperties.getCheckInEncounterType(), patient, where, new Date(), obsForCheckInEncounter, ordersForCheckInEncounter);
         encounter.addProvider(emrProperties.getCheckInClerkEncounterRole(), checkInClerk);
         activeVisit.addEncounter(encounter);
@@ -349,8 +340,19 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
             return byPatient.get(byPatient.size() - 1);
         }
     }
+	
+	@Override
+    public VisitSummary getActiveVisitSummary(Patient patient, Location location) {
+		VisitSummary visitSummary = null;
+		Visit activeVisit = getActiveVisit(patient, location);
+		if(activeVisit!=null){
+			visitSummary = new VisitSummary(activeVisit, emrProperties);
+		}
+	    return visitSummary;
+    }
 
-    /**
+
+	/**
 	 * Utility method that returns all child locations and children of its child locations
 	 * recursively
 	 * 
