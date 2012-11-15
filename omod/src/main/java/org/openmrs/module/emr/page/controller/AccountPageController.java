@@ -111,12 +111,11 @@ public class AccountPageController {
 				return "redirect:/emr/account.page?personId=" + account.getPerson().getPersonId();
 			}
 			catch (Exception e) {
-				log.warn("Some error occured while saving account details:", e);
+				log.warn("Some error occurred while saving account details:", e);
 				request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE,
-                        messageSourceService.getMessage("emr.account.error.save.fail"));
+                        messageSourceService.getMessage("emr.account.error.save.fail", new Object[]{ e.getMessage() }, Context.getLocale()));
 			}
 		} else {
-
             sendErrorMessage(errors, messageSource, request);
 		}
 		

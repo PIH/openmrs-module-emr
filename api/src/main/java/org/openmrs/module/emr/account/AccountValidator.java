@@ -63,13 +63,23 @@ public class AccountValidator implements Validator {
             checkIfUserNameIsCorrect(errors, account.getUsername());
             checkIfPasswordIsCorrect(errors, account);
             checkIfPrivilegeLevelIsCorrect(errors, account);
+        } else if (!checkIfProviderWasCreated(account)){
+            errors.rejectValue("provider", "emr.account.requiredFields",
+                    new Object[] { messageSourceService.getMessage("emr.account.requiredFields") }, null);
         }
+    }
+
+    private boolean checkIfProviderWasCreated(Account account) {
+        if (account.getProvider()!= null){
+            return true;
+        }
+        return false;
     }
 
     private void checkIfPrivilegeLevelIsCorrect(Errors errors, Account account) {
         if (account.getPrivilegeLevel() == null) {
             errors.rejectValue("privilegeLevel", "error.required",
-                new Object[] { messageSourceService.getMessage("emr.user.privilegeLevel") }, null);
+                new Object[] { messageSourceService.getMessage("emr.account.requiredFields") }, null);
         }
     }
 
@@ -120,8 +130,8 @@ public class AccountValidator implements Validator {
        String max = "50";
        if(StringUtils.isNotBlank(username)) {
              if(!username.matches("[A-Za-z0-9\\._\\-]{" + min + "," + max + "}")){
-                 errors.rejectValue("username", "error.required",
-                         new Object[] { messageSourceService.getMessage("emr.user.username") }, null);
+                 errors.rejectValue("username", "emr.user.username.error",
+                         new Object[] { messageSourceService.getMessage("emr.user.username.error") }, null);
              }
        } else{
            errors.rejectValue("username", "error.required",

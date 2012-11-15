@@ -9,20 +9,31 @@
 function emr_cancel(){
 	window.location='/${contextPath}/emr/manageAccounts.page';
 }
+
+function sendData(){
+    if (jQuery('.emr_userDetails').css('display') != 'none' && jQuery('#capabilities').is(':checked') == false){
+        alert(${ ui.message("emr.user.Capabilities.required") });
+    } else {
+        jQuery("accountForm").submit();
+    }
+}
+
 function emr_createProviderAccount(){
 	jQuery('.emr_providerDetails').toggle();
 	jQuery('#createProviderAccount').val('true');
 	jQuery('#interactsWithPatients').attr('checked','checked');
+    jQuery("#providerIdentifier").focus();
 }
 function emr_createUserAccount(){
 	jQuery('.emr_userDetails').toggle();
 	jQuery('#createUserAccount').val('true');
 	jQuery('#enabled').attr('checked','checked');
+    jQuery("#username").focus();
 }
 </script>
 
-<h3>${ ui.message("emr.editAccount") }</h3>
-<form method="post">
+<h3>${ (createAccount) ? ui.message("emr.createAccount") : ui.message("emr.editAccount") }</h3>
+<form method="post" id="accountForm">
 	<fieldset>
 		<legend>${ ui.message("emr.person.details") }</legend>
 		${ ui.message("emr.person.givenName") } 
@@ -51,7 +62,7 @@ function emr_createUserAccount(){
 				<tr>
 					<td>${ ui.message("emr.user.username") }</td>
 					<td>
-						<input type="text" name="username" value="${(account.username) ? account.username : ""}" />
+						<input type="text" name="username" id="username" value="${(account.username) ? account.username : ""}" />
 						${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "username" ])} &nbsp;
 						<% if (!showPasswordFields) { %>
 						<input class="emr_passwordDetails emr_userDetails" type="button" value="${ ui.message("emr.user.changeUserPassword") }" 
@@ -107,7 +118,7 @@ function emr_createUserAccount(){
 			<div style="padding-left: 20px">
 			<% capabilities.each{ %>
 				<br />
-				<input type="checkbox" name="capabilities" value="${ it.name }" <% if(account.capabilities.contains(it)){ %>checked='checked'<% } %> /> ${ ui.message("emr.app." + (it.name - rolePrefix) + ".label") }
+				<input type="checkbox" name="capabilities" id="capabilities" value="${ it.name }" <% if(account.capabilities.contains(it)){ %>checked='checked'<% } %> /> ${ ui.message("emr.app." + (it.name - rolePrefix) + ".label") }
 				${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "capabilities" ])}
 				<% } %>
 			</div>
@@ -129,7 +140,7 @@ function emr_createUserAccount(){
 		
 			<br /><br />
 			${ ui.message("emr.provider.identifier") } 
-			<input type="text" name="providerIdentifier" value="${(account.providerIdentifier) ? account.providerIdentifier : ""}" />
+			<input type="text" name="providerIdentifier" id="providerIdentifier" value="${(account.providerIdentifier) ? account.providerIdentifier : ""}" />
 			${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "providerIdentifier" ])}
 		</div>
 		<div class="emr_providerDetails">
@@ -143,7 +154,7 @@ function emr_createUserAccount(){
 	<br /><br />
 	<input id="createUserAccount" type="hidden" name="createUserAccount" value="${account.user != null && account.user.userId == null}" />
 	<input id="createProviderAccount" type="hidden" name="createProviderAccount" value="${account.provider != null && account.provider.providerId == null}" />
-	<input type="submit" value="${ ui.message("general.save") }" /> &nbsp;&nbsp;&nbsp;
+	<input type="button" value="${ ui.message("general.save") }" onclick="javascript:sendData()" /> &nbsp;&nbsp;&nbsp;
 	<input type="button" value="${ ui.message("general.cancel") }" onclick="javascript:window.location='/${ contextPath }/emr/systemAdministration.page'" />
 		
 </form>

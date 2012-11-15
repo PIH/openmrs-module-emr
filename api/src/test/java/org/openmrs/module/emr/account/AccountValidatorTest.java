@@ -173,21 +173,7 @@ public class AccountValidatorTest {
 		validator.validate(account, errors);
 		assertFalse(errors.hasErrors());
 	}
-	
-	/**
-	 * @see AccountValidator#validate(Object,Errors)
-	 * @verifies pass for a valid account with only person property
-	 */
-	@Test
-	public void validate_shouldPassForAValidAccountWithOnlyPersonProperty() throws Exception {
-		account.setGivenName("give name");
-		account.setFamilyName("family name");
-		
-		Errors errors = new BindException(account, "account");
-		validator.validate(account, errors);
-		assertFalse(errors.hasErrors());
-	}
-	
+
 	/**
 	 * @see AccountValidator#validate(Object,Errors)
 	 * @verifies require passwords for a new a user account
@@ -210,7 +196,7 @@ public class AccountValidatorTest {
     public void shouldVerifyIfPasswordIsBeingValidated() {
         mockStatic(OpenmrsUtil.class);
 
-        createAccount("username");
+        createAccountWithUsernameAs("username");
 
         Errors errors = new BindException(account, "account");
         validator.validate(account, errors);
@@ -225,7 +211,7 @@ public class AccountValidatorTest {
         PowerMockito.doThrow(new PasswordException("Your Password is too short")).when(OpenmrsUtil.class);
         OpenmrsUtil.validatePassword("username", "password", "systemId");
 
-        createAccount("username");
+        createAccountWithUsernameAs("username");
 
         Errors errors = new BindException(account, "account");
         validator.validate(account, errors);
@@ -241,7 +227,7 @@ public class AccountValidatorTest {
     public void shouldCreateAnErrorMessageWhenUsernameHasOnlyOneCharacter(){
         mockStatic(OpenmrsUtil.class);
 
-        createAccount("a");
+        createAccountWithUsernameAs("a");
         Errors errors = new BindException(account, "account");
         validator.validate(account, errors);
 
@@ -254,7 +240,7 @@ public class AccountValidatorTest {
     public void shouldCreateAnErrorMessageWhenUsernameHasMoreThanFiftyCharacters(){
         mockStatic(OpenmrsUtil.class);
 
-        createAccount("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        createAccountWithUsernameAs("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         Errors errors = new BindException(account, "account");
         validator.validate(account, errors);
 
@@ -267,7 +253,7 @@ public class AccountValidatorTest {
     public void shouldCreateAnErrorMessageWhenUserNameCharactersAreNotValid() {
         mockStatic(OpenmrsUtil.class);
 
-        createAccount("usern@me");
+        createAccountWithUsernameAs("usern@me");
         Errors errors = new BindException(account, "account");
         validator.validate(account, errors);
 
@@ -280,14 +266,29 @@ public class AccountValidatorTest {
     public void shouldValidateIfUserNameCharactersAreValid() {
         mockStatic(OpenmrsUtil.class);
 
-        createAccount("usern.-_1");
+        createAccountWithUsernameAs("usern.-_1");
         Errors errors = new BindException(account, "account");
         validator.validate(account, errors);
 
         assertFalse(errors.hasErrors());
     }
 
-    private void createAccount(String username) {
+    @Test
+    public void shouldCreateAnErrorMessageWhenUserAndProviderAreNull() {
+        mockStatic(OpenmrsUtil.class);
+
+        account.setFamilyName("family name");
+        account.setGivenName("Given Name");
+
+        Errors errors = new BindException(account, "account");
+        validator.validate(account, errors);
+
+        assertTrue(errors.hasErrors());
+        List<FieldError> errorList = errors.getFieldErrors("provider");
+        assertThat(errorList.size(), is(1));
+    }
+
+    private void createAccountWithUsernameAs(String username) {
         account.setUsername(username);
         account.setPassword("password");
         account.setConfirmPassword("password");
