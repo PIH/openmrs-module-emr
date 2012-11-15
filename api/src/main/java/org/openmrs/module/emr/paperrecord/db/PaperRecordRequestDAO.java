@@ -14,6 +14,8 @@
 
 package org.openmrs.module.emr.paperrecord.db;
 
+import org.openmrs.Location;
+import org.openmrs.Patient;
 import org.openmrs.module.emr.api.db.SingleClassDAO;
 import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 
@@ -21,8 +23,32 @@ import java.util.List;
 
 public interface PaperRecordRequestDAO extends SingleClassDAO<PaperRecordRequest> {
 
+    /**
+     * Returns all the paper record requests with the specified status
+     *
+     * @param status
+     * @return the paper record requests with the specified status
+     */
     List<PaperRecordRequest> findPaperRecordRequests(PaperRecordRequest.Status status);
 
+    /**
+     * Returns all the paper record requests with the specified status that either have or don't have
+     * an identifier, based on the hasIdentifier boolean
+     *
+     * @param status
+     * @param hasIdentifier
+     * @return the paper record requests with the specified status that either have or don't have an identifier
+     */
     List<PaperRecordRequest> findPaperRecordRequests(PaperRecordRequest.Status status, boolean hasIdentifier);
+
+    /**
+     * Returns all the paper record requests for the given patient and given location with ANY of the specified statuses
+     *
+     * @param statusList
+     * @param patient
+     * @param recordLocation
+     * @return the paper record requests for the given patient and given location with ANY of the specified statuses
+     */
+    List<PaperRecordRequest> findPaperRecordRequests(List<PaperRecordRequest.Status> statusList, Patient patient, Location recordLocation);
 
 }

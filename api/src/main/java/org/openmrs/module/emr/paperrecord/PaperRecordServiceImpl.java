@@ -31,8 +31,11 @@ import org.openmrs.module.emr.utils.GeneralUtils;
 import org.openmrs.module.idgen.service.IdentifierSourceService;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import static org.openmrs.module.emr.paperrecord.PaperRecordRequest.Status;
 
 public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperRecordService {
 
@@ -88,6 +91,22 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient, getPaperRecordIdentifierType(), recordLocation);
         String identifier = paperRecordIdentifier != null ? paperRecordIdentifier.getIdentifier() : null;
 
+        // see if there is an active request for this patient at this location
+        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(Arrays.asList(Status.OPEN, Status.ASSIGNED_TO_PULL, Status.ASSIGNED_TO_CREATE), patient, recordLocation);
+
+        if (requests.size() > 1) {
+            throw new IllegalStateException("Duplicate active record requests exist for patient " + patient);
+        }
+
+        // if an active record exists, simply update that request location, don't issue a new requeset
+        if (requests.size() == 1) {
+            PaperRecordRequest request = requests.get(0);
+            request.setRequestLocation(requestLocation);
+            paperRecordRequestDAO.saveOrUpdate(request);
+            return request;
+        }
+
+        // if no active record exists, create a new request
         PaperRecordRequest request = new PaperRecordRequest();
         request.setCreator(Context.getAuthenticatedUser());
         request.setDateCreated(new Date());

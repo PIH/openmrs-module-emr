@@ -27,6 +27,8 @@ import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveTest {
@@ -109,16 +111,16 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     @Test
     public void testGetOpenPaperRecordRequestsToCreate() {
 
-        Assert.assertEquals(0, paperRecordService.getOpenPaperRecordRequestsToPull().size());
+        Assert.assertEquals(0, paperRecordService.getOpenPaperRecordRequestsToCreate().size());
 
-        // all these are from the standard test dataset
+        // all these are from the standard test dataset (neither patient have medical record identifiers at location 2)
         Patient patient = patientService.getPatient(2) ;
-        Location medicalRecordLocation = locationService.getLocation(3);
+        Patient anotherPatient = patientService.getPatient(8);
+        Location medicalRecordLocation = locationService.getLocation(2);
         Location requestLocation = locationService.getLocation(3);
 
-        // just make the request twice
         paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
-        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+        paperRecordService.requestPaperRecord(anotherPatient, medicalRecordLocation, requestLocation);
 
         // make sure both records are now in the database
         Assert.assertEquals(2, paperRecordService.getOpenPaperRecordRequestsToCreate().size());
@@ -130,14 +132,14 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
         Assert.assertEquals(0, paperRecordService.getOpenPaperRecordRequestsToPull().size());
 
-        // all these are from the standard test dataset
-        Patient patient = patientService.getPatient(2) ;
+        // all these are from the standard test dataset (both patients have medical record identifiers at location 1)
+        Patient patient = patientService.getPatient(2);
+        Patient anotherPatient = patientService.getPatient(999);
         Location medicalRecordLocation = locationService.getLocation(1);
         Location requestLocation = locationService.getLocation(3);
 
-        // just make the request twice
         paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
-        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+        paperRecordService.requestPaperRecord(anotherPatient, medicalRecordLocation, requestLocation);
 
         // make sure both records are now is in the database
         Assert.assertEquals(2, paperRecordService.getOpenPaperRecordRequestsToPull().size());
@@ -153,7 +155,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Assert.assertEquals(new Integer(1), request.getRecordLocation().getId());
         Assert.assertEquals(new Integer(2), request.getRequestLocation().getId());
         Assert.assertEquals("CATBALL", request.getIdentifier());
-        Assert.assertEquals(PaperRecordRequest.Status.CANCELLED, request.getStatus());
+        Assert.assertEquals(PaperRecordRequest.Status.FULFILLED, request.getStatus());
         Assert.assertNull(request.getAssignee());
 
     }
@@ -186,4 +188,155 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Assert.assertEquals("101", request.getIdentifier());
 
     }
+
+    @Test
+    public void testRequestPaperRecordWhenDuplicateRecord() {
+
+        // all these are from the standard test dataset
+        Patient patient = patientService.getPatient(2) ;
+        Location medicalRecordLocation = locationService.getLocation(1);
+        Location requestLocation = locationService.getLocation(3);
+
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        // sanity check; make sure the record is in the database
+        List<PaperRecordRequest> requests = paperRecordService.getOpenPaperRecordRequestsToPull();
+        Assert.assertEquals(1, requests.size());
+        Date dateCreated = requests.get(0).getDateCreated();
+
+        // now request the same record again
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        // there should still only be one paper record request
+        requests = paperRecordService.getOpenPaperRecordRequestsToPull();
+        Assert.assertEquals(1, requests.size());
+        PaperRecordRequest request = requests.get(0);
+        Assert.assertEquals(new Integer(2), request.getPatient().getId());
+        Assert.assertEquals(new Integer(1), request.getRecordLocation().getId());
+        Assert.assertEquals(new Integer(3), request.getRequestLocation().getId());
+        Assert.assertEquals("101", request.getIdentifier());
+        Assert.assertEquals(PaperRecordRequest.Status.OPEN, request.getStatus());
+        Assert.assertEquals(dateCreated, request.getDateCreated());
+        Assert.assertNull(request.getAssignee());
+    }
+
+    @Test
+    public void testRequestPaperRecordWhenDuplicateRecordShouldUpdateLocation() {
+
+        // all these are from the standard test dataset
+        Patient patient = patientService.getPatient(2) ;
+        Location medicalRecordLocation = locationService.getLocation(1);
+        Location requestLocation = locationService.getLocation(3);
+        Location anotherRequestLocation = locationService.getLocation(2);
+
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        // sanity check; make sure the record is in the database
+        List<PaperRecordRequest> requests = paperRecordService.getOpenPaperRecordRequestsToPull();
+        Assert.assertEquals(1, requests.size());
+        Date dateCreated = requests.get(0).getDateCreated();
+
+        // now request the same record again
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, anotherRequestLocation);
+
+        // there should still only be one paper record request, but with the new location
+        requests = paperRecordService.getOpenPaperRecordRequestsToPull();
+        Assert.assertEquals(1, requests.size());
+        PaperRecordRequest request = requests.get(0);
+        Assert.assertEquals(new Integer(2), request.getPatient().getId());
+        Assert.assertEquals(new Integer(1), request.getRecordLocation().getId());
+        Assert.assertEquals(new Integer(2), request.getRequestLocation().getId());
+        Assert.assertEquals("101", request.getIdentifier());
+        Assert.assertEquals(PaperRecordRequest.Status.OPEN, request.getStatus());
+        Assert.assertEquals(dateCreated, request.getDateCreated());
+        Assert.assertNull(request.getAssignee());
+    }
+
+    @Test
+    public void testRequestPaperRecordWhenDuplicateRecordThatHasAlreadyBeenAssigned() {
+
+        // all these are from the standard test dataset
+        Patient patient = patientService.getPatient(2) ;
+        Location medicalRecordLocation = locationService.getLocation(1);
+        Location requestLocation = locationService.getLocation(3);
+
+        PaperRecordRequest paperRecordRequest = paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        Person person = personService.getPerson(7);
+        paperRecordService.assignRequests(Arrays.asList(paperRecordRequest), person);
+
+        // sanity check; make sure the record is in the database
+        List<PaperRecordRequest> requests = paperRecordService.getAssignedPaperRecordRequestsToPull();
+        Assert.assertEquals(1, requests.size());
+        Date dateCreated = requests.get(0).getDateCreated();
+
+        // now request the same record again
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        // there should not be any open requested, and only the one assigned request
+        requests = paperRecordService.getOpenPaperRecordRequestsToPull();
+        Assert.assertEquals(0, requests.size());
+        requests = paperRecordService.getAssignedPaperRecordRequestsToPull();
+        Assert.assertEquals(1, requests.size());
+        PaperRecordRequest request = requests.get(0);
+        Assert.assertEquals(new Integer(2), request.getPatient().getId());
+        Assert.assertEquals(new Integer(1), request.getRecordLocation().getId());
+        Assert.assertEquals(new Integer(3), request.getRequestLocation().getId());
+        Assert.assertEquals("101", request.getIdentifier());
+        Assert.assertEquals(PaperRecordRequest.Status.ASSIGNED_TO_PULL, request.getStatus());
+        Assert.assertEquals(dateCreated, request.getDateCreated());
+        Assert.assertEquals(person, request.getAssignee());
+    }
+
+    @Test
+    public void testRequestPaperRecordWhenSamePatientButDifferentMedicalRecordLocation() {
+
+        // all these are from the standard test dataset
+        Patient patient = patientService.getPatient(2) ;
+        Location medicalRecordLocation = locationService.getLocation(2);
+        Location anotherMedicalRecordLocation = locationService.getLocation(3);
+        Location requestLocation = locationService.getLocation(1);
+
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        // sanity check; make sure the record is in the database
+        List<PaperRecordRequest> requests = paperRecordService.getOpenPaperRecordRequestsToCreate();
+        Assert.assertEquals(1, requests.size());
+        Date dateCreated = requests.get(0).getDateCreated();
+
+        // now request the the record from the same patient, but a different medical record location
+        paperRecordService.requestPaperRecord(patient, anotherMedicalRecordLocation, requestLocation);
+
+        // both of these requests should be in the queue (should not be flagged as a duplicate)
+        requests = paperRecordService.getOpenPaperRecordRequestsToCreate();
+        Assert.assertEquals(2, requests.size());
+    }
+
+
+    @Test
+    public void testRequestPaperRecordShouldNotConsiderCompletedRequestAsDuplicate() {
+
+        // create a request for the patient that has a "completed" request defined in paperRecordServiceComponentTestDataset.xml
+        Patient patient = patientService.getPatient(7) ;
+        Location medicalRecordLocation = locationService.getLocation(1);
+        Location requestLocation = locationService.getLocation(2);
+
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        // make sure this request has been created
+        List<PaperRecordRequest> requests = paperRecordService.getOpenPaperRecordRequestsToCreate();
+        Assert.assertEquals(1, requests.size());
+        Date dateCreated = requests.get(0).getDateCreated();
+
+        PaperRecordRequest request = requests.get(0);
+        Assert.assertEquals(new Integer(7), request.getPatient().getId());
+        Assert.assertEquals(new Integer(1), request.getRecordLocation().getId());
+        Assert.assertEquals(new Integer(2), request.getRequestLocation().getId());
+        Assert.assertNull(request.getIdentifier());
+        Assert.assertEquals(PaperRecordRequest.Status.OPEN, request.getStatus());
+        Assert.assertEquals(dateCreated, request.getDateCreated());
+        Assert.assertNull(request.getAssignee());
+    }
+
+
 }

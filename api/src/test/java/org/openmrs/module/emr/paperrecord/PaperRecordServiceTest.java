@@ -33,19 +33,23 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Context.class)
@@ -161,11 +165,8 @@ public class PaperRecordServiceTest {
         patient.setId(15);
 
         Location medicalRecordLocation = createMedicalRecordLocation();
-
         Location otherLocation = createLocation(5, "Cange");
-
         Location requestLocation = createLocation(4, "Outpatient Clinic");
-
 
         PatientIdentifier wrongIdentifer = createIdentifier(otherLocation, "ZYXCBA");
         patient.addIdentifier(wrongIdentifer);
@@ -180,17 +181,6 @@ public class PaperRecordServiceTest {
         PaperRecordRequest returnedRequest = paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
         verify(mockPaperRecordDAO).saveOrUpdate(argThat(expectedRequestMatcher));
         expectedRequestMatcher.matches(returnedRequest);
-    }
-
-    private PaperRecordRequest createExpectedRequest(Patient patient, Location medicalRecordLocation, String identifier) {
-        PaperRecordRequest expectedRequest = new PaperRecordRequest();
-        expectedRequest.setAssignee(null);
-        expectedRequest.setCreator(authenticatedUser);
-        expectedRequest.setIdentifier(identifier);
-        expectedRequest.setRecordLocation(medicalRecordLocation);
-        expectedRequest.setPatient(patient);
-        expectedRequest.setStatus(PaperRecordRequest.Status.OPEN);
-        return expectedRequest;
     }
 
     @Test
@@ -316,10 +306,79 @@ public class PaperRecordServiceTest {
 
         String paperMedicalRecordNumber = paperRecordService.createPaperMedicalRecordNumberFor(patient, createMedicalRecordLocation());
 
-        //cannot compare using one identifier because the equals is not implemented correctly
+        // cannot compare using one identifier because the equals is not implemented correctly
         verify(patientService).savePatientIdentifier(any(PatientIdentifier.class));
 
         assertEquals(paperMedicalRecordNumberAsExpected, paperMedicalRecordNumber);
+    }
+
+
+    @Test
+    public void whenDuplicateRequestIsMadeNoNewRequestShouldBeGenerated() throws Exception {
+
+        Patient patient = new Patient();
+        patient.setId(15);
+
+        Location medicalRecordLocation = createMedicalRecordLocation();
+        Location requestLocation = createLocation(4, "Outpatient Clinic");
+
+        // generate an existing paper record request
+        PaperRecordRequest request = createExpectedRequest(patient, medicalRecordLocation, "");
+        request.setId(10);
+        request.setRequestLocation(requestLocation);
+        request.setDateCreated(new Date());
+
+        when(mockPaperRecordDAO.findPaperRecordRequests(anyListOf(PaperRecordRequest.Status.class), eq(patient), eq(medicalRecordLocation))).thenReturn(Collections.singletonList(request));
+        IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(request);
+
+        // the returned request should be the existing request
+        PaperRecordRequest returnedRequest = paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+        verify(mockPaperRecordDAO).saveOrUpdate(argThat(expectedRequestMatcher));
+        expectedRequestMatcher.matches(request);
+
+    }
+
+    @Test
+    public void whenDuplicateRequestIsMadeLocationShouldBeUpdated() throws Exception {
+
+        Patient patient = new Patient();
+        patient.setId(15);
+
+        Location medicalRecordLocation = createMedicalRecordLocation();
+        Location requestLocation = createLocation(4, "Outpatient Clinic");
+        Location newRequestLocation = createLocation(5, "ER");
+
+        // generate an existing paper record request
+        PaperRecordRequest request = createExpectedRequest(patient, medicalRecordLocation, "ABC123");
+        request.setId(10);
+        request.setRequestLocation(requestLocation);
+        request.setDateCreated(new Date());
+
+        // expected request is the same, but with the new location
+        PaperRecordRequest expectedRequest = createExpectedRequest(patient, medicalRecordLocation, "ABC123");
+        expectedRequest.setId(10);
+        expectedRequest.setRequestLocation(newRequestLocation);
+        expectedRequest.setDateCreated(new Date());
+
+        when(mockPaperRecordDAO.findPaperRecordRequests(anyListOf(PaperRecordRequest.Status.class), eq(patient), eq(medicalRecordLocation))).thenReturn(Collections.singletonList(request));
+        IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(request);
+
+        // the returned request should be the existing request
+        PaperRecordRequest returnedRequest = paperRecordService.requestPaperRecord(patient, medicalRecordLocation, newRequestLocation);
+        verify(mockPaperRecordDAO).saveOrUpdate(argThat(expectedRequestMatcher));
+        expectedRequestMatcher.matches(request);
+
+    }
+
+    private PaperRecordRequest createExpectedRequest(Patient patient, Location medicalRecordLocation, String identifier) {
+        PaperRecordRequest expectedRequest = new PaperRecordRequest();
+        expectedRequest.setAssignee(null);
+        expectedRequest.setCreator(authenticatedUser);
+        expectedRequest.setIdentifier(identifier);
+        expectedRequest.setRecordLocation(medicalRecordLocation);
+        expectedRequest.setPatient(patient);
+        expectedRequest.setStatus(PaperRecordRequest.Status.OPEN);
+        return expectedRequest;
     }
 
     private class PaperRecordServiceStub extends PaperRecordServiceImpl {
@@ -350,6 +409,7 @@ public class PaperRecordServiceTest {
 
             PaperRecordRequest actualRequest = (PaperRecordRequest) o;
 
+            assertThat(actualRequest.getId(), is(expectedRequest.getId()));
             assertThat(actualRequest.getAssignee(), is(expectedRequest.getAssignee()));
             assertThat(actualRequest.getCreator(), is(expectedRequest.getCreator()));
             assertThat(actualRequest.getIdentifier(), is(expectedRequest.getIdentifier()));

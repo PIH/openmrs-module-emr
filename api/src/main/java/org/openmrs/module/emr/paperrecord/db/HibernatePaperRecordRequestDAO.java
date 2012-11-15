@@ -15,8 +15,11 @@
 package org.openmrs.module.emr.paperrecord.db;
 
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openmrs.Location;
+import org.openmrs.Patient;
 import org.openmrs.module.emr.api.db.hibernate.HibernateSingleClassDAO;
 import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 
@@ -49,12 +52,45 @@ public class HibernatePaperRecordRequestDAO  extends HibernateSingleClassDAO<Pap
         return (List<PaperRecordRequest>) criteria.list();
     }
 
+    @Override
+    public List<PaperRecordRequest> findPaperRecordRequests(List<PaperRecordRequest.Status> statusList, Patient patient, Location recordLocation) {
+
+        Criteria criteria = createPaperRecordCriteria();
+        addPatientRestriction(criteria, patient);
+        addRecordLocationRestriction(criteria, recordLocation);
+        addStatusDisjunctionRestriction(criteria, statusList);
+        addOrderByDate(criteria);
+
+        return (List<PaperRecordRequest>) criteria.list();
+    }
+
+
     private Criteria createPaperRecordCriteria() {
         return sessionFactory.getCurrentSession().createCriteria(PaperRecordRequest.class);
     }
 
     private void addStatusRestriction(Criteria criteria, PaperRecordRequest.Status status) {
         criteria.add(Restrictions.eq("status", status));
+    }
+
+    private void addStatusDisjunctionRestriction(Criteria criteria, List<PaperRecordRequest.Status> statusList) {
+
+        Disjunction statusDisjunction = Restrictions.disjunction();
+
+        for (PaperRecordRequest.Status status : statusList) {
+            statusDisjunction.add(Restrictions.eq("status", status));
+        }
+
+        criteria.add(statusDisjunction);
+    }
+
+    private void addPatientRestriction(Criteria criteria, Patient patient) {
+        criteria.add(Restrictions.eq("patient", patient));
+    }
+
+    private void addRecordLocationRestriction(Criteria criteria, Location recordLocation) {
+        criteria.add(Restrictions.eq("recordLocation", recordLocation));
+
     }
 
     private void addHasIdentifierRestriction(Criteria criteria, boolean hasIdentifier) {
