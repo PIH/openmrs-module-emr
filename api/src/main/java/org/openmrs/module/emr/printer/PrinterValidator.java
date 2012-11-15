@@ -90,26 +90,22 @@ public class PrinterValidator implements Validator {
         }
 
         if (printer.getName() != null && printer.getName().length() > 256) {
-            errors.rejectValue("name", messageSourceService.getMessage("emr.printer.error.nameTooLong"));
+            errors.rejectValue("name", "emr.printer.error.nameTooLong", null, null);
         }
 
         if (printer.getIpAddress() != null && printer.getIpAddress().length() > 50) {
-            errors.rejectValue("ipAddress", messageSourceService.getMessage("emr.printer.error.ipAddressTooLong"));
-        }
-
-        if (printer.getPort() != null && printer.getPort().length() > 10) {
-            errors.rejectValue("port", messageSourceService.getMessage("emr.printer.error.portTooLong"));
+            errors.rejectValue("ipAddress", "emr.printer.error.ipAddressTooLong", null, null);
         }
 
         // verify ip address
         if (printer.getIpAddress() != null) {
 
             if (!(ipV4Pattern.matcher(printer.getIpAddress()).matches() || ipV6Pattern.matcher(printer.getIpAddress()).matches())) {
-                errors.rejectValue("ipAddress", messageSourceService.getMessage("emr.printer.error.ipAddressInvalid"));
+                errors.rejectValue("ipAddress", "emr.printer.error.ipAddressInvalid", null, null);
             }
 
             if (printerService.isIpAddressAllocatedToAnotherPrinter(printer)) {
-                errors.rejectValue("ipAddress", messageSourceService.getMessage("emr.printer.error.ipAddressInUse"));
+                errors.rejectValue("ipAddress", "emr.printer.error.ipAddressInUse", null, null);
             }
         }
 
@@ -121,12 +117,12 @@ public class PrinterValidator implements Validator {
             try {
                 portInteger = Integer.parseInt(printer.getPort());
                 if (portInteger < 0 || portInteger > 65536)  {
-                    errors.rejectValue("port", messageSourceService.getMessage("emr.printer.error.portInvalid"));
+                    errors.rejectValue("port", "emr.printer.error.portInvalid", null, null);
                 }
 
             }
             catch (NumberFormatException e) {
-                errors.rejectValue("port", messageSourceService.getMessage("emr.printer.error.portInvalid"));
+                errors.rejectValue("port", "emr.printer.error.portInvalid", null, null);
             }
 
         }

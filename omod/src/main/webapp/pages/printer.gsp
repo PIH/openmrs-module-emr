@@ -14,11 +14,9 @@
     }
 %>
 
-<h3>${ ui.message("emr.printer.edit") }</h3>
+<form class="standard-vertical-form" method="post">
 
-<form method="post">
-
-    <input type="hidden" name="printerId" value="${ printer.id ?: ''}" />
+    <h3>${ ui.message("emr.printer.edit") }</h3>
 
     <fieldset>
         ${ ui.includeFragment("emr", "field/radioButtons", [ label: ui.message("emr.printer.type"), formFieldName: "type", initialValue: (printer.type ?: ''), options: typeOptions ])} <br/>
@@ -30,5 +28,7 @@
 
     <input type="submit" value="${ ui.message("general.save") }" /> &nbsp;&nbsp;&nbsp;
     <input type="button" value="${ ui.message("general.cancel") }" onclick="javascript:window.location='/${ contextPath }/emr/managePrinters.page'" />
+
+    <input type="hidden" name="printerId" value="${ printer.id ?: ''}" />
 
 </form>

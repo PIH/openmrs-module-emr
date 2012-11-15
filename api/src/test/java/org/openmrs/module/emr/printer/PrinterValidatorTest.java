@@ -129,18 +129,6 @@ public class PrinterValidatorTest {
     }
 
     @Test
-    public void validate_shouldRejectPortGreaterThan10Characters() throws Exception {
-        printer.setName("Test Printer");
-        printer.setType(Printer.Type.ID_CARD);
-        printer.setIpAddress("10.10.10.10");
-        printer.setPort("808012121212121212121212");
-
-        Errors errors = new BindException(printer, "printer");
-        validator.validate(printer, errors);
-        assertTrue(errors.hasFieldErrors("port"));
-    }
-
-    @Test
     public void validate_validPrinterShouldPass() throws Exception {
         printer.setName("Test Printer");
         printer.setType(Printer.Type.ID_CARD);

@@ -4,7 +4,7 @@
 
 <h3>${  ui.message("emr.printer.managePrinters") }</h3>
 
-<table>
+<table class="bordered">
     <tr>
         <th>${ ui.message("emr.printer.type") }</th>
         <th>${ ui.message("emr.printer.physicalLocation") }</th>
@@ -24,9 +24,6 @@
         </td>
         <td>
             ${ ui.format(it.name) }
-        </td>
-        <td>
-            ${ ui.message("emr.printer." + it.type) }
         </td>
         <td>
             ${ ui.format(it.ipAddress) }

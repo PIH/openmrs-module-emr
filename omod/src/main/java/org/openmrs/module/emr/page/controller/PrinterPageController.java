@@ -73,8 +73,9 @@ public class PrinterPageController {
                     "emr.error.foundValidationErrors");
         }
 
-        // redisplay the form
+        // redisplay the form with errors
         addReferenceData(model, locationService);
+        model.addAttribute("errors", errors);
         model.addAttribute("printer", printer);
         return null;
     }
