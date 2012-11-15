@@ -12,9 +12,9 @@ function emr_cancel(){
 
 function sendData(){
     if (jQuery('.emr_userDetails').css('display') != 'none' && jQuery('#capabilities').is(':checked') == false){
-        alert(${ ui.message("emr.user.Capabilities.required") });
+        alert("${ ui.message("emr.user.Capabilities.required") }");
     } else {
-        jQuery("accountForm").submit();
+        jQuery("#accountForm").submit();
     }
 }
 
