@@ -29,13 +29,13 @@ import java.util.List;
 /**
  * A rich-domain-model class that wraps a Patient, and lets you perform common queries.
  */
-public class PatientSummary {
+public class PatientDomainWrapper {
 
     private Patient patient;
     protected EmrProperties emrProperties;
     protected AdtService adtService;
 
-    public PatientSummary(Patient patient, EmrProperties emrProperties, AdtService adtService) {
+    public PatientDomainWrapper(Patient patient, EmrProperties emrProperties, AdtService adtService) {
         this.patient = patient;
         this.emrProperties = emrProperties;
         this.adtService = adtService;

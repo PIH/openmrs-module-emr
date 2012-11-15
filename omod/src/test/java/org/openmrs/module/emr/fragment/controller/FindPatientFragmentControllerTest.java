@@ -15,15 +15,24 @@ package org.openmrs.module.emr.fragment.controller;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.junit.Test;
+import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonName;
+import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.ui.framework.BasicUiUtils;
 import org.openmrs.ui.framework.FormatterImpl;
 import org.openmrs.ui.framework.SimpleObject;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class FindPatientFragmentControllerTest {
 
@@ -33,14 +42,21 @@ public class FindPatientFragmentControllerTest {
         name.setGivenName("Barack");
         name.setFamilyName("Obama");
 
+        PatientIdentifierType pit = new PatientIdentifierType();
+        pit.setName("US President Number");
+
         Patient patient = new Patient();
         patient.setPatientId(44);
         patient.addName(name);
         patient.setGender("M");
         patient.setBirthdate(new SimpleDateFormat("yyyy-MM-dd").parse("1961-08-04"));
+        patient.addIdentifier(new PatientIdentifier("44", pit, new Location()));
+
+        EmrProperties emrProperties = mock(EmrProperties.class);
+        when(emrProperties.getPrimaryIdentifierType()).thenReturn(pit);
 
         TestUiUtils ui = new TestUiUtils();
-        SimpleObject o = new FindPatientFragmentController().simplify(ui, patient);
+        SimpleObject o = new FindPatientFragmentController().simplify(ui, emrProperties, patient);
 
         assertEquals("Barack", PropertyUtils.getProperty(o, "preferredName.givenName"));
         assertEquals("", PropertyUtils.getProperty(o, "preferredName.middleName"));
@@ -49,6 +65,9 @@ public class FindPatientFragmentControllerTest {
         assertEquals("04-Aug-1961", PropertyUtils.getProperty(o, "birthdate"));
         assertEquals("false", PropertyUtils.getProperty(o, "birthdateEstimated"));
         assertEquals("M", PropertyUtils.getProperty(o, "gender"));
+
+        Object primaryIdentifier = ((List) o.get("primaryIdentifiers")).get(0);
+        assertThat((String) PropertyUtils.getProperty(primaryIdentifier, "identifier"), is("44"));
     }
 
     private class TestUiUtils extends BasicUiUtils {

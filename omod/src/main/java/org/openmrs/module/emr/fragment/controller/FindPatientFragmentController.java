@@ -15,7 +15,10 @@ package org.openmrs.module.emr.fragment.controller;
 
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonName;
+import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.api.EmrService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
@@ -33,26 +36,31 @@ public class FindPatientFragmentController {
     public List<SimpleObject> search(@RequestParam(value = "q", required = false) String query,
                                      @RequestParam(value = "checkedInAt", required = false) Location checkedInAt,
                                      @SpringBean EmrService service,
+                                     @SpringBean EmrProperties emrProperties,
                                      UiUtils ui) {
         List<Patient> results = service.findPatients(query, checkedInAt, 0, 100);
-        return simplify(ui, results);
+        return simplify(ui, emrProperties, results);
     }
 
-    List<SimpleObject> simplify(UiUtils ui, List<Patient> results) {
+    List<SimpleObject> simplify(UiUtils ui, EmrProperties emrProperties, List<Patient> results) {
         List<SimpleObject> ret = new ArrayList<SimpleObject>(results.size());
         for (Patient p : results) {
-            ret.add(simplify(ui, p));
+            ret.add(simplify(ui, emrProperties, p));
         }
         return ret;
     }
 
-    SimpleObject simplify(UiUtils ui, Patient p) {
+    SimpleObject simplify(UiUtils ui, EmrProperties emrProperties, Patient p) {
         PersonName name = p.getPersonName();
         SimpleObject preferredName = SimpleObject.fromObject(name, ui, "givenName", "middleName", "familyName", "familyName2");
         preferredName.put("fullName", name.getFullName());
 
+        PatientIdentifierType primaryIdentifierType = emrProperties.getPrimaryIdentifierType();
+        List<PatientIdentifier> primaryIdentifiers = p.getPatientIdentifiers(primaryIdentifierType);
+
         SimpleObject o = SimpleObject.fromObject(p, ui, "patientId", "gender", "age", "birthdate", "birthdateEstimated");
         o.put("preferredName", preferredName);
+        o.put("primaryIdentifiers", SimpleObject.fromCollection(primaryIdentifiers, ui, "identifier"));
 
         return o;
     }
