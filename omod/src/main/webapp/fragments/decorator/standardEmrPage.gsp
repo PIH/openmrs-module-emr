@@ -4,32 +4,24 @@
 	def title = config.title ?: ui.message("emr.title")
 %>
 
-<script type="text/javascript">
-	var jq = jQuery;
-    _.templateSettings = {
-        interpolate : /\\{\\{=(.+?)\\}\\}/g ,
-        escape : /\\{\\{-(.+?)\\}\\}/g ,
-        evaluate : /\\{\\{(.+?)\\}\\}/g
-    };
-</script>
+<div id="body-wrapper">
 
-<div id="application-header" class="container">
-	<a href="/${ contextPath }/index.htm">
-		${ title }
-	</a>
-	<% if (context.authenticated) { %>
-		<span style="float: right">
-			${ ui.includeFragment("emr", "loginInfo") }
-			|
-            ${ ui.message("emr.emrContext.sessionLocation", ui.format(emrContext.sessionLocation)) }
-            |
-			<a id="logout-button" href="/${ contextPath }/logout">Log Out</a>
-		</span>
-	<% } %>
-</div>
+    <div id="header">
+        <div id="user-info">
+            <% if (context.authenticated) { %>
+                ${ context.authenticatedUser.username ?: context.authenticatedUser.systemId }:
+                ${ ui.format(emrContext.sessionLocation) }
+                <a href="/${ contextPath }/logout">Logout</a>
+            <% } %>
+        </div>
 
-${ ui.includeFragment("emr", "infoAndErrorMessage") }
+        <img src="${ ui.resourceLink("mirebalais", "images/pih_grey_logo_small.png") }"/>
+    </div>
 
-<div id="content" class="container">
-	<%= config.content %>
+    ${ ui.includeFragment("emr", "infoAndErrorMessage") }
+
+    <div id="content" class="container">
+        <%= config.content %>
+    </div>
+
 </div>

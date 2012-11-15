@@ -75,3 +75,10 @@ var emr = (function($) {
     };
 
 })(jQuery);
+
+var jq = jQuery;
+_.templateSettings = {
+    interpolate : /{{=(.+?)}}/g ,
+    escape : /{{-(.+?)}}/g ,
+    evaluate : /{{(.+?)}}/g
+};

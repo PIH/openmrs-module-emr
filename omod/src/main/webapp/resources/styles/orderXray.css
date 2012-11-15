@@ -1,0 +1,38 @@
+.left-column, .right-column {
+    float: left;
+    width: 45%;
+    padding-bottom: 20px;
+}
+.left-column {
+    clear: left;
+}
+
+#selected-studies {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+#selected-studies li {
+    border: 1px black solid;
+    border-radius: 5px;
+    background-color: #e0e0e0;
+    padding: 0.5em 1em 0.5em 1em;
+}
+
+#bottom {
+    clear: both;
+}
+
+.row {
+    display: table-row;
+}
+.row .radio-label , .row div {
+    display: table-cell;
+    padding-right: 1.0em;
+    white-space: nowrap;
+}
+#contentForm {
+    padding-left: 50px;
+    padding-right: 50px;
+}

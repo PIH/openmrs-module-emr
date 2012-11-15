@@ -1,15 +1,14 @@
 <%
     ui.decorateWith("emr", "standardEmrPage")
 
-    ui.includeJavascript("emr", "jquery-1.8.1.min.js")
-    ui.includeJavascript("emr", "jquery-ui-1.8.23.custom.min.js")
     ui.includeJavascript("emr", "knockout-2.1.0.js")
     ui.includeJavascript("emr", "custom/xrayOrder.js")
-    ui.includeCss("emr", "cupertino/jquery-ui-1.8.23.custom.css")
+
+    ui.includeCss("emr", "orderXray.css")
 %>
 
 <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
-    jq(document).ready( function() {
+    jQuery(function() {
         ko.applyBindings( new StudiesViewModel(${xrayOrderables}, ${portableLocations}) );
 
         // Preventing form submission when pressing enter on study-search input field
@@ -21,51 +20,8 @@
         });
     });
 </script>
-<style type="text/css">
-    .left-column, .right-column {
-        float: left;
-        width: 45%;
-        padding-bottom: 20px;
-    }
-    .left-column {
-        clear: left;
-    }
-
-    #selected-studies {
-        list-style: none;
-        margin-left: 0;
-        padding-left: 0;
-    }
-
-    #selected-studies li {
-        border: 1px black solid;
-        border-radius: 5px;
-        background-color: #e0e0e0;
-        padding: 0.5em 1em 0.5em 1em;
-    }
-
-    #bottom {
-        clear: both;
-    }
-
-    .row {
-        display: table-row;
-    }
-    .row .radio-label , .row div {
-        display: table-cell;
-        padding-right: 1.0em;
-        white-space: nowrap;
-    }
-    #contentForm {
-        padding-left: 50px;
-        padding-right: 50px;
-    }
-</style>
-
 
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
-
-
 
 <div id="contentForm">
 <h1>X-Ray Requisition</h1>
