@@ -14,6 +14,8 @@
 
 package org.openmrs.module.emr.printer.db;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 import org.openmrs.module.emr.api.db.hibernate.HibernateSingleClassDAO;
 import org.openmrs.module.emr.printer.Printer;
 
@@ -21,5 +23,21 @@ public class HibernatePrinterDAO extends HibernateSingleClassDAO<Printer> implem
 
     public HibernatePrinterDAO() {
         super(Printer.class);
+    }
+
+    @Override
+    public Printer getPrinterByIpAddress(String ipAddress) {
+        Criteria criteria = createPrinterCriteria();
+        addIpAddressRestriction(criteria, ipAddress);
+
+        return (Printer) criteria.uniqueResult();
+    }
+
+    private Criteria createPrinterCriteria() {
+        return sessionFactory.getCurrentSession().createCriteria(Printer.class);
+    }
+
+    private void addIpAddressRestriction(Criteria criteria, String ipAddress) {
+        criteria.add(Restrictions.eq("ipAddress", ipAddress));
     }
 }

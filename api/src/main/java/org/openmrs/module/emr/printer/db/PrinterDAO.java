@@ -19,5 +19,6 @@ import org.openmrs.module.emr.printer.Printer;
 
 public interface PrinterDAO extends SingleClassDAO<Printer> {
 
+    Printer getPrinterByIpAddress(String ipAddress);
 
 }

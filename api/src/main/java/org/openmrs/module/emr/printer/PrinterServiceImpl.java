@@ -28,9 +28,6 @@ public class PrinterServiceImpl extends BaseOpenmrsService implements PrinterSer
         this.printerDAO = printerDAO;
     }
 
-    // TODO: add a printer validator?
-
-
     @Override
     public Printer getPrinterById(Integer id) {
         return printerDAO.getById(id);
@@ -46,5 +43,21 @@ public class PrinterServiceImpl extends BaseOpenmrsService implements PrinterSer
     @Transactional(readOnly = true)
     public List<Printer> getAllPrinters() {
        return printerDAO.getAll();
+    }
+
+    @Override
+    public boolean isIpAddressAllocatedToAnotherPrinter(Printer printer) {
+        if (printer.getIpAddress() == null)  {
+            throw new IllegalStateException("Printer IP is null");
+        }
+
+        Printer existingPrinter = printerDAO.getPrinterByIpAddress(printer.getIpAddress());
+
+        if (existingPrinter != null && !existingPrinter.equals(printer)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }

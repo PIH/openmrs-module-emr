@@ -20,6 +20,7 @@ import org.openmrs.api.LocationService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.printer.Printer;
 import org.openmrs.module.emr.printer.PrinterService;
+import org.openmrs.module.emr.printer.PrinterValidator;
 import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.annotation.MethodParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -36,29 +37,25 @@ public class PrinterPageController {
     public Printer getPrinter(@RequestParam(value = "printerId", required = false) Printer printer) {
         if (printer == null) {
             printer = new Printer();
-
-            // TODO: temporary, until we add this option
-            printer.setType(Printer.Type.ID_CARD);
         }
 
         return printer;
     }
 
     public void get(PageModel model, @MethodParam("getPrinter") Printer printer, @SpringBean("locationService")LocationService locationService) {
-        model.addAttribute("locations", locationService.getAllLocations());
-        model.addAttribute("printerTypeOptions", Printer.Type.values());
+        addReferenceData(model, locationService);
         model.addAttribute("printer", printer);
     }
 
     public String post(PageModel model, @MethodParam("getPrinter") @BindParams Printer printer, BindingResult errors,
                        @SpringBean("printerService") PrinterService printerService,
+                       @SpringBean("printerValidator") PrinterValidator printerValidator,
+                       @SpringBean("locationService")LocationService locationService,
                        HttpServletRequest request) {
 
-
-        // TODO: add validation
+        printerValidator.validate(printer, errors);
 
         if (!errors.hasErrors()) {
-
             try {
                 printerService.savePrinter(printer);
                 request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, "emr.printer.saved");
@@ -70,14 +67,21 @@ public class PrinterPageController {
                 request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE,
                         "emr.printer.error.save.fail");
             }
-        } else {
+        }
+        else {
             request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE,
                     "emr.error.foundValidationErrors");
         }
 
-        //redisplay the form
+        // redisplay the form
+        addReferenceData(model, locationService);
         model.addAttribute("printer", printer);
         return null;
+    }
+
+    private void addReferenceData(PageModel model, LocationService locationService) {
+        model.addAttribute("locations", locationService.getAllLocations());
+        model.addAttribute("printerTypeOptions", Printer.Type.values());
     }
 
 }

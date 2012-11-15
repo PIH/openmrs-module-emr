@@ -47,4 +47,12 @@ public interface PrinterService extends OpenmrsService {
     @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
     List<Printer> getAllPrinters();
 
+    /**
+     * Given a printer, returns true/false if that ip address is in use
+     * by *another* printer
+     * @return
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
+    boolean isIpAddressAllocatedToAnotherPrinter(Printer printer);
+
 }

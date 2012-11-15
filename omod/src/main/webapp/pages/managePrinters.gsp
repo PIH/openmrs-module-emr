@@ -23,9 +23,7 @@
             ${ ui.format(it.physicalLocation) }
         </td>
         <td>
-            <a href="/${ contextPath }/emr/printer.page?printerId=${ it.printerId }">
-                ${ ui.format(it.name) }
-            </a>
+            ${ ui.format(it.name) }
         </td>
         <td>
             ${ ui.message("emr.printer." + it.type) }

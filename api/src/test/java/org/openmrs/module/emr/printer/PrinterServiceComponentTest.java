@@ -51,4 +51,40 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
        Assert.assertNotNull(printers.get(0).getUuid());
    }
 
+    @Test
+    public void testShouldReturnTrueIfAnotherPrinterAlreadyHasIpAddressAssigned() {
+        Printer printer = new Printer();
+        printer.setName("Test Printer");
+        printer.setIpAddress("192.1.1.8");
+        printer.setType(Printer.Type.ID_CARD);
+
+        printerService.savePrinter(printer);
+
+        Printer differentPrinter = new Printer();
+        differentPrinter.setName("Another printer");
+        differentPrinter.setIpAddress("192.1.1.8");
+        differentPrinter.setType(Printer.Type.LABEL);
+
+        Assert.assertTrue(printerService.isIpAddressAllocatedToAnotherPrinter(differentPrinter));
+
+    }
+
+    @Test
+    public void testShouldReturnFalseIfAnotherPrinterDoesNotHaveIpAddressAssigned() {
+        Printer printer = new Printer();
+        printer.setName("Test Printer");
+        printer.setIpAddress("192.1.1.6");
+        printer.setType(Printer.Type.ID_CARD);
+
+        printerService.savePrinter(printer);
+
+        Printer differentPrinter = new Printer();
+        differentPrinter.setName("Another printer");
+        differentPrinter.setIpAddress("192.1.1.8");
+        differentPrinter.setType(Printer.Type.LABEL);
+
+        Assert.assertFalse(printerService.isIpAddressAllocatedToAnotherPrinter(differentPrinter));
+
+    }
+
 }
