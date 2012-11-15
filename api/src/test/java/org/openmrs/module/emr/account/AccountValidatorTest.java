@@ -1,6 +1,5 @@
 package org.openmrs.module.emr.account;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +21,6 @@ import org.springframework.validation.FieldError;
 
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -118,7 +116,6 @@ public class AccountValidatorTest {
 		Errors errors = new BindException(account, "account");
 		validator.validate(account, errors);
 		assertTrue(errors.hasFieldErrors("password"));
-		assertTrue(errors.hasFieldErrors("confirmPassword"));
 	}
 	
 	/**
@@ -126,7 +123,7 @@ public class AccountValidatorTest {
 	 * @verifies require confirm password if password is provided
 	 */
 	@Test
-	public void validate_shouldRequireConfirmPasswordIfPasswordIsProvided() throws Exception {
+	public void shouldCreateErrorWhenConfirmPasswordIsNotProvided() throws Exception {
 		account.setGivenName("give name");
 		account.setFamilyName("family name");
 		account.setUser(new User());
@@ -135,27 +132,28 @@ public class AccountValidatorTest {
 		
 		Errors errors = new BindException(account, "account");
 		validator.validate(account, errors);
-		assertFalse(errors.hasFieldErrors("password"));
+		assertTrue(errors.hasFieldErrors("password"));
 		assertTrue(errors.hasFieldErrors("confirmPassword"));
 	}
-	
-	/**
-	 * @see AccountValidator#validate(Object,Errors)
-	 * @verifies require password if conform password is provided
-	 */
-	@Test
-	public void validate_shouldRequirePasswordIfConformPasswordIsProvided() throws Exception {
-		account.setGivenName("give name");
-		account.setFamilyName("family name");
-		account.setUser(new User());
-		account.setUsername("username");
-		account.setConfirmPassword("confirm password");
-		
-		Errors errors = new BindException(account, "account");
-		validator.validate(account, errors);
-		assertFalse(errors.hasFieldErrors("confirmPassword"));
-		assertTrue(errors.hasFieldErrors("password"));
-	}
+
+    /**
+     * @see AccountValidator#validate(Object,Errors)
+     * @verifies require confirm password if password is provided
+     */
+    @Test
+    public void shouldCreateErrorWhenPasswordIsNotProvided() throws Exception {
+        account.setGivenName("give name");
+        account.setFamilyName("family name");
+        account.setUser(new User());
+        account.setUsername("username");
+        account.setConfirmPassword("password");
+
+        Errors errors = new BindException(account, "account");
+        validator.validate(account, errors);
+        assertTrue(errors.hasFieldErrors("password"));
+        assertTrue(errors.hasFieldErrors("confirmPassword"));
+    }
+
 	
 	/**
 	 * @see AccountValidator#validate(Object,Errors)
@@ -212,7 +210,7 @@ public class AccountValidatorTest {
     public void shouldVerifyIfPasswordIsBeingValidated() {
         mockStatic(OpenmrsUtil.class);
 
-        createAccount();
+        createAccount("username");
 
         Errors errors = new BindException(account, "account");
         validator.validate(account, errors);
@@ -227,7 +225,7 @@ public class AccountValidatorTest {
         PowerMockito.doThrow(new PasswordException("Your Password is too short")).when(OpenmrsUtil.class);
         OpenmrsUtil.validatePassword("username", "password", "systemId");
 
-        createAccount();
+        createAccount("username");
 
         Errors errors = new BindException(account, "account");
         validator.validate(account, errors);
@@ -239,10 +237,63 @@ public class AccountValidatorTest {
         assertThat(errorList.size(), is(1));
     }
 
-    private void createAccount() {
-        account.setUsername("username");
+    @Test
+    public void shouldCreateAnErrorMessageWhenUsernameHasOnlyOneCharacter(){
+        mockStatic(OpenmrsUtil.class);
+
+        createAccount("a");
+        Errors errors = new BindException(account, "account");
+        validator.validate(account, errors);
+
+        assertTrue(errors.hasErrors());
+        List<FieldError> errorList = errors.getFieldErrors("username");
+        assertThat(errorList.size(), is(1));
+
+    }
+    @Test
+    public void shouldCreateAnErrorMessageWhenUsernameHasMoreThanFiftyCharacters(){
+        mockStatic(OpenmrsUtil.class);
+
+        createAccount("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        Errors errors = new BindException(account, "account");
+        validator.validate(account, errors);
+
+        assertTrue(errors.hasErrors());
+        List<FieldError> errorList = errors.getFieldErrors("username");
+        assertThat(errorList.size(), is(1));
+    }
+
+    @Test
+    public void shouldCreateAnErrorMessageWhenUserNameCharactersAreNotValid() {
+        mockStatic(OpenmrsUtil.class);
+
+        createAccount("usern@me");
+        Errors errors = new BindException(account, "account");
+        validator.validate(account, errors);
+
+        assertTrue(errors.hasErrors());
+        List<FieldError> errorList = errors.getFieldErrors("username");
+        assertThat(errorList.size(), is(1));
+    }
+
+    @Test
+    public void shouldValidateIfUserNameCharactersAreValid() {
+        mockStatic(OpenmrsUtil.class);
+
+        createAccount("usern.-_1");
+        Errors errors = new BindException(account, "account");
+        validator.validate(account, errors);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    private void createAccount(String username) {
+        account.setUsername(username);
         account.setPassword("password");
         account.setConfirmPassword("password");
+        account.setFamilyName("family name");
+        account.setGivenName("Given Name");
+        account.setPrivilegeLevel(new Role());
         User user = createUser();
         account.setUser(user);
     }

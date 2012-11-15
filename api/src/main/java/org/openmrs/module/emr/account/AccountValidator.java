@@ -1,6 +1,7 @@
 package org.openmrs.module.emr.account;
 
 import org.apache.commons.lang.StringUtils;
+import org.openmrs.User;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.PasswordException;
 import org.openmrs.messagesource.MessageSourceService;
@@ -52,57 +53,92 @@ public class AccountValidator implements Validator {
 			throw new IllegalArgumentException("The parameter obj should not be null and must be of type" + Account.class);
 		
 		Account account = (Account) obj;
-		//ensure all properties are set on the underlying Person, User and Provider objects
 		account.syncProperties();
-		
-		if (StringUtils.isBlank(account.getGivenName())) {
-			errors.rejectValue("givenName", "error.required",
-			    new Object[] { messageSourceService.getMessage("emr.person.givenName") }, null);
-		}
-		if (StringUtils.isBlank(account.getFamilyName())) {
-			errors.rejectValue("familyName", "error.required",
-			    new Object[] { messageSourceService.getMessage("emr.person.familyName") }, null);
-		}
-		if (account.getUser() != null && StringUtils.isBlank(account.getUsername())) {
-			errors.rejectValue("username", "error.required",
-			    new Object[] { messageSourceService.getMessage("emr.user.username") }, null);
-		}
-		if (account.getUser() != null && account.getPrivilegeLevel() == null) {
-			errors.rejectValue("privilegeLevel", "error.required",
-			    new Object[] { messageSourceService.getMessage("emr.user.privilegeLevel") }, null);
-		}
-		
-		//If new user account has been added or any password field was changed, validate them
-		if ((account.getUser() != null && account.getUser().getUserId() == null)
-		        || !(StringUtils.isBlank(account.getPassword()) && StringUtils.isBlank(account.getConfirmPassword()))) {
-			if (StringUtils.isBlank(account.getPassword())) {
-				errors.rejectValue("password", "error.required",
-				    new Object[] { messageSourceService.getMessage("emr.user.password") }, null);
-			}
-			if (StringUtils.isBlank(account.getConfirmPassword())) {
-				errors.rejectValue("confirmPassword", "error.required",
-				    new Object[] { messageSourceService.getMessage("emr.user.confirmPassword") }, null);
-			}
-			if (StringUtils.isNotBlank(account.getPassword()) && StringUtils.isNotBlank(account.getConfirmPassword())) {
-			    if (!account.getPassword().equals(account.getConfirmPassword())) {
-                    errors.rejectValue("password", "emr.account.error.passwordDontMatch",
-                        new Object[] { messageSourceService.getMessage("emr.user.password") }, null);
-                    errors.rejectValue("confirmPassword", "emr.account.error.passwordDontMatch",
-                        new Object[] { messageSourceService.getMessage("emr.user.confirmPassword") }, null);
-                } else {
-                    validatePassword(errors, account);
-                }
-			}
-		}
-	}
 
-    private void validatePassword(Errors errors, Account account) {
+        User user = account.getUser();
 
+        checkIfGivenAndFamilyNameAreNotNull(errors, account);
+
+        if (checkIfUserWasCreated(user)) {
+            checkIfUserNameIsCorrect(errors, account.getUsername());
+            checkIfPasswordIsCorrect(errors, account);
+            checkIfPrivilegeLevelIsCorrect(errors, account);
+        }
+    }
+
+    private void checkIfPrivilegeLevelIsCorrect(Errors errors, Account account) {
+        if (account.getPrivilegeLevel() == null) {
+            errors.rejectValue("privilegeLevel", "error.required",
+                new Object[] { messageSourceService.getMessage("emr.user.privilegeLevel") }, null);
+        }
+    }
+
+    private void checkIfPasswordIsCorrect(Errors errors, Account account) {
+        String password = account.getPassword();
+        String confirmPassword = account.getConfirmPassword();
+
+        if (checkIfPasswordWasCreated(password, confirmPassword)) {
+            validatePassword(errors, account, password, confirmPassword);
+        } else {
+            errors.rejectValue("password", "error.required",
+                    new Object[] { messageSourceService.getMessage("emr.user.password") }, null);
+            errors.rejectValue("confirmPassword", "error.required",
+                    new Object[] { messageSourceService.getMessage("emr.user.confirmPassword") }, null);
+        }
+
+     }
+
+    private void validatePassword(Errors errors, Account account, String password, String confirmPassword) {
+        if (password.equals(confirmPassword)) {
+            getErrorInPassword(errors, account);
+        } else {
+            errors.rejectValue("password", "emr.account.error.passwordDontMatch",
+                    new Object[] { messageSourceService.getMessage("emr.user.password") }, null);
+        }
+    }
+
+    private void getErrorInPassword(Errors errors, Account account) {
         try{
             OpenmrsUtil.validatePassword(account.getUsername(), account.getPassword(), account.getUser().getSystemId());
         }catch (PasswordException e){
-            errors.rejectValue("password", "emr.account.error.passwordDoNotMatchOneRequirement", new Object[] { e.getMessage() }, null);
+            errors.rejectValue("password", "emr.account.error.passwordError",
+                    new Object[]{messageSourceService.getMessage("emr.account.error.passwordError")}, null);
         }
+    }
+
+
+    private boolean checkIfPasswordWasCreated(String password, String confirmPassword) {
+        return (StringUtils.isNotBlank(password) && StringUtils.isNotBlank(confirmPassword));
+    }
+
+    private boolean checkIfUserWasCreated(User user) {
+        return (user != null && user.getUserId() == null);
+    }
+
+    private void checkIfUserNameIsCorrect(Errors errors, String username) {
+       String min = "2";
+       String max = "50";
+       if(StringUtils.isNotBlank(username)) {
+             if(!username.matches("[A-Za-z0-9\\._\\-]{" + min + "," + max + "}")){
+                 errors.rejectValue("username", "error.required",
+                         new Object[] { messageSourceService.getMessage("emr.user.username") }, null);
+             }
+       } else{
+           errors.rejectValue("username", "error.required",
+                   new Object[] { messageSourceService.getMessage("emr.user.username") }, null);
+       }
 
     }
+
+    private void checkIfGivenAndFamilyNameAreNotNull(Errors errors, Account account) {
+        if (StringUtils.isBlank(account.getGivenName())) {
+            errors.rejectValue("givenName", "error.required",
+                new Object[] { messageSourceService.getMessage("emr.person.givenName") }, null);
+        }
+        if (StringUtils.isBlank(account.getFamilyName())) {
+            errors.rejectValue("familyName", "error.required",
+                new Object[] { messageSourceService.getMessage("emr.person.familyName") }, null);
+        }
+    }
+
 }
