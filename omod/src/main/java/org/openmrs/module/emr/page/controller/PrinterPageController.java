@@ -47,7 +47,7 @@ public class PrinterPageController {
         model.addAttribute("printer", printer);
     }
 
-    public String post(PageModel model, @MethodParam("getPrinter") @BindParams Printer printer, BindingResult errors,
+    public String post(PageModel model, @BindParams Printer printer, BindingResult errors,
                        @SpringBean("printerService") PrinterService printerService,
                        @SpringBean("printerValidator") PrinterValidator printerValidator,
                        @SpringBean("locationService")LocationService locationService,

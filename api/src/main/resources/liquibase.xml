@@ -133,4 +133,14 @@
 
     </changeSet>
 
+    <changeSet id="201211162012-1" author="mgoodrich">
+        <comment>Changes name column to be unique</comment>
+
+        <modifyColumn tableName="emr_printer">
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </modifyColumn>
+    </changeSet>
+
 </databaseChangeLog>

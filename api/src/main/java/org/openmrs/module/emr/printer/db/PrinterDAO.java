@@ -19,6 +19,30 @@ import org.openmrs.module.emr.printer.Printer;
 
 public interface PrinterDAO extends SingleClassDAO<Printer> {
 
-    Printer getPrinterByIpAddress(String ipAddress);
+
+    /**
+     * Fetch a printer by name
+     *
+     * @param name
+     * @return
+     */
+    Printer getPrinterByName(String name);
+
+
+    /**
+     * Given a printer, returns true/false if that ip address is in use
+     * by *another* printer
+     *
+     * @return
+     */
+    boolean isIpAddressAllocatedToAnotherPrinter(Printer printer);
+
+    /**
+     * Given a printer, returns true/false if that name is in use
+     * by *another* printer
+     *
+     * @return
+     */
+    boolean isNameAllocatedToAnotherPrinter(Printer printer);
 
 }

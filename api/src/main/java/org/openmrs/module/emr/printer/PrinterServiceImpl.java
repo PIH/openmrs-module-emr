@@ -29,8 +29,15 @@ public class PrinterServiceImpl extends BaseOpenmrsService implements PrinterSer
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Printer getPrinterById(Integer id) {
         return printerDAO.getById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Printer getPrinterByName(String name) {
+        return printerDAO.getPrinterByName(name);
     }
 
     @Override
@@ -46,18 +53,14 @@ public class PrinterServiceImpl extends BaseOpenmrsService implements PrinterSer
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isIpAddressAllocatedToAnotherPrinter(Printer printer) {
-        if (printer.getIpAddress() == null)  {
-            throw new IllegalStateException("Printer IP is null");
-        }
+        return printerDAO.isIpAddressAllocatedToAnotherPrinter(printer);
+    }
 
-        Printer existingPrinter = printerDAO.getPrinterByIpAddress(printer.getIpAddress());
-
-        if (existingPrinter != null && !existingPrinter.equals(printer)) {
-            return true;
-        }
-        else {
-            return false;
-        }
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isNameAllocatedToAnotherPrinter(Printer printer) {
+        return printerDAO.isNameAllocatedToAnotherPrinter(printer);
     }
 }

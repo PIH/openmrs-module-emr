@@ -97,6 +97,10 @@ public class PrinterValidator implements Validator {
             errors.rejectValue("ipAddress", "emr.printer.error.ipAddressTooLong", null, null);
         }
 
+        if (printerService.isNameAllocatedToAnotherPrinter(printer)) {
+            errors.rejectValue("name", "emr.printer.error.nameDuplicate", null, null);
+        }
+
         // verify ip address
         if (printer.getIpAddress() != null) {
 

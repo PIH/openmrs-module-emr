@@ -20,7 +20,7 @@
             ${ ui.message("emr.printer." + it.type) }
         </td>
         <td>
-            ${ ui.format(it.physicalLocation) }
+            ${ ui.format(it.physicalLocation) ?: '&nbsp;'}
         </td>
         <td>
             ${ ui.format(it.name) }

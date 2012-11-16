@@ -87,4 +87,52 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
 
     }
 
+    @Test
+    public void testGetPrinterByName() {
+
+        // first, save a printer
+        Printer printer = new Printer();
+        printer.setName("Test Printer");
+        printer.setIpAddress("192.1.1.8");
+        printer.setType(Printer.Type.ID_CARD);
+        printerService.savePrinter(printer);
+
+        // now, try to fetch that printer by name
+        Printer returnedPrinter = printerService.getPrinterByName("Test Printer");
+        Assert.assertEquals(printer, returnedPrinter);
+    }
+
+    @Test
+    public void testShouldReturnTrueIfAnotherPrinterAlreadyHasSameName() {
+        Printer printer = new Printer();
+        printer.setName("Test Printer");
+        printer.setIpAddress("192.1.1.8");
+        printer.setType(Printer.Type.ID_CARD);
+
+        printerService.savePrinter(printer);
+
+        Printer differentPrinter = new Printer();
+        differentPrinter.setName("Test Printer");
+        differentPrinter.setIpAddress("192.1.1.9");
+        differentPrinter.setType(Printer.Type.LABEL);
+
+        Assert.assertTrue(printerService.isNameAllocatedToAnotherPrinter(differentPrinter));
+    }
+
+    @Test
+    public void testShouldReturnFalseIfAnotherPrinterDoesNotHaveSameName() {
+        Printer printer = new Printer();
+        printer.setName("Test Printer");
+        printer.setIpAddress("192.1.1.8");
+        printer.setType(Printer.Type.ID_CARD);
+
+        printerService.savePrinter(printer);
+
+        Printer differentPrinter = new Printer();
+        differentPrinter.setName("Test Printer With Different Name");
+        differentPrinter.setIpAddress("192.1.1.9");
+        differentPrinter.setType(Printer.Type.LABEL);
+
+        Assert.assertFalse(printerService.isNameAllocatedToAnotherPrinter(differentPrinter));
+    }
 }

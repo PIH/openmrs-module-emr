@@ -32,6 +32,15 @@ public interface PrinterService extends OpenmrsService {
     Printer getPrinterById(Integer id);
 
     /**
+     * Fetches a printer by name
+     *
+     * @param name
+     * @return
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
+    Printer getPrinterByName(String name);
+
+    /**
      * Saves a printer
      *
      * @param printer
@@ -50,9 +59,19 @@ public interface PrinterService extends OpenmrsService {
     /**
      * Given a printer, returns true/false if that ip address is in use
      * by *another* printer
+     *
      * @return
      */
     @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
     boolean isIpAddressAllocatedToAnotherPrinter(Printer printer);
+
+    /**
+     * Given a printer, returns true/false if that name is in use
+     * by *another* printer
+     *
+     * @return
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
+    boolean isNameAllocatedToAnotherPrinter(Printer printer);
 
 }

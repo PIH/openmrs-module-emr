@@ -15,6 +15,7 @@
 package org.openmrs.module.emr.printer.db;
 
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.module.emr.api.db.hibernate.HibernateSingleClassDAO;
 import org.openmrs.module.emr.printer.Printer;
@@ -26,11 +27,31 @@ public class HibernatePrinterDAO extends HibernateSingleClassDAO<Printer> implem
     }
 
     @Override
-    public Printer getPrinterByIpAddress(String ipAddress) {
+    public Printer getPrinterByName(String name) {
         Criteria criteria = createPrinterCriteria();
-        addIpAddressRestriction(criteria, ipAddress);
+        addNameRestriction(criteria, name);
 
         return (Printer) criteria.uniqueResult();
+    }
+
+    @Override
+    public boolean isIpAddressAllocatedToAnotherPrinter(Printer printer) {
+        Criteria criteria = createPrinterCriteria();
+        addIpAddressRestriction(criteria, printer.getIpAddress());
+        addUuidExclusionRestriction(criteria, printer.getUuid());
+        Number count = (Number) criteria.setProjection(Projections.rowCount()).uniqueResult();
+
+        return count.intValue() == 0 ? false : true;
+    }
+
+    @Override
+    public boolean isNameAllocatedToAnotherPrinter(Printer printer) {
+        Criteria criteria = createPrinterCriteria();
+        addNameRestriction(criteria, printer.getName());
+        addUuidExclusionRestriction(criteria, printer.getUuid());
+        Number count = (Number) criteria.setProjection(Projections.rowCount()).uniqueResult();
+
+        return count.intValue() == 0 ? false : true;
     }
 
     private Criteria createPrinterCriteria() {
@@ -40,4 +61,13 @@ public class HibernatePrinterDAO extends HibernateSingleClassDAO<Printer> implem
     private void addIpAddressRestriction(Criteria criteria, String ipAddress) {
         criteria.add(Restrictions.eq("ipAddress", ipAddress));
     }
+
+    private void addNameRestriction(Criteria criteria, String name) {
+        criteria.add(Restrictions.eq("name", name));
+    }
+
+    private void addUuidExclusionRestriction(Criteria criteria, String uuid) {
+        criteria.add(Restrictions.not(Restrictions.eq("uuid", uuid)));
+    }
+
 }

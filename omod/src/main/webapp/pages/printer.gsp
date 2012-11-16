@@ -30,5 +30,6 @@
     <input type="button" value="${ ui.message("general.cancel") }" onclick="javascript:window.location='/${ contextPath }/emr/managePrinters.page'" />
 
     <input type="hidden" name="printerId" value="${ printer.id ?: ''}" />
+    <input type="hidden" name="uuid" value="${ printer.uuid ?: ''}" />
 
 </form>
