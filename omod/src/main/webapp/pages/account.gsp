@@ -125,7 +125,7 @@ function emr_createUserAccount(){
 		</div>
 		<div class="emr_userDetails">
 			<% if(!account.user) { %>
-				<input type="button" value="${ ui.message("emr.user.createUserAccount") }" 
+				<input type="button" id="createUserAccountButton" value="${ ui.message("emr.user.createUserAccount") }"
 					onclick="javascript:emr_createUserAccount()" />
 			<% } %>
 		</div>
@@ -145,7 +145,7 @@ function emr_createUserAccount(){
 		</div>
 		<div class="emr_providerDetails">
 		<% if(!account.provider) { %>
-			<input type="button" value="${ ui.message("emr.provider.createProviderAccount") }" 
+			<input type="button" id="createProviderAccountButton" value="${ ui.message("emr.provider.createProviderAccount") }"
 				onclick="javascript:emr_createProviderAccount()" />
 		<% } %>
 		</div>
