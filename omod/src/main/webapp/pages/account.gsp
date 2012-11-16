@@ -118,7 +118,7 @@ function emr_createUserAccount(){
 			<div style="padding-left: 20px">
 			<% capabilities.each{ %>
 				<br />
-				<input type="checkbox" name="capabilities" id="capabilities" value="${ it.name }" <% if(account.capabilities.contains(it)){ %>checked='checked'<% } %> /> ${ ui.message("emr.app." + (it.name - rolePrefix) + ".label") }
+				<input type="checkbox" name="capabilities" id="${ it.name - rolePrefix }" value="${ it.name }" <% if(account.capabilities.contains(it)){ %>checked='checked'<% } %> /> ${ ui.message("emr.app." + (it.name - rolePrefix) + ".label") }
 				${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "capabilities" ])}
 				<% } %>
 			</div>
