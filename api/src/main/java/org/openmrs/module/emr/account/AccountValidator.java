@@ -13,12 +13,14 @@ import org.springframework.validation.Validator;
 
 @Handler(supports = { Account.class }, order = 50)
 public class AccountValidator implements Validator {
-	
-	@Autowired
+
+    @Autowired
 	@Qualifier("messageSourceService")
 	private MessageSourceService messageSourceService;
-	
-	/**
+    public static final String USERNAME_MIN_LENGTH = "2";
+    public static final String USERNAME_MAX_LENGTH = "50";
+
+    /**
 	 * @param messageSourceService the messageSourceService to set
 	 */
 	public void setMessageSourceService(MessageSourceService messageSourceService) {
@@ -126,10 +128,8 @@ public class AccountValidator implements Validator {
     }
 
     private void checkIfUserNameIsCorrect(Errors errors, String username) {
-       String min = "2";
-       String max = "50";
-       if(StringUtils.isNotBlank(username)) {
-             if(!username.matches("[A-Za-z0-9\\._\\-]{" + min + "," + max + "}")){
+        if(StringUtils.isNotBlank(username)) {
+             if(!username.matches("[A-Za-z0-9\\._\\-]{" + USERNAME_MIN_LENGTH + "," + USERNAME_MAX_LENGTH + "}")){
                  errors.rejectValue("username", "emr.user.username.error",
                          new Object[] { messageSourceService.getMessage("emr.user.username.error") }, null);
              }
