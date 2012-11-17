@@ -1,4 +1,6 @@
 <%
+    emrContext.requireAuthentication()
+
 	ui.includeFragment("emr", "standardEmrIncludes")
 
 	def title = config.title ?: ui.message("emr.title")
@@ -15,7 +17,9 @@
             <% } %>
         </div>
 
-        <img src="${ ui.resourceLink("mirebalais", "images/pih_grey_logo_small.png") }"/>
+        <a href="${ ui.pageLink("mirebalais", "home") }">
+            <img src="${ ui.resourceLink("mirebalais", "images/pih_grey_logo_small.png") }"/>
+        </a>
     </div>
 
     ${ ui.includeFragment("emr", "infoAndErrorMessage") }
