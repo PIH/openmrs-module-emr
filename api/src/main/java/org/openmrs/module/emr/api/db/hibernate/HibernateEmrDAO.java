@@ -23,6 +23,7 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Visit;
 import org.openmrs.api.db.hibernate.PatientSearchCriteria;
+import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.api.db.EmrDAO;
 
 import java.util.ArrayList;
@@ -31,9 +32,14 @@ import java.util.List;
 public class HibernateEmrDAO implements EmrDAO {
 
     private SessionFactory sessionFactory;
+    private EmrProperties emrProperties;
 
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
+    }
+
+    public void setEmrProperties(EmrProperties emrProperties) {
+        this.emrProperties = emrProperties;
     }
 
     @Override
@@ -47,13 +53,13 @@ public class HibernateEmrDAO implements EmrDAO {
             criteria.add(Restrictions.eq("location", checkedInAt));
             Criteria patientCriteria = criteria.createCriteria("patient");
             if (StringUtils.isNotBlank(query)) {
-                patientCriteria = new PatientSearchCriteria(sessionFactory, patientCriteria).prepareCriteria(query, null, new ArrayList<PatientIdentifierType>(), true, true);
+                patientCriteria = buildCriteria(query, patientCriteria);
             }
             criteria = patientCriteria;
         }
         else {
             criteria = sessionFactory.getCurrentSession().createCriteria(Patient.class);
-            criteria = new PatientSearchCriteria(sessionFactory, criteria).prepareCriteria(query, null, new ArrayList<PatientIdentifierType>(), true, true);
+            criteria = buildCriteria(query, criteria);
         }
 
         if (start != null) {
@@ -65,6 +71,16 @@ public class HibernateEmrDAO implements EmrDAO {
         }
 
         return (List<Patient>) criteria.list();
+    }
+
+    private Criteria buildCriteria(String query, Criteria criteria) {
+        if (query.matches(".*\\d.*")) {
+            // has at least one digit, so treat as an identifier
+            return new PatientSearchCriteria(sessionFactory, criteria).prepareCriteria(null, query, emrProperties.getIdentifierTypesToSearch(), true, true);
+        } else {
+            // no digits, so treat as a name
+            return new PatientSearchCriteria(sessionFactory, criteria).prepareCriteria(query, null, new ArrayList<PatientIdentifierType>(), true, true);
+        }
     }
 
 }

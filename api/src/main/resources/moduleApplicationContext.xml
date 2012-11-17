@@ -13,6 +13,7 @@
                 <property name="dao">
                     <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateEmrDAO">
                         <property name="sessionFactory"><ref bean="sessionFactory"/></property>
+                        <property name="emrProperties" ref="emrProperties" />
                     </bean>
                 </property>
                 <property name="emrProperties" ref="emrProperties" />

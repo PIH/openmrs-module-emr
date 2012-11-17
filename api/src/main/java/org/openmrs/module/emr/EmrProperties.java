@@ -25,6 +25,9 @@ import org.openmrs.VisitType;
 import org.openmrs.module.emr.utils.ModuleProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component("emrProperties")
 public class EmrProperties extends ModuleProperties {
 
@@ -78,6 +81,16 @@ public class EmrProperties extends ModuleProperties {
 
     public PatientIdentifierType getPaperRecordIdentifierType() {
         return getPatientIdentifierTypeByGlobalProperty(EmrConstants.GP_PAPER_RECORD_IDENTIFIER_TYPE, false);
+    }
+
+    public List<PatientIdentifierType> getIdentifierTypesToSearch() {
+        ArrayList<PatientIdentifierType> types = new ArrayList<PatientIdentifierType>();
+        types.add(getPrimaryIdentifierType());
+        PatientIdentifierType paperRecordIdentifierType = getPaperRecordIdentifierType();
+        if (paperRecordIdentifierType != null) {
+            types.add(paperRecordIdentifierType);
+        }
+        return types;
     }
 
 }

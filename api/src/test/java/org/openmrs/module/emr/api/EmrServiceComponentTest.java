@@ -22,12 +22,12 @@ import org.openmrs.LocationTag;
 import org.openmrs.Patient;
 import org.openmrs.Privilege;
 import org.openmrs.Role;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
-import org.openmrs.module.emr.TestUtils;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -35,12 +35,15 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.openmrs.module.emr.TestUtils.assertContainsElementWithProperty;
 
 public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
 	
 	protected final Log log = LogFactory.getLog(getClass());
 	
 	EmrService service;
+
+    AdministrationService administrationService;
 	
 	Location where;
 
@@ -51,6 +54,7 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
 	public void before() throws Exception{
 		executeDataSet("privilegeTestDataset.xml");
 		service = Context.getService(EmrService.class);
+        administrationService = Context.getAdministrationService();
 
         LocationService locationService = Context.getLocationService();
 
@@ -66,24 +70,32 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
 	public void testFindPatientsWithActiveVisits() throws Exception {
 		List<Patient> patients = service.findPatients("", where, null, null);
 		assertEquals(1, patients.size());
-		TestUtils.assertContainsElementWithProperty(patients, "patientId", 2);
+		assertContainsElementWithProperty(patients, "patientId", 2);
 	}
+
+    @Test
+    public void testFindPatientsByIdentifier() throws Exception {
+        administrationService.setGlobalProperty(EmrConstants.PRIMARY_IDENTIFIER_TYPE, "1");
+        List<Patient> patients = service.findPatients("6TS-4", null, null, null);
+        assertEquals(1, patients.size());
+        assertContainsElementWithProperty(patients, "patientId", 7);
+    }
 	
 	@Test
 	public void testFindPatientsByName() throws Exception {
 		List<Patient> patients = service.findPatients("Test", null, null, null);
 		assertEquals(4, patients.size());
-		TestUtils.assertContainsElementWithProperty(patients, "patientId", 2);
-		TestUtils.assertContainsElementWithProperty(patients, "patientId", 6);
-		TestUtils.assertContainsElementWithProperty(patients, "patientId", 7);
-		TestUtils.assertContainsElementWithProperty(patients, "patientId", 8);
+		assertContainsElementWithProperty(patients, "patientId", 2);
+		assertContainsElementWithProperty(patients, "patientId", 6);
+		assertContainsElementWithProperty(patients, "patientId", 7);
+		assertContainsElementWithProperty(patients, "patientId", 8);
 	}
 	
 	@Test
 	public void testFindPatientsByNameWithActiveVisits() throws Exception {
 		List<Patient> patients = service.findPatients("Hora", where, null, null);
 		assertEquals(1, patients.size());
-		TestUtils.assertContainsElementWithProperty(patients, "patientId", 2);
+		assertContainsElementWithProperty(patients, "patientId", 2);
 	}
 	
 	@Test
