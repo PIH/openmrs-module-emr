@@ -18,21 +18,24 @@
     </bean>
     <bean id="emrArchivesRoomApp" class="org.openmrs.module.appframework.SimpleAppDescriptor">
         <property name="id" value="emr.archivesRoom"/>
-        <property name="label" value="Archives Room"/>
+        <property name="label" value="Archives"/>
         <property name="homepageUrl" value="emr/archivesRoom.page"/>
         <property name="iconUrl" value="moduleResources/uilibrary/images/folder_32.png"/>
+        <property name="order" value="1" />
     </bean>
     <bean id="emrActiveVisitsApp" class="org.openmrs.module.appframework.SimpleAppDescriptor">
         <property name="id" value="emr.activeVisits"/>
         <property name="label" value="Active Visits"/>
         <property name="homepageUrl" value="emr/activeVisits.page"/>
         <property name="iconUrl" value="moduleResources/uilibrary/images/home_back_32.png"/>
+        <property name="order" value="3" />
     </bean>
     <bean id="systemAdministrationApp" class="org.openmrs.module.appframework.SimpleAppDescriptor">
         <property name="id" value="emr.systemAdministration"/>
         <property name="label" value="System Administration"/>
         <property name="homepageUrl" value="emr/systemAdministration.page"/>
         <property name="iconUrl" value="moduleResources/uilibrary/images/settings-32.png"/>
+        <property name="order" value="2" />
     </bean>
     
 
