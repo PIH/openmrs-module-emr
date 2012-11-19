@@ -80,11 +80,11 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
     </div>
 
     <div id="bottom">
-        <button type="button" style="float: left;" onclick="location.href = emr.pageLink('emr', 'patient', { patientId: <%= patient.id %> })">
+        <button type="button" id="cancel" style="float: left;" onclick="location.href = emr.pageLink('emr', 'patient', { patientId: <%= patient.id %> })">
             <img src="${ ui.resourceLink("uilibrary", "images/close_32.png") }"/> <br/>
             ${ ui.message("emr.cancel") }
         </button>
-        <button type="submit" style="float: right;" data-bind="visible: isValid()">
+        <button type="submit" id="next" style="float: right;" data-bind="visible: isValid()">
             <img src="${ ui.resourceLink("uilibrary", "images/arrow_right_32.png") }"/> <br/>
             ${ ui.message("emr.next") }
         </button>
