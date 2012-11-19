@@ -154,7 +154,7 @@ function emr_createUserAccount(){
 	<br /><br />
 	<input id="createUserAccount" type="hidden" name="createUserAccount" value="${account.user != null && account.user.userId == null}" />
 	<input id="createProviderAccount" type="hidden" name="createProviderAccount" value="${account.provider != null && account.provider.providerId == null}" />
-	<input type="button" value="${ ui.message("general.save") }" onclick="javascript:sendData()" /> &nbsp;&nbsp;&nbsp;
+	<input type="button" id="save-button" value="${ ui.message("general.save") }" onclick="javascript:sendData()" /> &nbsp;&nbsp;&nbsp;
 	<input type="button" value="${ ui.message("general.cancel") }" onclick="javascript:window.location='/${ contextPath }/emr/systemAdministration.page'" />
 		
 </form>
