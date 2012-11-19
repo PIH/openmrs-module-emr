@@ -34,7 +34,7 @@
 	
 	<properties>
 		<openMRSVersion>1.9.2-SNAPSHOT</openMRSVersion>
-        <uiframeworkVersion>2.2</uiframeworkVersion>
+        <uiframeworkVersion>2.2.1</uiframeworkVersion>
         <appframeworkVersion>1.4-SNAPSHOT</appframeworkVersion>
         <idgenVersion>2.4-SNAPSHOT</idgenVersion>
         <springVersion>3.0.5.RELEASE</springVersion>
