@@ -20,10 +20,15 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Visit;
+import org.openmrs.api.EncounterService;
+import org.openmrs.api.VisitService;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.adt.AdtService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,17 +37,57 @@ import java.util.List;
 public class PatientDomainWrapper {
 
     private Patient patient;
+
+    @Qualifier("emrProperties")
+    @Autowired
     protected EmrProperties emrProperties;
+
+    @Qualifier("adtService")
+    @Autowired
     protected AdtService adtService;
 
-    public PatientDomainWrapper(Patient patient, EmrProperties emrProperties, AdtService adtService) {
+    @Qualifier("visitService")
+    @Autowired
+    protected VisitService visitService;
+
+    @Qualifier("encounterService")
+    @Autowired
+    protected EncounterService encounterService;
+
+    public PatientDomainWrapper() {
+    }
+
+    public PatientDomainWrapper(Patient patient, EmrProperties emrProperties, AdtService adtService,
+                                VisitService visitService, EncounterService encounterService) {
         this.patient = patient;
         this.emrProperties = emrProperties;
         this.adtService = adtService;
+        this.visitService = visitService;
+        this.encounterService = encounterService;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
     }
 
     public Patient getPatient() {
         return patient;
+    }
+
+    public String getGender() {
+        return patient.getGender();
+    }
+
+    public Integer getAge() {
+        return patient.getAge();
+    }
+
+    public Boolean getBirthdateEstimated() {
+        return patient.getBirthdateEstimated();
+    }
+
+    public Date getBirthdate() {
+        return patient.getBirthdate();
     }
 
     public PatientIdentifier getPrimaryIdentifier() {
@@ -72,6 +117,36 @@ public class PatientDomainWrapper {
 
     public Visit getActiveVisit(Location location) {
         return adtService.getActiveVisit(patient, location);
+    }
+
+    public int getCountOfEncounters() {
+        return adtService.getCountOfEncounters(patient);
+    }
+
+    public int getCountOfVisits() {
+        return adtService.getCountOfVisits(patient);
+    }
+
+    public List<Encounter> getAllEncounters() {
+        return encounterService.getEncountersByPatient(patient);
+    }
+
+    public List<Visit> getAllVisits() {
+        return visitService.getVisitsByPatient(patient, true, false);
+    }
+
+    public boolean hasOverlappingVisitsWith(Patient otherPatient) {
+        List<Visit> otherVisits = visitService.getVisitsByPatient(otherPatient, true, false);
+        List<Visit> myVisits = getAllVisits();
+
+        for (Visit v : myVisits) {
+            for (Visit o : otherVisits) {
+                if (adtService.visitsOverlap(v, o)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

@@ -16,7 +16,9 @@ package org.openmrs.module.emr.page.controller;
 import org.openmrs.Patient;
 import org.openmrs.api.OrderService;
 import org.openmrs.module.emr.EmrContext;
+import org.openmrs.module.emr.patient.PatientDomainWrapper;
 import org.openmrs.module.emr.task.TaskService;
+import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,10 +32,12 @@ public class PatientPageController {
 	public void controller(@RequestParam("patientId") Patient patient,
                            EmrContext emrContext,
 	                       PageModel model,
+                           @InjectBeans PatientDomainWrapper patientDomainWrapper,
                            @SpringBean("orderService") OrderService orderService,
                            @SpringBean("taskService") TaskService taskService) {
 
-        model.addAttribute("patient", patient);
+        patientDomainWrapper.setPatient(patient);
+        model.addAttribute("patient", patientDomainWrapper);
         model.addAttribute("orders", orderService.getOrdersByPatient(patient));
         model.addAttribute("availableTasks", taskService.getAvailableTasks(emrContext));
     }

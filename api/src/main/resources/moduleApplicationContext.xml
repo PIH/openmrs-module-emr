@@ -112,6 +112,7 @@
             	<property name="visitService" ref="visitService" />
             	<property name="locationService" ref="locationService" />
             	<property name="providerService" ref="providerService" />
+                <property name="patientService" ref="patientService" />
             </bean>
         </property>
         <property name="preInterceptors">

@@ -15,14 +15,12 @@
 package org.openmrs.module.emr.page.controller;
 
 import org.openmrs.Patient;
-import org.openmrs.api.PatientService;
 import org.openmrs.module.emr.EmrConstants;
-import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.adt.AdtService;
 import org.openmrs.module.emr.patient.PatientDomainWrapper;
-import org.openmrs.serialization.SerializationException;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
+import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,23 +29,39 @@ import javax.servlet.http.HttpServletRequest;
 
 public class MergePatientsPageController {
 
-    public void get(@RequestParam(required = false, value = "patient1") Patient patient1,
+    public String get(@RequestParam(required = false, value = "patient1") Patient patient1,
                     @RequestParam(required = false, value = "patient2") Patient patient2,
-                    @SpringBean("emrProperties") EmrProperties emrProperties,
-                    @SpringBean("adtService") AdtService adtService,
+                    @RequestParam(value = "confirmed", defaultValue = "false") Boolean confirmed,
+                    @InjectBeans PatientDomainWrapper wrapper1,
+                    @InjectBeans PatientDomainWrapper wrapper2,
                     HttpServletRequest request,
                     PageModel pageModel) {
 
         pageModel.addAttribute("patient1", null);
         pageModel.addAttribute("patient2", null);
+        pageModel.addAttribute("confirmed", confirmed);
 
-        if (patient1 != null && patient2 != null) {
-            if (patient1.equals(patient2)) {
-                request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE, "emr.mergePatients.error.samePatient");
-                return;
-            }
-            pageModel.addAttribute("patient1", new PatientDomainWrapper(patient1, emrProperties, adtService));
-            pageModel.addAttribute("patient2", new PatientDomainWrapper(patient2, emrProperties, adtService));
+        if (patient1 == null || patient2 == null) {
+            return "mergePatients-chooseRecords";
+        }
+
+        if (patient1.equals(patient2)) {
+            request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE, "emr.mergePatients.error.samePatient");
+            return "mergePatients-chooseRecords";
+        }
+
+        wrapper1.setPatient(patient1);
+        wrapper2.setPatient(patient2);
+        pageModel.addAttribute("patient1", wrapper1);
+        pageModel.addAttribute("patient2", wrapper2);
+
+        if (!confirmed) {
+            return "mergePatients-confirmSamePerson";
+        }
+        else {
+            // do extra checks
+            pageModel.addAttribute("overlappingVisits", wrapper1.hasOverlappingVisitsWith(patient2));
+            return "mergePatients-chooseMergeOptions";
         }
     }
 
@@ -56,13 +70,9 @@ public class MergePatientsPageController {
                        @RequestParam("patient1") Patient patient1,
                        @RequestParam("patient2") Patient patient2,
                        @RequestParam("preferred") Patient preferred,
-                       @SpringBean("patientService") PatientService patientService) {
+                       @SpringBean("adtService") AdtService adtService) {
         Patient notPreferred = patient1.equals(preferred) ? patient2 : patient1;
-        try {
-            patientService.mergePatients(preferred, notPreferred);
-        } catch (SerializationException e) {
-            throw new RuntimeException("Unexpected error logging results of merge", e);
-        }
+        adtService.mergePatients(preferred, notPreferred);
 
         request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, "emr.mergePatients.success");
         return "redirect:" + ui.pageLink("emr", "patient", SimpleObject.create("patientId", preferred.getId()));

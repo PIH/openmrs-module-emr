@@ -26,16 +26,19 @@ import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.Visit;
+import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.OrderService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.serialization.SerializationException;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +58,9 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
     private EmrProperties emrProperties;
 
     private AdministrationService administrationService;
-
+    
+    private PatientService patientService;
+    
     private EncounterService encounterService;
 
     private OrderService orderService;
@@ -69,9 +74,12 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 	public void setOrderService(OrderService orderService) {
 		this.orderService = orderService;
 	}
-	
-	
-	public void setLocationService(LocationService locationService) {
+
+    public void setPatientService(PatientService patientService) {
+        this.patientService = patientService;
+    }
+
+    public void setLocationService(LocationService locationService) {
 		this.locationService = locationService;
 	}
 	
@@ -133,6 +141,20 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
             }
         }
 
+    }
+
+    @Override
+    public boolean visitsOverlap(Visit v1, Visit v2) {
+        Location where1 = v1.getLocation();
+        Location where2 = v2.getLocation();
+        if ((where1 == null && where2 == null) ||
+                isSameOrAncestor(where1, where2) ||
+                isSameOrAncestor(where2, where1)) {
+            // "same" location, so check if date ranges overlap (assuming startDatetime is never null)
+            return (OpenmrsUtil.compareWithNullAsLatest(v1.getStartDatetime(), v2.getStopDatetime()) <= 0)
+                    && (OpenmrsUtil.compareWithNullAsLatest(v2.getStartDatetime(), v1.getStopDatetime()) <= 0);
+        }
+        return false;
     }
 
     @Override
@@ -302,8 +324,8 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
      * @return true if a.equals(b) or a is an ancestor of b.
      */
     private boolean isSameOrAncestor(Location a, Location b) {
-        if (b == null) {
-            return a == null;
+        if (a == null || b == null) {
+            return a == null && b == null;
         }
         return a.equals(b) || isSameOrAncestor(a, b.getParentLocation());
     }
@@ -332,7 +354,7 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 
     @Override
     public Encounter getLastEncounter(Patient patient) {
-        // this could be sped up by implementing it directly in a DAO
+        // speed this up by implementing it directly in a DAO
         List<Encounter> byPatient = encounterService.getEncountersByPatient(patient);
         if (byPatient.size() == 0) {
             return null;
@@ -351,8 +373,19 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 	    return visitSummary;
     }
 
+    @Override
+    public int getCountOfEncounters(Patient patient) {
+        // speed this up by implementing it directly in a DAO
+        return encounterService.getEncountersByPatient(patient).size();
+    }
 
-	/**
+    @Override
+    public int getCountOfVisits(Patient patient) {
+        // speed this up by implementing it directly in a DAO
+        return visitService.getVisitsByPatient(patient, true, false).size();
+    }
+
+    /**
 	 * Utility method that returns all child locations and children of its child locations
 	 * recursively
 	 * 
@@ -375,5 +408,42 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 		
 		return foundLocations;
 	}
+
+    @Transactional
+    @Override
+    public void mergePatients(Patient preferred, Patient notPreferred) {
+        List<Visit> preferredVisits = visitService.getVisitsByPatient(preferred, true, false);
+        List<Visit> notPreferredVisits = visitService.getVisitsByPatient(notPreferred, true, false);
+        for (Visit losing : notPreferredVisits) {
+            for (Visit winning : preferredVisits) {
+                if (visitsOverlap(losing, winning)) {
+                    // extend date range of winning
+                    if (OpenmrsUtil.compareWithNullAsEarliest(losing.getStartDatetime(), winning.getStartDatetime()) < 0) {
+                        winning.setStartDatetime(losing.getStartDatetime());
+                    }
+                    if (winning.getStopDatetime() != null && OpenmrsUtil.compareWithNullAsLatest(winning.getStopDatetime(), losing.getStopDatetime()) < 0) {
+                        winning.setStopDatetime(losing.getStopDatetime());
+                    }
+
+                    // move encounters from losing into winning
+                    if (losing.getEncounters() != null) {
+                        for (Encounter e : losing.getEncounters()) {
+                            e.setPatient(preferred);
+                            winning.addEncounter(e);
+                            encounterService.saveEncounter(e);
+                        }
+                    }
+                    visitService.voidVisit(losing, "EMR - Merge Patients");
+                    visitService.saveVisit(winning);
+                    break;
+                }
+            }
+        }
+        try {
+            patientService.mergePatients(preferred, notPreferred);
+        } catch (SerializationException e) {
+            throw new APIException("Unable to merge patients due to serialization error", e);
+        }
+    }
 
 }

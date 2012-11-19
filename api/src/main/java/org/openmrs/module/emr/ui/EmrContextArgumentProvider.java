@@ -40,8 +40,8 @@ import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 /**
- * Makes an EmrContext argument available in PageModel and FragmentModel, and for inject into page and fragment
- * controller methods.
+ * Makes EmrContext and EmrProperties arguments available in PageModel and FragmentModel, and for injection into page
+ * and fragment controller methods.
  */
 @Component
 public class EmrContextArgumentProvider implements PageModelConfigurator, FragmentModelConfigurator,
@@ -66,6 +66,7 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
         HttpServletRequest request = pageContext.getRequest().getRequest();
         EmrContext emrContext = buildEmrContext(request);
         pageContext.getModel().addAttribute("emrContext", emrContext);
+        pageContext.getModel().addAttribute("emrProperties", emrProperties);
     }
 
     @Override
@@ -74,6 +75,7 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
         PageModel pageModel = fragmentContext.getPageContext().getModel();
         EmrContext emrContext = (EmrContext) pageModel.get("emrContext");
         fragmentContext.getModel().addAttribute("emrContext", emrContext);
+        fragmentContext.getModel().addAttribute("emrProperties", emrProperties);
     }
 
     @Override
@@ -82,6 +84,7 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
         PageModel pageModel = (PageModel) possibleArguments.get(PageModel.class);
         EmrContext emrContext = (EmrContext) pageModel.get("emrContext");
         possibleArguments.put(EmrContext.class, emrContext);
+        possibleArguments.put(EmrProperties.class, emrProperties);
     }
 
     @Override
@@ -95,6 +98,7 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
         HttpServletRequest request = (HttpServletRequest) possibleArguments.get(HttpServletRequest.class);
         EmrContext emrContext = buildEmrContext(request);
         possibleArguments.put(EmrContext.class, emrContext);
+        possibleArguments.put(EmrProperties.class, emrProperties);
     }
 
     private EmrContext buildEmrContext(HttpServletRequest request) {

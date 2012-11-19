@@ -26,15 +26,23 @@
     <img class="icon" src="${ ui.resourceLink("emr", "images/patient_" + patient.gender + ".gif") }"/>
 
     <div class="demographics">
-        <span class="name">${ ui.format(patient) }</span>
+        <span class="name">${ ui.format(patient.patient) }</span>
         <br/>
         ${ ui.message("emr.gender." + patient.gender) }
-        ${ patient.age } year(s)
+        <% if (patient.age) { %>
+            ${ ui.message("emr.ageYears", patient.age) }
+        <% } else { %>
+            ${ ui.message("emr.unknownAge") }
+        <% } %>
     </div>
 
     <div class="identifiers">
-        <% patient.activeIdentifiers.each { %>
-            ${ ui.format(it) } <br/>
+        ID:
+        <%= patient.primaryIdentifiers.collect{ it.identifier }.join(", ") %>
+        <% if (patient.paperRecordIdentifiers) { %>
+            <br/>
+            ${ ui.format(emrProperties.paperRecordIdentifierType) }:
+            <%= patient.paperRecordIdentifiers.collect{ it.identifier }.join(", ") %>
         <% } %>
     </div>
 

@@ -136,4 +136,35 @@ public interface AdtService extends OpenmrsService {
      */
     Encounter getLastEncounter(Patient patient);
 
+    /**
+     * @param patient
+     * @return the number of non-voided encounters this patient has had
+     */
+    int getCountOfEncounters(Patient patient);
+
+    /**
+     * @param patient
+     * @return the number of non-voided visits this patient has had
+     */
+    int getCountOfVisits(Patient patient);
+
+    /**
+     * @param v1
+     * @param v2
+     * @return true if both visits are in overlapping locations, and have overlapping datetime ranges
+     */
+    boolean visitsOverlap(Visit v1, Visit v2);
+
+    /**
+     * Merges patients using the underlying OpenMRS core mechanism, but applying extra business logic:
+     * <ul>
+     *     <li>Any two visits that overlap will be joined together into one</li>
+     * </ul>
+     *
+     * @see #visitsOverlap(org.openmrs.Visit, org.openmrs.Visit)
+     * @see org.openmrs.api.PatientService#mergePatients(org.openmrs.Patient, org.openmrs.Patient)
+     * @param preferred
+     * @param notPreferred
+     */
+    void mergePatients(Patient preferred, Patient notPreferred);
 }

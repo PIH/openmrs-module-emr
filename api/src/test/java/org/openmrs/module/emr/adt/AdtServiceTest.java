@@ -33,6 +33,7 @@ import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
@@ -61,6 +62,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyCollection;
 import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -81,6 +83,7 @@ public class AdtServiceTest {
     VisitService mockVisitService;
     EncounterService mockEncounterService;
     ProviderService mockProviderService;
+    PatientService mockPatientService;
 
     private Person personForCurrentUser;
     private Provider providerForCurrentUser;
@@ -109,6 +112,7 @@ public class AdtServiceTest {
 
         mockVisitService = mock(VisitService.class);
         mockEncounterService = mock(EncounterService.class);
+        mockPatientService = mock(PatientService.class);
 
         checkInClerkEncounterRole = new EncounterRole();
         checkInEncounterType = new EncounterType();
@@ -131,6 +135,7 @@ public class AdtServiceTest {
         when(emrProperties.getCheckInClerkEncounterRole()).thenReturn(checkInClerkEncounterRole);
 
         AdtServiceImpl service = new AdtServiceImpl();
+        service.setPatientService(mockPatientService);
         service.setVisitService(mockVisitService);
         service.setEncounterService(mockEncounterService);
         service.setProviderService(mockProviderService);
@@ -376,4 +381,85 @@ public class AdtServiceTest {
         assertNotNull(old1.getStopDatetime());
         assertNotNull(old2.getStopDatetime());
     }
+
+    @Test
+    public void testOverlappingVisits() throws Exception {
+        Patient patient = new Patient();
+        VisitType visitType = new VisitType();
+
+        Date now = new Date();
+        Date tenDaysAgo = DateUtils.addDays(now, -10);
+        Date nineDaysAgo = DateUtils.addDays(now, -9);
+        Date eightDaysAgo = DateUtils.addDays(now, -8);
+        Date sevenDaysAgo = DateUtils.addDays(now, -7);
+
+        Visit visit1 = buildVisit(patient, visitType, mirebalaisHospital, tenDaysAgo, eightDaysAgo);
+        Visit visit2 = buildVisit(patient, visitType, mirebalaisHospital, now, null);
+        Visit visit3 = buildVisit(patient, visitType, null, tenDaysAgo, nineDaysAgo);
+        Visit visit4 = buildVisit(patient, visitType, mirebalaisHospital, nineDaysAgo, sevenDaysAgo);
+
+        assertThat(service.visitsOverlap(visit1, visit2), is(false));
+        assertThat(service.visitsOverlap(visit1, visit3), is(false));
+        assertThat(service.visitsOverlap(visit1, visit4), is(true));
+    }
+
+    @Test
+    public void testMergePatientsJoinsOverlappingVisits() throws Exception {
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        Date now = new Date();
+        Date tenDaysAgo = DateUtils.addDays(now, -10);
+        Date nineDaysAgo = DateUtils.addDays(now, -9);
+        Date eightDaysAgo = DateUtils.addDays(now, -8);
+        Date sevenDaysAgo = DateUtils.addDays(now, -7);
+
+        Visit first = buildVisit(notPreferred, null, mirebalaisHospital, tenDaysAgo, eightDaysAgo);
+        Visit last = buildVisit(notPreferred, null, mirebalaisHospital, sevenDaysAgo, null);
+        Visit middle = buildVisit(preferred, null, mirebalaisHospital, nineDaysAgo, now);
+        Visit unrelated = buildVisit(preferred, null, null, tenDaysAgo, eightDaysAgo);
+
+        first.addEncounter(buildEncounter(notPreferred, tenDaysAgo));
+        middle.addEncounter(buildEncounter(preferred, nineDaysAgo));
+
+        when(mockVisitService.getVisitsByPatient(preferred, true, false)).thenReturn(Arrays.asList(middle, unrelated));
+        when(mockVisitService.getVisitsByPatient(notPreferred, true, false)).thenReturn(Arrays.asList(first, last));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockVisitService).voidVisit(eq(first), anyString());
+        verify(mockVisitService).voidVisit(eq(last), anyString());
+        verify(mockVisitService, never()).saveVisit(unrelated);
+
+        assertThat(middle.getStartDatetime(), is(tenDaysAgo));
+        assertNull(middle.getStopDatetime());
+        assertThat(middle.getEncounters().size(), is(2));
+        for (Encounter e : middle.getEncounters()) {
+            assertThat(e.getVisit(), is(middle));
+            assertThat(e.getPatient(), is(middle.getPatient()));
+        }
+
+        verify(mockVisitService, times(2)).saveVisit(middle); // two encounters merged in
+
+
+        verify(mockPatientService).mergePatients(preferred, notPreferred);
+    }
+
+    private Encounter buildEncounter(Patient patient, Date encounterDatetime) {
+        Encounter encounter = new Encounter();
+        encounter.setPatient(patient);
+        encounter.setEncounterDatetime(encounterDatetime);
+        return encounter;
+    }
+
+    private Visit buildVisit(Patient patient, VisitType visitType, Location location, Date startDate, Date endDate) {
+        Visit visit = new Visit();
+        visit.setPatient(patient);
+        visit.setVisitType(visitType);
+        visit.setLocation(location);
+        visit.setStartDatetime(startDate);
+        visit.setStopDatetime(endDate);
+        return visit;
+    }
+
 }

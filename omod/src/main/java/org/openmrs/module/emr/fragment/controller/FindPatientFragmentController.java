@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.emr.fragment.controller;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -34,10 +35,14 @@ import java.util.List;
 public class FindPatientFragmentController {
 
     public List<SimpleObject> search(@RequestParam(value = "q", required = false) String query,
+                                     @RequestParam(value = "term", required = false) String term,
                                      @RequestParam(value = "checkedInAt", required = false) Location checkedInAt,
                                      @SpringBean EmrService service,
                                      @SpringBean EmrProperties emrProperties,
                                      UiUtils ui) {
+        if (StringUtils.isBlank(query)) {
+            query = term;
+        }
         List<Patient> results = service.findPatients(query, checkedInAt, 0, 100);
         return simplify(ui, emrProperties, results);
     }

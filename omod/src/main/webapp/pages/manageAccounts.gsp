@@ -4,6 +4,10 @@
 
 <h3>${  ui.message("emr.manageAccounts") }</h3>
 
+<a href="${ ui.pageLink("emr", "account") }">
+    <button>${ ui.message("emr.createAccount") }</button>
+</a>
+
 <ul>
 	<% accounts.each{  %>
  	<li>
