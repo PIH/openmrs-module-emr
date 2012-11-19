@@ -1,3 +1,6 @@
+<%
+    def patient = config.patient
+%>
 <style class="text/css">
     .patient-header {
         border-bottom: 1px gray solid;
