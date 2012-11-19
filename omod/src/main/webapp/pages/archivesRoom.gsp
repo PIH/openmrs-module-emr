@@ -17,7 +17,9 @@
 
         <% if (createPaperMedicalRecord) {      %>
             jq('#tabs').tabs('select', '#tab-createrequest');
-        <% }  %>
+        <% } else { %>
+            jq('#tabs').tabs('select', '#tab-pullrequest');
+        <% } %>
 
         var recordsToPull = [];
         <% openRequestsToPull.each { %>
