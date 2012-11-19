@@ -15,11 +15,8 @@
 
         jq("#tabs").tabs();
 
-        <% if (createPaperMedicalRecord) {      %>
-            jq('#tabs').tabs('select', '#tab-createrequest');
-        <% } else { %>
-            jq('#tabs').tabs('select', '#tab-pullrequest');
-        <% } %>
+        jq('#tabs').tabs('select', '#tab-${ activeTab }');
+
 
         var recordsToPull = [];
         <% openRequestsToPull.each { %>
@@ -86,7 +83,7 @@
                 <span style="display: none" data-bind="foreach: selectedRequests()">
                     <input type="hidden" name="requestId" data-bind="value: requestId"/>
                 </span>
-                <input type="hidden" name="createPaperMedicalRecord" value="true">
+                <input type="hidden" name="activeTab" value="createrequest">
                 <input id="create_record_requests_button" type="submit" value="${ ui.message("emr.archivesRoom.createSelected") }"
                        data-bind="enable: selectedRequests().length > 0"/>
             </form>
@@ -120,6 +117,7 @@
                 <!-- ko foreach:selectedRequests -->
                 <input type="hidden" name="requestId" data-bind="value: requestId"/>
                 <!-- /ko -->
+                <input type="hidden" name="activeTab" value="pullrequest">
                 <input id="pull_record_requests_button" type="submit" value="${ ui.message("emr.archivesRoom.pullSelected") }"
                        data-bind="enable: selectedRequests().length > 0"/>
             </form>

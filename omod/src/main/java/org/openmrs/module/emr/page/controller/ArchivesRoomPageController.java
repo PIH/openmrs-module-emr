@@ -18,7 +18,7 @@ import static org.openmrs.module.emr.EmrConstants.PRIMARY_IDENTIFIER_TYPE;
 public class ArchivesRoomPageController {
 
     public void get(PageModel model,
-                    @RequestParam(value="createPaperMedicalRecord", required=false, defaultValue="false") boolean createPaperMedicalRecord,
+                    @RequestParam(value="activeTab", required=false, defaultValue="createrequest") String activeTab,
                     @SpringBean PaperRecordService paperRecordService,
                     @SpringBean("adminService") AdministrationService administrationService) {
         List<PaperRecordRequest> openPaperRecordRequestsToPull = paperRecordService.getOpenPaperRecordRequestsToPull();
@@ -30,7 +30,7 @@ public class ArchivesRoomPageController {
         model.addAttribute("openRequestsToPull", openPaperRecordRequestsToPull);
         model.addAttribute("assignedRequestsToPull", assignedPaperRecordRequestsToPull);
         model.addAttribute("primaryIdentifierType", primaryIdentifierType);
-        model.addAttribute("createPaperMedicalRecord", createPaperMedicalRecord);
+        model.addAttribute("activeTab", activeTab);
     }
 
     /**
@@ -38,7 +38,7 @@ public class ArchivesRoomPageController {
      * @param requests
      */
     public String post(@RequestParam("requestId") List<PaperRecordRequest> requests,
-                       @RequestParam(value="createPaperMedicalRecord", required=false, defaultValue="false") boolean createPaperMedicalRecord,
+                       @RequestParam(value="activeTab", required=false, defaultValue="createrequest") String activeTab,
                        @RequestParam("assignTo") Person assignTo,
                        @SpringBean PaperRecordService paperRecordService,
                        UiUtils ui,
@@ -48,7 +48,7 @@ public class ArchivesRoomPageController {
         } catch (IllegalStateException ex) {
             session.setAttribute(WebConstants.OPENMRS_ERROR_ATTR, ui.message("emr.archivesRoom.alreadyAssigned"));
         }
-        return "redirect:emr/archivesRoom.page?createPaperMedicalRecord=" + createPaperMedicalRecord;
+        return "redirect:emr/archivesRoom.page?activeTab=" + activeTab;
     }
 
 }
