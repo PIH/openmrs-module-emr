@@ -5,15 +5,11 @@
 
 <script type="text/javascript">
     jq(function() {
+        jq('input[type=text]').first().focus();
+
         jq('#cancel-button').click(function() {
             emr.navigateTo({ page: 'systemAdministration' });
         });
-    });
-</script>
-
-<script type="text/javascript">
-    jq(function() {
-        jq('input[type=text]').first().focus();
     });
 
     function labelFunction(item) {
@@ -27,10 +23,10 @@
 
 <form method="get">
 
-    <h3>Select two patients to merge...</h3>
+    <h3>${ ui.message("emr.mergePatients.selectTwo") }</h3>
 
     ${ ui.includeFragment("emr", "field/autocomplete", [
-            label: "First",
+            label: ui.message("emr.mergePatients.chooseFirstLabel"),
             formFieldName: "patient1",
             fragment: "findPatient",
             action: "search",
@@ -41,7 +37,7 @@
     <br/>
 
     ${ ui.includeFragment("emr", "field/autocomplete", [
-            label: "Second",
+            label: ui.message("emr.mergePatients.chooseSecondLabel"),
             formFieldName: "patient2",
             fragment: "findPatient",
             action: "search",

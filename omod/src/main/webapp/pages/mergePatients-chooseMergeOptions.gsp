@@ -19,55 +19,57 @@
             var preferId = jq(eventObject.target).val();
             jq('.prefer-' + preferId).closest("label").addClass('primary');
             jq('#perform-merge').removeAttr('disabled').addClass("primary");
+
+            if (jq('.prefer-' + preferId).closest("label").hasClass("left-option")) {
+                jq('#separator').html('<img src="${ ui.resourceLink("uilibrary", "images/blue_arrow_left_32.png") }"/>');
+            } else {
+                jq('#separator').html('<img src="${ ui.resourceLink("uilibrary", "images/blue_arrow_right_32.png") }"/>');
+            }
         });
     });
 </script>
 
-<h3>About to merge records...</h3>
-
-<span class="panel first-patient">
-    ${ patient1.primaryIdentifier.identifier } - ${ ui.format(patient1.patient) }
-</span>
-
-and
-
-<span class="panel second-patient">
-    ${ patient2.primaryIdentifier.identifier } - ${ ui.format(patient2.patient) }
-</span>
-
-<br/>
-<br/>
+<h3>${ ui.message("emr.mergePatients.choosePreferred.question") }</h3>
+<em>${ ui.message("emr.mergePatients.choosePreferred.description") }</em>
+<br/><br/>
 
 <form id="prefer-form" method="post">
-    <h3>Choose demographics to keep:</h3>
 
-    <label for="choose1" class="panel choose-demographics prefer-${ patient1.patient.id }">
+    <label for="choose1" class="panel choose-demographics prefer-${ patient1.patient.id } left-option">
         <input type="radio" id="choose1" name="preferred" value="${ patient1.patient.id }" class="hidden"/>
 
-        Gender: ${ patient1.gender } <br/>
-        Birthdate: ${ formatBirthdate(patient1.patient) } <br/>
-        Age: ${ patient1.age ?: "?" }
+        <strong>${ ui.format(patient1.patient) }</strong><br/>
+        ${ ui.format(patient1.primaryIdentifier) }
+        <hr/>
+        ${ ui.message("emr.gender") }: ${ ui.message("emr.gender." + patient1.gender) } <br/>
+        ${ ui.message("emr.birthdate") }: ${ formatBirthdate(patient1.patient) } <br/>
+        ${ ui.message("emr.age") }: ${ patient.age ? ui.message("ageYears", patient1.age) : ui.message("emr.unknownAge") }
     </label>
 
-    <label for="choose2" class="panel choose-demographics prefer-${ patient2.patient.id }">
+    <span id="separator"></span>
+
+    <label for="choose2" class="panel choose-demographics prefer-${ patient2.patient.id } right-option">
         <input type="radio" id="choose2" name="preferred" value="${ patient2.patient.id }" class="hidden"/>
 
-        Gender: ${ patient2.gender } <br/>
-        Birthdate: ${ formatBirthdate(patient2.patient) } <br/>
-        Age: ${ patient2.age ?: "?" }
+        <strong>${ ui.format(patient2.patient) }</strong> <br/>
+        ${ ui.format(patient2.primaryIdentifier) }
+        <hr/>
+        ${ ui.message("emr.gender") }: ${ ui.message("emr.gender." + patient2.gender) } <br/>
+        ${ ui.message("emr.birthdate") }: ${ formatBirthdate(patient2.patient) } <br/>
+        ${ ui.message("emr.age") }: ${ patient.age ? ui.message("ageYears", patient2.age) : ui.message("emr.unknownAge") }
     </label>
 
     <br/><br/>
 
+
+    <h4>${ ui.message("emr.mergePatients.allDataWillBeCombined") }</h4>
+
     <% if (overlappingVisits) { %>
-        <h3>These records have visits that overlap, and will be joined together.</h3>
+        <h4>${ ui.message("emr.mergePatients.overlappingVisitsWillBeJoined") }</h4>
     <% } %>
-
-    <h3>All other data will be combined.</h3>
-
-    <br/><br/>
+    <br/>
 
     <input type="button" id="cancel-button" class="button secondary" value="${ ui.message("emr.cancel") }"/>
 
-    <input type="submit" id="perform-merge" disabled="disabled" class="button" value="Perform Merge"/>
+    <input type="submit" id="perform-merge" disabled="disabled" class="button" value="${ ui.message("emr.mergePatients.performMerge") }"/>
 </form>
