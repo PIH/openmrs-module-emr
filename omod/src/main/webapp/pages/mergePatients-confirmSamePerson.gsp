@@ -28,8 +28,9 @@
         ${ ui.message("emr.birthdate") }: ${ birthdate } """
     }
 
-    def formatLastVisit = {
-        it.getActiveVisit(emrContext.sessionLocation) ?: ui.message("emr.none")
+    def formatActiveVisit = {
+        def activeVisit = it.getActiveVisit(emrContext.sessionLocation)
+        activeVisit ? ui.format(activeVisit) : ui.message("emr.none")
     }
 
     def formatDataSummary = {
@@ -94,7 +95,7 @@
         <%= displayList(ui.message("emr.mergePatients.section.paperRecordIdentifiers"), patient1.paperRecordIdentifiers, patient2.paperRecordIdentifiers, formatIdentifiers) %>
         <%= displayList(ui.message("emr.mergePatients.section.addresses"), patient1.patient.addresses, patient2.patient.addresses, formatAddress) %>
         <%= displayList(ui.message("emr.mergePatients.section.lastSeen"), [ patient1.lastEncounter ], [ patient2.lastEncounter ], formatEncounter) %>
-        <%= displayList(ui.message("emr.mergePatients.section.activeVisit"), [ patient1 ], [ patient2 ], formatLastVisit) %>
+        <%= displayList(ui.message("emr.mergePatients.section.activeVisit"), [ patient1 ], [ patient2 ], formatActiveVisit) %>
         <%= displayList(ui.message("emr.mergePatients.section.dataSummary"), [ patient1 ], [ patient2 ], formatDataSummary) %>
     </table>
 
