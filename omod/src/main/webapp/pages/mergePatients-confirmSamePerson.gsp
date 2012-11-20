@@ -32,6 +32,11 @@
         it.getActiveVisit(emrContext.sessionLocation) ?: ui.message("emr.none")
     }
 
+    def formatDataSummary = {
+        """${ ui.message("emr.mergePatients.section.dataSummary.numVisits", it.countOfVisits) },
+            ${ ui.message("emr.mergePatients.section.dataSummary.numEncounters", it.countOfEncounters) } """
+    }
+
     def displayList = { title, leftList, rightList, formatter ->
         def ret = """
             <tr>
@@ -83,14 +88,14 @@
     <h3>${ ui.message("emr.mergePatients.confirmationQuestion") }</h3>
 
     <table>
-        <%= displayList("Name(s)", patient1.patient.names, patient2.patient.names, highlightPreferred) %>
-        <%= displayList("Demographics", [ patient1.patient ], [ patient2.patient ], formatDemographics) %>
-        <%= displayList("Identifier(s)", patient1.primaryIdentifiers, patient2.primaryIdentifiers, formatIdentifiers) %>
-        <%= displayList("Paper Record Identifier(s)", patient1.paperRecordIdentifiers, patient2.paperRecordIdentifiers, formatIdentifiers) %>
-        <%= displayList("Address(es)", patient1.patient.addresses, patient2.patient.addresses, formatAddress) %>
-        <%= displayList("Last Seen", [ patient1.lastEncounter ], [ patient2.lastEncounter ], formatEncounter) %>
-        <%= displayList("Active Visit", [ patient1 ], [ patient2 ], formatLastVisit) %>
-        <%= displayList("Visits", [ patient1 ], [ patient2 ], { "${ it.countOfVisits} visit(s), ${ it.countOfEncounters} encounter(s)" }) %>
+        <%= displayList(ui.message("emr.mergePatients.section.names"), patient1.patient.names, patient2.patient.names, highlightPreferred) %>
+        <%= displayList(ui.message("emr.mergePatients.section.demographics"), [ patient1.patient ], [ patient2.patient ], formatDemographics) %>
+        <%= displayList(ui.message("emr.mergePatients.section.primaryIdentifiers"), patient1.primaryIdentifiers, patient2.primaryIdentifiers, formatIdentifiers) %>
+        <%= displayList(ui.message("emr.mergePatients.section.paperRecordIdentifiers"), patient1.paperRecordIdentifiers, patient2.paperRecordIdentifiers, formatIdentifiers) %>
+        <%= displayList(ui.message("emr.mergePatients.section.addresses"), patient1.patient.addresses, patient2.patient.addresses, formatAddress) %>
+        <%= displayList(ui.message("emr.mergePatients.section.lastSeen"), [ patient1.lastEncounter ], [ patient2.lastEncounter ], formatEncounter) %>
+        <%= displayList(ui.message("emr.mergePatients.section.activeVisit"), [ patient1 ], [ patient2 ], formatLastVisit) %>
+        <%= displayList(ui.message("emr.mergePatients.section.dataSummary"), [ patient1 ], [ patient2 ], formatDataSummary) %>
     </table>
 
     <h3>${ ui.message("emr.mergePatients.confirmationQuestion") }</h3>
