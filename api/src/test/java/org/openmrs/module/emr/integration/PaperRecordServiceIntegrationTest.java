@@ -1,6 +1,7 @@
 package org.openmrs.module.emr.integration;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -19,6 +20,7 @@ import org.springframework.test.annotation.NotTransactional;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@Ignore
 @SkipBaseSetup
 public class PaperRecordServiceIntegrationTest extends BaseModuleContextSensitiveTest {
 
