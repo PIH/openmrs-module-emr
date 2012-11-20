@@ -78,7 +78,7 @@
         <div id="tab-createrequest">
             <h1 id="create_requests">${ ui.message("emr.archivesRoom.openCreateRequests.label") }</h1>
 
-            <form id="post_create_requests" method="post">
+            <form id="post_create_requests" action="archivesRoom.page" method="post">
                 <input type="hidden" name="assignTo" value="${ context.authenticatedUser.person.id }"/>
                 <span style="display: none" data-bind="foreach: selectedRequests()">
                     <input type="hidden" name="requestId" data-bind="value: requestId"/>
@@ -112,7 +112,7 @@
         <div id="tab-pullrequest">
             <h1 id="pull_requests">${ ui.message("emr.archivesRoom.openPullRequests.label") }</h1>
 
-            <form id="post_pull_requests" method="post">
+            <form id="post_pull_requests" action="archivesRoom.page" method="post">
                 <input type="hidden" name="assignTo" value="${ context.authenticatedUser.person.id }"/>
                 <!-- ko foreach:selectedRequests -->
                 <input type="hidden" name="requestId" data-bind="value: requestId"/>
