@@ -11,12 +11,15 @@ import org.openmrs.module.emr.paperrecord.PaperRecordService;
 import org.openmrs.module.emr.paperrecord.PaperRecordServiceImpl;
 import org.openmrs.module.idgen.service.IdentifierSourceService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.NotTransactional;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@SkipBaseSetup
 public class PaperRecordServiceIntegrationTest extends BaseModuleContextSensitiveTest {
 
     private AdministrationService administrationService;
@@ -39,12 +42,25 @@ public class PaperRecordServiceIntegrationTest extends BaseModuleContextSensitiv
         ((PaperRecordServiceImpl) paperRecordService).setPatientService(patientService);
     }
 
+    @Override
+    public Boolean useInMemoryDatabase() {
+        return false;
+    }
 
-     @Test
-    public void shouldCreateTwoDifferentDossierNumbers(){
-         when(administrationService.getGlobalProperty(EmrConstants.GP_PAPER_RECORD_IDENTIFIER_TYPE)).thenReturn("e66645eb-03a8-4991-b4ce-e87318e37566");
+    @Override
+    public String getWebappName() {
+        return "mirebalais";
+    }
 
-         String paperMedicalRecordNumberFor = paperRecordService.createPaperMedicalRecordNumberFor(mock(Patient.class), new Location(15));
+
+    @Test
+    @DirtiesContext
+    @NotTransactional
+    public void shouldCreateTwoDifferentDossierNumbers() throws Exception {
+        authenticate();
+        when(administrationService.getGlobalProperty(EmrConstants.GP_PAPER_RECORD_IDENTIFIER_TYPE)).thenReturn("e66645eb-03a8-4991-b4ce-e87318e37566");
+
+        String paperMedicalRecordNumberFor = paperRecordService.createPaperMedicalRecordNumberFor(mock(Patient.class), new Location(15));
      }
 
 }
