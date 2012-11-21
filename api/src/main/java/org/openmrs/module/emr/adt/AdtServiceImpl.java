@@ -433,7 +433,7 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
                             encounterService.saveEncounter(e);
                         }
                     }
-                    visitService.voidVisit(losing, "EMR - Merge Patients");
+                    visitService.voidVisit(losing, "EMR - Merge Patients: merged into visit " + winning.getVisitId());
                     visitService.saveVisit(winning);
                     break;
                 }
