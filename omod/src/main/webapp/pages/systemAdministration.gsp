@@ -8,7 +8,7 @@
     <a href="${ ui.pageLink("emr", "manageAccounts") }">
         <div class="task">
             <img src="${ ui.resourceLink("uilibrary", "images/address_book_32.png")}"/>
-            ${ ui.message("emr.manageAccounts") }
+            ${ ui.message("emr.task.accountManagement.label") }
         </div>
     </a>
     <a href="${ ui.pageLink("emr", "managePrinters") }">
