@@ -21,5 +21,21 @@
         <!--  default properties must be set in the hibernate.default.properties -->
     </bean>
 
+    <bean id="patientServiceTest" class="org.openmrs.api.impl.PatientServiceImpl">
+        <property name="patientDAO"><ref bean="patientDAO"/></property>
+        <property name="identifierValidators">
+            <map>
+                <entry>
+                    <key><value>org.openmrs.patient.impl.LuhnIdentifierValidator</value></key>
+                    <bean class="org.openmrs.patient.impl.LuhnIdentifierValidator"/>
+                </entry>
+                <entry>
+                    <key><value>org.openmrs.patient.impl.VerhoeffIdentifierValidator</value></key>
+                    <bean class="org.openmrs.patient.impl.VerhoeffIdentifierValidator"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
 </beans>
 

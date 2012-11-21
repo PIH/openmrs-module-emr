@@ -8,5 +8,6 @@
         <mapping resource="PaperRecordRequest.hbm.xml"/>
         <mapping resource="RadiologyOrder.hbm.xml"/>
         <mapping resource="Printer.hbm.xml"/>
+        <mapping resource="IdentifierSource.hbm.xml" />
     </session-factory>
 </hibernate-configuration>
