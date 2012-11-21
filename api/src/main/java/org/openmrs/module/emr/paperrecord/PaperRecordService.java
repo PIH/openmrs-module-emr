@@ -38,14 +38,13 @@ public interface PaperRecordService extends OpenmrsService {
     PaperRecordRequest getPaperRecordRequestById(Integer id);
     
     /**
-     * 
-     * Fetches a list of Paper Record Request for the specified Patient
+     * Fetches all Paper Record Requests for the specified Patient
      * 
      * @param patient a Patient
      * @return a List<PaperRecordRequest>
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
-    List<PaperRecordRequest> getPaperRecordRequest(Patient patient);
+    List<PaperRecordRequest> getPaperRecordRequestsByPatient(Patient patient);
 
     /**
      * Requests the paper record for the specified patient for the specified location

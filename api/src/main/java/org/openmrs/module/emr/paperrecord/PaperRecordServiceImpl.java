@@ -194,7 +194,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     
     @Override
     @Transactional(readOnly = true)
-    public List<PaperRecordRequest> getPaperRecordRequest(Patient patient) {	    
+    public List<PaperRecordRequest> getPaperRecordRequestsByPatient(Patient patient) {
 	    return paperRecordRequestDAO.findPaperRecordRequests(patient);	    
     }
 

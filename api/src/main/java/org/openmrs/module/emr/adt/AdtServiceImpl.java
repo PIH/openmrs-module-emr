@@ -14,14 +14,6 @@
 
 package org.openmrs.module.emr.adt;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,6 +43,16 @@ import org.openmrs.module.emr.paperrecord.PaperRecordService;
 import org.openmrs.serialization.SerializationException;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 
 public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
@@ -422,45 +424,70 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
     public void mergePatients(Patient preferred, Patient notPreferred) {
         List<Visit> preferredVisits = visitService.getVisitsByPatient(preferred, true, false);
         List<Visit> notPreferredVisits = visitService.getVisitsByPatient(notPreferred, true, false);
-        for (Visit losing : notPreferredVisits) {
-            for (Visit winning : preferredVisits) {
-                if (visitsOverlap(losing, winning)) {
-                    // extend date range of winning
-                    if (OpenmrsUtil.compareWithNullAsEarliest(losing.getStartDatetime(), winning.getStartDatetime()) < 0) {
-                        winning.setStartDatetime(losing.getStartDatetime());
-                    }
-                    if (winning.getStopDatetime() != null && OpenmrsUtil.compareWithNullAsLatest(winning.getStopDatetime(), losing.getStopDatetime()) < 0) {
-                        winning.setStopDatetime(losing.getStopDatetime());
-                    }
 
-                    // move encounters from losing into winning
-                    if (losing.getEncounters() != null) {
-                        for (Encounter e : losing.getEncounters()) {
-                            e.setPatient(preferred);
-                            winning.addEncounter(e);
-                            encounterService.saveEncounter(e);
-                        }
+        // if the non-preferred patient has any visits that overlap with visits of the preferred patient, we need to merge them together
+        for (Visit losing : notPreferredVisits) {
+            if (!losing.isVoided()) {
+                for (Visit winning : preferredVisits) {
+                    if (!winning.isVoided() && visitsOverlap(losing, winning)) {
+                        mergeVisits(winning, losing);
+                        break;
                     }
-                    visitService.voidVisit(losing, "EMR - Merge Patients: merged into visit " + winning.getVisitId());
-                    visitService.saveVisit(winning);
-                    break;
+                }
+            }
+        }
+
+        // merging in visits from the non-preferred patient (and extending visit durations) may have caused preferred-patient visits to overlap
+        Collections.sort(preferredVisits, new Comparator<Visit>() {
+            @Override
+            public int compare(Visit left, Visit right) {
+                return OpenmrsUtil.compareWithNullAsEarliest(left.getStartDatetime(), right.getStartDatetime());
+            }
+        });
+        for (int i = 0; i < preferredVisits.size(); ++i) {
+            Visit visit = preferredVisits.get(i);
+            if (!visit.isVoided()) {
+                for (int j = i + 1; j < preferredVisits.size(); ++j) {
+                    Visit candidate = preferredVisits.get(j);
+                    if (!candidate.isVoided() && visitsOverlap(visit, candidate)) {
+                        mergeVisits(visit, candidate);
+                    }
                 }
             }
         }
         
-        List<PaperRecordRequest> paperRecordRequestList= paperRecordService.getPaperRecordRequest(notPreferred);
-        if(paperRecordRequestList!=null && paperRecordRequestList.size()>0){
-        	for(PaperRecordRequest paperRecordRequest : paperRecordRequestList){
-        		paperRecordRequest.setPatient(preferred);
-        		paperRecordService.savePaperRecordRequest(paperRecordRequest);
-        	}
+        List<PaperRecordRequest> moveToPreferred = paperRecordService.getPaperRecordRequestsByPatient(notPreferred);
+        for(PaperRecordRequest paperRecordRequest : moveToPreferred){
+            paperRecordRequest.setPatient(preferred);
+            paperRecordService.savePaperRecordRequest(paperRecordRequest);
         }
-        
+
         try {
             patientService.mergePatients(preferred, notPreferred);
         } catch (SerializationException e) {
             throw new APIException("Unable to merge patients due to serialization error", e);
         }
+    }
+
+    private void mergeVisits(Visit preferred, Visit nonPreferred) {
+        // extend date range of winning
+        if (OpenmrsUtil.compareWithNullAsEarliest(nonPreferred.getStartDatetime(), preferred.getStartDatetime()) < 0) {
+            preferred.setStartDatetime(nonPreferred.getStartDatetime());
+        }
+        if (preferred.getStopDatetime() != null && OpenmrsUtil.compareWithNullAsLatest(preferred.getStopDatetime(), nonPreferred.getStopDatetime()) < 0) {
+            preferred.setStopDatetime(nonPreferred.getStopDatetime());
+        }
+
+        // move encounters from losing into winning
+        if (nonPreferred.getEncounters() != null) {
+            for (Encounter e : nonPreferred.getEncounters()) {
+                e.setPatient(preferred.getPatient());
+                preferred.addEncounter(e);
+                encounterService.saveEncounter(e);
+            }
+        }
+        visitService.voidVisit(nonPreferred, "EMR - Merge Patients: merged into visit " + preferred.getVisitId());
+        visitService.saveVisit(preferred);
     }
 
 }
