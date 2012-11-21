@@ -14,6 +14,38 @@
 
 package org.openmrs.module.emr.adt;
 
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyCollection;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.openmrs.module.emr.TestUtils.isCollectionOfExactlyElementsWithProperties;
+import static org.openmrs.module.emr.TestUtils.isJustNow;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,41 +71,10 @@ import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 import org.openmrs.module.emr.paperrecord.PaperRecordService;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyCollection;
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.openmrs.module.emr.TestUtils.isCollectionOfExactlyElementsWithProperties;
-import static org.openmrs.module.emr.TestUtils.isJustNow;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Context.class)
@@ -446,6 +447,54 @@ public class AdtServiceTest {
         verify(mockVisitService, times(2)).saveVisit(middle); // two encounters merged in
 
 
+        verify(mockPatientService).mergePatients(preferred, notPreferred);
+    }
+    
+    @Test
+    public void testMergePatientsResultsInOverlappingVisits() throws Exception {
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        Date now = new Date();
+        Date twelveDaysAgo = DateUtils.addDays(now, -12);
+        Date elevenDaysAgo = DateUtils.addDays(now, -11);
+        Date tenDaysAgo = DateUtils.addDays(now, -10);
+        Date nineDaysAgo = DateUtils.addDays(now, -9);
+        Date eightDaysAgo = DateUtils.addDays(now, -8);
+        Date sevenDaysAgo = DateUtils.addDays(now, -7);
+        
+        /*
+         *       ___not_preferred_visit_____________
+         *       |                                  |
+         *   |                        |       |                      |
+         *   |_____preferred_visits___|.......|__preferred_visits____|    
+         * 
+         * 
+         */
+
+        Visit nonPrefferedVisit = buildVisit(notPreferred, null, mirebalaisHospital, elevenDaysAgo, eightDaysAgo);
+        PaperRecordRequest nonPrefferedPaperRecordRequest = mockPaperRecordService.requestPaperRecord(notPreferred, mirebalaisHospital, outpatientDepartment);
+        
+        Visit firstPrefferedVisit =  buildVisit(preferred, null, mirebalaisHospital, twelveDaysAgo, tenDaysAgo);
+        Visit secondPrefferedVisit = buildVisit(preferred, null, mirebalaisHospital, nineDaysAgo, sevenDaysAgo);
+        PaperRecordRequest prefferedPaperRecordRequest = mockPaperRecordService.requestPaperRecord(preferred, mirebalaisHospital, outpatientDepartment);
+        
+        nonPrefferedVisit.addEncounter(buildEncounter(notPreferred, tenDaysAgo));
+        firstPrefferedVisit.addEncounter(buildEncounter(notPreferred, elevenDaysAgo));
+        secondPrefferedVisit.addEncounter(buildEncounter(notPreferred, eightDaysAgo));
+      
+
+        when(mockVisitService.getVisitsByPatient(notPreferred, true, false)).thenReturn(Arrays.asList(nonPrefferedVisit));
+        when(mockVisitService.getVisitsByPatient(preferred, true, false)).thenReturn(Arrays.asList(firstPrefferedVisit, secondPrefferedVisit));
+       
+
+        service.mergePatients(preferred, notPreferred);
+
+        assertThat(firstPrefferedVisit.getStartDatetime(), is(twelveDaysAgo));
+        assertThat(firstPrefferedVisit.getStopDatetime(), is(eightDaysAgo));
+        assertThat(secondPrefferedVisit.getStartDatetime(), is(nineDaysAgo));
+        assertThat(secondPrefferedVisit.getStopDatetime(), is(sevenDaysAgo));
+        
         verify(mockPatientService).mergePatients(preferred, notPreferred);
     }
 
