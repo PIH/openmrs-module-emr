@@ -43,7 +43,7 @@
         <hr/>
         ${ ui.message("emr.gender") }: ${ ui.message("emr.gender." + patient1.gender) } <br/>
         ${ ui.message("emr.birthdate") }: ${ formatBirthdate(patient1.patient) } <br/>
-        ${ ui.message("emr.age") }: ${ patient.age ? ui.message("ageYears", patient1.age) : ui.message("emr.unknownAge") }
+        ${ ui.message("emr.age") }: ${ patient1.age ? ui.message("ageYears", patient1.age) : ui.message("emr.unknownAge") }
     </label>
 
     <span id="separator"></span>
@@ -56,7 +56,7 @@
         <hr/>
         ${ ui.message("emr.gender") }: ${ ui.message("emr.gender." + patient2.gender) } <br/>
         ${ ui.message("emr.birthdate") }: ${ formatBirthdate(patient2.patient) } <br/>
-        ${ ui.message("emr.age") }: ${ patient.age ? ui.message("ageYears", patient2.age) : ui.message("emr.unknownAge") }
+        ${ ui.message("emr.age") }: ${ patient2.age ? ui.message("ageYears", patient2.age) : ui.message("emr.unknownAge") }
     </label>
 
     <br/><br/>
