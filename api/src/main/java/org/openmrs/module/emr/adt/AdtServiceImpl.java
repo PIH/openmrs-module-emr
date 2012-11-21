@@ -14,6 +14,14 @@
 
 package org.openmrs.module.emr.adt;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,17 +46,11 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
+import org.openmrs.module.emr.paperrecord.PaperRecordService;
 import org.openmrs.serialization.SerializationException;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 
 public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
@@ -56,6 +58,8 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
     private final Log log = LogFactory.getLog(getClass());
 
     private EmrProperties emrProperties;
+    
+    private PaperRecordService paperRecordService;
 
     private AdministrationService administrationService;
     
@@ -89,6 +93,10 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 
     public void setEncounterService(EncounterService encounterService) {
         this.encounterService = encounterService;
+    }
+    
+    public void setPaperRecordService(PaperRecordService paperRecordService) {
+    	this.paperRecordService = paperRecordService;
     }
 
     public void setVisitService(VisitService visitService) {
@@ -439,6 +447,15 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
                 }
             }
         }
+        
+        List<PaperRecordRequest> paperRecordRequestList= paperRecordService.getPaperRecordRequest(notPreferred);
+        if(paperRecordRequestList!=null && paperRecordRequestList.size()>0){
+        	for(PaperRecordRequest paperRecordRequest : paperRecordRequestList){
+        		paperRecordRequest.setPatient(preferred);
+        		paperRecordService.savePaperRecordRequest(paperRecordRequest);
+        	}
+        }
+        
         try {
             patientService.mergePatients(preferred, notPreferred);
         } catch (SerializationException e) {

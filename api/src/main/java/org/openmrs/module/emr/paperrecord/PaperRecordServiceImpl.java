@@ -121,6 +121,15 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     }
 
     @Override
+    public PaperRecordRequest savePaperRecordRequest(PaperRecordRequest paperRecordRequest) {
+	    PaperRecordRequest request =null;
+    	if(paperRecordRequest!=null){
+    		return paperRecordRequestDAO.saveOrUpdate(paperRecordRequest);
+    	}
+	    return request;
+    }
+
+	@Override
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getOpenPaperRecordRequestsToPull() {
         return paperRecordRequestDAO.findPaperRecordRequests(PaperRecordRequest.Status.OPEN, true);
@@ -181,7 +190,15 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         return paperRecordRequestDAO.findPaperRecordRequests(PaperRecordRequest.Status.ASSIGNED_TO_PULL);
     }
 
+    
+    
     @Override
+    @Transactional(readOnly = true)
+    public List<PaperRecordRequest> getPaperRecordRequest(Patient patient) {	    
+	    return paperRecordRequestDAO.findPaperRecordRequests(patient);	    
+    }
+
+	@Override
     @Transactional
     public String createPaperMedicalRecordNumberFor(Patient patient, Location medicalRecordLocation) {
         if (patient == null){

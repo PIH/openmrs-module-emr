@@ -106,6 +106,7 @@
         <property name="target">
             <bean class="${project.parent.groupId}.${project.parent.artifactId}.adt.AdtServiceImpl">
             	<property name="emrProperties" ref="emrProperties" />
+            	<property name="paperRecordService" ref="paperRecordService" />
             	<property name="administrationService" ref="adminService" />
             	<property name="encounterService" ref="encounterService" />
             	<property name="orderService" ref="orderService" />

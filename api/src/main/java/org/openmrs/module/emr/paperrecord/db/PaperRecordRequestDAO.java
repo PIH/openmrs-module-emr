@@ -30,6 +30,15 @@ public interface PaperRecordRequestDAO extends SingleClassDAO<PaperRecordRequest
      * @return the paper record requests with the specified status
      */
     List<PaperRecordRequest> findPaperRecordRequests(PaperRecordRequest.Status status);
+    
+    /**
+     * 
+     * Returns all paper record requests with the specified Patient
+     * 
+     * @param patient
+     * @return
+     */
+    List<PaperRecordRequest> findPaperRecordRequests(Patient patient);
 
     /**
      * Returns all the paper record requests with the specified status that either have or don't have

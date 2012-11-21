@@ -39,6 +39,7 @@ import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.paperrecord.PaperRecordService;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -81,6 +82,7 @@ public class AdtServiceTest {
     private AdtServiceImpl service;
 
     VisitService mockVisitService;
+    PaperRecordService mockPaperRecordService;
     EncounterService mockEncounterService;
     ProviderService mockProviderService;
     PatientService mockPatientService;
@@ -113,6 +115,7 @@ public class AdtServiceTest {
         mockVisitService = mock(VisitService.class);
         mockEncounterService = mock(EncounterService.class);
         mockPatientService = mock(PatientService.class);
+        mockPaperRecordService = mock(PaperRecordService.class);
 
         checkInClerkEncounterRole = new EncounterRole();
         checkInEncounterType = new EncounterType();
@@ -137,6 +140,7 @@ public class AdtServiceTest {
         AdtServiceImpl service = new AdtServiceImpl();
         service.setPatientService(mockPatientService);
         service.setVisitService(mockVisitService);
+        service.setPaperRecordService(mockPaperRecordService);
         service.setEncounterService(mockEncounterService);
         service.setProviderService(mockProviderService);
         service.setEmrProperties(emrProperties);

@@ -36,6 +36,16 @@ public interface PaperRecordService extends OpenmrsService {
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     PaperRecordRequest getPaperRecordRequestById(Integer id);
+    
+    /**
+     * 
+     * Fetches a list of Paper Record Request for the specified Patient
+     * 
+     * @param patient a Patient
+     * @return a List<PaperRecordRequest>
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
+    List<PaperRecordRequest> getPaperRecordRequest(Patient patient);
 
     /**
      * Requests the paper record for the specified patient for the specified location
@@ -65,6 +75,14 @@ public interface PaperRecordService extends OpenmrsService {
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     List<PaperRecordRequest> getOpenPaperRecordRequestsToCreate();
 
+    /**
+     * 
+     * Creates or updates a Paper Record Request
+     * 
+     * @return
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
+    PaperRecordRequest savePaperRecordRequest(PaperRecordRequest paperRecordRequest);
 
     /**
      * Sets the status to ASSIGNED_TO_PULL and the assignee to the given value, for the given requests.

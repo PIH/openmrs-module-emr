@@ -40,8 +40,15 @@ public class HibernatePaperRecordRequestDAO  extends HibernateSingleClassDAO<Pap
 
         return (List<PaperRecordRequest>) criteria.list();
     }
-
+    
     @Override
+    public List<PaperRecordRequest> findPaperRecordRequests(Patient patient) {
+    	Criteria criteria = createPaperRecordCriteria();
+        addPatientRestriction(criteria, patient);
+        return (List<PaperRecordRequest>) criteria.list();
+    }
+
+	@Override
     public List<PaperRecordRequest> findPaperRecordRequests(PaperRecordRequest.Status status, boolean hasIdentifier) {
 
         Criteria criteria = createPaperRecordCriteria();
