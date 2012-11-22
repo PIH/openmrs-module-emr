@@ -106,5 +106,5 @@
 
     <input type="button" id="cancel-button" class="button secondary" value="${ ui.message("emr.no") }"/>
 
-    <input type="submit" class="button primary" value="${ ui.message("emr.yesContinue") }"/>
+    <input type="submit" id="confirm-button" class="button primary" value="${ ui.message("emr.yesContinue") }"/>
 </form>
