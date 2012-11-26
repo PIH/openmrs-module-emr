@@ -1,0 +1,74 @@
+.label {
+    font-size: 1.2em;
+    font-weight: bold;
+    padding: 5px 10px 5px 10px;
+}
+
+input {
+    font-size: 1.2em;
+}
+
+section {
+	margin: 10px 20px 10px 20px;
+	img.field_check {
+	    vertical-align: middle;
+	}
+	ul {
+	    display: none;
+	}
+}
+
+section.focused {
+	background-color: #37ADE3;
+	color: #FFFFFF;
+	border-radius: 10px;
+
+	span.value {
+	    display: none;
+	}
+	ul {
+	    display: block;
+	    list-style: none;
+	    padding: 20px 0px 20px 50px;
+	    li {
+	        margin: 3px 0px;
+            label {
+                font-weight: bold;
+                margin: 0px 5px;
+            }
+            input, select {
+                border: 3px solid #F0F0F0;
+                display: inline;
+            }
+            input:focus, select:focus {
+                border-color: #FCBD02;
+            }
+            div {
+                margin-left: 50px;
+            }
+        }
+	}
+}
+
+div.actions {
+    float: right;
+}
+
+
+input.submit {
+    background-color: #A2BE1B;
+    color: #FFFFFF;
+    font-weight: bold;
+    font-size: 1.2em;
+    border-radius: 5px;
+    padding: 5px 20px 5px 20px;
+}
+
+a.cancel, a.cancel:visited {
+    background-color: #F;
+    color: #BF0024;
+    font-weight: bold;
+    font-size: 1.2em;
+    padding: 5px 20px 5px 20px;
+}
+

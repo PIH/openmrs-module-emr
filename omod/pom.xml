@@ -34,6 +34,12 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>rubygems</groupId>
+            <artifactId>compass</artifactId>
+            <version>0.11.7</version>
+            <type>gem</type>
+        </dependency>
     </dependencies>
 
 	<build>
@@ -115,6 +121,22 @@
 						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
+                <plugin>
+                    <groupId>org.jasig.maven</groupId>
+                    <artifactId>sass-maven-plugin</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <sassSourceDirectory>${basedir}/src/main/webapp</sassSourceDirectory>
+                        <outputDirectory>${basedir}/src/main/webapp/resources/styles</outputDirectory>
+                        <baseOutputDirectory>${basedir}/src/main/webapp/resources/styles</baseOutputDirectory>
+                        <skin>scss</skin>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>de.saumya.mojo</groupId>
+                    <artifactId>gem-maven-plugin</artifactId>
+                    <version>0.28.6</version>
+                </plugin>
 			</plugins>
 		</pluginManagement>
 
@@ -183,7 +205,51 @@
                     <skipTests>false</skipTests>
                 </configuration>
 		    </plugin>
+            <plugin>
+                <groupId>de.saumya.mojo</groupId>
+                <artifactId>gem-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!--jrubyVersion>1.6.4</jrubyVersion-->
+                    <execArgs>${project.build.directory}/rubygems/bin/compass compile ${basedir}/src/main/compass</execArgs>
+                </configuration>
+            </plugin>
         </plugins>
 	</build>
+
+    <profiles>
+        <profile>
+            <id>watch-sass</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>de.saumya.mojo</groupId>
+                        <artifactId>gem-maven-plugin</artifactId>
+                        <extensions>true</extensions>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <!--jrubyVersion>1.6.4</jrubyVersion-->
+                            <execArgs>${project.build.directory}/rubygems/bin/compass watch ${basedir}/src/main/compass</execArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
