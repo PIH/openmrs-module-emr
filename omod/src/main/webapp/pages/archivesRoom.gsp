@@ -48,6 +48,17 @@
 
         var assignedPullRequestsViewModel = AssignedPullRequestsViewModel(assignedRecordsToPull);
         ko.applyBindings(assignedPullRequestsViewModel, document.getElementById('tab-assignedpullrequest'));
+
+        var assignedRecordsToCreate = [];
+        <% assignedRequestsToCreate.each { %>
+        assignedRecordsToCreate.push(RecordRequestModel(
+                ${it.requestId}, "${ui.format(it.patient)}", "${ui.format(it.patient.getPatientIdentifier(primaryIdentifierType).identifier)}", "${it.identifier}", "${ui.format(it.requestLocation)}", "${timeFormat.format(it.dateCreated)}", ${it.dateCreated.time}
+        ));
+        <% } %>
+
+        var assignedCreateRequestsViewModel = AssignedCreateRequestsViewModel(assignedRecordsToCreate);
+        ko.applyBindings(assignedCreateRequestsViewModel, document.getElementById('tab-assignedcreaterequest'));
+
     });
 </script>
 <style>
@@ -55,7 +66,7 @@
         background-color: yellow;
     }
 
-    #pull_requests {
+    #pull_requests, #create_requests, #assigned_create_requests, #assigned_pull_requests {
         float:left;
         padding: 0 50px 0 50px;
     }
@@ -72,6 +83,8 @@
             <li><a id="tab-selector-createrequest" href="#tab-createrequest">${ ui.message("emr.archivesRoom.openCreateRequests.label") }</a></li>
             <li><a id="tab-selector-pullrequest" href="#tab-pullrequest">${ ui.message("emr.archivesRoom.openPullRequests.label") }</a></li>
             <li><a id="tab-selector-assignedpullrequest" href="#tab-assignedpullrequest">${ ui.message("emr.archivesRoom.assignedPullRequests.label") }</a></li>
+            <li><a id="tab-selector-assignedcreaterequest" href="#tab-assignedcreaterequest">${ ui.message("emr.archivesRoom.assignedCreateRequests.label") }</a></li>
+
         </ul>
 
 
@@ -158,7 +171,31 @@
                 </tr>
                 </thead>
                 <tbody data-bind="foreach: assignedRecordsToPull">
-                <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), even: (\$index() % 2 == 0) }, click: \$root.selectRecordsToBeCreated" >
+                <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), even: (\$index() % 2 == 0) }" >
+                    <td><span data-bind="text: patientName"></span></td>
+                    <td><span data-bind="text: dossierNumber"></span></td>
+                    <td><span data-bind="text: sendToLocation"></span></td>
+                    <td><span data-bind="text: timeRequested"></span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="tab-assignedcreaterequest">
+            <h1 id="assigned_create_requests">${ ui.message("emr.archivesRoom.assignedCreateRequests.label") }</h1>
+
+
+            <table id="assigned_create_requests_table" class="dataTable">
+                <thead>
+                <tr>
+                    <th>${ ui.message("emr.person.name") }</th>
+                    <th>${ ui.message("emr.patient.paperRecordIdentifier") }</th>
+                    <th>${ ui.message("emr.location") }</th>
+                    <th>${ ui.message("emr.time") }</th>
+                </tr>
+                </thead>
+                <tbody data-bind="foreach: assignedRecordsToCreate">
+                <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), even: (\$index() % 2 == 0) }" >
                     <td><span data-bind="text: patientName"></span></td>
                     <td><span data-bind="text: dossierNumber"></span></td>
                     <td><span data-bind="text: sendToLocation"></span></td>

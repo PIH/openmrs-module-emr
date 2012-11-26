@@ -24,11 +24,13 @@ public class ArchivesRoomPageController {
         List<PaperRecordRequest> openPaperRecordRequestsToPull = paperRecordService.getOpenPaperRecordRequestsToPull();
         List<PaperRecordRequest> openPaperRecordRequestsToCreate = paperRecordService.getOpenPaperRecordRequestsToCreate();
         List<PaperRecordRequest> assignedPaperRecordRequestsToPull = paperRecordService.getAssignedPaperRecordRequestsToPull();
+        List<PaperRecordRequest> assignedPaperRecordRequestsToCreate = paperRecordService.getAssignedPaperRecordRequestsToCreate();
         String primaryIdentifierType = administrationService.getGlobalProperty(PRIMARY_IDENTIFIER_TYPE);
 
         model.addAttribute("openRequestsToCreate", openPaperRecordRequestsToCreate);
         model.addAttribute("openRequestsToPull", openPaperRecordRequestsToPull);
         model.addAttribute("assignedRequestsToPull", assignedPaperRecordRequestsToPull);
+        model.addAttribute("assignedRequestsToCreate", assignedPaperRecordRequestsToCreate);
         model.addAttribute("primaryIdentifierType", primaryIdentifierType);
         model.addAttribute("activeTab", activeTab);
     }

@@ -61,6 +61,14 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     	this.administrationService = administrationService;
     }
 
+    public void setIdentifierSourceService(IdentifierSourceService identifierSourceService) {
+        this.identifierSourceService = identifierSourceService;
+    }
+
+    public void setPatientService(PatientService patientService) {
+        this.patientService = patientService;
+    }
+
 	@Override
     @Transactional(readOnly = true)
     public PaperRecordRequest getPaperRecordRequestById(Integer id) {
@@ -190,8 +198,12 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         return paperRecordRequestDAO.findPaperRecordRequests(PaperRecordRequest.Status.ASSIGNED_TO_PULL);
     }
 
-    
-    
+    @Override
+    @Transactional(readOnly = true)
+    public List<PaperRecordRequest> getAssignedPaperRecordRequestsToCreate() {
+        return paperRecordRequestDAO.findPaperRecordRequests(PaperRecordRequest.Status.ASSIGNED_TO_CREATE);
+    }
+
     @Override
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getPaperRecordRequestsByPatient(Patient patient) {
@@ -236,11 +248,4 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         return paperRecordIdentifierType;
     }
 
-    public void setIdentifierSourceService(IdentifierSourceService identifierSourceService) {
-        this.identifierSourceService = identifierSourceService;
-    }
-
-    public void setPatientService(PatientService patientService) {
-        this.patientService = patientService;
-    }
 }

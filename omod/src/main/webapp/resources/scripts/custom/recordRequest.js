@@ -64,3 +64,10 @@ function AssignedPullRequestsViewModel(assignedRecordsToPull) {
 
     return api;
 }
+
+function AssignedCreateRequestsViewModel(assignedRecordsToCreate) {
+    var api = {};
+    api.assignedRecordsToCreate = ko.observableArray(assignedRecordsToCreate);
+
+    return api;
+}
