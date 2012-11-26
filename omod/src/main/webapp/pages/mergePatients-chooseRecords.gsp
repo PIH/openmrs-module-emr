@@ -26,6 +26,7 @@
     <h3>${ ui.message("emr.mergePatients.selectTwo") }</h3>
 
     ${ ui.includeFragment("emr", "field/autocomplete", [
+            id: "choose-first",
             label: ui.message("emr.mergePatients.chooseFirstLabel"),
             formFieldName: "patient1",
             fragment: "findPatient",
@@ -37,6 +38,7 @@
     <br/>
 
     ${ ui.includeFragment("emr", "field/autocomplete", [
+            id: "choose-second",
             label: ui.message("emr.mergePatients.chooseSecondLabel"),
             formFieldName: "patient2",
             fragment: "findPatient",
