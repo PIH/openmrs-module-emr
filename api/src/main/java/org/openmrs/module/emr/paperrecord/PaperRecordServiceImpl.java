@@ -210,8 +210,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 	    return paperRecordRequestDAO.findPaperRecordRequests(patient);	    
     }
 
-	@Override
-    @Transactional
+    // leaving this method as public so that it can be tested by integration test in mirebalais module
     public String createPaperMedicalRecordNumberFor(Patient patient, Location medicalRecordLocation) {
         if (patient == null){
             throw new IllegalArgumentException("Patient shouldn't be null");

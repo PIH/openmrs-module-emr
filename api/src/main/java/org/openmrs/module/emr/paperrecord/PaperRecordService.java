@@ -110,8 +110,4 @@ public interface PaperRecordService extends OpenmrsService {
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     List<PaperRecordRequest> getAssignedPaperRecordRequestsToCreate();
 
-    // TODO: we can probably remove this as a public method after we remove it from the Patient registration module
-    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
-    String createPaperMedicalRecordNumberFor(Patient patient, Location medicalRecordLocation);
-
 }
