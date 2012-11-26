@@ -28,8 +28,9 @@
         </li>
         <li>
             <label for="location">Location</label>
-            <select id="location" data-bind="value:location, options:locations, optionsText:'name', optionsCaption:'Choose location ...'">
-            </select>
+            <div id="location" class="optionsList" data-bind="foreach: locations">
+                <span class="option" data-bind="text: name"></span>
+            </div>
         </li>
         <li>
             <label for="checkinDate">Check-in date</label>

@@ -5,6 +5,7 @@ var FormNavigator = function(submitElement, cancelElement) {
     var currentSection;
     var focusSectionsCounter = [];
     var currentField;
+    var currentOptionFromList;
 
     sections.click( function() {
         api.gotoSection($(this));
@@ -27,7 +28,7 @@ var FormNavigator = function(submitElement, cancelElement) {
             return;
         }
 
-        var fields = $(currentSection).find('input,select');
+        var fields = $(currentSection).find('input,select,.optionsList');
         var fieldIndex = $.inArray(currentField, fields);
 
         if(fieldIndex == fields.length - 1) {
@@ -35,29 +36,49 @@ var FormNavigator = function(submitElement, cancelElement) {
             if(sectionIndex == sections.length - 1) gotoSubmit();
             else api.gotoSection(sections[sectionIndex + 1]);
         } else {
+            $(currentField).blur();
+            $(currentField).removeClass('focusedQuestion');
             currentField = fields[fieldIndex + 1];
-            if( $(currentField).is(':visible')) $(currentField).focus();
+            if( $(currentField).is(':visible')) {
+                $(currentField).addClass('focusedQuestion');
+                $(currentField).focus();
+                if($(currentField).children('.option').length > 0) {
+                    currentOptionFromList = $(currentField).children('.option').first();
+                    currentOptionFromList
+                }
+            }
             else api.jumpToNextField();
         }
     };
     api.jumpToPreviousField = function() {
-        var fields = $(currentSection).find('input,select');
+        var fields = $(currentSection).find('input,select,.optionsList');
         var fieldIndex = $.inArray(currentField, fields);
 
         if(!currentField || fieldIndex == 0) {
             var sectionIndex = $.inArray(currentSection, sections);
             if(sectionIndex != 0) api.gotoSection(sections[sectionIndex - 1]);
         } else {
+            $(currentField).blur();
+            $(currentField).removeClass('focusedQuestion');
             currentField = fields[fieldIndex - 1];
-            if( $(currentField).is(':visible')) $(currentField).focus();
+            if( $(currentField).is(':visible')) {
+                $(currentField).addClass('focusedQuestion');
+                $(currentField).focus();
+            }
             else api.jumpToPreviousField();
         }
     };
+    api.moveDownIfOnOptionsList = function() {
+        if( $(currentField).hasClass('optionsList') ) {
+            currentOptionFromList
+        }
+    }
 
     var keyFunctions = {
         /*TAB*/   9  : api.jumpToNextField,
         /*ENTER*/ 13 : api.jumpToNextField,
-        /*ESC*/   27 : api.jumpToPreviousField
+        /*ESC*/   27 : api.jumpToPreviousField,
+        /*UP*/    40 : api.moveDownIfOnOptionsList
     };
 
     $('body').keydown(function(key) {
@@ -71,6 +92,12 @@ var FormNavigator = function(submitElement, cancelElement) {
     return api;
 }
 
+/*
+ api.questions = [
+    { label: "Payment Reason", type: "optionsList", options: [ ... ], value: ko.observable() },
+    OptionListQuestion("Payment Reason", [ ... ])
+ ];
+ */
 
 
 
@@ -85,7 +112,7 @@ function RetrospectiveCheckinViewModel() {
     api.paymentAmounts = [
         {name:"50 Gourdes", value:50},
         {name:"100 Gourdes", values:100},
-        {name:"Exemtpt", values:0}];
+        {name:"Exempt", values:0}];
 
     api.location = ko.observable();
     api.patientIdentifier = ko.observable();
