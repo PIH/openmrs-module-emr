@@ -19,7 +19,7 @@
     <bean id="emrArchivesRoomApp" class="org.openmrs.module.appframework.SimpleAppDescriptor">
         <property name="id" value="emr.archivesRoom"/>
         <property name="label" value="Archives"/>
-        <property name="homepageUrl" value="emr/archivesRoom.page"/>
+        <property name="homepageUrl" value="emr/paperrecord/archivesRoom.page"/>
         <property name="iconUrl" value="moduleResources/uilibrary/images/folder_32.png"/>
         <property name="order" value="1" />
     </bean>

@@ -1,4 +1,4 @@
-package org.openmrs.module.emr.page.controller;
+package org.openmrs.module.emr.page.controller.paperrecord;
 
 import org.openmrs.Person;
 import org.openmrs.api.AdministrationService;
@@ -50,7 +50,7 @@ public class ArchivesRoomPageController {
         } catch (IllegalStateException ex) {
             session.setAttribute(WebConstants.OPENMRS_ERROR_ATTR, ui.message("emr.archivesRoom.alreadyAssigned"));
         }
-        return "redirect:emr/archivesRoom.page?activeTab=" + activeTab;
+        return "redirect:emr/paperrecord/archivesRoom.page?activeTab=" + activeTab;
     }
 
 }
