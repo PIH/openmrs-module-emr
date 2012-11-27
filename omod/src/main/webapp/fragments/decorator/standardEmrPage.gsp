@@ -11,9 +11,9 @@
     <div id="header">
         <div id="user-info">
             <% if (context.authenticated) { %>
-                <div id="username"> ${ context.authenticatedUser.username ?: context.authenticatedUser.systemId }: ${ ui.format(emrContext.sessionLocation) } </div>
-                <div id="changeLocation">Change Location</div>
-                <div id="logout"><a href="/${ contextPath }/logout">Logout</a></div>
+                <span class="header-menu"> ${ context.authenticatedUser.username ?: context.authenticatedUser.systemId }: ${ ui.format(emrContext.sessionLocation) } </span>
+                <span class="header-menu">Change Location</span>
+                <span class="header-menu"><a href="/${ contextPath }/logout">Logout</a></span>
             <% } %>
         </div>
 
