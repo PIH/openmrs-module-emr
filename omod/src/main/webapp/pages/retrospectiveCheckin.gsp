@@ -18,7 +18,7 @@
         data-bind="style: {visibility: checkinInfoIsValid() ? 'visible':'hidden'}"/>
     <span class="label">Check-in information</span>
     <span class="value" data-bind="text:patientIdentifier"></span> -
-    <span class="value" data-bind="text:location() ? location().name : ''"></span> -
+    <span class="value" data-bind="text:locations().selectedOption() ? locations().selectedOption().name : ''"></span> -
     <span class="value" data-bind="text:checkinDate"></span>
 
     <ul>
@@ -26,11 +26,11 @@
             <label for="patientIdentifier">Patient identifier</label>
             <input id="patientIdentifier" type="text" data-bind="value:patientIdentifier" />
         </li>
-        <li>
+        <li data-bind="with:locations">
             <label for="location">Location</label>
-            <div id="location" class="optionsList" data-bind="foreach: locations">
+            <div id="location" class="optionsList" data-bind="foreach: options">
                 <span class="option"
-                      data-bind="text: name, click:\$root.selectCheckinLocation, css:{selectedOption: selected}"></span>
+                      data-bind="text: name, click:\$parent.selectOption, css:{selectedOption: selected}"></span>
             </div>
         </li>
         <li>
@@ -44,26 +44,30 @@
     <img class="field_check" src=${ui.resourceLink("emr", "images/checked.png")}
         data-bind="style: {visibility: paymentInfoIsValid() ? 'visible':'hidden'}" />
     <span class="label">Payment</span>
-    <span class="value" data-bind="text:paymentReason() ? paymentReason().name : ''"></span>
-    <span class="value" data-bind="text:amountPaid() ? amountPaid().name : ''"></span>
+    <span class="value" data-bind="text:paymentReasons().selectedOption() ? paymentReasons().selectedOption().name : ''"></span>
+    <span class="value" data-bind="text:paymentAmounts().selectedOption() ? paymentAmounts().selectedOption().name : ''"></span>
 
     <ul>
-        <li>
+        <li data-bind="with:paymentReasons">
             <label for="paymentReason">Reason</label>
-            <select id="paymentReason" data-bind="value:paymentReason, options:paymentReasons, optionsText:'name', optionsCaption:'Choose reason ...'">
+            <div id="paymentReason" class="optionsList" data-bind="foreach: options">
+                <span class="option"
+                      data-bind="text: name, click:\$parent.selectOption, css:{selectedOption: selected}"></span>
+            </div>
             </select>
         </li>
-        <li>
+        <li data-bind="with:paymentAmounts">
             <label for="paymentAmount">Amount</label>
-            <select id="paymentAmount" data-bind="value:amountPaid, options:paymentAmounts, optionsText:'name', optionsCaption:'Choose amount ...'" >
-            </select>
+            <div id="paymentAmount" class="optionsList" data-bind="foreach: options">
+                <span class="option"
+                      data-bind="text: name, click:\$parent.selectOption, css:{selectedOption: selected}"></span>
+            </div>
         </li>
     </ul>
 </section>
 
 <section id="encountersInformation">
-    <img class="field_check" src=${ui.resourceLink("emr", "images/checked.png")}
-         data-bind="style: {visibility: amountPaid() ? 'visible':'hidden'}"/>
+    <img class="field_check" src=${ui.resourceLink("emr", "images/checked.png")} />
     <span class="label">Encounters</span>
 
     <ul>

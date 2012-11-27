@@ -23,6 +23,14 @@ var FormNavigator = function(submitElement, cancelElement) {
     };
 
     api.jumpToNextField = function() {
+        if(currentOptionFromList) {
+            koContext = ko.contextFor(currentOptionFromList);
+            if(koContext) {
+                koContext.$parent.selectOption(koContext.$data);
+                console.log(koContext.$parent);
+            }
+        }
+
         if(!currentSection) {
             api.gotoSection(sections[0]);
             return;
@@ -38,13 +46,16 @@ var FormNavigator = function(submitElement, cancelElement) {
         } else {
             $(currentField).blur();
             $(currentField).removeClass('focusedQuestion');
+            if(currentOptionFromList) {
+                $(currentOptionFromList).removeClass("focusedOption");
+            }
             currentField = fields[fieldIndex + 1];
             if( $(currentField).is(':visible')) {
                 $(currentField).addClass('focusedQuestion');
                 $(currentField).focus();
                 if($(currentField).children('.option').length > 0) {
-                    currentOptionFromList = $(currentField).children('.option').first();
-                    currentOptionFromList.addClass("focusedOption");
+                    currentOptionFromList = $(currentField).children('.option')[0];
+                    $(currentOptionFromList).addClass("focusedOption");
                 }
             }
             else api.jumpToNextField();
@@ -60,29 +71,36 @@ var FormNavigator = function(submitElement, cancelElement) {
         } else {
             $(currentField).blur();
             $(currentField).removeClass('focusedQuestion');
+            if(currentOptionFromList) {
+                $(currentOptionFromList).removeClass("focusedOption");
+            }
             currentField = fields[fieldIndex - 1];
             if( $(currentField).is(':visible')) {
                 $(currentField).addClass('focusedQuestion');
                 $(currentField).focus();
+                if($(currentField).children('.option').length > 0) {
+                    currentOptionFromList = $(currentField).children('.option')[0];
+                    $(currentOptionFromList).addClass("focusedOption");
+                }
             }
             else api.jumpToPreviousField();
         }
     };
     api.moveDownIfOnOptionsList = function() {
         if( $(currentField).hasClass('optionsList') ) {
-            if(currentOptionFromList.next()) {
-                currentOptionFromList.removeClass('focusedOption')
-                currentOptionFromList = currentOptionFromList.next();
-                currentOptionFromList.addClass('focusedOption');
+            if($(currentOptionFromList).next()) {
+                $(currentOptionFromList).removeClass('focusedOption')
+                currentOptionFromList = $(currentOptionFromList).next()[0];
+                $(currentOptionFromList).addClass('focusedOption');
             }
         }
     };
     api.moveUpIfOnOptionsList = function() {
         if( $(currentField).hasClass('optionsList') ) {
-            if(currentOptionFromList.prev()) {
-                currentOptionFromList.removeClass('focusedOption')
-                currentOptionFromList = currentOptionFromList.prev();
-                currentOptionFromList.addClass('focusedOption');
+            if($(currentOptionFromList).prev()) {
+                $(currentOptionFromList).removeClass('focusedOption')
+                currentOptionFromList = $(currentOptionFromList).prev()[0];
+                $(currentOptionFromList).addClass('focusedOption');
             }
         }
     };
@@ -115,27 +133,46 @@ var FormNavigator = function(submitElement, cancelElement) {
 
 
 
+function Option(name, value) {
+    var model = {};
+    model.name = name;
+    model.value = value;
+    model.selected = ko.observable(false);
+
+    return model;
+}
+function SelectableOptions(options) {
+    var api = {};
+    api.options = ko.observableArray(options);
+    api.selectedOption = ko.computed(function() {
+        return _.find(api.options(), function(o) {return o.selected()});
+    });
+
+    api.selectOption = function(option) {
+        _.each(api.options(), function(o) {o.selected(false)});
+        option.selected(true);
+    };
+    return api;
+}
+
 function RetrospectiveCheckinViewModel() {
     var api = {};
-    api.locations = [
-        {name:"Emergency", value:1, selected: ko.observable(false)},
-        {name:"Outpatient", value:2, selected: ko.observable(false)}
-    ];
-    api.paymentReasons = [
-        {name:"Medical certificate without diagnosis", value:1},
-        {name:"Standard dental visit", value:2},
-        {name:"Marriage certificate without diagnosis", value:3},
-        {name:"Standard outpatient visit", value:4}];
-    api.paymentAmounts = [
-        {name:"50 Gourdes", value:50},
-        {name:"100 Gourdes", values:100},
-        {name:"Exempt", values:0}];
+    api.locations = ko.observable(SelectableOptions([
+        Option("Emergency", 1),
+        Option("Outpatient", 2),
+        Option("Inpatient", 3)]));
+    api.paymentReasons = ko.observable(SelectableOptions([
+        Option("Medical certificate without diagnosis", 1),
+        Option("Standard dental visit", 2),
+        Option("Marriage certificate without diagnosis", 3),
+        Option("Standard outpatient visit", 4)]));
+    api.paymentAmounts = ko.observable(SelectableOptions([
+        Option("50 Gourdes", 50),
+        Option("100 Gourdes", 100),
+        Option("Exempt", 0)]));
 
-    api.location = ko.observable();
     api.patientIdentifier = ko.observable();
     api.checkinDate = ko.observable();
-    api.paymentReason = ko.observable();
-    api.amountPaid = ko.observable();
     api.receiptNumber = ko.observable();
 
     api.radiologyEncounter = ko.observable(false);
@@ -154,14 +191,10 @@ function RetrospectiveCheckinViewModel() {
 
 
     api.checkinInfoIsValid = function() {
-        return api.patientIdentifier() && api.location() && api.checkinDate();
+        return api.patientIdentifier() && api.locations().selectedOption() && api.checkinDate();
     }
     api.paymentInfoIsValid = function () {
-        return api.paymentReason() && api.amountPaid();
-    }
-    api.selectCheckinLocation = function(location) {
-        _.each(api.locations, function(l) {l.selected(false);});
-        location.selected(true);
+        return api.paymentReasons().selectedOption() && api.paymentAmounts().selectedOption();
     }
     return api;
-}
+};
