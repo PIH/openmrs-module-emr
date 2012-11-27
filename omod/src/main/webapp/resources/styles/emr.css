@@ -9,6 +9,12 @@ body {
     float:left;
 }
 
+#changeLocation{
+    float:left;
+    position:relative;
+    padding-left:25px;
+}
+
 #logout{
     float:right;
 }
