@@ -5,43 +5,6 @@ body {
     margin: 0px;
 }
 
-#username{
-    float:left;
-}
-
-#changeLocation{
-    float:left;
-    position:relative;
-    padding-left:25px;
-}
-
-#logout{
-    float:right;
-}
-
-#sessionLocation {
-    background-color: white;
-    border: 2px solid #b9b299;
-    padding: 5px;
-    margin-bottom: 20px;
-}
-#sessionLocation .selected {
-    background-color: #bbbbbb;
-    font-weight: bold;
-}
-
-.locationOption {
-    font-size: 1.0em;
-    display: inline-block;
-    padding: 3px 15px;
-    width: 250px;
-}
-
-.locationOption:hover, .locationOption:focus {
-    background-color: blue;
-    color: white;
-}
-
 #application-header, #application-header a {
 	color: white;
 	background-color: black;

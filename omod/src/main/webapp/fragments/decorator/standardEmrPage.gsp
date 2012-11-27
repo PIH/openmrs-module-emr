@@ -12,7 +12,7 @@
         <div id="user-info">
             <% if (context.authenticated) { %>
                 <span class="header-menu"> ${ context.authenticatedUser.username ?: context.authenticatedUser.systemId }: ${ ui.format(emrContext.sessionLocation) } </span>
-                <span class="header-menu">Change Location</span>
+                <span class="header-menu location">Change Location</span>
                 <span class="header-menu"><a href="/${ contextPath }/logout">Logout</a></span>
             <% } %>
         </div>
@@ -21,7 +21,7 @@
             <img src="${ ui.resourceLink("mirebalais", "images/pih_grey_logo_small.png") }"/>
         </a>
     </div>
-    <div id="sessionLocation">
+    <div id="sessionLocation" style="display: none;">
         <span class="locationOption" value="24">Antepartum ward</span>
 
         <span class="locationOption" value="8">Community Health</span>
