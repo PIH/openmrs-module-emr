@@ -15,6 +15,8 @@
 package org.openmrs.module.emr.paperrecord;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -38,6 +40,8 @@ import java.util.List;
 import static org.openmrs.module.emr.paperrecord.PaperRecordRequest.Status;
 
 public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperRecordService {
+
+    private final Log log = LogFactory.getLog(getClass());
 
     private PaperRecordRequestDAO paperRecordRequestDAO;
 
@@ -103,11 +107,13 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(Arrays.asList(Status.OPEN, Status.ASSIGNED_TO_PULL, Status.ASSIGNED_TO_CREATE), patient, recordLocation);
 
         if (requests.size() > 1) {
-            throw new IllegalStateException("Duplicate active record requests exist for patient " + patient);
+            // this should not be allowed, but it could possibility happen if you merge two patients that both have
+            // open paper record requests for the same location; we should fix this when we handle story #186
+            log.warn("Duplicate active record requests exist for patient " + patient);
         }
 
         // if an active record exists, simply update that request location, don't issue a new requeset
-        if (requests.size() == 1) {
+        if (requests.size() > 0) {   // TODO: change this to size() == 1 once we  implement story #186 and can guarantee that there won't be multiple requests (see comment above)
             PaperRecordRequest request = requests.get(0);
             request.setRequestLocation(requestLocation);
             paperRecordRequestDAO.saveOrUpdate(request);
