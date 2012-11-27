@@ -44,7 +44,7 @@ var FormNavigator = function(submitElement, cancelElement) {
                 $(currentField).focus();
                 if($(currentField).children('.option').length > 0) {
                     currentOptionFromList = $(currentField).children('.option').first();
-                    currentOptionFromList
+                    currentOptionFromList.addClass("focusedOption");
                 }
             }
             else api.jumpToNextField();
@@ -70,15 +70,29 @@ var FormNavigator = function(submitElement, cancelElement) {
     };
     api.moveDownIfOnOptionsList = function() {
         if( $(currentField).hasClass('optionsList') ) {
-            currentOptionFromList
+            if(currentOptionFromList.next()) {
+                currentOptionFromList.removeClass('focusedOption')
+                currentOptionFromList = currentOptionFromList.next();
+                currentOptionFromList.addClass('focusedOption');
+            }
         }
-    }
+    };
+    api.moveUpIfOnOptionsList = function() {
+        if( $(currentField).hasClass('optionsList') ) {
+            if(currentOptionFromList.prev()) {
+                currentOptionFromList.removeClass('focusedOption')
+                currentOptionFromList = currentOptionFromList.prev();
+                currentOptionFromList.addClass('focusedOption');
+            }
+        }
+    };
 
     var keyFunctions = {
         /*TAB*/   9  : api.jumpToNextField,
         /*ENTER*/ 13 : api.jumpToNextField,
         /*ESC*/   27 : api.jumpToPreviousField,
-        /*UP*/    40 : api.moveDownIfOnOptionsList
+        /*UP*/    40 : api.moveDownIfOnOptionsList,
+        /*DOWN*/  38 : api.moveUpIfOnOptionsList
     };
 
     $('body').keydown(function(key) {
@@ -103,7 +117,10 @@ var FormNavigator = function(submitElement, cancelElement) {
 
 function RetrospectiveCheckinViewModel() {
     var api = {};
-    api.locations = [{name:"Emergency", value:1}, {name:"Outpatient", value:2}];
+    api.locations = [
+        {name:"Emergency", value:1, selected: ko.observable(false)},
+        {name:"Outpatient", value:2, selected: ko.observable(false)}
+    ];
     api.paymentReasons = [
         {name:"Medical certificate without diagnosis", value:1},
         {name:"Standard dental visit", value:2},
@@ -141,6 +158,10 @@ function RetrospectiveCheckinViewModel() {
     }
     api.paymentInfoIsValid = function () {
         return api.paymentReason() && api.amountPaid();
+    }
+    api.selectCheckinLocation = function(location) {
+        _.each(api.locations, function(l) {l.selected(false);});
+        location.selected(true);
     }
     return api;
 }

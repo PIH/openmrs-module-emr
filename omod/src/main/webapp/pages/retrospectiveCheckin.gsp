@@ -29,7 +29,8 @@
         <li>
             <label for="location">Location</label>
             <div id="location" class="optionsList" data-bind="foreach: locations">
-                <span class="option" data-bind="text: name"></span>
+                <span class="option"
+                      data-bind="text: name, click:\$root.selectCheckinLocation, css:{selectedOption: selected}"></span>
             </div>
         </li>
         <li>
