@@ -32,7 +32,7 @@
             ${ ui.format(it.port) }
         </td>
         <td>
-            <a href="/${ contextPath }/emr/printer.page?printerId=${ it.printerId }">
+            <a href="/${ contextPath }/emr/printer/printer.page?printerId=${ it.printerId }">
                 <button>${ ui.message("general.edit") }</button>
             </a>
         </td>
@@ -40,4 +40,4 @@
     <% } %>
 </table>
 
-<a href="/${ contextPath }/emr/printer.page"><button>${ ui.message("emr.printer.add") }</button></a>
+<a href="/${ contextPath }/emr/printer/printer.page"><button>${ ui.message("emr.printer.add") }</button></a>

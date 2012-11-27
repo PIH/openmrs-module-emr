@@ -14,7 +14,7 @@
     }
 %>
 
-<form class="standard-vertical-form" method="post">
+<form class="standard-vertical-form" method="post" action="printer.page">
 
     <h3>${ ui.message("emr.printer.edit") }</h3>
 
@@ -27,7 +27,7 @@
     </fieldset>
 
     <input type="submit" value="${ ui.message("general.save") }" /> &nbsp;&nbsp;&nbsp;
-    <input type="button" value="${ ui.message("general.cancel") }" onclick="javascript:window.location='/${ contextPath }/emr/managePrinters.page'" />
+    <input type="button" value="${ ui.message("general.cancel") }" onclick="javascript:window.location='${ ui.pageLink("emr", "printer/managePrinters") }'" />
 
     <input type="hidden" name="printerId" value="${ printer.id ?: ''}" />
     <input type="hidden" name="uuid" value="${ printer.uuid ?: ''}" />

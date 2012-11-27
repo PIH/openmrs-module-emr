@@ -11,7 +11,7 @@
             ${ ui.message("emr.task.accountManagement.label") }
         </div>
     </a>
-    <a href="${ ui.pageLink("emr", "managePrinters") }">
+    <a href="${ ui.pageLink("emr", "printer/managePrinters") }">
         <div class="task">
             <img src="${ ui.resourceLink("uilibrary", "images/printer.gif")}"/>
             ${ ui.message("emr.printer.managePrinters") }

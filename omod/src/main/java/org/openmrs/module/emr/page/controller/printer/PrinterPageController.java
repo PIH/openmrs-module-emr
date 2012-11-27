@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.emr.page.controller;
+package org.openmrs.module.emr.page.controller.printer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -60,7 +60,7 @@ public class PrinterPageController {
                 printerService.savePrinter(printer);
                 request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, "emr.printer.saved");
 
-                return "redirect:/emr/managePrinters.page";
+                return "redirect:/emr/printer/managePrinters.page";
             }
             catch (Exception e) {
                 log.warn("Some error occured while saving account details:", e);
