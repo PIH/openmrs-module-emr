@@ -1,5 +1,5 @@
 .left-column, .right-column {
-    float: left;
+    display: inline-block;
     width: 45%;
     padding-bottom: 20px;
 }

@@ -31,7 +31,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
     <input type="hidden" name="requestedBy" value="${ currentProvider.id }"/>
 
     <div class="left-column">
-        ${ ui.includeFragment("emr", "field/textarea", [ label: "Indication", formFieldName: "clinicalHistory", labelPosition: "top", rows: 5, cols: 60 ]) }
+        ${ ui.includeFragment("emr", "field/textarea", [ label: "Indication", formFieldName: "clinicalHistory", labelPosition: "top", rows: 5, cols: 40 ]) }
     </div>
 
     <div class="right-column">
@@ -59,7 +59,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
     <div class="left-column">
         <label for="study-search">Type the name of a study:</label><br/>
-        <input id="study-search" style="width: 430px; height: 2em; padding-left: 5px; margin-top: 5px;" type="text" size="40"
+        <input id="study-search" style="width: 330px; height: 2em; padding-left: 5px; margin-top: 5px;" type="text" size="40"
                data-bind="autocomplete:searchTerm, search:convertedStudies, select:selectStudy, clearValue:function() { return true; }"
                placeholder="eg. Chest x-ray"/>
     </div>
