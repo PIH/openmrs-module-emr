@@ -1,5 +1,10 @@
 <%
-    config.require("label")
+    // config supports "label"
+    // config.require("label")
+
+    //config supports "placeholder"
+    //config.require("placeholder")
+
     config.require("formFieldName")
     config.require("fragment")
     config.require("action")
@@ -32,7 +37,7 @@
 <span class="autocomplete-label">${ config.label }</span>
 <div>
     <input type="hidden" class="field-value" id="${ config.id }-value" name="${ config.formFieldName }"/>
-    <input type="text" class="field-display" id="${ config.id }-search" size="40"/>
+    <input type="text" class="field-display" id="${ config.id }-search" placeholder="${ config.placeholder}" size="40"/>
 </div>
 
 <span class="field-error" style="display: none"></span>
