@@ -10,18 +10,40 @@ var FormNavigator = function(submitElement, cancelElement) {
     sections.click( function() {
         api.gotoSection($(this));
     });
+    $('body').append('<div id="invisibleBotton" style="height: 1000px"></div>');
 
-    var gotoSubmit = function() { submit.focus(); };
+    var blurCurrentField = function() {
+        $(currentField).blur();
+        $(currentField).removeClass('focusedQuestion');
+        if(currentOptionFromList) {
+            $(currentOptionFromList).removeClass("focusedOption");
+        }
+    };
+    var focusCurrentField = function() {
+        $(currentField).addClass('focusedQuestion');
+        $(currentField).focus();
+        $('body').scrollTop($(currentField).offset().top - sections.offset().top);
+        if($(currentField).children('.option').length > 0) {
+            currentOptionFromList = $(currentField).children('.option')[0];
+            $(currentOptionFromList).addClass("focusedOption");
+        }
+    };
+    var gotoSubmit = function() {
+        submit.focus();
+    };
 
     api.gotoSection = function(section) {
         if(!currentSection || $(section).attr('id') != $(currentSection).attr('id')) {
-            if(currentSection) $(currentSection).removeClass("focused");
+            blurCurrentField();
+            currentField = undefined;
+            if(currentSection) {
+                $(currentSection).removeClass("focused");
+            }
             currentSection = section;
             $(currentSection).addClass("focused");
-            currentField = undefined;
+            $('body').scrollTop($(currentSection).offset().top - sections.offset().top);
         }
     };
-
     api.jumpToNextField = function() {
         if(currentOptionFromList) {
             koContext = ko.contextFor(currentOptionFromList);
@@ -43,19 +65,10 @@ var FormNavigator = function(submitElement, cancelElement) {
             if(sectionIndex == sections.length - 1) gotoSubmit();
             else api.gotoSection(sections[sectionIndex + 1]);
         } else {
-            $(currentField).blur();
-            $(currentField).removeClass('focusedQuestion');
-            if(currentOptionFromList) {
-                $(currentOptionFromList).removeClass("focusedOption");
-            }
+            blurCurrentField();
             currentField = fields[fieldIndex + 1];
             if( $(currentField).is(':visible')) {
-                $(currentField).addClass('focusedQuestion');
-                $(currentField).focus();
-                if($(currentField).children('.option').length > 0) {
-                    currentOptionFromList = $(currentField).children('.option')[0];
-                    $(currentOptionFromList).addClass("focusedOption");
-                }
+                focusCurrentField();
             }
             else api.jumpToNextField();
         }
@@ -68,19 +81,10 @@ var FormNavigator = function(submitElement, cancelElement) {
             var sectionIndex = $.inArray(currentSection, sections);
             if(sectionIndex != 0) api.gotoSection(sections[sectionIndex - 1]);
         } else {
-            $(currentField).blur();
-            $(currentField).removeClass('focusedQuestion');
-            if(currentOptionFromList) {
-                $(currentOptionFromList).removeClass("focusedOption");
-            }
+            blurCurrentField();
             currentField = fields[fieldIndex - 1];
             if( $(currentField).is(':visible')) {
-                $(currentField).addClass('focusedQuestion');
-                $(currentField).focus();
-                if($(currentField).children('.option').length > 0) {
-                    currentOptionFromList = $(currentField).children('.option')[0];
-                    $(currentOptionFromList).addClass("focusedOption");
-                }
+                focusCurrentField();
             }
             else api.jumpToPreviousField();
         }
@@ -114,7 +118,6 @@ var FormNavigator = function(submitElement, cancelElement) {
     };
 
     $('body').keydown(function(key) {
-        console.log(key.which);
         if(keyFunctions[key.which]) {
             key.preventDefault();
             keyFunctions[key.which]();
@@ -123,6 +126,8 @@ var FormNavigator = function(submitElement, cancelElement) {
 
     return api;
 }
+
+
 
 function Option(name, value) {
     var model = {};
