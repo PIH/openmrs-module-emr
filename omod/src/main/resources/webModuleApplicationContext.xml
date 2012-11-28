@@ -58,5 +58,11 @@
         <property name="url" value="emr/orderCTScan.page"/>
         <property name="priority" value="20"/>
     </bean>
+    <bean id="emrRetrospectiveCheckIn" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
+        <property name="id" value="emr.retrospectiveCheckIn"/>
+        <property name="labelCode" value="emr.task.retrospectiveCheckIn.label"/>
+        <property name="url" value="emr/spike/retrospectiveVisit.page"/>
+        <property name="priority" value="10"/>
+    </bean>
 
 </beans>

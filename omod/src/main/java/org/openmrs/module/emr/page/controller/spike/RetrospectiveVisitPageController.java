@@ -14,12 +14,18 @@
 
 package org.openmrs.module.emr.page.controller.spike;
 
+import org.openmrs.Patient;
+import org.openmrs.ui.framework.page.PageModel;
+import org.springframework.web.bind.annotation.RequestParam;
+
 /**
  *
  */
 public class RetrospectiveVisitPageController {
 
-    public void get() {
+    public void get(@RequestParam("patientId") Patient patient,
+                    PageModel model) {
+        model.addAttribute("patient", patient);
     }
 
 }

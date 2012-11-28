@@ -1,0 +1,7 @@
+<div class="option-list">
+    {{ _.each(options, function(option) { }}
+        <div class="option{{ if (option.value == value) { }} selected{{ } }}">
+            {{- option.label }}
+        </div>
+    {{ }); }}
+</div>
