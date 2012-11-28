@@ -179,7 +179,6 @@ public class EmrActivator implements ModuleActivator {
 
     private void createGlobalProperties(AdministrationService administrationService) {
 
-
         // When https://tickets.openmrs.org/browse/TRUNK-3773 is resolved, refactor this
         GlobalProperty gp = administrationService.getGlobalPropertyObject(OpenmrsConstants.GP_VISIT_ASSIGNMENT_HANDLER);
         if (gp == null) {
@@ -198,6 +197,7 @@ public class EmrActivator implements ModuleActivator {
             defaultLabelPrinterAttributeType = new LocationAttributeType();
             defaultLabelPrinterAttributeType.setUuid(LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER.get("LABEL"));
             defaultLabelPrinterAttributeType.setDatatypeClassname(PrinterDatatype.class.getName());
+            defaultLabelPrinterAttributeType.setDatatypeConfig("LABEL");
             defaultLabelPrinterAttributeType.setMaxOccurs(1);
             defaultLabelPrinterAttributeType.setMinOccurs(0);
             defaultLabelPrinterAttributeType.setName("Default Label Printer");
@@ -213,6 +213,7 @@ public class EmrActivator implements ModuleActivator {
             defaultIdCardPrinterAttributeType = new LocationAttributeType();
             defaultIdCardPrinterAttributeType.setUuid(LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER.get("ID_CARD"));
             defaultIdCardPrinterAttributeType.setDatatypeClassname(PrinterDatatype.class.getName());
+            defaultIdCardPrinterAttributeType.setDatatypeConfig("ID_CARD");
             defaultIdCardPrinterAttributeType.setMaxOccurs(1);
             defaultIdCardPrinterAttributeType.setMinOccurs(0);
             defaultIdCardPrinterAttributeType.setName("Default ID card Printer");

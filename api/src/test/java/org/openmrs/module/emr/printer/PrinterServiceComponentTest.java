@@ -18,12 +18,16 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Location;
+import org.openmrs.LocationAttribute;
+import org.openmrs.LocationAttributeType;
+import org.openmrs.api.APIException;
 import org.openmrs.api.LocationService;
-import org.openmrs.module.emr.EmrActivator;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+
+import static org.openmrs.module.emr.EmrConstants.LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER;
 
 public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest {
 
@@ -121,9 +125,6 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
     @Test
     public void shouldSetDefaultLabelPrinterForLocation() {
 
-        EmrActivator emrActivator = new EmrActivator();
-        emrActivator.started();
-
         Location location = locationService.getLocation(2);
         Printer printer = printerService.getPrinterById(1);
 
@@ -136,14 +137,32 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
     @Test
     public void shouldGetDefaultLabelPrinterForLocation() {
 
-        EmrActivator emrActivator = new EmrActivator();
-        emrActivator.started();
-
         Location location = locationService.getLocation(3);
         Printer printer = printerService.getPrinterById(1);  // this has been set as the default printer for location 3 in dataset
 
         Printer fetchedPrinter = printerService.getDefaultPrinter(location, Printer.Type.LABEL);
         Assert.assertEquals(printer, fetchedPrinter);
 
+    }
+
+    @Test(expected = APIException.class)
+    public void shouldNotAllowMismatchedLocationAttributeTypeandPrinterType() {
+
+        Location location = locationService.getLocation(2);
+
+        Printer printer = new Printer();
+        printer.setName("Test Label Printer");
+        printer.setIpAddress("192.1.1.9");
+        printer.setType(Printer.Type.ID_CARD);
+
+        LocationAttributeType defaultIdCardPrinter = locationService.getLocationAttributeTypeByUuid(LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER.get("LABEL"));
+
+        LocationAttribute attribute = new LocationAttribute();
+        attribute.setAttributeType(defaultIdCardPrinter);
+        attribute.setValue(printer);
+
+        location.addAttribute(attribute);
+
+        locationService.saveLocation(location);
     }
 }

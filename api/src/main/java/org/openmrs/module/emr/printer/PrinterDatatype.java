@@ -26,6 +26,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PrinterDatatype extends SerializingCustomDatatype<Printer> {
 
+    private Printer.Type supportedPrinterType;
+
     @Override
     public Printer deserialize(String serializedValue) {
 
@@ -46,5 +48,16 @@ public class PrinterDatatype extends SerializingCustomDatatype<Printer> {
         return typedValue.getId().toString();
     }
 
+    @Override
+    public void setConfiguration(String config) {
+        supportedPrinterType = Printer.Type.valueOf(config);
+    }
+
+    @Override
+    public void validate(Printer printer) {
+        if (!printer.getType().equals(supportedPrinterType)) {
+            throw new InvalidCustomValueException("Printer of type " + printer.getType() + " not supported for this printer datatype");
+        }
+    }
 
 }
