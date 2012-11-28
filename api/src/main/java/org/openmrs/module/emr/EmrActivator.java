@@ -18,14 +18,19 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.GlobalProperty;
+import org.openmrs.LocationAttributeType;
 import org.openmrs.Privilege;
 import org.openmrs.Role;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.Module;
 import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.emr.account.AccountService;
 import org.openmrs.module.emr.adt.EmrVisitAssignmentHandler;
+import org.openmrs.module.emr.printer.PrinterDatatype;
 import org.openmrs.module.emr.task.TaskDescriptor;
 import org.openmrs.module.emr.task.TaskService;
 import org.openmrs.scheduler.SchedulerException;
@@ -39,10 +44,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.openmrs.module.emr.EmrConstants.EMR_MODULE_ID;
+import static org.openmrs.module.emr.EmrConstants.LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER;
+
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
  */
-public class EMRActivator implements ModuleActivator {
+public class EmrActivator implements ModuleActivator {
 
     protected Log log = LogFactory.getLog(getClass());
 	
@@ -152,8 +160,27 @@ public class EMRActivator implements ModuleActivator {
 	 * @see ModuleActivator#started()
 	 */
 	public void started() {
+
+        try {
+            LocationService locationService = Context.getLocationService();
+            AdministrationService administrationService = Context.getAdministrationService();
+
+            createGlobalProperties(administrationService);
+            createLocationAttributeTypesForDefaultPrinters(locationService);
+        }
+        catch (Exception e) {
+            Module mod = ModuleFactory.getModuleById(EMR_MODULE_ID);
+            ModuleFactory.stopModule(mod);
+            throw new RuntimeException("failed to setup the EMR modules", e);
+        }
+
+        log.info("EMR Module started");
+	}
+
+    private void createGlobalProperties(AdministrationService administrationService) {
+
+
         // When https://tickets.openmrs.org/browse/TRUNK-3773 is resolved, refactor this
-        AdministrationService administrationService = Context.getAdministrationService();
         GlobalProperty gp = administrationService.getGlobalPropertyObject(OpenmrsConstants.GP_VISIT_ASSIGNMENT_HANDLER);
         if (gp == null) {
             gp = new GlobalProperty();
@@ -161,10 +188,41 @@ public class EMRActivator implements ModuleActivator {
         }
         gp.setPropertyValue(EmrVisitAssignmentHandler.class.getName());
         administrationService.saveGlobalProperty(gp);
+    }
 
-        log.info("EMR Module started");
-	}
-	
+    private void createLocationAttributeTypesForDefaultPrinters(LocationService locationService) {
+        LocationAttributeType defaultLabelPrinterAttributeType =
+                locationService.getLocationAttributeTypeByUuid(LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER.get("LABEL"));
+
+        if (defaultLabelPrinterAttributeType == null) {
+            defaultLabelPrinterAttributeType = new LocationAttributeType();
+            defaultLabelPrinterAttributeType.setUuid(LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER.get("LABEL"));
+            defaultLabelPrinterAttributeType.setDatatypeClassname(PrinterDatatype.class.getName());
+            defaultLabelPrinterAttributeType.setMaxOccurs(1);
+            defaultLabelPrinterAttributeType.setMinOccurs(0);
+            defaultLabelPrinterAttributeType.setName("Default Label Printer");
+            defaultLabelPrinterAttributeType.setDescription("The default label printer for this location");
+
+            locationService.saveLocationAttributeType(defaultLabelPrinterAttributeType);
+        }
+
+        LocationAttributeType defaultIdCardPrinterAttributeType =
+                locationService.getLocationAttributeTypeByUuid(LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER.get("ID_CARD"));
+
+        if (defaultIdCardPrinterAttributeType == null) {
+            defaultIdCardPrinterAttributeType = new LocationAttributeType();
+            defaultIdCardPrinterAttributeType.setUuid(LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER.get("ID_CARD"));
+            defaultIdCardPrinterAttributeType.setDatatypeClassname(PrinterDatatype.class.getName());
+            defaultIdCardPrinterAttributeType.setMaxOccurs(1);
+            defaultIdCardPrinterAttributeType.setMinOccurs(0);
+            defaultIdCardPrinterAttributeType.setName("Default ID card Printer");
+            defaultIdCardPrinterAttributeType.setDescription("The default id card printer for this location");
+
+            locationService.saveLocationAttributeType(defaultIdCardPrinterAttributeType);
+        }
+
+    }
+
 	/**
 	 * @see ModuleActivator#willStop()
 	 */

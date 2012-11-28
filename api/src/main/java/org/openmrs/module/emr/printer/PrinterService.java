@@ -14,6 +14,7 @@
 
 package org.openmrs.module.emr.printer;
 
+import org.openmrs.Location;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
@@ -55,6 +56,28 @@ public interface PrinterService extends OpenmrsService {
      */
     @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
     List<Printer> getAllPrinters();
+
+    /**
+     * Sets the specified printer as the default printer (of it's specified type)
+     * as the specified location
+     *
+     * @param location
+     * @param printer
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
+    void setDefaultPrinter(Location location, Printer printer);
+
+    /**
+     * Gets the printer of the specified type that is the default printer
+     * for that location; returns null if no printer found
+     *
+     * @param location
+     * @param type
+     * @return
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
+    Printer getDefaultPrinter(Location location, Printer.Type type);
+
 
     /**
      * Given a printer, returns true/false if that ip address is in use

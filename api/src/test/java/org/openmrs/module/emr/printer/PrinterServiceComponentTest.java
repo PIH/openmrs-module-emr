@@ -15,7 +15,11 @@
 package org.openmrs.module.emr.printer;
 
 import junit.framework.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.Location;
+import org.openmrs.api.LocationService;
+import org.openmrs.module.emr.EmrActivator;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,11 +31,19 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
    @Autowired
    private PrinterService printerService;
 
+   @Autowired
+   private LocationService locationService;
+
+   @Before
+   public void beforeAllTests() throws Exception {
+       executeDataSet("printerServiceComponentTestDataset.xml");
+   }
+
    @Test
    public void testSavePrinter() {
 
        Printer printer = new Printer();
-       printer.setName("Test Printer");
+       printer.setName("Another Test Printer");
        printer.setIpAddress("192.1.1.8");
        printer.setType(Printer.Type.ID_CARD);
 
@@ -39,30 +51,21 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
 
        List<Printer> printers = printerService.getAllPrinters();
 
-       Assert.assertEquals(1, printers.size());
-       Assert.assertEquals("Test Printer", printers.get(0).getName());
-       Assert.assertEquals("192.1.1.8", printers.get(0).getIpAddress());
-       Assert.assertEquals("9100", printers.get(0).getPort());
-       Assert.assertEquals(Printer.Type.ID_CARD, printers.get(0).getType());
+       // there is already a test printer in the dataset, so there should be two printers now
+       Assert.assertEquals(2, printers.size());
 
        // make sure the audit fields have been set
-       Assert.assertNotNull(printers.get(0).getDateCreated());
-       Assert.assertNotNull(printers.get(0).getCreator());
-       Assert.assertNotNull(printers.get(0).getUuid());
+       Assert.assertNotNull(printer.getDateCreated());
+       Assert.assertNotNull(printer.getCreator());
+       Assert.assertNotNull(printer.getUuid());
    }
 
     @Test
     public void testShouldReturnTrueIfAnotherPrinterAlreadyHasIpAddressAssigned() {
-        Printer printer = new Printer();
-        printer.setName("Test Printer");
-        printer.setIpAddress("192.1.1.8");
-        printer.setType(Printer.Type.ID_CARD);
-
-        printerService.savePrinter(printer);
 
         Printer differentPrinter = new Printer();
         differentPrinter.setName("Another printer");
-        differentPrinter.setIpAddress("192.1.1.8");
+        differentPrinter.setIpAddress("192.1.1.2");   // printer in test dataset has this ip
         differentPrinter.setType(Printer.Type.LABEL);
 
         Assert.assertTrue(printerService.isIpAddressAllocatedToAnotherPrinter(differentPrinter));
@@ -71,12 +74,6 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
 
     @Test
     public void testShouldReturnFalseIfAnotherPrinterDoesNotHaveIpAddressAssigned() {
-        Printer printer = new Printer();
-        printer.setName("Test Printer");
-        printer.setIpAddress("192.1.1.6");
-        printer.setType(Printer.Type.ID_CARD);
-
-        printerService.savePrinter(printer);
 
         Printer differentPrinter = new Printer();
         differentPrinter.setName("Another printer");
@@ -90,26 +87,17 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
     @Test
     public void testGetPrinterByName() {
 
-        // first, save a printer
-        Printer printer = new Printer();
-        printer.setName("Test Printer");
-        printer.setIpAddress("192.1.1.8");
-        printer.setType(Printer.Type.ID_CARD);
-        printerService.savePrinter(printer);
+        Printer printer = printerService.getPrinterByName("Test Printer");
+        Assert.assertEquals(new Integer(1), printer.getId());
+        Assert.assertEquals(new Integer(2), printer.getPhysicalLocation().getId());
+        Assert.assertEquals("192.1.1.2", printer.getIpAddress());
+        Assert.assertEquals("2", printer.getPort());
+        Assert.assertEquals("LABEL", printer.getType().name());
 
-        // now, try to fetch that printer by name
-        Printer returnedPrinter = printerService.getPrinterByName("Test Printer");
-        Assert.assertEquals(printer, returnedPrinter);
     }
 
     @Test
     public void testShouldReturnTrueIfAnotherPrinterAlreadyHasSameName() {
-        Printer printer = new Printer();
-        printer.setName("Test Printer");
-        printer.setIpAddress("192.1.1.8");
-        printer.setType(Printer.Type.ID_CARD);
-
-        printerService.savePrinter(printer);
 
         Printer differentPrinter = new Printer();
         differentPrinter.setName("Test Printer");
@@ -121,12 +109,6 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
 
     @Test
     public void testShouldReturnFalseIfAnotherPrinterDoesNotHaveSameName() {
-        Printer printer = new Printer();
-        printer.setName("Test Printer");
-        printer.setIpAddress("192.1.1.8");
-        printer.setType(Printer.Type.ID_CARD);
-
-        printerService.savePrinter(printer);
 
         Printer differentPrinter = new Printer();
         differentPrinter.setName("Test Printer With Different Name");
@@ -134,5 +116,34 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
         differentPrinter.setType(Printer.Type.LABEL);
 
         Assert.assertFalse(printerService.isNameAllocatedToAnotherPrinter(differentPrinter));
+    }
+
+    @Test
+    public void shouldSetDefaultLabelPrinterForLocation() {
+
+        EmrActivator emrActivator = new EmrActivator();
+        emrActivator.started();
+
+        Location location = locationService.getLocation(2);
+        Printer printer = printerService.getPrinterById(1);
+
+        printerService.setDefaultPrinter(location, printer);
+
+        Printer fetchedPrinter = printerService.getDefaultPrinter(location, Printer.Type.LABEL);
+        Assert.assertEquals(printer, fetchedPrinter);
+    }
+
+    @Test
+    public void shouldGetDefaultLabelPrinterForLocation() {
+
+        EmrActivator emrActivator = new EmrActivator();
+        emrActivator.started();
+
+        Location location = locationService.getLocation(3);
+        Printer printer = printerService.getPrinterById(1);  // this has been set as the default printer for location 3 in dataset
+
+        Printer fetchedPrinter = printerService.getDefaultPrinter(location, Printer.Type.LABEL);
+        Assert.assertEquals(printer, fetchedPrinter);
+
     }
 }

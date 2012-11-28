@@ -223,6 +223,7 @@
                         <property name="sessionFactory"><ref bean="sessionFactory"/></property>
                     </bean>
                 </property>
+                <property name="locationService" ref="locationService" />
             </bean>
         </property>
         <property name="preInterceptors">
