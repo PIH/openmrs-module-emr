@@ -124,15 +124,6 @@ var FormNavigator = function(submitElement, cancelElement) {
     return api;
 }
 
-/*
- api.questions = [
-    { label: "Payment Reason", type: "optionsList", options: [ ... ], value: ko.observable() },
-    OptionListQuestion("Payment Reason", [ ... ])
- ];
- */
-
-
-
 function Option(name, value) {
     var model = {};
     model.name = name;
@@ -141,9 +132,10 @@ function Option(name, value) {
 
     return model;
 }
-
-function SelectableOptions(options) {
+function SelectableOptions(label, widgetId, options) {
     var api = {};
+    api.label = ko.observable(label);
+    api.widgetId = ko.observable(widgetId);
     api.options = ko.observableArray(options);
     api.selectedOption = ko.computed(function() {
         return _.find(api.options(), function(o) {return o.selected()});
@@ -158,16 +150,16 @@ function SelectableOptions(options) {
 
 function RetrospectiveCheckinViewModel() {
     var api = {};
-    api.locations = ko.observable(SelectableOptions([
+    api.locations = ko.observable(SelectableOptions('Location', 'location', [
         Option("Emergency", 1),
         Option("Outpatient", 2),
         Option("Inpatient", 3)]));
-    api.paymentReasons = ko.observable(SelectableOptions([
+    api.paymentReasons = ko.observable(SelectableOptions('Reason', 'paymentReason', [
         Option("Medical certificate without diagnosis", 1),
         Option("Standard dental visit", 2),
         Option("Marriage certificate without diagnosis", 3),
         Option("Standard outpatient visit", 4)]));
-    api.paymentAmounts = ko.observable(SelectableOptions([
+    api.paymentAmounts = ko.observable(SelectableOptions('Amount', 'paymentAmount', [
         Option("50 Gourdes", 50),
         Option("100 Gourdes", 100),
         Option("Exempt", 0)]));

@@ -12,6 +12,14 @@
     });
 </script>
 
+<script type="text/html" id="optionsList-template">
+    <label data-bind="text:label, attr: {for: widgetId}"></label>
+    <div class="optionsList" data-bind="foreach: options, attr: {id:widgetId}">
+        <span class="option"
+              data-bind="text: name, click:\$parent.selectOption, css:{selectedOption: selected}"></span>
+    </div>
+</script>
+
 <h1>Retrospective Check-in</h1>
 <section id="checkinInformation">
     <img class="field_check" src=${ui.resourceLink("emr", "images/checked.png")}
@@ -26,13 +34,7 @@
             <label for="patientIdentifier">Patient identifier</label>
             <input id="patientIdentifier" type="text" data-bind="value:patientIdentifier" />
         </li>
-        <li data-bind="with:locations">
-            <label for="location">Location</label>
-            <div id="location" class="optionsList" data-bind="foreach: options">
-                <span class="option"
-                      data-bind="text: name, click:\$parent.selectOption, css:{selectedOption: selected}"></span>
-            </div>
-        </li>
+        <li data-bind="template: {name:'optionsList-template', foreach:locations}"></li>
         <li>
             <label for="checkinDate">Check-in date</label>
             <input id="checkinDate" type="date" data-bind="value:checkinDate" placeholder="  /  /  "/>
@@ -48,20 +50,8 @@
     <span class="value" data-bind="text:paymentAmounts().selectedOption() ? paymentAmounts().selectedOption().name : ''"></span>
 
     <ul>
-        <li data-bind="with:paymentReasons">
-            <label for="paymentReason">Reason</label>
-            <div id="paymentReason" class="optionsList" data-bind="foreach: options">
-                <span class="option"
-                      data-bind="text: name, click:\$parent.selectOption, css:{selectedOption: selected}"></span>
-            </div>
-        </li>
-        <li data-bind="with:paymentAmounts">
-            <label for="paymentAmount">Amount</label>
-            <div id="paymentAmount" class="optionsList" data-bind="foreach: options">
-                <span class="option"
-                      data-bind="text: name, click:\$parent.selectOption, css:{selectedOption: selected}"></span>
-            </div>
-        </li>
+        <li data-bind="template: {name:'optionsList-template', foreach:paymentReasons}"></li>
+        <li data-bind="template: {name:'optionsList-template', foreach:paymentAmounts}"></li>
     </ul>
 </section>
 
