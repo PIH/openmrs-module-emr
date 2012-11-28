@@ -15,12 +15,7 @@
 package org.openmrs.module.emr.utils;
 
 import org.apache.commons.lang.StringUtils;
-import org.openmrs.Concept;
-import org.openmrs.EncounterRole;
-import org.openmrs.EncounterType;
-import org.openmrs.OrderType;
-import org.openmrs.PatientIdentifierType;
-import org.openmrs.VisitType;
+import org.openmrs.*;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
@@ -29,8 +24,11 @@ import org.openmrs.api.OrderService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.VisitService;
+import org.openmrs.module.emr.api.EmrService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.List;
 
 /**
  * Helper class that lets modules centralize their configuration details. See EmrProperties for an example.
@@ -68,6 +66,10 @@ public abstract class ModuleProperties {
     @Autowired
     @Qualifier("patientService")
     protected PatientService patientService;
+    
+    @Autowired
+    @Qualifier("emrService")
+    protected EmrService emrService;
 
     public void setConceptService(ConceptService conceptService) {
         this.conceptService = conceptService;
@@ -99,6 +101,10 @@ public abstract class ModuleProperties {
 
     public void setPatientService(PatientService patientService) {
         this.patientService = patientService;
+    }
+    
+    public void setEmrService(EmrService emrService){
+        this.emrService = emrService;
     }
 
     protected Concept getConceptByGlobalProperty(String globalPropertyName) {
@@ -161,6 +167,10 @@ public abstract class ModuleProperties {
             throw new IllegalStateException("Configuration required: " + globalPropertyName);
         }
         return globalProperty;
+    }
+    
+    public List<Location> getAllAvailableLocations(){
+        return emrService.getLoginLocations();
     }
 
 }
