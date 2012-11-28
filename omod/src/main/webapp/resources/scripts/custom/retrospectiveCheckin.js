@@ -27,7 +27,6 @@ var FormNavigator = function(submitElement, cancelElement) {
             koContext = ko.contextFor(currentOptionFromList);
             if(koContext) {
                 koContext.$parent.selectOption(koContext.$data);
-                console.log(koContext.$parent);
             }
         }
 
@@ -88,7 +87,8 @@ var FormNavigator = function(submitElement, cancelElement) {
     };
     api.moveDownIfOnOptionsList = function() {
         if( $(currentField).hasClass('optionsList') ) {
-            if($(currentOptionFromList).next()) {
+            if($(currentOptionFromList).next().length > 0) {
+                console.log($(currentOptionFromList).next());
                 $(currentOptionFromList).removeClass('focusedOption')
                 currentOptionFromList = $(currentOptionFromList).next()[0];
                 $(currentOptionFromList).addClass('focusedOption');
@@ -97,7 +97,7 @@ var FormNavigator = function(submitElement, cancelElement) {
     };
     api.moveUpIfOnOptionsList = function() {
         if( $(currentField).hasClass('optionsList') ) {
-            if($(currentOptionFromList).prev()) {
+            if($(currentOptionFromList).prev().length > 0) {
                 $(currentOptionFromList).removeClass('focusedOption')
                 currentOptionFromList = $(currentOptionFromList).prev()[0];
                 $(currentOptionFromList).addClass('focusedOption');
@@ -141,6 +141,7 @@ function Option(name, value) {
 
     return model;
 }
+
 function SelectableOptions(options) {
     var api = {};
     api.options = ko.observableArray(options);

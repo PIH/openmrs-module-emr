@@ -54,7 +54,6 @@
                 <span class="option"
                       data-bind="text: name, click:\$parent.selectOption, css:{selectedOption: selected}"></span>
             </div>
-            </select>
         </li>
         <li data-bind="with:paymentAmounts">
             <label for="paymentAmount">Amount</label>
