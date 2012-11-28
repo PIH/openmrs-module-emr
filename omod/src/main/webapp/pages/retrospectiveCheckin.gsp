@@ -1,6 +1,6 @@
 <%
     ui.decorateWith("emr", "standardEmrPage")
-    ui.includeJavascript("emr", "knockout-2.1.0.js")
+    ui.includeJavascript("emr", "knockout-2.2.0.js")
     ui.includeJavascript("emr", "custom/retrospectiveCheckin.js")
     ui.includeCss("emr", "retrospectiveCheckin.css")
 %>
@@ -67,13 +67,22 @@
         <li>
             <label for="diagnosesEncounter">Diagnostics</label>
             <input id="diagnosesEncounter" type="checkbox" data-bind="checked:diagnosticsEncounter" />
-            <div data-bind="visible: diagnosticsEncounter">
+            <div data-bind="visible: diagnosticsEncounter, with:diagnosis">
                 <label for="diagnose">Diagnostic</label>
-                <input id="diagnose" type="text" data-bind="value:diagnostic"/>
+                <input id="diagnose" type="text" data-bind="value:diagnose"/>
             </div>
-            <div data-bind="visible: diagnosticsEncounter">
+            <div data-bind="visible: diagnosticsEncounter, with:diagnosis">
                 <label for="diagnosticPhisician">Phisician</label>
-                <input id="diagnosticPhisician" type="text" data-bind="value:diagnosticPhisician" />
+                <input id="diagnosticPhisician" type="text" data-bind="value:phisician" />
+                <input id="addDiagnosis" type="button" data-bind="click:add" value="Add"/>
+            </div>
+            <div data-bind="visible: diagnosticsEncounter, with:diagnosis">
+                <ul data-bind="foreach:diagnosis">
+                    <li>
+                        <span data-bind="text:diagnose"></span> by <span data-bind="text:phisician"></span>
+                        <span data-bind="click:\$parent.remove">X</span>
+                    </li>
+                </ul>
             </div>
         </li>
         <li>

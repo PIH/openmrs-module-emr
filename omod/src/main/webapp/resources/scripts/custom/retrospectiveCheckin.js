@@ -148,6 +148,24 @@ function SelectableOptions(label, widgetId, options) {
     return api;
 }
 
+function Diagnosis() {
+    var api = {};
+    api.diagnosis = ko.observableArray([]);
+    api.diagnose = ko.observable();
+    api.phisician = ko.observable();
+
+    api.add = function() {
+        api.diagnosis.push({'diagnose': api.diagnose(), 'phisician': api.phisician()});
+        api.diagnose('');
+        api.phisician('');
+    }
+    api.remove = function(diagnose) {
+        api.diagnosis.remove(diagnose);
+    }
+    return api;
+}
+
+var d = Diagnosis();
 function RetrospectiveCheckinViewModel() {
     var api = {};
     api.locations = ko.observable(SelectableOptions('Location', 'location', [
@@ -171,8 +189,7 @@ function RetrospectiveCheckinViewModel() {
     api.radiologyEncounter = ko.observable(false);
 
     api.diagnosticsEncounter = ko.observable(false);
-    api.diagnostic = ko.observable();
-    api.diagnosticPhisician = ko.observable();
+    api.diagnosis = ko.observable(d);
 
     api.medicationEncounter = ko.observable(false);
 
