@@ -1,6 +1,7 @@
 <%
     ui.decorateWith("emr", "standardEmrPage")
-    ui.includeJavascript("emr", "knockout-2.1.0.js")
+    ui.includeJavascript("emr", "knockout-2.2.0.js")
+    ui.includeJavascript("emr", "navigator.js")
     ui.includeJavascript("emr", "custom/retrospectiveCheckin.js")
     ui.includeCss("emr", "retrospectiveCheckin.css")
 %>
@@ -56,52 +57,6 @@
             <label for="paymentAmount">Amount</label>
             <select id="paymentAmount" data-bind="value:amountPaid, options:paymentAmounts, optionsText:'name', optionsCaption:'Choose amount ...'" >
             </select>
-        </li>
-    </ul>
-</section>
-
-<section id="encountersInformation">
-    <img class="field_check" src=${ui.resourceLink("emr", "images/checked.png")}
-         data-bind="style: {visibility: amountPaid() ? 'visible':'hidden'}"/>
-    <span class="label">Encounters</span>
-
-    <ul>
-        <li>
-            <label for="radiologyEncounter">Radiology</label>
-            <input id="radiologyEncounter" type="checkbox" data-bind="checked:radiologyEncounter" />
-        </li>
-        <li>
-            <label for="diagnosesEncounter">Diagnostics</label>
-            <input id="diagnosesEncounter" type="checkbox" data-bind="checked:diagnosticsEncounter" />
-            <div data-bind="visible: diagnosticsEncounter">
-                <label for="diagnose">Diagnostic</label>
-                <input id="diagnose" type="text" data-bind="value:diagnostic"/>
-            </div>
-            <div data-bind="visible: diagnosticsEncounter">
-                <label for="diagnosticPhisician">Phisician</label>
-                <input id="diagnosticPhisician" type="text" data-bind="value:diagnosticPhisician" />
-            </div>
-        </li>
-        <li>
-            <label for="medicationAdministration">Medication administration</label>
-            <input id="medicationAdministration" type="checkbox" data-bind="checked:medicationEncounter"/>
-        </li>
-        <li>
-            <label for="admissionEncounter">Admision</label>
-            <input id="admissionEncounter" type="checkbox" data-bind="checked:admissionEncounter" />
-            <div style="display: block" data-bind="visible: admissionEncounter">
-                <label for="admissionDate">Admission date</label>
-                <input id="admissionDate" type="date" data-bind="value:admissionDate" />
-            </div>
-        </li>
-        <li>
-            <label for="dischargeEncounter">Discharge</label>
-            <input id="dischargeEncounter" type="checkbox" data-bind="checked:dischargeEncounter" />
-
-            <div style="display: block" data-bind="visible: dischargeEncounter">
-                <label for="dischargeDate">Discharge date</label>
-                <input id="dischargeDate" type="date" data-bind="value:dischargeDate" />
-            </div>
         </li>
     </ul>
 </section>
