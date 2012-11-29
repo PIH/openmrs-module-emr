@@ -21,6 +21,9 @@
             <img src="${ ui.resourceLink("mirebalais", "images/pih_grey_logo_small.png") }"/>
         </a>
         <div id="sessionLocation" style="display: none;">
+            <div id="spinner">
+                <img src="${ui.resourceLink("mirebalais", "images/spinner.gif")}">
+            </div>
             <% emrProperties.allAvailableLocations.each {
                 def selected = (it==emrContext.sessionLocation) ? "selected" : ""
                 %>
@@ -40,10 +43,13 @@
         function updateBindings(id, text) {
             var data = "locationId=" + id;
 
+            jq("#spinner").show();
+
             jq.post("/${ contextPath }/mirebalais/standard.page", data, function(returnedData) {
                 ko.applyBindings(new Location(id, text), jq('#user-info').get(0));
                 jq('#sessionLocation .locationOption').removeClass('selected');
                 jq('#sessionLocation .locationOption[value|=' + id + ']').addClass('selected');
+                jq("#spinner").hide();
             })
         }
 
