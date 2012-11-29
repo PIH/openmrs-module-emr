@@ -20,15 +20,13 @@
         <a href="${ ui.pageLink("mirebalais", "home") }">
             <img src="${ ui.resourceLink("mirebalais", "images/pih_grey_logo_small.png") }"/>
         </a>
-    </div>
-
-
-    <div id="sessionLocation" style="display: none;">
-        <% emrProperties.allAvailableLocations.each {
-            def selected = (it==emrContext.sessionLocation) ? "selected" : ""
-            %>
-            <span class="locationOption ${selected}" value="${it.id}" onclick="updateBindings(${it.id}, '${ui.format(it)}');">${ui.format(it)}</span>
-        <% } %>
+        <div id="sessionLocation" style="display: none;">
+            <% emrProperties.allAvailableLocations.each {
+                def selected = (it==emrContext.sessionLocation) ? "selected" : ""
+                %>
+                <span class="locationOption ${selected}" value="${it.id}" onclick="updateBindings(${it.id}, '${ui.format(it)}');">${ui.format(it)}</span>
+            <% } %>
+        </div>
     </div>
 
 
@@ -40,21 +38,26 @@
         }
 
         function updateBindings(id, text) {
-            ko.applyBindings(new Location(id, text));
-
             var data = "locationId=" + id;
-            jq.post("/mirebalais/mirebalais/standard.page", data, function(returnedData) {
-                console.log("success");
+
+            jq.post("/${ contextPath }/mirebalais/standard.page", data, function(returnedData) {
+                ko.applyBindings(new Location(id, text));
+                jq('#sessionLocation .locationOption').removeClass('selected');
+                jq('#sessionLocation .locationOption[value|=' + id + ']').addClass('selected');
             })
         }
 
-        jq('#sessionLocation').mouseleave(function() {
-            jq('#sessionLocation').attr('style','display: none');
-        });
+        jq(function() {
+            jq("#user-info .location").mouseover(function() {
+                jq('#sessionLocation').show();
+                jq(this).addClass('focus');
+            });
 
-        function showLocationDiv() {
-            jq('#sessionLocation').attr('style', '')
-        }
+            jq('#sessionLocation').mouseleave(function() {
+                jq('#sessionLocation').hide();
+                jq("#user-info .location").removeClass('focus');
+            });
+        });
 
     </script>
 

@@ -25,7 +25,9 @@
 }
 
 #search-box, #results-box {
-    float: left;
+    display: inline-block;
+    width: 45%;
+    vertical-align: top;
 }
 
 .location-option {
@@ -34,6 +36,7 @@
     padding: 5px;
     margin-top: 5px;
     margin-bottom: 5px;
+    width: 70%;
 }
 
 .selected {
