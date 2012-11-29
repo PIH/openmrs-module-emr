@@ -15,21 +15,38 @@
 
 <script type="text/javascript">
     jq(function() {
+
+        function setSearchValue(objectItem){
+            jq('#${ config.id }-value').val(objectItem.${ config.itemValueProperty });
+            jq('#${ config.id }-search').val(${ config.itemLabelFunction }(objectItem));
+        };
+
         jq('#${ config.id }-search').autocomplete({
-            source: '${ ui.actionLink(fragmentProvider, config.fragment, config.action) }',
+            source:   '${ ui.actionLink(fragmentProvider, config.fragment, config.action) }',
             minLength: 2,
             delay: 100,
             select: function(event, ui) {
-                jq('#${ config.id }-value').val(ui.item.${ config.itemValueProperty });
-                jq('#${ config.id }-search').val(${ config.itemLabelFunction }(ui.item));
+                setSearchValue(ui.item);
                 return false;
             }
-        })
-        .data('autocomplete')._renderItem = function(ul, item) {
+        });
+        jq('#${ config.id }-search').data('autocomplete')._renderItem = function(ul, item) {
             return jq('<li>')
                     .data('item.autocomplete', item)
                     .append('<a>' + ${ config.itemLabelFunction }(item) + '</a>')
                     .appendTo(ul);
+        };
+
+        jq('#${ config.id }-search').data('autocomplete')._renderMenu = function(ul, items){
+            var self= this;
+            if(items.length ==1){
+                var firstItem = items[0];
+                setSearchValue(firstItem);
+            }else{
+                jq.each( items , function(i, item){
+                    self._renderItem(ul, item);
+                });
+            }
         };
     });
 </script>
