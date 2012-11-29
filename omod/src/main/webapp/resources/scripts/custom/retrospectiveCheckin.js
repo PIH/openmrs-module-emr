@@ -24,26 +24,41 @@ function SelectableOptions(label, widgetId, options) {
 
 function RetrospectiveCheckinViewModel() {
     var api = {};
-    api.locations = [{name:"Emergency", value:1}, {name:"Outpatient", value:2}];
-    api.paymentReasons = [
-        {name:"Medical certificate without diagnosis", value:1},
-        {name:"Standard dental visit", value:2},
-        {name:"Marriage certificate without diagnosis", value:3},
-        {name:"Standard outpatient visit", value:4}];
-    api.paymentAmounts = [
-        {name:"50 Gourdes", value:50},
-        {name:"100 Gourdes", values:100},
-        {name:"Exempt", values:0}];
+    api.locations = ko.observable(SelectableOptions('Location', 'location', [
+        Option("Emergency", 1),
+        Option("Outpatient", 2),
+        Option("Inpatient", 3)]));
+    api.paymentReasons = ko.observable(SelectableOptions('Reason', 'paymentReason', [
+        Option("Medical certificate without diagnosis", 1),
+        Option("Standard dental visit", 2),
+        Option("Marriage certificate without diagnosis", 3),
+        Option("Standard outpatient visit", 4)]));
+    api.paymentAmounts = ko.observable(SelectableOptions('Amount', 'paymentAmount', [
+        Option("50 Gourdes", 50),
+        Option("100 Gourdes", 100),
+        Option("Exempt", 0)]));
 
-    api.location = ko.observable();
     api.patientIdentifier = ko.observable();
     api.checkinDate = ko.observable();
     api.paymentReason = ko.observable();
     api.amountPaid = ko.observable();
     api.receiptNumber = ko.observable();
 
+    api.locationName = ko.computed(function() {
+        var selectedOption = api.locations().selectedOption();
+        return selectedOption ? selectedOption.name : '';
+    });
+    api.paymentReason = ko.computed(function() {
+        var selectedOption = api.paymentReasons().selectedOption();
+        return selectedOption ? selectedOption.name : '';
+    });
+    api.amountPaid = ko.computed(function() {
+        var selectedOption = api.paymentAmounts().selectedOption();
+        return selectedOption ? selectedOption.name : '';
+    });
+
     api.checkinInfoIsValid = function() {
-        return api.patientIdentifier() && api.location() && api.checkinDate();
+        return api.patientIdentifier() && api.locationName() && api.checkinDate();
     }
     api.paymentInfoIsValid = function () {
         return api.paymentReason() && api.amountPaid();

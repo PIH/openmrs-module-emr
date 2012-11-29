@@ -8,10 +8,18 @@
 
 <script type="text/javascript">
     jQuery(function() {
-        ko.applyBindings(RetrospectiveCheckinViewModel());
+        ko.applyBindings(RetrospectiveCheckinViewModel(), jq('#content').get(0));
         FormNavigator(jQuery('#submitButton'), jQuery('#cancelButton'));
     });
 </script>
+<script type="text/html" id="optionsList-template">
+    <label data-bind="text:label, attr: {for: widgetId}"></label>
+    <div class="optionsList" data-bind="foreach: options, attr: {id:widgetId}">
+        <span class="option"
+              data-bind="text: name, click:\$parent.selectOption, css:{selectedOption: selected}"></span>
+    </div>
+</script>
+
 
 <h1>Retrospective Check-in</h1>
 <section id="checkinInformation">
@@ -19,7 +27,7 @@
         data-bind="style: {visibility: checkinInfoIsValid() ? 'visible':'hidden'}"/>
     <span class="label">Check-in information</span>
     <span class="value" data-bind="text:patientIdentifier"></span> -
-    <span class="value" data-bind="text:location() ? location().name : ''"></span> -
+    <span class="value" data-bind="text:locationName"></span> -
     <span class="value" data-bind="text:checkinDate"></span>
 
     <ul>
@@ -27,12 +35,7 @@
             <label for="patientIdentifier">Patient identifier</label>
             <input id="patientIdentifier" type="text" data-bind="value:patientIdentifier" />
         </li>
-        <li>
-            <label for="location">Location</label>
-            <div id="location" class="optionsList" data-bind="foreach: locations">
-                <span class="option" data-bind="text: name"></span>
-            </div>
-        </li>
+        <li data-bind="template: {name:'optionsList-template', foreach:locations}"></li>
         <li>
             <label for="checkinDate">Check-in date</label>
             <input id="checkinDate" type="date" data-bind="value:checkinDate" placeholder="  /  /  "/>
@@ -44,20 +47,12 @@
     <img class="field_check" src=${ui.resourceLink("emr", "images/checked.png")}
         data-bind="style: {visibility: paymentInfoIsValid() ? 'visible':'hidden'}" />
     <span class="label">Payment</span>
-    <span class="value" data-bind="text:paymentReason() ? paymentReason().name : ''"></span>
-    <span class="value" data-bind="text:amountPaid() ? amountPaid().name : ''"></span>
+    <span class="value" data-bind="text:paymentReason"></span>
+    <span class="value" data-bind="text:amountPaid"></span>
 
     <ul>
-        <li>
-            <label for="paymentReason">Reason</label>
-            <select id="paymentReason" data-bind="value:paymentReason, options:paymentReasons, optionsText:'name', optionsCaption:'Choose reason ...'">
-            </select>
-        </li>
-        <li>
-            <label for="paymentAmount">Amount</label>
-            <select id="paymentAmount" data-bind="value:amountPaid, options:paymentAmounts, optionsText:'name', optionsCaption:'Choose amount ...'" >
-            </select>
-        </li>
+        <li data-bind="template: {name:'optionsList-template', foreach:paymentReasons}"></li>
+        <li data-bind="template: {name:'optionsList-template', foreach:paymentAmounts}"></li>
     </ul>
 </section>
 
