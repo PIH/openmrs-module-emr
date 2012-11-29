@@ -12,7 +12,7 @@
         <div id="user-info">
             <% if (context.authenticated) { %>
                 <span class="header-menu"> ${ context.authenticatedUser.username ?: context.authenticatedUser.systemId }:<strong data-bind="text: text"> ${ ui.format(emrContext.sessionLocation) } </strong></span>
-                <span class="header-menu location" onmouseover="javascript:showLocationDiv();">Change Location</span>
+                <span class="header-menu location">Change Location</span>
                 <span class="header-menu"><a href="/${ contextPath }/logout">Logout</a></span>
             <% } %>
         </div>
@@ -41,7 +41,7 @@
             var data = "locationId=" + id;
 
             jq.post("/${ contextPath }/mirebalais/standard.page", data, function(returnedData) {
-                ko.applyBindings(new Location(id, text));
+                ko.applyBindings(new Location(id, text), jq('#user-info').get(0));
                 jq('#sessionLocation .locationOption').removeClass('selected');
                 jq('#sessionLocation .locationOption[value|=' + id + ']').addClass('selected');
             })

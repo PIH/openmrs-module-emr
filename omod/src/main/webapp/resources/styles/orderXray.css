@@ -7,6 +7,13 @@
     clear: left;
 }
 
+#study-search {
+    width: 330px;
+    height: 2em;
+    padding-left: 5px;
+    margin-top: 5px;
+}
+
 #selected-studies {
     list-style: none;
     margin-left: 0;
@@ -20,8 +27,17 @@
     padding: 0.5em 1em 0.5em 1em;
 }
 
+#selected-studies span:nth-child(3) {
+    float:right;
+    cursor: pointer;
+}
+
 #bottom {
     clear: both;
+}
+
+#bottom button:nth-child(2) {
+    float: right;
 }
 
 .row {

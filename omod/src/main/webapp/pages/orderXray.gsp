@@ -9,7 +9,7 @@
 
 <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
     jQuery(function() {
-        ko.applyBindings( new StudiesViewModel(${xrayOrderables}, ${portableLocations}) );
+        ko.applyBindings( new StudiesViewModel(${xrayOrderables}, ${portableLocations}), jq('#contentForm').get(0) );
 
         // Preventing form submission when pressing enter on study-search input field
         jq('#study-search').bind('keypress', function(eventKey) {
@@ -59,7 +59,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
     <div class="left-column">
         <label for="study-search">Type the name of a study:</label><br/>
-        <input id="study-search" style="width: 330px; height: 2em; padding-left: 5px; margin-top: 5px;" type="text" size="40"
+        <input id="study-search" type="text"
                data-bind="autocomplete:searchTerm, search:convertedStudies, select:selectStudy, clearValue:function() { return true; }"
                placeholder="eg. Chest x-ray"/>
     </div>
@@ -73,18 +73,18 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 <li>
                     <input type="hidden" data-bind="value: id" name="studies" />
                     <span data-bind="text: name"></span>
-                    <span style="float:right" data-bind="click: \$root.unselectStudy">X</span>
+                    <span data-bind="click: \$root.unselectStudy">X</span>
                 </li>
             </ul>
         </div>
     </div>
 
     <div id="bottom">
-        <button type="button" id="cancel" style="float: left;" onclick="location.href = emr.pageLink('emr', 'patient', { patientId: <%= patient.id %> })">
+        <button type="button" id="cancel" onclick="location.href = emr.pageLink('emr', 'patient', { patientId: <%= patient.id %> })">
             <img src="${ ui.resourceLink("uilibrary", "images/close_32.png") }"/> <br/>
             ${ ui.message("emr.cancel") }
         </button>
-        <button type="submit" id="next" style="float: right;" data-bind="visible: isValid()">
+        <button type="submit" id="next" data-bind="visible: isValid()">
             <img src="${ ui.resourceLink("uilibrary", "images/arrow_right_32.png") }"/> <br/>
             ${ ui.message("emr.next") }
         </button>
