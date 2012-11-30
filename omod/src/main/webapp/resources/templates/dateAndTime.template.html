@@ -1,0 +1,30 @@
+<table>
+    <tr>
+        <td>Year</td>
+        <td>Month</td>
+        <td>Day</td>
+        <td>Hour</td>
+        <td>Minute</td>
+        <td>Second</td>
+    </tr>
+    <tr>
+        <td>
+            <input type="text" name="year" size="4" <% if (value.year) { %> value="<%- value.year %>" <% } %>/>
+        </td>
+        <td>
+            <input type="text" name="month" size="2" <% if (value.month) { %> value="<%- value.month %>" <% } %>/>
+        </td>
+        <td>
+            <input type="text" name="day" size="2" <% if (value.day) { %> value="<%- value.day %>" <% } %>/>
+        </td>
+        <td>
+            <input type="text" name="day" size="2" <% if (value.hour) { %> value="<%- value.hour %>" <% } %>/>
+        </td>
+        <td>
+            <input type="text" name="day" size="2" <% if (value.minute) { %> value="<%- value.minute %>" <% } %>/>
+        </td>
+        <td>
+            <input type="text" name="day" size="2" <% if (value.second) { %> value="<%- value.second %>" <% } %>/>
+        </td>
+    </tr>
+</table>

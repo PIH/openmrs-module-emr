@@ -77,6 +77,7 @@ var emr = (function($) {
 })(jQuery);
 
 var jq = jQuery;
+var original_templateSettings = _.templateSettings;
 _.templateSettings = {
     interpolate : /{{=(.+?)}}/g ,
     escape : /{{-(.+?)}}/g ,

@@ -1,0 +1,6 @@
+<% _.each(questions, function(question) { %>
+    <div class="previous-question">
+        <span class="label"><%- question.summaryLabel %></span>
+        <span class="value"><% if (question.currentValue) { print(question.widget.formatValueForDisplay(question.currentValue)) } %></span>
+    </div>
+<% }); %>
