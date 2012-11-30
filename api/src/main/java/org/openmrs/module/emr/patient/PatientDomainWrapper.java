@@ -14,12 +14,8 @@
 
 package org.openmrs.module.emr.patient;
 
-import org.openmrs.Encounter;
-import org.openmrs.Location;
-import org.openmrs.Patient;
-import org.openmrs.PatientIdentifier;
-import org.openmrs.PatientIdentifierType;
-import org.openmrs.Visit;
+import org.apache.commons.lang.StringUtils;
+import org.openmrs.*;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.emr.EmrProperties;
@@ -149,4 +145,15 @@ public class PatientDomainWrapper {
         return false;
     }
 
+    public boolean isUnknownPatient() {
+        boolean unknownPatient = false;
+        PersonAttributeType unknownPatientAttributeType = emrProperties.getUnknownPatientPersonAttributeType();
+        if(patient!=null){
+            PersonAttribute att = patient.getAttribute(unknownPatientAttributeType);
+            if (att != null && "true".equals(att.getValue())) {
+                unknownPatient = true;
+            }
+        }
+        return unknownPatient;
+    }
 }

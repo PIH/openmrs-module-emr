@@ -4,15 +4,21 @@
 <style class="text/css">
     .patient-header {
         border-bottom: 1px gray solid;
+        position: relative;
     }
 
-    .patient-header .icon , .patient-header .demographics , .patient-header .identifiers, .active-visit {
-        float: left;
+    .unknown-patient{
+        color: red;
+    }
+
+    .patient-header .icon , .patient-header .demographics , .patient-header .identifiers, .active-visit, .unknown-patient {
+        display: inline-block;
         margin-right: 2em;
     }
 
-    .patient-header .demographics , .patient-header .identifiers, .active-visit {
+    .patient-header .demographics , .patient-header .identifiers, .active-visit, .unknown-patient {
         padding-top: 1em;
+        vertical-align: top;
     }
 
     .patient-header .name {
@@ -47,6 +53,11 @@
             ${ ui.format(emrProperties.paperRecordIdentifierType) }:
             <%= patient.paperRecordIdentifiers.collect{ it.identifier }.join(", ") %>
         <% } %>
+    </div>
+
+    <div class="unknown-patient">
+        ${ ui.message("emr.patient.temporaryRecord") } <br/>
+        <button>Merge into another Patient Record</button>
     </div>
 
     <% if (emrContext.activeVisitSummary) { %>
