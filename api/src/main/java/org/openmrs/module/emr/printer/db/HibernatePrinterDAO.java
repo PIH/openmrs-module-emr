@@ -20,6 +20,8 @@ import org.hibernate.criterion.Restrictions;
 import org.openmrs.module.emr.api.db.hibernate.HibernateSingleClassDAO;
 import org.openmrs.module.emr.printer.Printer;
 
+import java.util.List;
+
 public class HibernatePrinterDAO extends HibernateSingleClassDAO<Printer> implements PrinterDAO {
 
     public HibernatePrinterDAO() {
@@ -32,6 +34,14 @@ public class HibernatePrinterDAO extends HibernateSingleClassDAO<Printer> implem
         addNameRestriction(criteria, name);
 
         return (Printer) criteria.uniqueResult();
+    }
+
+    @Override
+    public List<Printer> getPrintersByType(Printer.Type type) {
+        Criteria criteria = createPrinterCriteria();
+        addTypeRestriction(criteria, type);
+
+        return (List<Printer>) criteria.list();
     }
 
     @Override
@@ -70,4 +80,7 @@ public class HibernatePrinterDAO extends HibernateSingleClassDAO<Printer> implem
         criteria.add(Restrictions.not(Restrictions.eq("uuid", uuid)));
     }
 
+    public void addTypeRestriction(Criteria criteria, Printer.Type type) {
+        criteria.add(Restrictions.eq("type", type));
+    }
 }

@@ -60,7 +60,7 @@ public class PrinterServiceTest {
 
         Location location = new Location(1);
 
-        printerService.setDefaultPrinter(location, printer);
+        printerService.setDefaultPrinter(location, Printer.Type.LABEL, printer);
 
         assertThat((Printer) location.getActiveAttributes(defaultLabelPrinterAttributeType).get(0).getValue(), is(printer));
     }
@@ -74,7 +74,7 @@ public class PrinterServiceTest {
 
         Location location = new Location(1);
 
-        printerService.setDefaultPrinter(location, printer);
+        printerService.setDefaultPrinter(location, Printer.Type.LABEL, printer);
 
         Printer fetchedPrinter = printerService.getDefaultPrinter(location, Printer.Type.LABEL);
         assertThat(fetchedPrinter, is(printer));
@@ -89,7 +89,7 @@ public class PrinterServiceTest {
 
         Location location = new Location(1);
 
-        printerService.setDefaultPrinter(location, printer);
+        printerService.setDefaultPrinter(location, Printer.Type.ID_CARD, printer);
 
         assertThat((Printer) location.getActiveAttributes(defaultIdCardPrinterAttributeType).get(0).getValue(), is(printer));
     }
@@ -103,11 +103,30 @@ public class PrinterServiceTest {
 
         Location location = new Location(1);
 
-        printerService.setDefaultPrinter(location, printer);
+        printerService.setDefaultPrinter(location, Printer.Type.ID_CARD, printer);
 
         Printer fetchedPrinter = printerService.getDefaultPrinter(location, Printer.Type.ID_CARD);
         assertThat(fetchedPrinter, is(printer));
     }
+
+    @Test
+    public void shouldRemoveDefaultPrinter() {
+
+        // first set a default printer
+        Printer printer = new Printer();
+        printer.setId(1);
+        printer.setType(Printer.Type.ID_CARD);
+
+        Location location = new Location(1);
+
+        printerService.setDefaultPrinter(location, Printer.Type.ID_CARD, printer);
+
+        // now set it to back to null
+        printerService.setDefaultPrinter(location, Printer.Type.ID_CARD, null);
+        assertNull(printerService.getDefaultPrinter(location, Printer.Type.ID_CARD));
+
+    }
+
 
     @Test
     public void shouldReturnNullIfNoDefaultPrinterDefinedForLocation() {
@@ -118,7 +137,7 @@ public class PrinterServiceTest {
 
         Location location = new Location(1);
 
-        printerService.setDefaultPrinter(location, printer);
+        printerService.setDefaultPrinter(location, Printer.Type.ID_CARD, printer);
 
         // note that we set the default ID CARD printer, but then try to fetch the default label printer
         assertNull(printerService.getDefaultPrinter(location, Printer.Type.LABEL));

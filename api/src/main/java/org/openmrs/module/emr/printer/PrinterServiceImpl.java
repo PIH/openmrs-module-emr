@@ -53,6 +53,12 @@ public class PrinterServiceImpl extends BaseOpenmrsService implements PrinterSer
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<Printer> getPrintersByType(Printer.Type type) {
+        return printerDAO.getPrintersByType(type);
+    }
+
+    @Override
     @Transactional
     public void savePrinter(Printer printer) {
         printerDAO.saveOrUpdate(printer);
@@ -65,13 +71,23 @@ public class PrinterServiceImpl extends BaseOpenmrsService implements PrinterSer
     }
 
     @Override
-    public void setDefaultPrinter(Location location, Printer printer) {
+    public void setDefaultPrinter(Location location, Printer.Type type, Printer printer) {
 
-        LocationAttribute defaultPrinter = new LocationAttribute();
-        defaultPrinter.setAttributeType(getLocationAttributeTypeDefaultPrinter(printer.getType()));
-        defaultPrinter.setValue(printer);
+        LocationAttributeType locationAttributeType = getLocationAttributeTypeDefaultPrinter(type);
 
-        location.setAttribute(defaultPrinter);
+        // if no printer is specified, void any existing default printer
+        if (printer == null) {
+            for (LocationAttribute attr : location.getActiveAttributes(locationAttributeType)) {
+                attr.setVoided(true);
+            }
+        }
+        else {
+            LocationAttribute defaultPrinter = new LocationAttribute();
+            defaultPrinter.setAttributeType(locationAttributeType);
+            defaultPrinter.setValue(printer);
+            location.setAttribute(defaultPrinter);
+        }
+
         locationService.saveLocation(location);
     }
 

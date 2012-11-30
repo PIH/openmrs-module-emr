@@ -16,6 +16,7 @@ package org.openmrs.module.emr.printer;
 
 import junit.framework.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.LocationAttribute;
@@ -128,7 +129,7 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
         Location location = locationService.getLocation(2);
         Printer printer = printerService.getPrinterById(1);
 
-        printerService.setDefaultPrinter(location, printer);
+        printerService.setDefaultPrinter(location, Printer.Type.LABEL, printer);
 
         Printer fetchedPrinter = printerService.getDefaultPrinter(location, Printer.Type.LABEL);
         Assert.assertEquals(printer, fetchedPrinter);
@@ -143,6 +144,35 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
         Printer fetchedPrinter = printerService.getDefaultPrinter(location, Printer.Type.LABEL);
         Assert.assertEquals(printer, fetchedPrinter);
 
+    }
+
+    @Test
+    @Ignore
+    public void shouldUpdateDefaultLabelPrinterForLocation() {
+
+        Location location = locationService.getLocation(3); // a default printer for location 3 in has been set in the dataset
+
+        // create a new printer and set it as the default for this location
+        Printer printer = new Printer();
+        printer.setName("Another Test Printer");
+        printer.setIpAddress("192.1.1.8");
+        printer.setType(Printer.Type.LABEL);
+
+        printerService.savePrinter(printer);
+        printerService.setDefaultPrinter(location, Printer.Type.LABEL, printer);
+
+        Printer fetchedPrinter = printerService.getDefaultPrinter(location, Printer.Type.LABEL);
+        Assert.assertEquals(printer, fetchedPrinter);
+    }
+
+
+    @Test
+    public void shouldRemoveDefaultLabelPrinterForLocation() {
+        Location location = locationService.getLocation(3); // a default printer for location 3 in has been set in the dataset
+        printerService.setDefaultPrinter(location, Printer.Type.LABEL, null);
+
+        Printer fetchedPrinter = printerService.getDefaultPrinter(location, Printer.Type.LABEL);
+        Assert.assertNull(fetchedPrinter);
     }
 
     @Test(expected = APIException.class)
@@ -164,5 +194,14 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
         location.addAttribute(attribute);
 
         locationService.saveLocation(location);
+    }
+
+    @Test
+    public void shouldGetPrinterByType() {
+
+        List<Printer> printers = printerService.getPrintersByType(Printer.Type.LABEL);
+        Assert.assertEquals(1, printers.size());
+        Assert.assertEquals("Test Printer", printers.get(0).getName());
+
     }
 }

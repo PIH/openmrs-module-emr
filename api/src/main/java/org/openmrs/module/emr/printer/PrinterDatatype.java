@@ -35,7 +35,7 @@ public class PrinterDatatype extends SerializingCustomDatatype<Printer> {
             return null;
         }
         try {
-            // TODO: we should autowire the printer service here once TRUNK-3823 is fixed
+            // TODO: we can't autowire this because this isn't a bean--see TRUNK-3823
             return Context.getService(PrinterService.class).getPrinterById(Integer.parseInt(serializedValue));
         }
         catch (Exception ex) {

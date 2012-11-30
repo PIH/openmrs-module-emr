@@ -42,6 +42,15 @@ public interface PrinterService extends OpenmrsService {
     Printer getPrinterByName(String name);
 
     /**
+     * Fetches all printers of the specified type
+     *
+     * @param type
+     * @return
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
+    List<Printer> getPrintersByType(Printer.Type type);
+
+    /**
      * Saves a printer
      *
      * @param printer
@@ -58,14 +67,16 @@ public interface PrinterService extends OpenmrsService {
     List<Printer> getAllPrinters();
 
     /**
-     * Sets the specified printer as the default printer (of it's specified type)
-     * as the specified location
+     * Sets the specified printer as the default printer of the specified type
+     * at the specified location; if printer = null, remove any default printer
+     * of that type at that location
      *
      * @param location
+     * @param type
      * @param printer
      */
     @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
-    void setDefaultPrinter(Location location, Printer printer);
+    void setDefaultPrinter(Location location, Printer.Type type, Printer printer);
 
     /**
      * Gets the printer of the specified type that is the default printer
