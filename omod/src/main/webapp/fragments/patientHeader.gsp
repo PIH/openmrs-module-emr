@@ -5,15 +5,19 @@
     .patient-header {
         border-bottom: 1px gray solid;
         position: relative;
-    }
-
-    .unknown-patient{
-        color: red;
+        z-index: 0;
     }
 
     .patient-header .icon , .patient-header .demographics , .patient-header .identifiers, .active-visit, .unknown-patient {
         display: inline-block;
         margin-right: 2em;
+    }
+
+    .unknown-patient{
+        color: red;
+    <% if (!patient.unknownPatient) {  %>
+        display: none;
+    <% } %>
     }
 
     .patient-header .demographics , .patient-header .identifiers, .active-visit, .unknown-patient {
