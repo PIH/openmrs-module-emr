@@ -29,7 +29,7 @@ public interface PrinterService extends OpenmrsService {
      *
      * @param id
      */
-    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
+    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_ACCESS_PRINTERS)
     Printer getPrinterById(Integer id);
 
     /**
@@ -38,7 +38,7 @@ public interface PrinterService extends OpenmrsService {
      * @param name
      * @return
      */
-    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
+    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_ACCESS_PRINTERS)
     Printer getPrinterByName(String name);
 
     /**
@@ -47,7 +47,7 @@ public interface PrinterService extends OpenmrsService {
      * @param type
      * @return
      */
-    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
+    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_ACCESS_PRINTERS)
     List<Printer> getPrintersByType(Printer.Type type);
 
     /**
@@ -63,7 +63,7 @@ public interface PrinterService extends OpenmrsService {
      *
      * @return all printers in the systesm
      */
-    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
+    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_ACCESS_PRINTERS)
     List<Printer> getAllPrinters();
 
     /**
@@ -86,7 +86,7 @@ public interface PrinterService extends OpenmrsService {
      * @param type
      * @return
      */
-    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
+    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_ACCESS_PRINTERS)
     Printer getDefaultPrinter(Location location, Printer.Type type);
 
 
