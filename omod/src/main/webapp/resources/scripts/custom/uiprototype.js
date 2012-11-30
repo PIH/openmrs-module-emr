@@ -129,7 +129,7 @@ var FormNavigator = function(submitElement, cancelElement) {
 
 
 
-function Option(name, value) {
+function POption(name, value) {
     var model = {};
     model.name = name;
     model.value = value;
@@ -137,7 +137,7 @@ function Option(name, value) {
 
     return model;
 }
-function SelectableOptions(label, widgetId, options) {
+function PSelectableOptions(label, widgetId, options) {
     var api = {};
     api.label = ko.observable(label);
     api.widgetId = ko.observable(widgetId);
@@ -171,21 +171,21 @@ function Diagnosis() {
 }
 
 var d = Diagnosis();
-function RetrospectiveCheckinViewModel() {
+function PRetrospectiveCheckinViewModel() {
     var api = {};
-    api.locations = ko.observable(SelectableOptions('Location', 'location', [
-        Option("Emergency", 1),
-        Option("Outpatient", 2),
-        Option("Inpatient", 3)]));
-    api.paymentReasons = ko.observable(SelectableOptions('Reason', 'paymentReason', [
-        Option("Medical certificate without diagnosis", 1),
-        Option("Standard dental visit", 2),
-        Option("Marriage certificate without diagnosis", 3),
-        Option("Standard outpatient visit", 4)]));
-    api.paymentAmounts = ko.observable(SelectableOptions('Amount', 'paymentAmount', [
-        Option("50 Gourdes", 50),
-        Option("100 Gourdes", 100),
-        Option("Exempt", 0)]));
+    api.locations = ko.observable(PSelectableOptions('Location', 'location', [
+        POption("Emergency", 1),
+        POption("Outpatient", 2),
+        POption("Inpatient", 3)]));
+    api.paymentReasons = ko.observable(PSelectableOptions('Reason', 'paymentReason', [
+        POption("Medical certificate without diagnosis", 1),
+        POption("Standard dental visit", 2),
+        POption("Marriage certificate without diagnosis", 3),
+        POption("Standard outpatient visit", 4)]));
+    api.paymentAmounts = ko.observable(PSelectableOptions('Amount', 'paymentAmount', [
+        POption("50 Gourdes", 50),
+        POption("100 Gourdes", 100),
+        POption("Exempt", 0)]));
 
     api.patientIdentifier = ko.observable();
     api.checkinDate = ko.observable();

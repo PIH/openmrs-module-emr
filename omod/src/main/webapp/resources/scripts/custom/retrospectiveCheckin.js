@@ -22,27 +22,29 @@ function SelectableOptions(label, widgetId, options) {
     return api;
 }
 
-function RetrospectiveCheckinViewModel() {
+function RetrospectiveCheckinViewModel(locations, paymentReasons, paymentAmounts) {
     var api = {};
-    api.locations = ko.observable(SelectableOptions('Location', 'location', [
-        Option("Emergency", 1),
-        Option("Outpatient", 2),
-        Option("Inpatient", 3)]));
-    api.paymentReasons = ko.observable(SelectableOptions('Reason', 'paymentReason', [
-        Option("Medical certificate without diagnosis", 1),
-        Option("Standard dental visit", 2),
-        Option("Marriage certificate without diagnosis", 3),
-        Option("Standard outpatient visit", 4)]));
-    api.paymentAmounts = ko.observable(SelectableOptions('Amount', 'paymentAmount', [
-        Option("50 Gourdes", 50),
-        Option("100 Gourdes", 100),
-        Option("Exempt", 0)]));
+    var convertSimpleObjectsToOptions = function(list) {
+        return _.map(list, function(item) { return Option(item.label, item.value); });
+    };
+
+    api.locations = ko.observable(SelectableOptions('Location', 'location', convertSimpleObjectsToOptions(locations)));
+    api.paymentReasons = ko.observable(SelectableOptions('Reason', 'paymentReason', convertSimpleObjectsToOptions(paymentReasons)));
+    api.paymentAmounts = ko.observable(SelectableOptions('Amount', 'paymentAmount', convertSimpleObjectsToOptions(paymentAmounts)));
 
     api.patientIdentifier = ko.observable();
     api.checkinDate = ko.observable();
     api.paymentReason = ko.observable();
     api.amountPaid = ko.observable();
     api.receiptNumber = ko.observable();
+
+    api.patientName = ko.observable();
+    api.patientIdentifier.subscribe(function(newValue) {
+        $.getJSON('/mirebalais/emr/findPatient/search.action?successUrl=/mirebalais/mirebalais/home.page?&term=' + newValue, function(data) {
+                var patient = data[0];
+                if(patient && patient.preferredName) api.patientName(patient.preferredName.fullName);
+        });
+    });
 
     api.locationName = ko.computed(function() {
         var selectedOption = api.locations().selectedOption();

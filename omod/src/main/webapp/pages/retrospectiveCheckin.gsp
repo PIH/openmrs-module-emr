@@ -1,14 +1,13 @@
 <%
     ui.decorateWith("emr", "standardEmrPage")
-    ui.includeJavascript("emr", "knockout-2.2.0.js")
-    ui.includeJavascript("emr", "navigator.js")
-    ui.includeJavascript("emr", "custom/retrospectiveCheckin.js")
+    ui.includeJavascript("emr", "navigator.js", Integer.MAX_VALUE - 20)
+    ui.includeJavascript("emr", "custom/retrospectiveCheckin.js", Integer.MAX_VALUE - 25)
     ui.includeCss("emr", "retrospectiveCheckin.css")
 %>
 
 <script type="text/javascript">
     jQuery(function() {
-        ko.applyBindings(RetrospectiveCheckinViewModel(), jq('#content').get(0));
+        ko.applyBindings(RetrospectiveCheckinViewModel(${locations}, ${paymentReasons}, ${paymentAmounts}), jq('#content').get(0));
         FormNavigator(jQuery('#submitButton'), jQuery('#cancelButton'));
     });
 </script>
@@ -26,7 +25,7 @@
     <img class="field_check" src=${ui.resourceLink("emr", "images/checked.png")}
         data-bind="style: {visibility: checkinInfoIsValid() ? 'visible':'hidden'}"/>
     <span class="label">Check-in information</span>
-    <span class="value" data-bind="text:patientIdentifier"></span> -
+    <span class="value" data-bind="text:patientName"></span> -
     <span class="value" data-bind="text:locationName"></span> -
     <span class="value" data-bind="text:checkinDate"></span>
 
