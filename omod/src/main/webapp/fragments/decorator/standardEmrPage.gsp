@@ -54,7 +54,7 @@
         }
 
         jq(function() {
-            jq("#user-info .location").mouseover(function() {
+            jq("#user-info .location").click(function() {
                 jq('#sessionLocation').show();
                 jq(this).addClass('focus');
             });
