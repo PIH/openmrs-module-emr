@@ -1,6 +1,11 @@
 <%
     ui.decorateWith("emr", "standardEmrPage", [ title: ui.message("emr.mergePatients") ])
     ui.includeCss("mirebalais", "mergePatients.css")
+
+    def id = (patient1!= null) ? patient1.patient.id : ""
+    def fullName = (patient1!= null) ? patient1.primaryIdentifiers.collect{ it.identifier }.join(',') + "-" + ui.format(patient1.patient) : ""
+    def link = (patient1!= null) ? "{ page : 'patient', query:{ patientId: ${id} } }" : "{ page : 'systemAdministration'}"
+
 %>
 
 <script type="text/javascript">
@@ -8,7 +13,7 @@
         jq('input[type=text]').first().focus();
 
         jq('#cancel-button').click(function() {
-            emr.navigateTo({ page: 'systemAdministration' });
+            emr.navigateTo(${link});
         });
     });
 
@@ -25,9 +30,7 @@
 
     <h3>${ ui.message("emr.mergePatients.selectTwo") }</h3>
 
-    <%  def id = (patient1!= null) ? patient1.patient.id : ""
-        def fullName = (patient1!= null) ? patient1.primaryIdentifiers.collect{ it.identifier }.join(',') + "-" + ui.format(patient1.patient) : ""
-    %>
+
 
     ${ ui.includeFragment("emr", "field/autocomplete", [
             id: "choose-first",
