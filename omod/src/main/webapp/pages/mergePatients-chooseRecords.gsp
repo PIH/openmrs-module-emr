@@ -25,6 +25,10 @@
 
     <h3>${ ui.message("emr.mergePatients.selectTwo") }</h3>
 
+    <%  def id = (patient1!= null) ? patient1.patient.id : ""
+        def fullName = (patient1!= null) ? patient1.primaryIdentifiers.collect{ it.identifier }.join(',') + "-" + ui.format(patient1.patient) : ""
+    %>
+
     ${ ui.includeFragment("emr", "field/autocomplete", [
             id: "choose-first",
             label: ui.message("emr.mergePatients.chooseFirstLabel"),
@@ -32,7 +36,10 @@
             fragment: "findPatient",
             action: "search",
             itemValueProperty: "patientId",
-            itemLabelFunction: "labelFunction"
+            itemLabelFunction: "labelFunction",
+            patientId: id,
+            disabled: isUnknownPatient,
+            value: fullName
     ])}
 
     <br/>

@@ -67,10 +67,13 @@
     });
 </script>
 
+<% def value = (config.value!=null) ? config.value : "" %>
+<% def disabled = (config.disabled) ? "disabled=disabled" : "" %>
+
 <span class="autocomplete-label">${ config.label }</span>
 <div>
-    <input type="hidden" class="field-value" id="${ config.id }-value" name="${ config.formFieldName }"/>
-    <input type="text" class="field-display" id="${ config.id }-search" placeholder="${ config.placeholder ?: '' }" size="40"/>
+    <input type="hidden" class="field-value" id="${ config.id }-value" name="${ config.formFieldName }" value="${ config.patientId}"/>
+    <input type="text" class="field-display" id="${ config.id }-search" ${disabled} placeholder="${ config.placeholder ?: '' }" value="${value}" size="40"/>
 </div>
 
 <span class="field-error" style="display: none"></span>
