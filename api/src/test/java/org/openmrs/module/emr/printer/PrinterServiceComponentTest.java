@@ -16,7 +16,6 @@ package org.openmrs.module.emr.printer;
 
 import junit.framework.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.LocationAttribute;
@@ -147,7 +146,6 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
     }
 
     @Test
-    @Ignore
     public void shouldUpdateDefaultLabelPrinterForLocation() {
 
         Location location = locationService.getLocation(3); // a default printer for location 3 in has been set in the dataset
