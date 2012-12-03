@@ -70,6 +70,16 @@ var emr = (function($) {
                 .error(function(err) {
                     emr.showError(err);
                 });
+        },
+
+        successMessage: function(message) {
+            jq().toastmessage( 'showToast', { type: 'success',
+                                              text:  message } );
+        },
+
+        errorMessage: function(message) {
+            jq().toastmessage( 'showToast', { type: 'error',
+                                              text:  message } );
         }
 
     };
