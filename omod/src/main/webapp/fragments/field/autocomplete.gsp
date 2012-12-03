@@ -41,7 +41,7 @@
             },
             autoFocus: true,
             minLength: 2,
-            delay: 100,
+            delay: 1000,
             select: function(event, ui) {
                 setSearchValue(ui.item);
                 return false;
