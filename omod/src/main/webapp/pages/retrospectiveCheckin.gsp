@@ -36,8 +36,18 @@
         </li>
         <li data-bind="template: {name:'optionsList-template', foreach:locations}"></li>
         <li>
-            <label for="checkinDate">Check-in date</label>
-            <input id="checkinDate" type="date" data-bind="value:checkinDate" placeholder="  /  /  "/>
+            <label for="checkinDate_day">Check-in date</label>
+            <input id="checkinDate_day" type="text" data-bind="value:checkinDay" maxlength="2" placeholder="Day"/>
+            <span> / </span>
+            <input id="checkinDate_month" type="text" data-bind="value:checkinMonth" maxlength="2" placeholder="Month"/>
+            <span> / </span>
+            <input id="checkinDate_year" type="text" data-bind="value:checkinYear" maxlength="4" placeholder="Year"/>
+        </li>
+        <li>
+            <label for="checkinTime_hour">Check-in time</label>
+            <input id="checkinTime_hour" data-bind="value:checkinHour" maxlength="2" placeholder="Hour"/>
+            <span> : </span>
+            <input id="checkinTime_minutes" data-bind="value:checkinMinutes" maxlength="2" placeholder="Minutes"/>
         </li>
     </ul>
 </section>
@@ -57,5 +67,7 @@
 
 <div class="actions">
     <a id="cancelButton" href="#" class="cancel">Cancel</a>
-    <input id="submitButton" type="button" class="submit" value="Submit" />
+    <input id="submitButton" type="button" class="submit" value="Submit" data-bind="click: registerCheckin"/>
 </div>
+
+<div id="dialogMessage"></div>
