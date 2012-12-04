@@ -228,7 +228,25 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
     @Override
     @Transactional
     public Encounter createCheckinInRetrospective(Patient patient, Location location, Provider clerk, Obs paymentReason, Obs paymentAmount, Date checkinDate) {
-        Visit visit = buildVisit(patient, location, checkinDate);
+        Visit encounterVisit = null;
+        List<Visit> visits = visitService.getVisitsByPatient(patient);
+        for(Visit v : visits) {
+            if( v.getStopDatetime() != null && checkinDate.compareTo(v.getStopDatetime()) > 0 &&
+                    DateUtils.addHours(v.getStopDatetime(), emrProperties.getVisitExpireHours()).compareTo(checkinDate) > 0 ) {
+                encounterVisit = v;
+            } else if( v.getStartDatetime() != null && checkinDate.compareTo(v.getStartDatetime()) < 0 &&
+                    DateUtils.addHours(checkinDate, emrProperties.getVisitExpireHours()).compareTo(v.getStartDatetime()) > 0) {
+                encounterVisit = v;
+            }
+        }
+        if( encounterVisit == null)
+            encounterVisit = buildVisit(patient, location, checkinDate);
+        else {
+            if( encounterVisit.getStartDatetime().compareTo(checkinDate) > 0)
+                encounterVisit.setStartDatetime(checkinDate);
+            if( encounterVisit.getStopDatetime().compareTo(checkinDate) < 0)
+                encounterVisit.setStopDatetime(checkinDate);
+        }
 
         List<Obs> paymentObservations = new ArrayList<Obs>();
         paymentObservations.add(paymentReason);
@@ -236,7 +254,7 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 
         Encounter checkinEncounter = buildEncounter(emrProperties.getCheckInEncounterType(), patient, location, checkinDate, paymentObservations, null);
         checkinEncounter.addProvider(emrProperties.getCheckInClerkEncounterRole(), clerk);
-        visit.addEncounter(checkinEncounter);
+        encounterVisit.addEncounter(checkinEncounter);
 
         checkinEncounter = encounterService.saveEncounter(checkinEncounter);
 

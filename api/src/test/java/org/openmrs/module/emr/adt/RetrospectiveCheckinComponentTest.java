@@ -35,20 +35,30 @@ public class RetrospectiveCheckinComponentTest extends BaseModuleContextSensitiv
     private ProviderService providerService;
     @Autowired
     private ConceptService conceptService;
+    @Autowired
+    private VisitService visitService;
+
+    private Patient patient;
+    private Location location;
+    private Provider clerk;
+    private Obs paymentReason;
+    private Obs paymentAmount;
+    private Date checkinDate;
 
     @Before
     public void setupDatabase() throws Exception {
         executeDataSet("retrospectiveCheckinComponentTestDataset.xml");
+
+        patient = patientService.getPatient(2);
+        location = locationService.getLocation(2);
+        clerk = providerService.getProvider(1);
+        paymentReason = createPaymentReasonObservation();
+        paymentAmount = createPaymentAmountObservation(50);
     }
 
     @Test
     public void createRetrospectiveCheckinWithinNewVisit() {
-        Patient patient = patientService.getPatient(2); // from standardTestDataset
-        Location location = locationService.getLocation(2); // from standardTestDataset (but configured in retrospectiveCheckinComponentTestDataset for checkin)
-        Provider clerk = providerService.getProvider(1); // from standardTestDataset
-        Obs paymentReason = createPaymentReasonObservation();
-        Obs paymentAmount = createPaymentAmountObservation(50);
-        Date checkinDate = generateDateFor(2011, 07, 25, 10, 39);
+        checkinDate = generateDateFor(2011, 07, 25, 10, 39);
 
         Encounter checkinEncounter = adtService.createCheckinInRetrospective(patient, location, clerk, paymentReason, paymentAmount, checkinDate);
         Visit visit = checkinEncounter.getVisit();
@@ -59,6 +69,50 @@ public class RetrospectiveCheckinComponentTest extends BaseModuleContextSensitiv
         assertThat(checkinEncounter.getObs(), containsInAnyOrder(paymentReason, paymentAmount));
         assertThat(checkinEncounter.getEncounterDatetime(), is(checkinDate));
         assertThat(visit.getStartDatetime(), is(checkinDate));
+    }
+
+    @Test
+    public void createRetrospectiveCheckinWithinVisitAfter() {
+        Visit visitAfter = new Visit();
+        visitAfter.setPatient(patient);
+        visitAfter.setStartDatetime(generateDateFor(2011, 07, 25, 14, 25));
+        visitAfter.setStopDatetime(generateDateFor(2011, 07, 25, 18, 00));
+        visitAfter.setVisitType(emrProperties.getAtFacilityVisitType());
+        visitService.saveVisit(visitAfter);
+
+        checkinDate = generateDateFor(2011, 07, 25, 10, 00);
+
+        Encounter checkinEncounter = adtService.createCheckinInRetrospective(patient, location, clerk, paymentReason, paymentAmount, checkinDate);
+        Visit visit = checkinEncounter.getVisit();
+
+        assertThat(checkinEncounter.getPatient(), is(patient));
+        assertThat(checkinEncounter.getLocation(), is(location));
+        assertThat(checkinEncounter.getProvidersByRole(emrProperties.getCheckInClerkEncounterRole()), containsInAnyOrder(clerk));
+        assertThat(checkinEncounter.getObs(), containsInAnyOrder(paymentReason, paymentAmount));
+        assertThat(checkinEncounter.getEncounterDatetime(), is(checkinDate));
+        assertThat(visit, is(visitAfter));
+    }
+
+    @Test
+    public void createRetrospectiveCheckinWithinVisitBefore() {
+        Visit visitBefore = new Visit();
+        visitBefore.setPatient(patient);
+        visitBefore.setStartDatetime(generateDateFor(2011, 07, 25, 8, 00));
+        visitBefore.setStopDatetime(generateDateFor(2011, 07, 25, 10, 00));
+        visitBefore.setVisitType(emrProperties.getAtFacilityVisitType());
+        visitService.saveVisit(visitBefore);
+
+        checkinDate = generateDateFor(2011, 07, 25, 14, 00);
+
+        Encounter checkinEncounter = adtService.createCheckinInRetrospective(patient, location, clerk, paymentReason, paymentAmount, checkinDate);
+        Visit visit = checkinEncounter.getVisit();
+
+        assertThat(checkinEncounter.getPatient(), is(patient));
+        assertThat(checkinEncounter.getLocation(), is(location));
+        assertThat(checkinEncounter.getProvidersByRole(emrProperties.getCheckInClerkEncounterRole()), containsInAnyOrder(clerk));
+        assertThat(checkinEncounter.getObs(), containsInAnyOrder(paymentReason, paymentAmount));
+        assertThat(checkinEncounter.getEncounterDatetime(), is(checkinDate));
+        assertThat(visit, is(visitBefore));
     }
 
     private Obs createPaymentAmountObservation(double amount) {
