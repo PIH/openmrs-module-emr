@@ -1,4 +1,4 @@
-function Option(name, value) {
+function OptionItem(name, value) {
     var model = {};
     model.name = name;
     model.value = value;
@@ -25,7 +25,7 @@ function SelectableOptions(label, widgetId, options) {
 function RetrospectiveCheckinViewModel(locations, paymentReasons, paymentAmounts) {
     var api = {};
     var convertSimpleObjectsToOptions = function(list) {
-        return _.map(list, function(item) { return Option(item.label, item.value); });
+        return _.map(list, function(item) { return OptionItem(item.label, item.value); });
     };
     var checkinDateForSubmission = function() {
         return api.checkinYear() + "-" + api.checkinMonth() + "-" + api.checkinDay() +
