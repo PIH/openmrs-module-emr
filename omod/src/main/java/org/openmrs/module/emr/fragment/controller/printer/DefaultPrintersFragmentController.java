@@ -17,6 +17,7 @@ package org.openmrs.module.emr.fragment.controller.printer;
 import org.openmrs.Location;
 import org.openmrs.module.emr.printer.Printer;
 import org.openmrs.module.emr.printer.PrinterService;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.action.FailureResult;
 import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
@@ -29,7 +30,8 @@ public class DefaultPrintersFragmentController {
     public FragmentActionResult saveDefaultPrinter(@RequestParam (value = "location", required =  true) Location location,
                                                    @RequestParam (value = "type", required = true) Printer.Type type,
                                                    @RequestParam (value = "printer", required = false) Printer printer,
-                                                   @SpringBean("printerService") PrinterService printerService) {
+                                                   @SpringBean("printerService") PrinterService printerService,
+                                                   UiUtils ui) {
 
         try {
             printerService.setDefaultPrinter(location, type, printer);
@@ -38,7 +40,8 @@ public class DefaultPrintersFragmentController {
             return new FailureResult(e.getMessage());
         }
 
-        return new SuccessResult();
+        String successMessage = ui.message("emr.printer.defaultUpdate", ui.message("emr.printer." + type), ui.format(location));
+        return new SuccessResult(successMessage);
     }
 
 

@@ -33,7 +33,7 @@
                 type: 'POST'
             })
                     .success(function(data) {
-                        emr.successMessage('${ ui.message("emr.printer.defaultUpdate") }');
+                        emr.successMessage(data.message);
                     })
                     .error(function(xhr, status, err) {
                         emr.errorMessage('${ ui.message("emr.printer.error.defaultUpdate") }')

@@ -15,6 +15,9 @@
         <th>&nbsp;</th>
     </tr>
 
+    <% if (!printers) { %>
+        <tr><td colspan="6">${ ui.message("emr.none") }</td></tr>
+    <% } %>
     <% printers.sort { it.name }.each {   %>
     <tr>
         <td>

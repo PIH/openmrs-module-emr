@@ -187,4 +187,32 @@ public class TestUtils {
 		};
 	}
 
+    public static String join(Iterable<?> iter, String separator) {
+        StringBuilder ret = new StringBuilder();
+        boolean first = true;
+        for (Object o : iter) {
+            if (!first) {
+                ret.append(separator);
+            } else {
+                first = false;
+            }
+            ret.append(o);
+        }
+        return ret.toString();
+    }
+
+    public static String join(Object[] array, String separator) {
+        StringBuilder ret = new StringBuilder();
+        boolean first = true;
+        for (Object o : array) {
+            if (!first) {
+                ret.append(separator);
+            } else {
+                first = false;
+            }
+            ret.append(o);
+        }
+        return ret.toString();
+    }
+
 }

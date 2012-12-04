@@ -21,8 +21,7 @@ import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonName;
 import org.openmrs.module.emr.EmrProperties;
-import org.openmrs.ui.framework.BasicUiUtils;
-import org.openmrs.ui.framework.FormatterImpl;
+import org.openmrs.module.emr.TestUiUtils;
 import org.openmrs.ui.framework.SimpleObject;
 
 import java.text.SimpleDateFormat;
@@ -70,9 +69,4 @@ public class FindPatientFragmentControllerTest {
         assertThat((String) PropertyUtils.getProperty(primaryIdentifier, "identifier"), is("44"));
     }
 
-    private class TestUiUtils extends BasicUiUtils {
-        public TestUiUtils() {
-            this.formatter = new FormatterImpl();
-        }
-    }
 }
