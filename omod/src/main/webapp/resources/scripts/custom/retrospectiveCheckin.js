@@ -76,7 +76,7 @@ function RetrospectiveCheckinViewModel(locations, paymentReasons, paymentAmounts
         return Boolean(api.patient && api.locationName() && api.checkinDate());
     }
     api.paymentInfoIsValid = function () {
-        return Boolean(api.paymentReason() && api.amountPaid());
+        return Boolean(api.paymentReason() && api.amountPaid() && api.receiptNumber());
     }
     api.registerCheckin = function() {
         if( !api.checkinInfoIsValid() || !api.paymentInfoIsValid() ) {
@@ -100,7 +100,8 @@ function RetrospectiveCheckinViewModel(locations, paymentReasons, paymentAmounts
                 locationId: api.locations().selectedOption().value,
                 checkinDate: checkinDateForSubmission(),
                 paymentReasonId: api.paymentReasons().selectedOption().value,
-                paidAmount: api.paymentAmounts().selectedOption().value
+                paidAmount: api.paymentAmounts().selectedOption().value,
+                paymentReceipt: api.receiptNumber()
             },
             success: function(data) {
                 $("#dialogMessage").html("Retrospective Check in added successfully!");

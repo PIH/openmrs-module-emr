@@ -9,9 +9,7 @@ import org.openmrs.module.emr.adt.AdtService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
-import org.openmrs.ui.framework.fragment.action.SuccessResult;
 import org.openmrs.ui.framework.page.PageModel;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
@@ -38,9 +36,10 @@ public class RetrospectiveCheckinPageController {
                        @SpringBean("providerService")ProviderService providerService,
                        @RequestParam("patientId") Patient patient,
                        @RequestParam("locationId") Location location,
-                       @RequestParam("checkinDatetime") Date date,
+                       @RequestParam("checkinDate") Date date,
                        @RequestParam("paymentReasonId") Integer paymentReasonId,
-                       @RequestParam("paidAmount") Double paidAmount) {
+                       @RequestParam("paidAmount") Double paidAmount,
+                       @RequestParam("paymentReceipt") String receiptNumber) {
 
         Collection<Provider> providers = providerService.getProvidersByPerson(Context.getAuthenticatedUser().getPerson());
         Provider checkInClerk = providers.iterator().next();
@@ -53,7 +52,11 @@ public class RetrospectiveCheckinPageController {
         paymentAmount.setConcept(conceptService.getConceptByUuid("5d1bc5de-6a35-4195-8631-7322941fe528"));
         paymentAmount.setValueNumeric(paidAmount);
 
-        adtService.createCheckinInRetrospective(patient, location, checkInClerk, paymentReason, paymentAmount, date);
+        Obs paymentReceipt = new Obs();
+        paymentReceipt.setConcept(conceptService.getConceptByUuid("20438dc7-c5b4-4d9c-8480-e888f4795123"));
+        paymentReceipt.setValueText(receiptNumber);
+
+        adtService.createCheckinInRetrospective(patient, location, checkInClerk, paymentReason, paymentAmount, paymentReceipt, date);
         return "redirect:" + ui.pageLink("mirebalais", "home");
     }
 

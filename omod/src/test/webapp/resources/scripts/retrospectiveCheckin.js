@@ -1,7 +1,7 @@
 describe("Retrospective Checkin", function() {
 
     var viewModel;
-    var successfulPatientRetrieval = function() {
+    var mockSuccessfulPatientRetrieval = function() {
         spyOn($, "ajax").andCallFake(function(params) {
             params.success(
                 $.parseJSON('[' +
@@ -20,7 +20,7 @@ describe("Retrospective Checkin", function() {
     })
 
     it("should find a patient", function() {
-        successfulPatientRetrieval();
+        mockSuccessfulPatientRetrieval();
         viewModel.patientIdentifier("TT309R");
         expect(viewModel.patientName()).toBe("Alberto Dummont");
     });
@@ -38,7 +38,7 @@ describe("Retrospective Checkin", function() {
     it("should validate checkin information", function() {
         expect(viewModel.checkinInfoIsValid()).toBe(false);
 
-        successfulPatientRetrieval();
+        mockSuccessfulPatientRetrieval();
         viewModel.patientIdentifier("TT309R");
         expect(viewModel.checkinInfoIsValid()).toBe(false);
 
@@ -71,8 +71,47 @@ describe("Retrospective Checkin", function() {
 
         var paymentAmount = viewModel.paymentAmounts().options()[0];
         viewModel.paymentAmounts().selectOption(paymentAmount);
+        expect(viewModel.paymentInfoIsValid()).toBe(false);
+
+        viewModel.receiptNumber("123456");
         expect(viewModel.paymentInfoIsValid()).toBe(true);
     });
+
+    it("should submit the data", function() {
+        viewModel.patient = {patientId:12};
+        var location = viewModel.locations().options()[0];
+        viewModel.locations().selectOption(location);
+        viewModel.checkinDay("23");
+        viewModel.checkinMonth("10");
+        viewModel.checkinYear("2012");
+        viewModel.checkinHour("13");
+        viewModel.checkinMinutes("04");
+
+        var paymentReason = viewModel.paymentReasons().options()[0];
+        viewModel.paymentReasons().selectOption(paymentReason);
+        var paymentAmount = viewModel.paymentAmounts().options()[0];
+        viewModel.paymentAmounts().selectOption(paymentAmount);
+        viewModel.receiptNumber("123456");
+
+        var ajaxParams;
+        spyOn($, "ajax").andCallFake(function(params) {
+            ajaxParams = params;
+        });
+
+        expect(viewModel.paymentInfoIsValid()).toBe(true);
+        expect(viewModel.checkinInfoIsValid()).toBe(true)
+
+        viewModel.registerCheckin();
+
+        expect($.ajax).toHaveBeenCalled();
+        expect(ajaxParams.data).toEqual({
+            patientId:12,
+            locationId: 1,
+            checkinDate: "2012-10-23 13:04:00",
+            paymentReasonId: 1,
+            paidAmount: 10,
+            paymentReceipt: "123456"});
+    })
 
     it("SelectableOptions should have at most 1 selected option", function() {
         expect(viewModel.locations().selectedOption()).toBe(undefined);

@@ -163,5 +163,5 @@ public interface AdtService extends OpenmrsService {
     void mergePatients(Patient preferred, Patient notPreferred);
 
 
-    Encounter createCheckinInRetrospective(Patient patient, Location location, Provider clerk, Obs paymentReason, Obs paymentAmount, Date checkinDate);
+    Encounter createCheckinInRetrospective(Patient patient, Location location, Provider clerk, Obs paymentReason, Obs paymentAmount, Obs paymentReceipt, Date checkinDate);
 }

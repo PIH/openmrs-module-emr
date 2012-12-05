@@ -227,7 +227,7 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 
     @Override
     @Transactional
-    public Encounter createCheckinInRetrospective(Patient patient, Location location, Provider clerk, Obs paymentReason, Obs paymentAmount, Date checkinDate) {
+    public Encounter createCheckinInRetrospective(Patient patient, Location location, Provider clerk, Obs paymentReason, Obs paymentAmount, Obs paymentReceipt, Date checkinDate) {
         Visit encounterVisit = null;
         List<Visit> visits = visitService.getVisitsByPatient(patient);
         for(Visit v : visits) {
@@ -251,6 +251,7 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
         List<Obs> paymentObservations = new ArrayList<Obs>();
         paymentObservations.add(paymentReason);
         paymentObservations.add(paymentAmount);
+        paymentObservations.add(paymentReceipt);
 
         Encounter checkinEncounter = buildEncounter(emrProperties.getCheckInEncounterType(), patient, location, checkinDate, paymentObservations, null);
         checkinEncounter.addProvider(emrProperties.getCheckInClerkEncounterRole(), clerk);

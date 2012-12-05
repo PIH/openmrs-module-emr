@@ -62,6 +62,10 @@
     <ul>
         <li data-bind="template: {name:'optionsList-template', foreach:paymentReasons}"></li>
         <li data-bind="template: {name:'optionsList-template', foreach:paymentAmounts}"></li>
+        <li>
+            <label for="receiptNumber">Receipt number</label>
+            <input id="receiptNumber" data-bind="value:receiptNumber" />
+        </li>
     </ul>
 </section>
 
