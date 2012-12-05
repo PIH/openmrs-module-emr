@@ -37,13 +37,18 @@ public class FindPatientFragmentController {
     public List<SimpleObject> search(@RequestParam(value = "q", required = false) String query,
                                      @RequestParam(value = "term", required = false) String term,
                                      @RequestParam(value = "checkedInAt", required = false) Location checkedInAt,
+                                     @RequestParam(value = "maxResults", required = false) Integer maxResults,
                                      @SpringBean EmrService service,
                                      @SpringBean EmrProperties emrProperties,
                                      UiUtils ui) {
         if (StringUtils.isBlank(query)) {
             query = term;
         }
-        List<Patient> results = service.findPatients(query, checkedInAt, 0, 100);
+        int resultLimit = 100;
+        if(maxResults!=null && maxResults.intValue()>0){
+            resultLimit = maxResults.intValue();
+        }
+        List<Patient> results = service.findPatients(query, checkedInAt, 0, resultLimit);
         return simplify(ui, emrProperties, results);
     }
 
