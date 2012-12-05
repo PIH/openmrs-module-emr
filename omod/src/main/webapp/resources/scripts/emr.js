@@ -10,7 +10,14 @@ var emr = (function($) {
         return ret;
     };
 
+    var jqObject = $();
+
     return {
+
+        // just used in testing so we can replace the instance with a mock or spy as needed
+        setJqObject: function(jqueryInstanceToSet)  {
+            jqObject = jqueryInstanceToSet;
+        },
 
         navigateTo: function(opts) {
             var url = opts.url;
@@ -73,12 +80,12 @@ var emr = (function($) {
         },
 
         successMessage: function(message) {
-            jq().toastmessage( 'showToast', { type: 'success',
+            jqObject.toastmessage( 'showToast', { type: 'success',
                                               text:  message } );
         },
 
         errorMessage: function(message) {
-            jq().toastmessage( 'showToast', { type: 'error',
+            jqObject.toastmessage( 'showToast', { type: 'error',
                                               text:  message } );
         }
 
