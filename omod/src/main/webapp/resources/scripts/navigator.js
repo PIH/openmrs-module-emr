@@ -31,7 +31,8 @@ var FormNavigator = function(submitElement, cancelElement) {
         if( $(currentField).hasClass('optionsList') ) {
             if(option.length > 0) {
                 $(currentOptionFromList).removeClass('focusedOption')
-                currentOptionFromList = option.prev()[0];
+                console.log(option[0]);
+                currentOptionFromList = option[0];
                 $(currentOptionFromList).addClass('focusedOption');
             }
         }

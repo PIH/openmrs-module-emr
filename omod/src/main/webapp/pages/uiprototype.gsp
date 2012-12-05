@@ -1,13 +1,13 @@
 <%
     ui.decorateWith("emr", "standardEmrPage")
     ui.includeJavascript("emr", "knockout-2.2.0.js")
-    ui.includeJavascript("emr", "custom/retrospectiveCheckin.js")
+    ui.includeJavascript("emr", "custom/uiprototype.js")
     ui.includeCss("emr", "retrospectiveCheckin.css")
 %>
 
 <script type="text/javascript">
     jQuery(function() {
-        ko.applyBindings(RetrospectiveCheckinViewModel());
+        ko.applyBindings(PRetrospectiveCheckinViewModel(), jq('#content').get(0));
         FormNavigator(jQuery('#submitButton'), jQuery('#cancelButton'));
     });
 </script>

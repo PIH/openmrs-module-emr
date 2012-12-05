@@ -61,7 +61,11 @@
 
     <div class="unknown-patient">
         ${ ui.message("emr.patient.temporaryRecord") } <br/>
-        <button>Merge into another Patient Record</button>
+        <form action="/${ contextPath }/emr/mergePatients.page" method="get">
+            <input type="hidden" name="unknown-patient" value="true" />
+            <input type="hidden" name="patient1" value="${patient.patient.id}" />
+            <input type="submit" id="merge-button" value="Merge into another Patient Record" />
+        </form>
     </div>
 
     <% if (emrContext.activeVisitSummary) { %>

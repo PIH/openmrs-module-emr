@@ -14,13 +14,7 @@
 
 package org.openmrs.module.emr.adt;
 
-import org.openmrs.Encounter;
-import org.openmrs.Location;
-import org.openmrs.Obs;
-import org.openmrs.Order;
-import org.openmrs.Patient;
-import org.openmrs.Provider;
-import org.openmrs.Visit;
+import org.openmrs.*;
 import org.openmrs.api.OpenmrsService;
 
 import java.util.Date;
@@ -167,4 +161,7 @@ public interface AdtService extends OpenmrsService {
      * @param notPreferred
      */
     void mergePatients(Patient preferred, Patient notPreferred);
+
+
+    Encounter createCheckinInRetrospective(Patient patient, Location location, Provider clerk, Obs paymentReason, Obs paymentAmount, Date checkinDate);
 }

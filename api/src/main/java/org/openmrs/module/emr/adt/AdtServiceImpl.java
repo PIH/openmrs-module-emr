@@ -17,23 +17,8 @@ package org.openmrs.module.emr.adt;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Encounter;
-import org.openmrs.EncounterType;
-import org.openmrs.Location;
-import org.openmrs.Obs;
-import org.openmrs.Order;
-import org.openmrs.Patient;
-import org.openmrs.Provider;
-import org.openmrs.User;
-import org.openmrs.Visit;
-import org.openmrs.api.APIException;
-import org.openmrs.api.AdministrationService;
-import org.openmrs.api.EncounterService;
-import org.openmrs.api.LocationService;
-import org.openmrs.api.OrderService;
-import org.openmrs.api.PatientService;
-import org.openmrs.api.ProviderService;
-import org.openmrs.api.VisitService;
+import org.openmrs.*;
+import org.openmrs.api.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
@@ -44,15 +29,7 @@ import org.openmrs.serialization.SerializationException;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
@@ -247,6 +224,44 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
         encounterService.saveEncounter(encounter);
         return encounter;
     }
+
+    @Override
+    @Transactional
+    public Encounter createCheckinInRetrospective(Patient patient, Location location, Provider clerk, Obs paymentReason, Obs paymentAmount, Date checkinDate) {
+        Visit encounterVisit = null;
+        List<Visit> visits = visitService.getVisitsByPatient(patient);
+        for(Visit v : visits) {
+            if( v.getStopDatetime() != null && checkinDate.compareTo(v.getStopDatetime()) > 0 &&
+                    DateUtils.addHours(v.getStopDatetime(), emrProperties.getVisitExpireHours()).compareTo(checkinDate) > 0 ) {
+                encounterVisit = v;
+            } else if( v.getStartDatetime() != null && checkinDate.compareTo(v.getStartDatetime()) < 0 &&
+                    DateUtils.addHours(checkinDate, emrProperties.getVisitExpireHours()).compareTo(v.getStartDatetime()) > 0) {
+                encounterVisit = v;
+            }
+        }
+        if( encounterVisit == null)
+            encounterVisit = buildVisit(patient, location, checkinDate);
+        else {
+            if( encounterVisit.getStartDatetime().compareTo(checkinDate) > 0)
+                encounterVisit.setStartDatetime(checkinDate);
+            if( encounterVisit.getStopDatetime().compareTo(checkinDate) < 0)
+                encounterVisit.setStopDatetime(checkinDate);
+        }
+
+        List<Obs> paymentObservations = new ArrayList<Obs>();
+        paymentObservations.add(paymentReason);
+        paymentObservations.add(paymentAmount);
+
+        Encounter checkinEncounter = buildEncounter(emrProperties.getCheckInEncounterType(), patient, location, checkinDate, paymentObservations, null);
+        checkinEncounter.addProvider(emrProperties.getCheckInClerkEncounterRole(), clerk);
+        encounterVisit.addEncounter(checkinEncounter);
+
+        checkinEncounter = encounterService.saveEncounter(checkinEncounter);
+
+        return checkinEncounter;
+    }
+
+
 
     private Provider getProvider(User accountBelongingToUser) {
         Collection<Provider> candidates = providerService.getProvidersByPerson(accountBelongingToUser.getPerson());

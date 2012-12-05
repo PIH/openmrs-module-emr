@@ -15,6 +15,7 @@
 
 <script type="text/javascript">
     jq(function() {
+        var xhr=null;
 
         function setSearchValue(objectItem){
             jq('#${ config.id }-value').val(objectItem.${ config.itemValueProperty });
@@ -24,10 +25,14 @@
         jq('#${ config.id }-search').autocomplete({
             source: function(request, response) {
                 var ajaxUrl = '${ ui.actionLink(fragmentProvider, config.fragment, config.action)}';
-                jq.ajax({
+                if(xhr){
+                    xhr.abort();
+                    xhr = null;
+                }
+                xhr= jq.ajax({
                     url: ajaxUrl,
                     dataType: 'json',
-                    data: { term: request.term } ,
+                    data: { term: request.term , maxResults: ${config.maxResults} ? ${config.maxResults} : 0} ,
                     success: function (data) {
                         if (data.length == 0){
                             data.push({
@@ -37,11 +42,16 @@
                         }
                         response(data);
                     }
+                }).complete(function(){
+                     xhr = null;
+                }).error(function(){
+                     xhr = null;
+                     console.log("error on searching for patients");
                 });
             },
             autoFocus: true,
             minLength: 2,
-            delay: 1000,
+            delay: 500,
             select: function(event, ui) {
                 setSearchValue(ui.item);
                 return false;
@@ -58,6 +68,9 @@
             var self= this;
             if(items.length ==1 && (items[0].patientId !==0 )){
                 setSearchValue(items[0]);
+                if(${ config.onExactMatchFunction } !==null ){
+                     ${ config.onExactMatchFunction }(items[0]);
+                }
             }else{
                 jq.each( items , function(i, item){
                     self._renderItem(ul, item);
@@ -67,10 +80,13 @@
     });
 </script>
 
+<% def value = (config.value!=null) ? config.value : "" %>
+<% def disabled = (config.disabled) ? "disabled=disabled" : "" %>
+
 <span class="autocomplete-label">${ config.label }</span>
 <div>
-    <input type="hidden" class="field-value" id="${ config.id }-value" name="${ config.formFieldName }"/>
-    <input type="text" class="field-display" id="${ config.id }-search" placeholder="${ config.placeholder ?: '' }" size="40"/>
+    <input type="hidden" class="field-value" id="${ config.id }-value" name="${ config.formFieldName }" value="${ config.patientId}"/>
+    <input type="text" class="field-display" id="${ config.id }-search" ${disabled} placeholder="${ config.placeholder ?: '' }" value="${value}" size="40"/>
 </div>
 
 <span class="field-error" style="display: none"></span>

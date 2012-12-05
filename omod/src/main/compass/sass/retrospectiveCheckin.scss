@@ -46,7 +46,7 @@ section.focused {
                 padding: 5px;
                 margin-bottom: 20px;
 
-                .selected {
+                .selectedOption {
                   background-color: #BBB;
                   font-weight: bold;
                 }
@@ -58,7 +58,7 @@ section.focused {
                   width: 250px;
                 }
 
-                .option:hover, .option:focus {
+                .option:hover, .option:focus, .focusedOption {
                   background-color: $blue;
                   color: white;
                 }

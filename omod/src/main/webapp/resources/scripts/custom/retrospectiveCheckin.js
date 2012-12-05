@@ -1,4 +1,4 @@
-function Option(name, value) {
+function OptionItem(name, value) {
     var model = {};
     model.name = name;
     model.value = value;
@@ -22,31 +22,110 @@ function SelectableOptions(label, widgetId, options) {
     return api;
 }
 
-function RetrospectiveCheckinViewModel() {
+function RetrospectiveCheckinViewModel(locations, paymentReasons, paymentAmounts) {
     var api = {};
-    api.locations = [{name:"Emergency", value:1}, {name:"Outpatient", value:2}];
-    api.paymentReasons = [
-        {name:"Medical certificate without diagnosis", value:1},
-        {name:"Standard dental visit", value:2},
-        {name:"Marriage certificate without diagnosis", value:3},
-        {name:"Standard outpatient visit", value:4}];
-    api.paymentAmounts = [
-        {name:"50 Gourdes", value:50},
-        {name:"100 Gourdes", values:100},
-        {name:"Exempt", values:0}];
+    var convertSimpleObjectsToOptions = function(list) {
+        return _.map(list, function(item) { return OptionItem(item.label, item.value); });
+    };
+    var checkinDateForSubmission = function() {
+        return api.checkinYear() + "-" + api.checkinMonth() + "-" + api.checkinDay() +
+            " " + api.checkinHour() + ":" + api.checkinMinutes() + ":00";
+    }
 
-    api.location = ko.observable();
+    api.locations = ko.observable(SelectableOptions('Location', 'location', convertSimpleObjectsToOptions(locations)));
+    api.paymentReasons = ko.observable(SelectableOptions('Reason', 'paymentReason', convertSimpleObjectsToOptions(paymentReasons)));
+    api.paymentAmounts = ko.observable(SelectableOptions('Amount', 'paymentAmount', convertSimpleObjectsToOptions(paymentAmounts)));
+
     api.patientIdentifier = ko.observable();
-    api.checkinDate = ko.observable();
-    api.paymentReason = ko.observable();
-    api.amountPaid = ko.observable();
+    api.checkinDay = ko.observable(); api.checkinMonth = ko.observable(); api.checkinYear = ko.observable();
+    api.checkinHour = ko.observable(); api.checkinMinutes = ko.observable();
     api.receiptNumber = ko.observable();
 
+    api.patientName = ko.observable();
+    api.patientIdentifier.subscribe(function(newValue) {
+        $.getJSON('/mirebalais/emr/findPatient/search.action?successUrl=/mirebalais/mirebalais/home.page?&term=' + newValue, function(data) {
+                var patient = data[0];
+                if(patient && patient.preferredName) {
+                    api.patient = patient;
+                    api.patientName(patient.preferredName.fullName);
+                }
+        });
+    });
+
+    api.checkinDate = ko.computed(function() {
+       if( api.checkinDay() && api.checkinMonth() && api.checkinYear() && api.checkinHour() && api.checkinMinutes() ) {
+           return api.checkinDay() + "/" + api.checkinMonth() + "/" + api.checkinYear() + " " +
+               api.checkinHour() + ":" + api.checkinMinutes();
+       }
+       return undefined;
+    });
+    api.locationName = ko.computed(function() {
+        var selectedOption = api.locations().selectedOption();
+        return selectedOption ? selectedOption.name : '';
+    });
+    api.paymentReason = ko.computed(function() {
+        var selectedOption = api.paymentReasons().selectedOption();
+        return selectedOption ? selectedOption.name : '';
+    });
+    api.amountPaid = ko.computed(function() {
+        var selectedOption = api.paymentAmounts().selectedOption();
+        return selectedOption ? selectedOption.name : '';
+    });
+
     api.checkinInfoIsValid = function() {
-        return api.patientIdentifier() && api.location() && api.checkinDate();
+        return Boolean(api.patient && api.locationName() && api.checkinDate());
     }
     api.paymentInfoIsValid = function () {
-        return api.paymentReason() && api.amountPaid();
+        return Boolean(api.paymentReason() && api.amountPaid());
+    }
+    api.registerCheckin = function() {
+        if( !api.checkinInfoIsValid() || !api.paymentInfoIsValid() ) {
+            $("#dialogMessage").html("Please fill all the fields in the form!");
+            $("#dialogMessage").dialog({
+                modal: true,
+                buttons: {
+                    Ok: function() {
+                        $(this).dialog("close");
+                        $(this).html("");
+                    }
+                }
+            });
+            return;
+        };
+        $.ajax({
+            type: 'POST',
+            url: window.location.pathname,
+            data: {
+                patientId:api.patient.patientId,
+                locationId: api.locations().selectedOption().value,
+                checkinDate: checkinDateForSubmission(),
+                paymentReasonId: api.paymentReasons().selectedOption().value,
+                paidAmount: api.paymentAmounts().selectedOption().value
+            },
+            success: function(data) {
+                $("#dialogMessage").html("Retrospective Check in added successfully!");
+                $("#dialogMessage").dialog({
+                    modal: true,
+                    buttons: {
+                        Ok: function() {
+                            $(this).dialog("close");
+                            window.location.href = emr.pageLink("emr", "retrospectiveCheckin");
+                        }
+                    }
+                });
+            },
+            error: function(data) {
+                $("#dialogMessage").html("There was an error on processing this retrospective check in");
+                $("#dialogMessage").dialog({
+                    modal: true,
+                    buttons: {
+                        Cancel: function() {
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+            }
+        });
     }
     return api;
 }
