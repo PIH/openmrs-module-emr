@@ -45,7 +45,7 @@ function RetrospectiveCheckinViewModel(locations, paymentReasons, paymentAmounts
     api.patientIdentifier.subscribe(function(newValue) {
         $.getJSON('/mirebalais/emr/findPatient/search.action?successUrl=/mirebalais/mirebalais/home.page?&term=' + newValue, function(data) {
             api.patient = undefined;
-            api.patientName('');
+            api.patientName(undefined);
             if(data.length > 0) {
                 var patient = data[0];
                 if(patient && patient.preferredName) {
