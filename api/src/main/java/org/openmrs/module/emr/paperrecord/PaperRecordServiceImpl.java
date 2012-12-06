@@ -146,12 +146,14 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 	@Override
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getOpenPaperRecordRequestsToPull() {
+        // TODO: once we have multiple medical record locations, we will need to add location as a criteria
         return paperRecordRequestDAO.findPaperRecordRequests(PaperRecordRequest.Status.OPEN, true);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getOpenPaperRecordRequestsToCreate() {
+        // TODO: once we have multiple medical record locations, we will need to add location as a criteria
         return paperRecordRequestDAO.findPaperRecordRequests(PaperRecordRequest.Status.OPEN, false);
     }
 
@@ -201,12 +203,14 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     @Override
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getAssignedPaperRecordRequestsToPull() {
+        // TODO: once we have multiple medical record locations, we will need to add location as a criteria
         return paperRecordRequestDAO.findPaperRecordRequests(PaperRecordRequest.Status.ASSIGNED_TO_PULL);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getAssignedPaperRecordRequestsToCreate() {
+        // TODO: once we have multiple medical record locations, we will need to add location as a criteria
         return paperRecordRequestDAO.findPaperRecordRequests(PaperRecordRequest.Status.ASSIGNED_TO_CREATE);
     }
 
@@ -214,6 +218,23 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getPaperRecordRequestsByPatient(Patient patient) {
 	    return paperRecordRequestDAO.findPaperRecordRequests(patient);	    
+    }
+
+    @Override
+    public PaperRecordRequest getActivePaperRecordRequestByIdentifier(String identifier) {
+        // TODO: once we have multiple medical record locations, we will need to add location as a criteria
+        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(Arrays.asList(Status.OPEN, Status.ASSIGNED_TO_PULL, Status.ASSIGNED_TO_CREATE), identifier);
+
+        if (requests == null || requests.size() == 0) {
+            return null;
+        }
+        else if (requests.size() > 1) {
+            throw new IllegalStateException("Duplicate active record requests exist with identifier " + identifier);
+        }
+        else {
+            return requests.get(0);
+        }
+
     }
 
     // leaving this method as public so that it can be tested by integration test in mirebalais module

@@ -110,4 +110,14 @@ public interface PaperRecordService extends OpenmrsService {
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     List<PaperRecordRequest> getAssignedPaperRecordRequestsToCreate();
 
+    /**
+     * Returns the active (ie, open or assigned) paper record request with the specified identifier
+     *
+     * @param identifier
+     * @return the active (ie, open or assigned) paper record request with the specified identifier
+     * @throws IllegalStateException if more than one request is found
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
+    PaperRecordRequest getActivePaperRecordRequestByIdentifier(String identifier);
+
 }

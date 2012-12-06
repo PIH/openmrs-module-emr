@@ -71,6 +71,15 @@ public class HibernatePaperRecordRequestDAO  extends HibernateSingleClassDAO<Pap
         return (List<PaperRecordRequest>) criteria.list();
     }
 
+    @Override
+    public List<PaperRecordRequest> findPaperRecordRequests(List<PaperRecordRequest.Status> statusList, String identifier) {
+
+        Criteria criteria = createPaperRecordCriteria();
+        addStatusDisjunctionRestriction(criteria, statusList);
+        addIdentifierRestriction(criteria, identifier);
+
+        return (List<PaperRecordRequest>) criteria.list();
+    }
 
     private Criteria createPaperRecordCriteria() {
         return sessionFactory.getCurrentSession().createCriteria(PaperRecordRequest.class);
@@ -98,6 +107,10 @@ public class HibernatePaperRecordRequestDAO  extends HibernateSingleClassDAO<Pap
     private void addRecordLocationRestriction(Criteria criteria, Location recordLocation) {
         criteria.add(Restrictions.eq("recordLocation", recordLocation));
 
+    }
+
+    private void addIdentifierRestriction(Criteria criteria, String identifier) {
+        criteria.add(Restrictions.eq("identifier", identifier));
     }
 
     private void addHasIdentifierRestriction(Criteria criteria, boolean hasIdentifier) {

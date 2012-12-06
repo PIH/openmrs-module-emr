@@ -23,6 +23,8 @@ import java.util.List;
 
 public interface PaperRecordRequestDAO extends SingleClassDAO<PaperRecordRequest> {
 
+    // TODO: these could probably be refactored into a single method
+
     /**
      * Returns all the paper record requests with the specified status
      *
@@ -39,6 +41,15 @@ public interface PaperRecordRequestDAO extends SingleClassDAO<PaperRecordRequest
      * @return
      */
     List<PaperRecordRequest> findPaperRecordRequests(Patient patient);
+
+    /**
+     * Returns all paper record requests with the specified status and specified identifier
+     *
+     * @param statusList
+     * @param identifier
+     * @return
+     */
+    List<PaperRecordRequest> findPaperRecordRequests(List<PaperRecordRequest.Status> statusList, String identifier);
 
     /**
      * Returns all the paper record requests with the specified status that either have or don't have

@@ -155,7 +155,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Assert.assertEquals(new Integer(1), request.getRecordLocation().getId());
         Assert.assertEquals(new Integer(2), request.getRequestLocation().getId());
         Assert.assertEquals("CATBALL", request.getIdentifier());
-        Assert.assertEquals(PaperRecordRequest.Status.FULFILLED, request.getStatus());
+        Assert.assertEquals(PaperRecordRequest.Status.SENT, request.getStatus());
         Assert.assertNull(request.getAssignee());
 
     }
@@ -338,5 +338,57 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Assert.assertNull(request.getAssignee());
     }
 
+    @Test
+    public void testGetActiveRequestByIdentifierShouldReturnOpenRequest() {
 
+        // all these are from the standard test dataset
+        Patient patient = patientService.getPatient(2) ;
+        Location medicalRecordLocation = locationService.getLocation(1);
+        Location requestLocation = locationService.getLocation(3);
+
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        PaperRecordRequest request = paperRecordService.getActivePaperRecordRequestByIdentifier("101");
+
+        Assert.assertEquals(new Integer(2), request.getPatient().getId());
+        Assert.assertEquals(new Integer(1), request.getRecordLocation().getId());
+        Assert.assertEquals(new Integer(3), request.getRequestLocation().getId());
+        Assert.assertEquals("101", request.getIdentifier());
+        Assert.assertEquals(PaperRecordRequest.Status.OPEN, request.getStatus());
+        Assert.assertNull(request.getAssignee());
+
+    }
+
+    @Test
+    public void testGetActiveRequestByIdentifierShouldReturnAssignedPullRequest() {
+
+        // all these are from the standard test dataset
+        Patient patient = patientService.getPatient(2) ;
+        Location medicalRecordLocation = locationService.getLocation(1);
+        Location requestLocation = locationService.getLocation(3);
+
+        // request a record
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        // retrieve that record
+        List<PaperRecordRequest> paperRecordRequests = paperRecordService.getOpenPaperRecordRequestsToPull();
+        Assert.assertEquals(1, paperRecordRequests.size()); // sanity check
+
+        // assign the person to the request
+        Person person = personService.getPerson(7);
+        paperRecordService.assignRequests(paperRecordRequests, person);
+
+        PaperRecordRequest request = paperRecordService.getActivePaperRecordRequestByIdentifier("101");
+
+        Assert.assertEquals(PaperRecordRequest.Status.ASSIGNED_TO_PULL, request.getStatus());
+        Assert.assertEquals(new Integer(7), request.getAssignee().getId());
+        Assert.assertEquals("101", request.getIdentifier());
+
+    }
+
+    @Test
+    public void testGetActiveRequestByIdentifierShouldReturnNullIfNoActiveRequests() {
+        // there is a paper record request in the sample database with this identifier, but it is marked as SENT
+        Assert.assertNull(paperRecordService.getActivePaperRecordRequestByIdentifier("CATBALL"));
+    }
 }

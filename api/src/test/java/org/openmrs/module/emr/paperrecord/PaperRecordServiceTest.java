@@ -33,6 +33,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +41,7 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.argThat;
@@ -368,6 +370,64 @@ public class PaperRecordServiceTest {
         verify(mockPaperRecordDAO).saveOrUpdate(argThat(expectedRequestMatcher));
         expectedRequestMatcher.matches(request);
 
+    }
+
+    @Test
+    public void getActivePaperRecordRequestByIdentifierShouldRetrieveRequestByIdentifier() {
+
+        Patient patient = new Patient();
+        patient.setId(15);
+
+        Location medicalRecordLocation = createMedicalRecordLocation();
+        Location requestLocation = createLocation(4, "Outpatient Clinic");
+        Location newRequestLocation = createLocation(5, "ER");
+
+        // generate an existing paper record request
+        String identifier = "ABC123";
+        PaperRecordRequest request = createExpectedRequest(patient, medicalRecordLocation, identifier);
+        request.setId(10);
+        request.setRequestLocation(requestLocation);
+        request.setDateCreated(new Date());
+
+        when(mockPaperRecordDAO.findPaperRecordRequests(anyListOf(PaperRecordRequest.Status.class), eq(identifier))).thenReturn(Collections.singletonList(request));
+        IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(request);
+
+        PaperRecordRequest returnedRequest = paperRecordService.getActivePaperRecordRequestByIdentifier(identifier);
+        expectedRequestMatcher.matches(request);
+
+    }
+
+    @Test
+    public void getActivePaperRecordRequestByIdentifierShouldReturnNullIfNoActiveRequestWithThatIdentifier() {
+        String identifier = "ABC123";
+        when(mockPaperRecordDAO.findPaperRecordRequests(anyListOf(PaperRecordRequest.Status.class), eq(identifier))).thenReturn(null);
+        assertNull(paperRecordService.getActivePaperRecordRequestByIdentifier(identifier));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void getActivePaperRecordRequestByIdentifierShouldThrowIllegalStateExceptionIfMultipleActiveRequestsFound() {
+
+        Patient patient = new Patient();
+        patient.setId(15);
+
+        Location medicalRecordLocation = createMedicalRecordLocation();
+        Location requestLocation = createLocation(4, "Outpatient Clinic");
+        Location newRequestLocation = createLocation(5, "ER");
+
+        // generate an existing paper record request
+        String identifier = "ABC123";
+        PaperRecordRequest request = createExpectedRequest(patient, medicalRecordLocation, identifier);
+        request.setId(10);
+        request.setRequestLocation(requestLocation);
+        request.setDateCreated(new Date());
+
+        PaperRecordRequest anotherRequest = createExpectedRequest(patient, medicalRecordLocation, identifier);
+        request.setId(11);
+        request.setRequestLocation(requestLocation);
+        request.setDateCreated(new Date());
+
+        when(mockPaperRecordDAO.findPaperRecordRequests(anyListOf(PaperRecordRequest.Status.class), eq(identifier))).thenReturn(Arrays.asList(request, anotherRequest));
+        paperRecordService.getActivePaperRecordRequestByIdentifier(identifier);
     }
 
     private PaperRecordRequest createExpectedRequest(Patient patient, Location medicalRecordLocation, String identifier) {
