@@ -121,7 +121,7 @@
             <em class="message-title">${ ui.message("emr.mergePatients.unknownPatient.message") }</em>
         <% } else {%>
             <em class="message-title">${ ui.message("emr.mergePatients.confirmationQuestion") }</em>
-        < } %>
+        <% } %>
         <em class="message">${ ui.message("emr.mergePatients.choosePreferred.description") }</em>
     </div>
 

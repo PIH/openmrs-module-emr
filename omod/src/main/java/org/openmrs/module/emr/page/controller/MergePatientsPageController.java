@@ -15,6 +15,7 @@
 package org.openmrs.module.emr.page.controller;
 
 import org.openmrs.Patient;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.adt.AdtService;
 import org.openmrs.module.emr.patient.PatientDomainWrapper;

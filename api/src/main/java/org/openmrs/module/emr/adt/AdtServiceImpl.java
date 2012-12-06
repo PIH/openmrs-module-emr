@@ -480,8 +480,18 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 
         try {
             patientService.mergePatients(preferred, notPreferred);
+            removeAttributeOfUnknownPatient(preferred);
         } catch (SerializationException e) {
             throw new APIException("Unable to merge patients due to serialization error", e);
+        }
+    }
+
+    private void removeAttributeOfUnknownPatient(Patient preferred) {
+        PersonAttributeType unknownPatientPersonAttributeType = emrProperties.getUnknownPatientPersonAttributeType();
+        PersonAttribute attribute = preferred.getAttribute(unknownPatientPersonAttributeType);
+        if (attribute != null){
+            preferred.removeAttribute(attribute);
+            patientService.savePatient(preferred);
         }
     }
 

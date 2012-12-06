@@ -20,18 +20,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
-import org.openmrs.Encounter;
-import org.openmrs.EncounterRole;
-import org.openmrs.EncounterType;
-import org.openmrs.Location;
-import org.openmrs.LocationTag;
-import org.openmrs.Patient;
-import org.openmrs.Person;
-import org.openmrs.PersonName;
-import org.openmrs.Provider;
-import org.openmrs.User;
-import org.openmrs.Visit;
-import org.openmrs.VisitType;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.openmrs.*;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.ProviderService;
@@ -40,6 +31,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.paperrecord.PaperRecordService;
+import org.openmrs.serialization.SerializationException;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -66,13 +58,11 @@ import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.openmrs.module.emr.EmrConstants.UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME;
 import static org.openmrs.module.emr.TestUtils.isCollectionOfExactlyElementsWithProperties;
 import static org.openmrs.module.emr.TestUtils.isJustNow;
+import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
@@ -453,7 +443,53 @@ public class AdtServiceTest {
 
         verify(mockPatientService).mergePatients(preferred, notPreferred);
     }
-    
+
+    @Test
+    public void itShouldNotCopyUnknownAttributeWhenMergingAnUnknownPatientIntoAPermanentOne() throws SerializationException {
+        EmrProperties emrProperties = mock(EmrProperties.class);
+
+        Patient preferred = createPatientWithIdAs(10);
+
+        Patient unknownPatient = createPatientWithIdAs(11);
+
+        final PersonAttributeType personAttributeType = new PersonAttributeType();
+        personAttributeType.setPersonAttributeTypeId(10);
+        personAttributeType.setName(UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME);
+        personAttributeType.setFormat("java.lang.String");
+
+        unknownPatient.addAttribute(new PersonAttribute(personAttributeType, "true"));
+
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+                Patient preferred = (Patient) invocationOnMock.getArguments()[0];
+                Patient unknownPatient = (Patient) invocationOnMock.getArguments()[1];
+
+                PersonAttribute attribute = unknownPatient.getAttribute(personAttributeType);
+                preferred.addAttribute(attribute);
+
+                return preferred;
+            }
+        }).when(mockPatientService).mergePatients(preferred, unknownPatient);
+
+        when(emrProperties.getUnknownPatientPersonAttributeType()).thenReturn(personAttributeType);
+        service.setEmrProperties(emrProperties);
+
+        service.mergePatients(preferred, unknownPatient);
+
+        assertNull(preferred.getAttribute(personAttributeType));
+
+        verify(mockPatientService).savePatient(preferred);
+
+    }
+
+    private Patient createPatientWithIdAs(int id) {
+        Patient preferred = new Patient();
+        preferred.setId(id);
+        preferred.setPatientId(id);
+        return preferred;
+    }
+
     @Test
     public void testMergePatientsDoesNotResultInOverlappingVisits() throws Exception {
         Patient preferred = new Patient();
