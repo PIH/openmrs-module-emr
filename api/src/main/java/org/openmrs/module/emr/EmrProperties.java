@@ -79,6 +79,18 @@ public class EmrProperties extends ModuleProperties {
         return getPatientIdentifierTypeByGlobalProperty(EmrConstants.GP_PAPER_RECORD_IDENTIFIER_TYPE, false);
     }
 
+    public Concept getPaymentAmountConcept() {
+        return getConceptByGlobalProperty(EmrConstants.PAYMENT_AMOUNT_CONCEPT_UUID);
+    }
+
+    public Concept getPaymentReasonsConcept() {
+        return getConceptByGlobalProperty(EmrConstants.PAYMENT_REASON_CONCEPT_UUID);
+    }
+
+    public Concept getPaymentReceiptNumberConcept() {
+        return getConceptByGlobalProperty(EmrConstants.PAYMENT_RECEIPT_NUMBER_CONCEPT_UUID);
+    }
+
     public PersonAttributeType getUnknownPatientPersonAttributeType(){
         PersonAttributeType type = null;
         type = personService.getPersonAttributeTypeByName(UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME);

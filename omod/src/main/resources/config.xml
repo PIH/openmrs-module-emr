@@ -129,6 +129,30 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>emr.paymentAmountConcept</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the concept used to represent payment amounts
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>emr.paymentReasonConcept</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the concept whose set members are the possible reasons for payment
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>emr.paymentReceiptNumberConcept</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the concept used to represent receipt numbers from payments
+        </description>
+    </globalProperty>
+
     <!-- Privileges -->
     <privilege>
         <name>Paper Records - Manage Requests</name>

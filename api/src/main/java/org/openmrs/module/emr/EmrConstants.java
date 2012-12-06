@@ -88,4 +88,8 @@ public class EmrConstants {
         put("ID_CARD", "b48ef9a0-38d3-11e2-81c1-0800200c9a66");
         put("LABEL", "bd6c1c10-38d3-11e2-81c1-0800200c9a66");
     }};
+
+    public static final String PAYMENT_AMOUNT_CONCEPT_UUID = "emr.paymentAmountConcept";
+    public static final String PAYMENT_REASON_CONCEPT_UUID = "emr.paymentReasonConcept";
+    public static final String PAYMENT_RECEIPT_NUMBER_CONCEPT_UUID = "emr.paymentReceiptNumberConcept";
 }

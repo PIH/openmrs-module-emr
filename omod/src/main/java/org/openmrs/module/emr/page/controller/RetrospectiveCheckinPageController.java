@@ -5,6 +5,8 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.adt.AdtService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
@@ -34,6 +36,7 @@ public class RetrospectiveCheckinPageController {
                        @SpringBean("adtService") AdtService adtService,
                        @SpringBean("conceptService") ConceptService conceptService,
                        @SpringBean("providerService")ProviderService providerService,
+                       @SpringBean("emrProperties")EmrProperties emrProperties,
                        @RequestParam("patientId") Patient patient,
                        @RequestParam("locationId") Location location,
                        @RequestParam("checkinDate") Date date,
@@ -45,15 +48,15 @@ public class RetrospectiveCheckinPageController {
         Provider checkInClerk = providers.iterator().next();
 
         Obs paymentReason = new Obs();
-        paymentReason.setConcept(conceptService.getConceptByUuid("36ba7721-fae0-4da4-aef2-7e476cc04bdf"));
+        paymentReason.setConcept(emrProperties.getPaymentReasonsConcept());
         paymentReason.setValueCoded(conceptService.getConcept(paymentReasonId));
 
         Obs paymentAmount = new Obs();
-        paymentAmount.setConcept(conceptService.getConceptByUuid("5d1bc5de-6a35-4195-8631-7322941fe528"));
+        paymentAmount.setConcept(emrProperties.getPaymentAmountConcept());
         paymentAmount.setValueNumeric(paidAmount);
 
         Obs paymentReceipt = new Obs();
-        paymentReceipt.setConcept(conceptService.getConceptByUuid("20438dc7-c5b4-4d9c-8480-e888f4795123"));
+        paymentReceipt.setConcept(emrProperties.getPaymentReceiptNumberConcept());
         paymentReceipt.setValueText(receiptNumber);
 
         adtService.createCheckinInRetrospective(patient, location, checkInClerk, paymentReason, paymentAmount, paymentReceipt, date);

@@ -105,14 +105,14 @@ public class RetrospectiveCheckinComponentTest extends BaseModuleContextSensitiv
 
     private Obs createPaymentAmountObservation(double amount) {
         Obs paymentAmount = new Obs();
-        paymentAmount.setConcept(conceptService.getConceptByUuid("5d1bc5de-6a35-4195-8631-7322941fe528"));
+        paymentAmount.setConcept(emrProperties.getPaymentAmountConcept());
         paymentAmount.setValueNumeric(amount);
         return paymentAmount;
     }
 
     private Obs createPaymentReasonObservation() {
         Obs paymentReason = new Obs();
-        paymentReason.setConcept(conceptService.getConceptByUuid("36ba7721-fae0-4da4-aef2-7e476cc04bdf"));
+        paymentReason.setConcept(emrProperties.getPaymentReasonsConcept());
         paymentReason.setValueCoded(conceptService.getConcept(16));
         return paymentReason;
     }
@@ -125,7 +125,7 @@ public class RetrospectiveCheckinComponentTest extends BaseModuleContextSensitiv
 
     private Obs createPaymentReceiptObservation(String receiptNumber) {
         Obs pr = new Obs();
-        pr.setConcept(conceptService.getConceptByUuid("20438dc7-c5b4-4d9c-8480-e888f4795123"));
+        pr.setConcept(emrProperties.getPaymentReceiptNumberConcept());
         pr.setValueText(receiptNumber);
 
         return pr;
