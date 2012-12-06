@@ -44,11 +44,17 @@ function RetrospectiveCheckinViewModel(locations, paymentReasons, paymentAmounts
     api.patientName = ko.observable();
     api.patientIdentifier.subscribe(function(newValue) {
         $.getJSON('/mirebalais/emr/findPatient/search.action?successUrl=/mirebalais/mirebalais/home.page?&term=' + newValue, function(data) {
+            api.patient = undefined;
+            api.patientName('');
+            if(data.length > 0) {
                 var patient = data[0];
                 if(patient && patient.preferredName) {
                     api.patient = patient;
                     api.patientName(patient.preferredName.fullName);
                 }
+            } else {
+                $().toastmessage('showErrorToast', "The given patient identifier is invalid.");
+            }
         });
     });
 
@@ -73,7 +79,7 @@ function RetrospectiveCheckinViewModel(locations, paymentReasons, paymentAmounts
     });
 
     api.checkinInfoIsValid = function() {
-        return Boolean(api.patient && api.locationName() && api.checkinDate());
+        return Boolean(api.locationName() && api.checkinDate() && api.patient);
     }
     api.paymentInfoIsValid = function () {
         return Boolean(api.paymentReason() && api.amountPaid() && api.receiptNumber());
