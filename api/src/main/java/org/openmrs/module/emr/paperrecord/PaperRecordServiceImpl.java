@@ -237,6 +237,13 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
     }
 
+    @Override
+    public void markPaperRequestRequestAsSent(PaperRecordRequest request) {
+        // I don't think we really need to do any verification here
+        request.setStatus(Status.SENT);
+        savePaperRecordRequest(request);
+    }
+
     // leaving this method as public so that it can be tested by integration test in mirebalais module
     public String createPaperMedicalRecordNumberFor(Patient patient, Location medicalRecordLocation) {
         if (patient == null){

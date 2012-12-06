@@ -120,4 +120,13 @@ public interface PaperRecordService extends OpenmrsService {
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     PaperRecordRequest getActivePaperRecordRequestByIdentifier(String identifier);
 
+    /**
+     * Marks the specified paper record request as "sent"
+     *
+     * @param request
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
+    void markPaperRequestRequestAsSent(PaperRecordRequest request);
+
 }
+

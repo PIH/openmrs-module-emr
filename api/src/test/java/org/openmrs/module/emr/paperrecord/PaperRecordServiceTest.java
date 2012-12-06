@@ -430,6 +430,27 @@ public class PaperRecordServiceTest {
         paperRecordService.getActivePaperRecordRequestByIdentifier(identifier);
     }
 
+    @Test
+    public void testMarkRequestAsSentShouldMarkRequestAsSent() throws Exception {
+        Patient patient = new Patient();
+        patient.setId(15);
+
+        Location medicalRecordLocation = createMedicalRecordLocation();
+
+        PatientIdentifier identifer = createIdentifier(medicalRecordLocation, "ABCZYX");
+        patient.addIdentifier(identifer);
+
+        PaperRecordRequest request = createExpectedRequest(patient, medicalRecordLocation, "ABCZYX");
+        request.setDateCreated(new Date());
+
+        paperRecordService.markPaperRequestRequestAsSent(request);
+
+        assertThat(request.getStatus(), is(PaperRecordRequest.Status.SENT));
+        IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(request);
+        verify(mockPaperRecordDAO).saveOrUpdate(argThat(expectedRequestMatcher));
+
+    }
+
     private PaperRecordRequest createExpectedRequest(Patient patient, Location medicalRecordLocation, String identifier) {
         PaperRecordRequest expectedRequest = new PaperRecordRequest();
         expectedRequest.setAssignee(null);

@@ -391,4 +391,30 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         // there is a paper record request in the sample database with this identifier, but it is marked as SENT
         Assert.assertNull(paperRecordService.getActivePaperRecordRequestByIdentifier("CATBALL"));
     }
+
+    @Test
+    public void markPaperRecordRequestAsSentShouldMarkRecordRequestAsSent() {
+
+        // all these are from the standard test dataset
+        Patient patient = patientService.getPatient(2) ;
+        Location medicalRecordLocation = locationService.getLocation(1);
+        Location requestLocation = locationService.getLocation(3);
+
+        // request a record
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        // retrieve that record
+       PaperRecordRequest request = paperRecordService.getOpenPaperRecordRequestsToPull().get(0);
+
+        // store the id for future retrieval
+        int id = request.getId();
+
+        paperRecordService.markPaperRequestRequestAsSent(request);
+
+        // make sure this request has been changed to "sent" in the database
+        Context.flushSession();
+
+        PaperRecordRequest returnedRequest = paperRecordService.getPaperRecordRequestById(id);
+        Assert.assertEquals(PaperRecordRequest.Status.SENT, request.getStatus());
+    }
 }
