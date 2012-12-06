@@ -15,14 +15,24 @@ var FormNavigator = function(submitElement, cancelElement) {
             $(currentOptionFromList).removeClass("focusedOption");
         }
     };
+    var focusSelectedOption = function() {
+        var optionItems = $(currentField).children('.option');
+        if(optionItems.length > 0) {
+            koContext = ko.contextFor(currentField);
+            if(koContext && koContext.$data.selectedOption()) {
+                currentOptionFromList = _.find(optionItems, function(op) {
+                    return $(op).text() == koContext.$data.selectedOption().name;
+                });
+            } else {
+                currentOptionFromList = optionItems[0];
+            }
+            $(currentOptionFromList).addClass("focusedOption");
+        }
+    };
     var focusCurrentField = function() {
         $(currentField).addClass('focusedQuestion');
         $(currentField).focus();
-        /* $('body').scrollTop($(currentField).offset().top - sections.offset().top); */
-        if($(currentField).children('.option').length > 0) {
-            currentOptionFromList = $(currentField).children('.option')[0];
-            $(currentOptionFromList).addClass("focusedOption");
-        }
+        focusSelectedOption();
     };
     var gotoSubmit = function() {
         submit.focus();
@@ -31,13 +41,17 @@ var FormNavigator = function(submitElement, cancelElement) {
         if( $(currentField).hasClass('optionsList') ) {
             if(option.length > 0) {
                 $(currentOptionFromList).removeClass('focusedOption')
-                console.log(option[0]);
                 currentOptionFromList = option[0];
                 $(currentOptionFromList).addClass('focusedOption');
             }
         }
     }
-
+    var selectCurrentOption = function() {
+        koContext = ko.contextFor(currentOptionFromList);
+        if(koContext) {
+            koContext.$parent.selectOption(koContext.$data);
+        }
+    }
 
     api.gotoSection = function(section) {
         if(!currentSection || $(section).attr('id') != $(currentSection).attr('id')) {
@@ -52,12 +66,7 @@ var FormNavigator = function(submitElement, cancelElement) {
         }
     };
     api.jumpToNextField = function() {
-        if(currentOptionFromList) {
-            koContext = ko.contextFor(currentOptionFromList);
-            if(koContext) {
-                koContext.$parent.selectOption(koContext.$data);
-            }
-        }
+        if(currentOptionFromList) selectCurrentOption();
 
         if(!currentSection) {
             api.gotoSection(sections[0]);
