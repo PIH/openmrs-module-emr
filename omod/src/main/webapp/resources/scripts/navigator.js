@@ -113,8 +113,9 @@ var FormNavigator = function(submitElement, cancelElement) {
     };
 
     sections.click( function() {
-        api.gotoSection($(this));
+        api.gotoSection($(this)[0]);
     });
+
     var keyFunctions = {
         /*TAB*/   9  : api.jumpToNextField,
         /*ENTER*/ 13 : api.jumpToNextField,
@@ -122,6 +123,11 @@ var FormNavigator = function(submitElement, cancelElement) {
         /*UP*/    40 : api.moveDownIfOnOptionsList,
         /*DOWN*/  38 : api.moveUpIfOnOptionsList
     };
+    $('input, .optionsList').click(function() {
+        blurCurrentField();
+        currentField = $(this)[0];
+        focusCurrentField();
+    });
     $('body').keydown(function(key) {
         if(keyFunctions[key.which]) {
             key.preventDefault();
@@ -129,5 +135,6 @@ var FormNavigator = function(submitElement, cancelElement) {
         }
     });
     $('body').append('<div id="invisibleBotton" style="height: 1000px"></div>');
+
     return api;
 }
