@@ -12,7 +12,7 @@
 <script type="text/javascript">
     jq(function() {
         jq('#cancel-button').click(function() {
-            emr.navigateTo({ page: 'systemAdministration' });
+            window.history.back();
         });
         jq('#prefer-form').on('change', 'input[name=preferred]', function(eventObject) {
             jq('.choose-demographics').removeClass('primary');

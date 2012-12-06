@@ -2,9 +2,13 @@
     ui.decorateWith("emr", "standardEmrPage", [ title: ui.message("emr.mergePatients") ])
     ui.includeCss("mirebalais", "mergePatients.css")
 
-    def id = (patient1!= null) ? patient1.patient.id : ""
-    def fullName = (patient1!= null) ? patient1.primaryIdentifiers.collect{ it.identifier }.join(',') + "-" + ui.format(patient1.patient) : ""
-    def link = (patient1!= null) ? "{ page : 'patient', query:{ patientId: ${id} } }" : "{ page : 'systemAdministration'}"
+    def id = ""
+    def fullName = ""
+
+    if (patient1 != null){
+         id = patient1.patient.id
+         fullName = patient1.primaryIdentifiers.collect{ it.identifier }.join(',') + "-" + ui.format(patient1.patient)
+    }
 
 %>
 
@@ -13,7 +17,7 @@
         jq('input[type=text]').first().focus();
 
         jq('#cancel-button').click(function() {
-            emr.navigateTo(${link});
+            window.history.back();
         });
     });
 
@@ -29,7 +33,7 @@
 <form method="get">
 
     <h3>${ ui.message("emr.mergePatients.selectTwo") }</h3>
-
+    <input type= "hidden" name= "unknown-patient" value= "${isUnknownPatient}"/>
 
 
     ${ ui.includeFragment("emr", "field/autocomplete", [
