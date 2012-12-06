@@ -47,20 +47,33 @@ public class RetrospectiveCheckinPageController {
         Collection<Provider> providers = providerService.getProvidersByPerson(Context.getAuthenticatedUser().getPerson());
         Provider checkInClerk = providers.iterator().next();
 
-        Obs paymentReason = new Obs();
-        paymentReason.setConcept(emrProperties.getPaymentReasonsConcept());
-        paymentReason.setValueCoded(conceptService.getConcept(paymentReasonId));
-
-        Obs paymentAmount = new Obs();
-        paymentAmount.setConcept(emrProperties.getPaymentAmountConcept());
-        paymentAmount.setValueNumeric(paidAmount);
-
-        Obs paymentReceipt = new Obs();
-        paymentReceipt.setConcept(emrProperties.getPaymentReceiptNumberConcept());
-        paymentReceipt.setValueText(receiptNumber);
+        Obs paymentReason = createPaymentReasonObservation(conceptService, emrProperties, paymentReasonId);
+        Obs paymentAmount = createPaymentAmountObservation(emrProperties, paidAmount);
+        Obs paymentReceipt = createPaymentReceiptObservation(emrProperties, receiptNumber);
 
         adtService.createCheckinInRetrospective(patient, location, checkInClerk, paymentReason, paymentAmount, paymentReceipt, date);
         return "redirect:" + ui.pageLink("mirebalais", "home");
+    }
+
+    private Obs createPaymentReceiptObservation(EmrProperties emrProperties, String receiptNumber) {
+        Obs paymentReceipt = new Obs();
+        paymentReceipt.setConcept(emrProperties.getPaymentReceiptNumberConcept());
+        paymentReceipt.setValueText(receiptNumber);
+        return paymentReceipt;
+    }
+
+    private Obs createPaymentAmountObservation(EmrProperties emrProperties, Double paidAmount) {
+        Obs paymentAmount = new Obs();
+        paymentAmount.setConcept(emrProperties.getPaymentAmountConcept());
+        paymentAmount.setValueNumeric(paidAmount);
+        return paymentAmount;
+    }
+
+    private Obs createPaymentReasonObservation(ConceptService conceptService, EmrProperties emrProperties, Integer paymentReasonId) {
+        Obs paymentReason = new Obs();
+        paymentReason.setConcept(emrProperties.getPaymentReasonsConcept());
+        paymentReason.setValueCoded(conceptService.getConcept(paymentReasonId));
+        return paymentReason;
     }
 
     private List<SimpleObject> getPossiblePaymentAmounts() {
