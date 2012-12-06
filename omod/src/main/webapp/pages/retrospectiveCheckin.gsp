@@ -22,8 +22,8 @@
 
 <h1>Retrospective Check-in</h1>
 <section id="checkinInformation">
-    <img class="field_check" src=${ui.resourceLink("emr", "images/checked.png")}
-        data-bind="style: {visibility: checkinInfoIsValid() ? 'visible':'hidden'}"/>
+    <img class="field_check" src="${ui.resourceLink("emr", "images/checked.png")}"
+        data-bind="style: {visibility:checkinInfoIsValid() ? 'visible':'hidden'}" />
     <span class="label">Check-in information</span>
     <span class="value" data-bind="text:patientName"></span> -
     <span class="value" data-bind="text:locationName"></span> -
@@ -53,7 +53,7 @@
 </section>
 
 <section id="paymentInformation">
-    <img class="field_check" src=${ui.resourceLink("emr", "images/checked.png")}
+    <img class="field_check" src="${ui.resourceLink("emr", "images/checked.png")}"
         data-bind="style: {visibility: paymentInfoIsValid() ? 'visible':'hidden'}" />
     <span class="label">Payment</span>
     <span class="value" data-bind="text:paymentReason"></span>
@@ -64,14 +64,15 @@
         <li data-bind="template: {name:'optionsList-template', foreach:paymentAmounts}"></li>
         <li>
             <label for="receiptNumber">Receipt number</label>
-            <input id="receiptNumber" data-bind="value:receiptNumber" />
+            <input id="receiptNumber" data-bind="value:receiptNumber, valueUpdate:'afterkeydown'" />
         </li>
     </ul>
 </section>
 
 <div class="actions">
     <a id="cancelButton" href="#" class="cancel">Cancel</a>
-    <input id="submitButton" type="button" class="submit" value="Submit" data-bind="click: registerCheckin"/>
+    <input id="submitButton" type="button" class="submit" value="Submit"
+           data-bind="style: {visibility:paymentInfoIsValid() && checkinInfoIsValid() ? 'visible':'hidden'}, click: registerCheckin" />
 </div>
 
 <div id="dialogMessage"></div>
