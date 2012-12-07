@@ -15,7 +15,6 @@
 package org.openmrs.module.emr.page.controller;
 
 import org.openmrs.Patient;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.adt.AdtService;
 import org.openmrs.module.emr.patient.PatientDomainWrapper;
@@ -44,7 +43,7 @@ public class MergePatientsPageController {
         pageModel.addAttribute("confirmed", confirmed);
         pageModel.addAttribute("isUnknownPatient", isUnknownPatient);
 
-        if (patient1!= null && patient2==null && isUnknownPatient){
+        if (patient1 != null && patient2 == null && isUnknownPatient) {
             wrapper1.setPatient(patient1);
             pageModel.addAttribute("patient1", wrapper1);
             return "mergePatients-chooseRecords";
