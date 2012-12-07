@@ -24,7 +24,7 @@ import java.util.Date;
 
 public class PaperRecordRequest extends BaseOpenmrsObject {
 
-    public enum Status{ OPEN, ASSIGNED_TO_PULL, ASSIGNED_TO_CREATE, SENT, CANCELLED }
+    public enum Status{ OPEN, ASSIGNED_TO_PULL, ASSIGNED_TO_CREATE, SENT, RETURNED, CANCELLED }
 
     private Integer requestId;
 

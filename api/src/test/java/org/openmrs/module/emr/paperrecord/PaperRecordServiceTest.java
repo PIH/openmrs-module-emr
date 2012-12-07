@@ -437,8 +437,8 @@ public class PaperRecordServiceTest {
 
         Location medicalRecordLocation = createMedicalRecordLocation();
 
-        PatientIdentifier identifer = createIdentifier(medicalRecordLocation, "ABCZYX");
-        patient.addIdentifier(identifer);
+        PatientIdentifier identifier = createIdentifier(medicalRecordLocation, "ABCZYX");
+        patient.addIdentifier(identifier);
 
         PaperRecordRequest request = createExpectedRequest(patient, medicalRecordLocation, "ABCZYX");
         request.setDateCreated(new Date());
