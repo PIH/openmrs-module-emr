@@ -25,6 +25,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
+import org.openmrs.customdatatype.datatype.FreeTextDatatype;
 import org.openmrs.module.Module;
 import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.ModuleFactory;
@@ -46,6 +47,7 @@ import java.util.Set;
 
 import static org.openmrs.module.emr.EmrConstants.EMR_MODULE_ID;
 import static org.openmrs.module.emr.EmrConstants.LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER;
+import static org.openmrs.module.emr.EmrConstants.LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
@@ -166,7 +168,7 @@ public class EmrActivator implements ModuleActivator {
             AdministrationService administrationService = Context.getAdministrationService();
 
             createGlobalProperties(administrationService);
-            createLocationAttributeTypesForDefaultPrinters(locationService);
+            createLocationAttributeTypes(locationService);
         }
         catch (Exception e) {
             Module mod = ModuleFactory.getModuleById(EMR_MODULE_ID);
@@ -189,7 +191,7 @@ public class EmrActivator implements ModuleActivator {
         administrationService.saveGlobalProperty(gp);
     }
 
-    private void createLocationAttributeTypesForDefaultPrinters(LocationService locationService) {
+    private void createLocationAttributeTypes(LocationService locationService) {
         LocationAttributeType defaultLabelPrinterAttributeType =
                 locationService.getLocationAttributeTypeByUuid(LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER.get("LABEL"));
 
@@ -222,6 +224,20 @@ public class EmrActivator implements ModuleActivator {
             locationService.saveLocationAttributeType(defaultIdCardPrinterAttributeType);
         }
 
+        LocationAttributeType nameToPrintOnIdCardAttributeType =
+                locationService.getLocationAttributeTypeByUuid(LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD);
+
+        if (nameToPrintOnIdCardAttributeType == null) {
+            nameToPrintOnIdCardAttributeType = new LocationAttributeType();
+            nameToPrintOnIdCardAttributeType.setUuid(LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD);
+            nameToPrintOnIdCardAttributeType.setDatatypeClassname(FreeTextDatatype.class.getName());
+            nameToPrintOnIdCardAttributeType.setMaxOccurs(1);
+            nameToPrintOnIdCardAttributeType.setMinOccurs(0);
+            nameToPrintOnIdCardAttributeType.setName("Name to print on ID card");
+            nameToPrintOnIdCardAttributeType.setDescription("The name to use when printing a location on an id card");
+
+            locationService.saveLocationAttributeType(nameToPrintOnIdCardAttributeType);
+        }
     }
 
 	/**

@@ -14,14 +14,23 @@
 
 package org.openmrs.module.emr;
 
-import org.openmrs.*;
-import org.openmrs.api.context.Context;
+import org.openmrs.Concept;
+import org.openmrs.EncounterRole;
+import org.openmrs.EncounterType;
+import org.openmrs.LocationAttributeType;
+import org.openmrs.LocationTag;
+import org.openmrs.OrderType;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.PersonAttributeType;
+import org.openmrs.Role;
+import org.openmrs.VisitType;
 import org.openmrs.module.emr.utils.ModuleProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.openmrs.module.emr.EmrConstants.LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD;
 import static org.openmrs.module.emr.EmrConstants.UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME;
 
 @Component("emrProperties")
@@ -96,6 +105,15 @@ public class EmrProperties extends ModuleProperties {
         type = personService.getPersonAttributeTypeByName(UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME);
         if (type == null) {
             throw new IllegalStateException("Configuration required: " + UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME);
+        }
+        return type;
+    }
+
+    public LocationAttributeType getLocationAttributeTypeNameToPrintOnIdCard() {
+        LocationAttributeType type = null;
+        type = locationService.getLocationAttributeTypeByUuid(LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD);
+        if (type == null) {
+            throw new IllegalStateException("Configuration required: " + LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD);
         }
         return type;
     }

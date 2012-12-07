@@ -71,8 +71,10 @@ public class EmrActivatorComponentTest extends BaseModuleContextSensitiveTest {
 
         LocationAttributeType defaultIdCardPrinter = locationService.getLocationAttributeTypeByUuid(EmrConstants.LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER.get(Printer.Type.ID_CARD.name()));
         LocationAttributeType defaultLabelPrinter = locationService.getLocationAttributeTypeByUuid(EmrConstants.LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER.get(Printer.Type.LABEL.name()));
+        LocationAttributeType nameToPrintOnIdCard = locationService.getLocationAttributeTypeByUuid(EmrConstants.LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD);
 
         assertThat(defaultIdCardPrinter, is(notNullValue()));
         assertThat(defaultLabelPrinter, is(notNullValue()));
+        assertThat(nameToPrintOnIdCard, is(notNullValue()));
     }
 }
