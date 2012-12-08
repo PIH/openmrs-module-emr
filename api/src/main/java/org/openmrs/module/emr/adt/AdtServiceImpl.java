@@ -17,19 +17,45 @@ package org.openmrs.module.emr.adt;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.*;
-import org.openmrs.api.*;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
+import org.openmrs.Location;
+import org.openmrs.Obs;
+import org.openmrs.Order;
+import org.openmrs.Patient;
+import org.openmrs.PersonAttribute;
+import org.openmrs.PersonAttributeType;
+import org.openmrs.Provider;
+import org.openmrs.User;
+import org.openmrs.Visit;
+import org.openmrs.api.APIException;
+import org.openmrs.api.AdministrationService;
+import org.openmrs.api.EncounterService;
+import org.openmrs.api.LocationService;
+import org.openmrs.api.OrderService;
+import org.openmrs.api.PatientService;
+import org.openmrs.api.ProviderService;
+import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 import org.openmrs.module.emr.paperrecord.PaperRecordService;
+import org.openmrs.module.emr.patient.PatientDomainWrapper;
 import org.openmrs.serialization.SerializationException;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 
 public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
@@ -438,6 +464,12 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
     @Transactional
     @Override
     public void mergePatients(Patient preferred, Patient notPreferred) {
+        boolean preferredWasUnknown = wrap(preferred).isUnknownPatient();
+        boolean notPreferredWasUnknown = wrap(notPreferred).isUnknownPatient();
+        if (preferredWasUnknown && !notPreferredWasUnknown) {
+            throw new IllegalArgumentException("Cannot merge a permanent record into an unknown one");
+        }
+
         List<Visit> preferredVisits = visitService.getVisitsByPatient(preferred, true, false);
         List<Visit> notPreferredVisits = visitService.getVisitsByPatient(notPreferred, true, false);
 
@@ -480,10 +512,17 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 
         try {
             patientService.mergePatients(preferred, notPreferred);
-            removeAttributeOfUnknownPatient(preferred);
+            // if we merged an unknown record into a permanent one, remove the unknown flag; if we merged two unknown records, keep it
+            if (!preferredWasUnknown) {
+                removeAttributeOfUnknownPatient(preferred);
+            }
         } catch (SerializationException e) {
             throw new APIException("Unable to merge patients due to serialization error", e);
         }
+    }
+
+    private PatientDomainWrapper wrap(Patient notPreferred) {
+        return new PatientDomainWrapper(notPreferred, emrProperties, this, visitService, encounterService);
     }
 
     private void removeAttributeOfUnknownPatient(Patient preferred) {

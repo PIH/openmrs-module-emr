@@ -22,7 +22,20 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.openmrs.*;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterRole;
+import org.openmrs.EncounterType;
+import org.openmrs.Location;
+import org.openmrs.LocationTag;
+import org.openmrs.Patient;
+import org.openmrs.Person;
+import org.openmrs.PersonAttribute;
+import org.openmrs.PersonAttributeType;
+import org.openmrs.PersonName;
+import org.openmrs.Provider;
+import org.openmrs.User;
+import org.openmrs.Visit;
+import org.openmrs.VisitType;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.ProviderService;
@@ -58,12 +71,16 @@ import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.openmrs.module.emr.EmrConstants.UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME;
 import static org.openmrs.module.emr.TestUtils.isCollectionOfExactlyElementsWithProperties;
 import static org.openmrs.module.emr.TestUtils.isJustNow;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Context.class)
@@ -76,6 +93,7 @@ public class AdtServiceTest {
     EncounterService mockEncounterService;
     ProviderService mockProviderService;
     PatientService mockPatientService;
+    EmrProperties emrProperties;
 
     private Person personForCurrentUser;
     private Provider providerForCurrentUser;
@@ -86,6 +104,7 @@ public class AdtServiceTest {
     private LocationTag supportsVisits;
     private Location mirebalaisHospital;
     private Location outpatientDepartment;
+    private PersonAttributeType unknownPatientPersonAttributeType;
 
     @Before
     public void setup() {
@@ -120,12 +139,19 @@ public class AdtServiceTest {
         mirebalaisHospital.addTag(supportsVisits);
         mirebalaisHospital.addChildLocation(outpatientDepartment);
 
-        EmrProperties emrProperties = mock(EmrProperties.class);
+        unknownPatientPersonAttributeType = new PersonAttributeType();
+        unknownPatientPersonAttributeType.setId(1);
+        unknownPatientPersonAttributeType.setPersonAttributeTypeId(10);
+        unknownPatientPersonAttributeType.setName(UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME);
+        unknownPatientPersonAttributeType.setFormat("java.lang.String");
+
+        emrProperties = mock(EmrProperties.class);
         when(emrProperties.getVisitExpireHours()).thenReturn(10);
         when(emrProperties.getCheckInEncounterType()).thenReturn(checkInEncounterType);
         when(emrProperties.getAtFacilityVisitType()).thenReturn(atFacilityVisitType);
         when(emrProperties.getCheckInClerkEncounterRole()).thenReturn(checkInClerkEncounterRole);
         when(emrProperties.getCheckInClerkEncounterRole()).thenReturn(checkInClerkEncounterRole);
+        when(emrProperties.getUnknownPatientPersonAttributeType()).thenReturn(unknownPatientPersonAttributeType);
 
         AdtServiceImpl service = new AdtServiceImpl();
         service.setPatientService(mockPatientService);
@@ -446,18 +472,11 @@ public class AdtServiceTest {
 
     @Test
     public void itShouldNotCopyUnknownAttributeWhenMergingAnUnknownPatientIntoAPermanentOne() throws SerializationException {
-        EmrProperties emrProperties = mock(EmrProperties.class);
-
         Patient preferred = createPatientWithIdAs(10);
 
         Patient unknownPatient = createPatientWithIdAs(11);
 
-        final PersonAttributeType personAttributeType = new PersonAttributeType();
-        personAttributeType.setPersonAttributeTypeId(10);
-        personAttributeType.setName(UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME);
-        personAttributeType.setFormat("java.lang.String");
-
-        unknownPatient.addAttribute(new PersonAttribute(personAttributeType, "true"));
+        unknownPatient.addAttribute(new PersonAttribute(unknownPatientPersonAttributeType, "true"));
 
         doAnswer(new Answer() {
             @Override
@@ -465,19 +484,16 @@ public class AdtServiceTest {
                 Patient preferred = (Patient) invocationOnMock.getArguments()[0];
                 Patient unknownPatient = (Patient) invocationOnMock.getArguments()[1];
 
-                PersonAttribute attribute = unknownPatient.getAttribute(personAttributeType);
+                PersonAttribute attribute = unknownPatient.getAttribute(unknownPatientPersonAttributeType);
                 preferred.addAttribute(attribute);
 
                 return preferred;
             }
         }).when(mockPatientService).mergePatients(preferred, unknownPatient);
 
-        when(emrProperties.getUnknownPatientPersonAttributeType()).thenReturn(personAttributeType);
-        service.setEmrProperties(emrProperties);
-
         service.mergePatients(preferred, unknownPatient);
 
-        assertNull(preferred.getAttribute(personAttributeType));
+        assertNull(preferred.getAttribute(unknownPatientPersonAttributeType));
 
         verify(mockPatientService).savePatient(preferred);
 
@@ -532,6 +548,28 @@ public class AdtServiceTest {
         verify(mockVisitService, times(2)).saveVisit(firstPreferredVisit); // two visits merged in
 
         verify(mockPatientService).mergePatients(preferred, notPreferred);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldNotAllowMergingAnUnknownRecordIntoAPermanentOne() {
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+        preferred.addAttribute(new PersonAttribute(emrProperties.getUnknownPatientPersonAttributeType(), "true"));
+
+        service.mergePatients(preferred, notPreferred);
+    }
+
+    @Test
+    public void testThatMergingTwoUnknownRecordsResultsInAnUnknownRecord() {
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+        PersonAttribute preferredIsUnknownAttribute = new PersonAttribute(unknownPatientPersonAttributeType, "true");
+        preferred.addAttribute(preferredIsUnknownAttribute);
+        notPreferred.addAttribute(new PersonAttribute(emrProperties.getUnknownPatientPersonAttributeType(), "true"));
+
+        service.mergePatients(preferred, notPreferred);
+
+        assertThat(preferred.getAttribute(unknownPatientPersonAttributeType), is(preferredIsUnknownAttribute));
     }
 
     private Encounter buildEncounter(Patient patient, Date encounterDatetime) {
