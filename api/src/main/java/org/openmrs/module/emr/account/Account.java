@@ -4,8 +4,12 @@ import org.openmrs.Person;
 import org.openmrs.Provider;
 import org.openmrs.Role;
 import org.openmrs.User;
+import org.openmrs.api.UserService;
 import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.util.OpenmrsConstants;
 import org.openmrs.util.OpenmrsUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +18,10 @@ import java.util.Set;
  * Acts a wrapper for a Person, User and Provider
  */
 public class Account {
+
+    @Qualifier("userService")
+    @Autowired
+    UserService userService;
 	
 	private Person person;
 	
@@ -47,12 +55,15 @@ public class Account {
 	
 	private String providerIdentifier;
 	
-	public Account(Person person) {
+	public Account(Person person, UserService userService) {
 		this.person = person;
+        this.userService = userService;
 		setPersonDetails();
 	}
 	
-	public Account(User user, Provider provider) {
+	public Account(User user, Provider provider, UserService userService) {
+        this.userService = userService;
+
 		if (user == null && provider == null)
 			throw new IllegalArgumentException("Both user and provider cannot be null");
 		else if (user != null && provider != null) {
@@ -359,4 +370,35 @@ public class Account {
 			return super.hashCode();
 		return getPerson().hashCode();
 	}
+
+
+    public boolean isLocked() {
+        if (user == null) {
+            return false;
+        }
+        String lockoutTimeProperty = user.getUserProperty(OpenmrsConstants.USER_PROPERTY_LOCKOUT_TIMESTAMP);
+        if (lockoutTimeProperty != null) {
+            try {
+                Long lockedOutUntil = Long.valueOf(lockoutTimeProperty) + 300000;
+                return System.currentTimeMillis() < lockedOutUntil;
+            } catch (NumberFormatException ex) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Unlocks this account (in case it has been locked for getting the password wrong too many times), and saves that
+     * to the database.
+     */
+    public void unlock() {
+        if (user == null) {
+            throw new IllegalStateException("Cannot unlock an account that doesn't have a user");
+        }
+        user.removeUserProperty(OpenmrsConstants.USER_PROPERTY_LOCKOUT_TIMESTAMP);
+        user.removeUserProperty(OpenmrsConstants.USER_PROPERTY_LOGIN_ATTEMPTS);
+        userService.saveUser(user, null);
+    }
+
 }

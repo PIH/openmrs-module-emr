@@ -13,17 +13,15 @@
  */
 package org.openmrs.module.emr.page.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Person;
 import org.openmrs.PersonName;
 import org.openmrs.Provider;
-import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
+import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrConstants;
@@ -34,27 +32,26 @@ import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.annotation.MethodParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.HashSet;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Set;
 
 public class AccountPageController {
 	
 	protected final Log log = LogFactory.getLog(getClass());
 
     public Account getAccount(@RequestParam(value = "personId", required = false) Person person,
-                                @SpringBean("accountService") AccountService accountService) {
+                                @SpringBean("accountService") AccountService accountService,
+                                @SpringBean("userService") UserService userService) {
         Account account;
         if (person == null) {
             Person newPerson = new Person();
             newPerson.addName(new PersonName());
-            account = new Account(newPerson);
+            account = new Account(newPerson, userService);
         }
         else {
             account = accountService.getAccountByPerson(person);

@@ -13,8 +13,6 @@ import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -67,7 +65,7 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 				continue;
 			
 			Provider provider = getProviderByPerson(user.getPerson());
-			byPerson.put(user.getPerson(), new Account(user, provider));
+			byPerson.put(user.getPerson(), new Account(user, provider, userService));
 		}
 		for (Provider provider : providerService.getAllProviders()) {
 			if (provider.getPerson() == null)
@@ -76,7 +74,7 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 			Account account = byPerson.get(provider.getPerson());
 			if (account == null) {
 				User user = getUserByPerson(provider.getPerson());
-				byPerson.put(provider.getPerson(), new Account(user, provider));
+				byPerson.put(provider.getPerson(), new Account(user, provider, userService));
 			}
 		}
 		
@@ -160,7 +158,7 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 	@Override
 	@Transactional(readOnly = true)
 	public Account getAccountByPerson(Person person) {
-		return new Account(getUserByPerson(person), getProviderByPerson(person));
+		return new Account(getUserByPerson(person), getProviderByPerson(person), userService);
 	}
 	
 	/**

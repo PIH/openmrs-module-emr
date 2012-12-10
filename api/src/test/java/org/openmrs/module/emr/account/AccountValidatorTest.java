@@ -9,6 +9,7 @@ import org.openmrs.PersonName;
 import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.api.PasswordException;
+import org.openmrs.api.UserService;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.util.OpenmrsUtil;
@@ -33,15 +34,18 @@ public class AccountValidatorTest {
 	
 	private AccountValidator validator;
     private Account account;
+    private UserService userService;
 
     @Before
 	public void setValidator() {
 		validator = new AccountValidator();
 		validator.setMessageSourceService(Mockito.mock(MessageSourceService.class));
 
+        userService = Mockito.mock(UserService.class);
+
         Person person = new Person();
         person.addName(new PersonName());
-        account = new Account(person);
+        account = new Account(person, userService);
 	}
 	
 	/**

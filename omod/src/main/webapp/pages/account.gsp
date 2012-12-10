@@ -30,7 +30,40 @@ function emr_createUserAccount(){
 	jQuery('#enabled').attr('checked','checked');
     jQuery("#username").focus();
 }
+
+jq(function() {
+   jq('#unlock-button').click(function() {
+       jq.post('${ ui.actionLink("emr", "account/account", "unlock", [ personId: account.person.id ]) }', function(data) {
+           emr.successMessage(data.message);
+           jq('#locked-warning').hide();
+       }, 'json').error(function() {
+           emr.errorMessage('${ ui.message("emr.account.unlock.failedMessage") }');
+       });
+   });
+});
 </script>
+
+<style type="text/css">
+    #locked-warning {
+        border: 1px black solid;
+        background-color: yellow;
+        padding: 0.5em;
+        border-radius: 5px;
+    }
+
+    #unlock-button {
+        margin-top: 1em;
+    }
+</style>
+
+<% if (account.locked) { %>
+    <div id="locked-warning">
+        <h3>${ ui.message("emr.account.locked.title") }</h3>
+        ${ ui.message("emr.account.locked.description") }
+        <br/>
+        <button id="unlock-button">${ ui.message("emr.account.locked.button") }</button>
+    </div>
+<% } %>
 
 <h3>${ (createAccount) ? ui.message("emr.createAccount") : ui.message("emr.editAccount") }</h3>
 <form method="post" id="accountForm">
