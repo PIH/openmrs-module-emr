@@ -63,8 +63,10 @@
 
     <br/>
 
-    <input class="button secondary" type="button" id="cancel-button" value="${ ui.message("emr.cancel") }"/>
+    <p>
+        <input class="cancel" type="button" id="cancel-button" value="${ ui.message("emr.cancel") }"/>
 
-    <input class="button primary" type="submit" value="${ ui.message("emr.continue") }"/>
+        <input class="confirm" type="submit" value="${ ui.message("emr.continue") }"/>
+    </p>
 
 </form>

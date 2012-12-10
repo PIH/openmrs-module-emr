@@ -6,7 +6,6 @@
     ui.includeJavascript("emr", "emr.js", Integer.MAX_VALUE - 15)
 
     ui.includeCss("emr", "cupertino/jquery-ui-1.9.2.custom.min.css", Integer.MAX_VALUE - 10)
-    ui.includeCss("emr", "emr.css")
 
     // toastmessage plugin: https://github.com/akquinet/jquery-toastmessage-plugin/wiki
     ui.includeJavascript("emr", "jquery.toastmessage.js")

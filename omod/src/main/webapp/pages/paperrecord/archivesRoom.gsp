@@ -1,8 +1,6 @@
 <%
     ui.decorateWith("emr", "standardEmrPage")
 
-    ui.includeCss("emr", "dataTable.css")
-
     ui.includeJavascript("emr", "knockout-2.1.0.js")
     ui.includeJavascript("emr", "custom/recordRequest.js")
 
@@ -102,7 +100,7 @@
             </form>
 
 
-            <table id="create_requests_table" class="dataTable">
+            <table id="create_requests_table">
                 <thead>
                 <tr>
                     <th>${ ui.message("emr.person.name") }</th>
