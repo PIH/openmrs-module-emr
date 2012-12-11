@@ -26,7 +26,7 @@
         <% } %>
 
         var pullRequestsViewModel = PullRequestsViewModel(recordsToPull);
-        ko.applyBindings(pullRequestsViewModel, document.getElementById('tab-pullrequest'));
+        ko.applyBindings(pullRequestsViewModel, document.getElementById('pullrequest'));
         pullRequestsViewModel.selectNumber(10);
 
         var recordsToCreate = [];
@@ -37,7 +37,7 @@
         <% } %>
 
         var createRequestsViewModel = CreateRequestsViewModel(recordsToCreate);
-        ko.applyBindings(createRequestsViewModel, document.getElementById('tab-createrequest'));
+        ko.applyBindings(createRequestsViewModel, document.getElementById('createrequest'));
 
         var assignedRecordsToPull = [];
         <% assignedRequestsToPull.each { %>
@@ -47,7 +47,7 @@
         <% } %>
 
         var assignedPullRequestsViewModel = AssignedPullRequestsViewModel(assignedRecordsToPull);
-        ko.applyBindings(assignedPullRequestsViewModel, document.getElementById('tab-assignedpullrequest'));
+        ko.applyBindings(assignedPullRequestsViewModel, document.getElementById('assignedpullrequest'));
 
         var assignedRecordsToCreate = [];
         <% assignedRequestsToCreate.each { %>
@@ -57,7 +57,31 @@
         <% } %>
 
         var assignedCreateRequestsViewModel = AssignedCreateRequestsViewModel(assignedRecordsToCreate);
-        ko.applyBindings(assignedCreateRequestsViewModel, document.getElementById('tab-assignedcreaterequest'));
+        ko.applyBindings(assignedCreateRequestsViewModel, document.getElementById('assignedcreaterequest'));
+
+        // handle entering bar codes
+        jq("#mark-as-pulled").submit(function (e) {
+
+            e.preventDefault();
+
+            var patientIdentifier = jq('#mark-as-pulled-identifier').val();
+
+            jq.ajax({
+                url: '${ ui.actionLink('emr','paperrecord/archivesRoom','markPaperRecordRequestAsSent') }',
+                data: { patientIdentifier: patientIdentifier },
+                dataType: 'json',
+                type: 'POST'
+            })
+                    .success(function(data) {
+                        alert(data.message);
+                    })
+                    .error(function(xhr, status, err) {
+                        alert(jq.parseJSON(xhr.responseText).globalErrors[0]);
+                    })
+
+
+        });
+
 
     });
 </script>
@@ -66,144 +90,154 @@
         background-color: yellow;
     }
 
-    #pull_requests, #create_requests, #assigned_create_requests, #assigned_pull_requests {
-        float:left;
-        padding: 0 50px 0 50px;
+    #pullrequest, #createrequest, #assignedcreaterequest, #assignedpullrequest {
+        display: inline-block;
+        width: 45%;
+        vertical-align: top;
+        padding: 10px 10px;
     }
 
-    #post_requests input[type=submit] {
-        margin-top: 30px;
-        font-size: 20pt;
-    }
+
 </style>
 
 <div id="tabs">
 
         <ul>
-            <li><a id="tab-selector-createrequest" href="#tab-createrequest">${ ui.message("emr.archivesRoom.openCreateRequests.label") }</a></li>
-            <li><a id="tab-selector-pullrequest" href="#tab-pullrequest">${ ui.message("emr.archivesRoom.openPullRequests.label") }</a></li>
-            <li><a id="tab-selector-assignedpullrequest" href="#tab-assignedpullrequest">${ ui.message("emr.archivesRoom.assignedPullRequests.label") }</a></li>
-            <li><a id="tab-selector-assignedcreaterequest" href="#tab-assignedcreaterequest">${ ui.message("emr.archivesRoom.assignedCreateRequests.label") }</a></li>
-
+            <li><a id="tab-selector-create" href="#tab-create">${ ui.message("emr.archivesRoom.newRecords.label") }</a></li>
+            <li><a id="tab-selector-pull" href="#tab-pull">${ ui.message("emr.archivesRoom.existingRecords.label") }</a></li>
         </ul>
 
+        <div id="tab-create">
+            <div id="createrequest">
+                <h2 id="create_requests">${ ui.message("emr.archivesRoom.openCreateRequests.label") }</h2>
 
-        <div id="tab-createrequest">
-            <h1 id="create_requests">${ ui.message("emr.archivesRoom.openCreateRequests.label") }</h1>
-
-            <form id="post_create_requests" action="archivesRoom.page" method="post">
-                <input type="hidden" name="assignTo" value="${ context.authenticatedUser.person.id }"/>
-                <span style="display: none" data-bind="foreach: selectedRequests()">
-                    <input type="hidden" name="requestId" data-bind="value: requestId"/>
-                </span>
-                <input type="hidden" name="activeTab" value="createrequest">
-                <input id="create_record_requests_button" type="submit" value="${ ui.message("emr.archivesRoom.createSelected") }"
-                       data-bind="enable: selectedRequests().length > 0"/>
-            </form>
-
-
-            <table id="create_requests_table" class="dataTable">
-                <thead>
-                <tr>
-                    <th>${ ui.message("emr.person.name") }</th>
-                    <th>${ ui.message("emr.patient.identifier") }</th>
-                    <th>${ ui.message("emr.location") }</th>
-                    <th>${ ui.message("emr.time") }</th>
-                </tr>
-                </thead>
-                <tbody data-bind="foreach: recordsToCreate">
-                <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), even: (\$index() % 2 == 0) }, click: \$root.selectRecordsToBeCreated" >
-                    <td><span data-bind="text: patientName"></span></td>
-                    <td><span data-bind="text: patientId"></span></td>
-                    <td><span data-bind="text: sendToLocation"></span></td>
-                    <td><span data-bind="text: timeRequested"></span></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div id="tab-pullrequest">
-            <h1 id="pull_requests">${ ui.message("emr.archivesRoom.openPullRequests.label") }</h1>
-
-            <form id="post_pull_requests" action="archivesRoom.page" method="post">
-                <input type="hidden" name="assignTo" value="${ context.authenticatedUser.person.id }"/>
-                <!-- ko foreach:selectedRequests -->
-                <input type="hidden" name="requestId" data-bind="value: requestId"/>
-                <!-- /ko -->
-                <input type="hidden" name="activeTab" value="pullrequest">
-                <input id="pull_record_requests_button" type="submit" value="${ ui.message("emr.archivesRoom.pullSelected") }"
-                       data-bind="enable: selectedRequests().length > 0"/>
-            </form>
+                <form id="post_create_requests" action="archivesRoom.page" method="post">
+                    <input type="hidden" name="assignTo" value="${ context.authenticatedUser.person.id }"/>
+                    <span style="display: none" data-bind="foreach: selectedRequests()">
+                        <input type="hidden" name="requestId" data-bind="value: requestId"/>
+                    </span>
+                    <input type="hidden" name="activeTab" value="createrequest">
+                    <input id="create_record_requests_button" type="submit" value="${ ui.message("emr.archivesRoom.createSelected") }"
+                           data-bind="enable: selectedRequests().length > 0"/>
+                </form>
 
 
-            <table id="pull_requests_table" class="dataTable">
-                <thead>
+                <table id="create_requests_table" class="dataTable">
+                    <thead>
+                    <tr>
+                        <th>${ ui.message("emr.person.name") }</th>
+                        <th>${ ui.message("emr.patient.identifier") }</th>
+                        <th>${ ui.message("emr.location") }</th>
+                        <th>${ ui.message("emr.time") }</th>
+                    </tr>
+                    </thead>
+                    <tbody data-bind="foreach: recordsToCreate">
+                    <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), even: (\$index() % 2 == 0) }, click: \$root.selectRecordsToBeCreated" >
+                        <td><span data-bind="text: patientName"></span></td>
+                        <td><span data-bind="text: patientId"></span></td>
+                        <td><span data-bind="text: sendToLocation"></span></td>
+                        <td><span data-bind="text: timeRequested"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="assignedcreaterequest">
+                <h2 id="assigned_create_requests">${ ui.message("emr.archivesRoom.assignedCreateRequests.label") }</h2>
+
+
+                <table id="assigned_create_requests_table" class="dataTable">
+                    <thead>
                     <tr>
                         <th>${ ui.message("emr.person.name") }</th>
                         <th>${ ui.message("emr.patient.paperRecordIdentifier") }</th>
                         <th>${ ui.message("emr.location") }</th>
                         <th>${ ui.message("emr.time") }</th>
                     </tr>
-                </thead>
-                <tbody data-bind="foreach: recordsToPull">
+                    </thead>
+                    <tbody data-bind="foreach: assignedRecordsToCreate">
+                    <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), even: (\$index() % 2 == 0) }" >
+                        <td><span data-bind="text: patientName"></span></td>
+                        <td><span data-bind="text: dossierNumber"></span></td>
+                        <td><span data-bind="text: sendToLocation"></span></td>
+                        <td><span data-bind="text: timeRequested"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="tab-pull">
+
+            <div id="pullrequest">
+                <h2 id="pull_requests">${ ui.message("emr.archivesRoom.openPullRequests.label") }</h2>
+
+                <form id="post_pull_requests" action="archivesRoom.page" method="post">
+                    <input type="hidden" name="assignTo" value="${ context.authenticatedUser.person.id }"/>
+                    <!-- ko foreach:selectedRequests -->
+                    <input type="hidden" name="requestId" data-bind="value: requestId"/>
+                    <!-- /ko -->
+                    <input type="hidden" name="activeTab" value="pullrequest">
+                    <input id="pull_record_requests_button" type="submit" value="${ ui.message("emr.archivesRoom.pullSelected") }"
+                           data-bind="enable: selectedRequests().length > 0"/>
+                </form>
+
+
+                <table id="pull_requests_table" class="dataTable">
+                    <thead>
+                    <tr>
+                        <th>${ ui.message("emr.archivesRoom.surname.label") }</th>
+                        <th>${ ui.message("emr.patient.paperRecordIdentifier") }</th>
+                        <th>${ ui.message("emr.archivesRoom.requestedBy.label") }</th>
+                        <th>${ ui.message("emr.time") }</th>
+                    </tr>
+                    </thead>
+                    <tbody data-bind="foreach: recordsToPull">
                     <tr data-bind="attr:{'id': dossierNumber}, css:{ selected: selected(), even: (\$index() % 2 == 0) }, click: \$root.selectRequestToBePulled" >
                         <td><span data-bind="text: patientName"></span></td>
                         <td><span data-bind="text: dossierNumber"></span></td>
                         <td><span data-bind="text: sendToLocation"></span></td>
                         <td><span data-bind="text: timeRequested"></span></td>
                     </tr>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="assignedpullrequest">
+                <h2 id="assigned_pull_requests">${ ui.message("emr.archivesRoom.assignedPullRequests.label") }</h2>
+
+
+                <table id="assigned_pull_requests_table" class="dataTable">
+                    <thead>
+                    <tr>
+                        <th>${ ui.message("emr.archivesRoom.surname.label") }</th>
+                        <th>${ ui.message("emr.patient.paperRecordIdentifier") }</th>
+                        <th>${ ui.message("emr.archivesRoom.requestedBy.label") }</th>
+                        <th>${ ui.message("emr.time") }</th>
+                    </tr>
+                    </thead>
+                    <tbody data-bind="foreach: assignedRecordsToPull">
+                    <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), even: (\$index() % 2 == 0) }" >
+                        <td><span data-bind="text: patientName"></span></td>
+                        <td><span data-bind="text: dossierNumber"></span></td>
+                        <td><span data-bind="text: sendToLocation"></span></td>
+                        <td><span data-bind="text: timeRequested"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <h2>${ ui.message("emr.archivesRoom.sendingRecords.label") }</h2>
+
+                <div id="scan-pull-records" class="container">
+                    ${ ui.message("emr.archivesRoom.typeOrIdentifyBarCode.label") }
+                    <br/>
+                    <form id="mark-as-pulled">
+                        <input type="text" size="40" id="mark-as-pulled-identifier" name="mark-as-pulled-identifier"/>
+                    </form>
+                </div>
+
+            </div>
+
         </div>
-
-
-        <div id="tab-assignedpullrequest">
-            <h1 id="assigned_pull_requests">${ ui.message("emr.archivesRoom.assignedPullRequests.label") }</h1>
-
-
-            <table id="assigned_pull_requests_table" class="dataTable">
-                <thead>
-                <tr>
-                    <th>${ ui.message("emr.person.name") }</th>
-                    <th>${ ui.message("emr.patient.paperRecordIdentifier") }</th>
-                    <th>${ ui.message("emr.location") }</th>
-                    <th>${ ui.message("emr.time") }</th>
-                </tr>
-                </thead>
-                <tbody data-bind="foreach: assignedRecordsToPull">
-                <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), even: (\$index() % 2 == 0) }" >
-                    <td><span data-bind="text: patientName"></span></td>
-                    <td><span data-bind="text: dossierNumber"></span></td>
-                    <td><span data-bind="text: sendToLocation"></span></td>
-                    <td><span data-bind="text: timeRequested"></span></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div id="tab-assignedcreaterequest">
-            <h1 id="assigned_create_requests">${ ui.message("emr.archivesRoom.assignedCreateRequests.label") }</h1>
-
-
-            <table id="assigned_create_requests_table" class="dataTable">
-                <thead>
-                <tr>
-                    <th>${ ui.message("emr.person.name") }</th>
-                    <th>${ ui.message("emr.patient.paperRecordIdentifier") }</th>
-                    <th>${ ui.message("emr.location") }</th>
-                    <th>${ ui.message("emr.time") }</th>
-                </tr>
-                </thead>
-                <tbody data-bind="foreach: assignedRecordsToCreate">
-                <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), even: (\$index() % 2 == 0) }" >
-                    <td><span data-bind="text: patientName"></span></td>
-                    <td><span data-bind="text: dossierNumber"></span></td>
-                    <td><span data-bind="text: sendToLocation"></span></td>
-                    <td><span data-bind="text: timeRequested"></span></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
 
 </div>

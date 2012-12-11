@@ -34,6 +34,7 @@ import org.openmrs.module.idgen.service.IdentifierSourceService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -79,9 +80,14 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         return paperRecordRequestDAO.getById(id);
     }
 
+    // TODO: these could probably be refactored into a single method
+
     @Override
     @Transactional
     public PaperRecordRequest requestPaperRecord(Patient patient, Location recordLocation, Location requestLocation) {
+
+        // TODO: we will have to handle the case if there is already a request for this patient's record in the "SENT" state
+        // TODO: (ie, what to do if the record is already out on the floor--right now it will just create a new request)
 
         if (patient == null) {
             throw new IllegalStateException("Patient cannot be null");
@@ -104,7 +110,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         String identifier = paperRecordIdentifier != null ? paperRecordIdentifier.getIdentifier() : null;
 
         // see if there is an active request for this patient at this location
-        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(Arrays.asList(Status.OPEN, Status.ASSIGNED_TO_PULL, Status.ASSIGNED_TO_CREATE), patient, recordLocation);
+        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(Arrays.asList(Status.OPEN, Status.ASSIGNED_TO_PULL, Status.ASSIGNED_TO_CREATE), patient, recordLocation, null, null);
 
         if (requests.size() > 1) {
             // this should not be allowed, but it could possibility happen if you merge two patients that both have
@@ -147,14 +153,14 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getOpenPaperRecordRequestsToPull() {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
-        return paperRecordRequestDAO.findPaperRecordRequests(PaperRecordRequest.Status.OPEN, true);
+        return paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(PaperRecordRequest.Status.OPEN), null, null, null, true);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getOpenPaperRecordRequestsToCreate() {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
-        return paperRecordRequestDAO.findPaperRecordRequests(PaperRecordRequest.Status.OPEN, false);
+        return paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(PaperRecordRequest.Status.OPEN), null, null, null, false);
     }
 
     @Override
@@ -204,31 +210,32 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getAssignedPaperRecordRequestsToPull() {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
-        return paperRecordRequestDAO.findPaperRecordRequests(PaperRecordRequest.Status.ASSIGNED_TO_PULL);
+        return paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(PaperRecordRequest.Status.ASSIGNED_TO_PULL), null, null, null, null);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getAssignedPaperRecordRequestsToCreate() {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
-        return paperRecordRequestDAO.findPaperRecordRequests(PaperRecordRequest.Status.ASSIGNED_TO_CREATE);
+        return paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(PaperRecordRequest.Status.ASSIGNED_TO_CREATE), null, null, null, null);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getPaperRecordRequestsByPatient(Patient patient) {
-	    return paperRecordRequestDAO.findPaperRecordRequests(patient);	    
+	    return paperRecordRequestDAO.findPaperRecordRequests(null, patient, null, null, null);
     }
 
     @Override
     public PaperRecordRequest getActivePaperRecordRequestByIdentifier(String identifier) {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
-        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(Arrays.asList(Status.OPEN, Status.ASSIGNED_TO_PULL, Status.ASSIGNED_TO_CREATE), identifier);
+        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(Arrays.asList(Status.OPEN, Status.ASSIGNED_TO_PULL, Status.ASSIGNED_TO_CREATE), null, null, identifier, null);
 
         if (requests == null || requests.size() == 0) {
             return null;
         }
         else if (requests.size() > 1) {
+            // TODO: we may run into this case until we handle merging properly
             throw new IllegalStateException("Duplicate active record requests exist with identifier " + identifier);
         }
         else {

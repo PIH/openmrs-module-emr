@@ -27,6 +27,7 @@ import org.openmrs.User;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
+import org.openmrs.module.emr.paperrecord.PaperRecordRequest.Status;
 import org.openmrs.module.emr.paperrecord.db.PaperRecordRequestDAO;
 import org.openmrs.module.idgen.service.IdentifierSourceService;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -43,7 +44,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
@@ -330,7 +330,8 @@ public class PaperRecordServiceTest {
         request.setRequestLocation(requestLocation);
         request.setDateCreated(new Date());
 
-        when(mockPaperRecordDAO.findPaperRecordRequests(anyListOf(PaperRecordRequest.Status.class), eq(patient), eq(medicalRecordLocation))).thenReturn(Collections.singletonList(request));
+        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(Arrays.asList(Status.ASSIGNED_TO_CREATE, Status.ASSIGNED_TO_PULL, Status.OPEN))),
+                eq(patient), eq(medicalRecordLocation), argThat(new NullString()), argThat(new NullBoolean()))).thenReturn(Collections.singletonList(request));
         IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(request);
 
         // the returned request should be the existing request
@@ -362,7 +363,8 @@ public class PaperRecordServiceTest {
         expectedRequest.setRequestLocation(newRequestLocation);
         expectedRequest.setDateCreated(new Date());
 
-        when(mockPaperRecordDAO.findPaperRecordRequests(anyListOf(PaperRecordRequest.Status.class), eq(patient), eq(medicalRecordLocation))).thenReturn(Collections.singletonList(request));
+        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(Arrays.asList(Status.ASSIGNED_TO_CREATE, Status.ASSIGNED_TO_PULL, Status.OPEN))),
+                eq(patient), eq(medicalRecordLocation), argThat(new NullString()), argThat(new NullBoolean()))).thenReturn(Collections.singletonList(request));
         IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(request);
 
         // the returned request should be the existing request
@@ -389,7 +391,8 @@ public class PaperRecordServiceTest {
         request.setRequestLocation(requestLocation);
         request.setDateCreated(new Date());
 
-        when(mockPaperRecordDAO.findPaperRecordRequests(anyListOf(PaperRecordRequest.Status.class), eq(identifier))).thenReturn(Collections.singletonList(request));
+        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(Arrays.asList(Status.ASSIGNED_TO_CREATE, Status.ASSIGNED_TO_PULL, Status.OPEN))),
+                argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier), argThat(new NullBoolean()))).thenReturn(Collections.singletonList(request));
         IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(request);
 
         PaperRecordRequest returnedRequest = paperRecordService.getActivePaperRecordRequestByIdentifier(identifier);
@@ -397,10 +400,12 @@ public class PaperRecordServiceTest {
 
     }
 
+
     @Test
     public void getActivePaperRecordRequestByIdentifierShouldReturnNullIfNoActiveRequestWithThatIdentifier() {
         String identifier = "ABC123";
-        when(mockPaperRecordDAO.findPaperRecordRequests(anyListOf(PaperRecordRequest.Status.class), eq(identifier))).thenReturn(null);
+        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(Arrays.asList(Status.ASSIGNED_TO_CREATE, Status.ASSIGNED_TO_PULL, Status.OPEN))),
+                argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier),  argThat(new NullBoolean()))).thenReturn(null);
         assertNull(paperRecordService.getActivePaperRecordRequestByIdentifier(identifier));
     }
 
@@ -426,7 +431,9 @@ public class PaperRecordServiceTest {
         request.setRequestLocation(requestLocation);
         request.setDateCreated(new Date());
 
-        when(mockPaperRecordDAO.findPaperRecordRequests(anyListOf(PaperRecordRequest.Status.class), eq(identifier))).thenReturn(Arrays.asList(request, anotherRequest));
+        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(Arrays.asList(Status.ASSIGNED_TO_CREATE, Status.ASSIGNED_TO_PULL, Status.OPEN))),
+                argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier),  argThat(new NullBoolean())))
+                .thenReturn(Arrays.asList(request, anotherRequest));
         paperRecordService.getActivePaperRecordRequestByIdentifier(identifier);
     }
 
@@ -536,5 +543,62 @@ public class PaperRecordServiceTest {
 
             return true;
         }
+    }
+
+    private class NullBoolean extends ArgumentMatcher<Boolean> {
+
+        public boolean matches(Object o)  {
+            return o == null ? true : false;
+        }
+
+    }
+
+    private class NullLocation extends ArgumentMatcher<Location> {
+
+        public boolean matches(Object o) {
+            return o == null ? true : false;
+        }
+    }
+
+    private class NullString extends ArgumentMatcher<String> {
+
+        public boolean matches(Object o) {
+            return o == null ? true : false;
+        }
+    }
+
+    private class NullPatient extends ArgumentMatcher<Patient> {
+
+        public boolean matches(Object o) {
+            return o == null ? true : false;
+        }
+    }
+
+
+    private class StatusListOf extends ArgumentMatcher<List<PaperRecordRequest.Status>> {
+
+        private List<PaperRecordRequest.Status>  expectedStatusList;
+
+        public StatusListOf(List<PaperRecordRequest.Status> expectedStatusList) {
+            this.expectedStatusList = expectedStatusList;
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            List<PaperRecordRequest.Status> statusList = (List<PaperRecordRequest.Status>) o;
+
+            if (statusList.size() != expectedStatusList.size()) {
+                return false;
+            }
+
+            if (statusList.containsAll(expectedStatusList)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+
+        }
+
     }
 }
