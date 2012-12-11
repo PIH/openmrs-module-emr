@@ -3,5 +3,5 @@
 <% } %>
 
 <% if (infoMessage) { %>
-    <div id="info-message" class="note warning"><i class="icon-warning-sign small"></i>${ ui.message(infoMessage) }</div>
+    <div id="info-message" class="note success"><i class="icon-ok small"></i>${ ui.message(infoMessage) }</div>
 <% } %>
