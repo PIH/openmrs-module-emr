@@ -37,7 +37,7 @@
         </td>
         <td>
             <a href="/${ contextPath }/emr/printer/printer.page?printerId=${ it.printerId }">
-                <button>${ ui.message("general.edit") }</button>
+                <button>${ ui.message("emr.edit") }</button>
             </a>
         </td>
     </tr>

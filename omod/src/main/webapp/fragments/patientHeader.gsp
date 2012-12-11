@@ -64,7 +64,7 @@
         <form action="/${ contextPath }/emr/mergePatients.page" method="get">
             <input type="hidden" name="unknown-patient" value="true" />
             <input type="hidden" name="patient1" value="${patient.patient.id}" />
-            <input type="submit" id="merge-button" value="Merge into another Patient Record" />
+            <input type="submit" id="merge-button" value="${ ui.message("emr.mergePatients.mergeIntoAnotherPatientRecord.button") }" />
         </form>
     </div>
 
