@@ -31,7 +31,6 @@ public class MergePatientsPageController {
 
     public String get(@RequestParam(required = false, value = "patient1") Patient patient1,
                     @RequestParam(required = false, value = "patient2") Patient patient2,
-                    @RequestParam(value = "confirmed", defaultValue = "false") Boolean confirmed,
                     @RequestParam(value = "unknown-patient", defaultValue = "false") boolean isUnknownPatient,
                     @InjectBeans PatientDomainWrapper wrapper1,
                     @InjectBeans PatientDomainWrapper wrapper2,
@@ -40,7 +39,6 @@ public class MergePatientsPageController {
 
         pageModel.addAttribute("patient1", null);
         pageModel.addAttribute("patient2", null);
-        pageModel.addAttribute("confirmed", confirmed);
         pageModel.addAttribute("isUnknownPatient", isUnknownPatient);
 
         if (patient1 != null && patient2 == null && isUnknownPatient) {
@@ -60,17 +58,13 @@ public class MergePatientsPageController {
 
         wrapper1.setPatient(patient1);
         wrapper2.setPatient(patient2);
+
         pageModel.addAttribute("patient1", wrapper1);
         pageModel.addAttribute("patient2", wrapper2);
+        pageModel.addAttribute("overlappingVisits", wrapper1.hasOverlappingVisitsWith(patient2));
 
-        if (!confirmed) {
-            return "mergePatients-confirmSamePerson";
-        }
-        else {
-            // do extra checks
-            pageModel.addAttribute("overlappingVisits", wrapper1.hasOverlappingVisitsWith(patient2));
-            return "mergePatients-chooseMergeOptions";
-        }
+        return "mergePatients-confirmSamePerson";
+
     }
 
     public String post(UiUtils ui,

@@ -76,28 +76,47 @@
 <script type="text/javascript">
     var patient1Id = ${patient1.patient.id};
     var patient2Id = ${patient2.patient.id};
-    var preferred = patient2Id;
-    jq(function() {
 
-        jq('.first-patient').live('click',function() {
-            //this value come from the request (isUnknownPatient parameter)
-            var isUnknownPatient = ${isUnknownPatient};
+    //this value come from the request (isUnknownPatient parameter)
+    var isUnknownPatient = ${isUnknownPatient};
+
+    jq(function() {
+        jq('div').on('click','#first-patient', function() {
 
             if(!isUnknownPatient){
-                jq('.first-patient').toggleClass('second-patient');
-                jq('.second-patient').toggleClass('first-patient');
-                jq('.first-patient').toggleClass('second-patient');
 
-                jq('#separator-left').toggleClass('hidden');
-                jq('#separator-right').toggleClass('hidden');
+                if (jq('#first-patient').hasClass("non-preferred-patient")){
+                    jq('#second-patient').removeClass('preferred-patient');
+                    jq('#second-patient').addClass('non-preferred-patient');
 
-                if (preferred == patient2Id){
-                    preferred = patient1Id;
-                } else {
-                    preferred = patient2Id;
+                    jq('#first-patient').removeClass('non-preferred-patient');
+                    jq('#first-patient').addClass('preferred-patient');
+
+                    jq('#separator-left').removeClass('hidden');
+                    jq('#separator-right').addClass('hidden');
                 }
 
-                jq('#preferred').val(preferred);
+                jq('#preferred').val(patient1Id);
+
+            }
+        });
+
+        jq('div').on('click','#second-patient', function() {
+
+            if(!isUnknownPatient){
+
+                if (jq('#second-patient').hasClass("non-preferred-patient")){
+                    jq('#first-patient').removeClass('preferred-patient');
+                    jq('#first-patient').addClass('non-preferred-patient');
+
+                    jq('#second-patient').removeClass('non-preferred-patient');
+                    jq('#second-patient').addClass('preferred-patient');
+
+                    jq('#separator-left').addClass('hidden');
+                    jq('#separator-right').removeClass('hidden');
+                }
+
+                 jq('#preferred').val(patient2Id);
 
             }
         });
@@ -112,39 +131,150 @@
 <form method="post">
     <input type="hidden" name="patient1" value="${ patient1.patient.id }" />
     <input type="hidden" name="patient2" value="${ patient2.patient.id }" />
-    <input type="hidden" name="preferred" id="preferred" value="${ patient2.patient.id }" />
-    <input type="hidden" name="confirmed" value="true"/>
+    <input type="hidden" name="preferred" id="preferred"  />
 
 
     <div class="messages-container">
         <%  if (isUnknownPatient){ %>
-            <em class="message-title">${ ui.message("emr.mergePatients.unknownPatient.message") }</em>
+            <!--em class="message-title">${ ui.message("emr.mergePatients.unknownPatient.message") }</em-->
+            <h2>${ ui.message("emr.mergePatients.unknownPatient.message") }</h2>
         <% } else {%>
-            <em class="message-title">${ ui.message("emr.mergePatients.confirmationQuestion") }</em>
+            <!--em class="message-title">${ ui.message("emr.mergePatients.confirmationQuestion") }</em-->
+            <h2>${ ui.message("emr.mergePatients.confirmationQuestion") }
         <% } %>
-        <em class="message">${ ui.message("emr.mergePatients.choosePreferred.description") }</em>
+            <em>${ ui.message("emr.mergePatients.choosePreferred.description") }</em>
+        </h2>
     </div>
 
-    <% def arrows = "<span id=\"separator-right\"><img src=\"/mirebalais/ms/uiframework/resource/uilibrary/images/blue_arrow_right_32.png\"></span> "  %>
-    <%  arrows += "<span id=\"separator-left\" class=\"hidden\"><img src=\"/mirebalais/ms/uiframework/resource/uilibrary/images/blue_arrow_left_32.png\" ></span>"  %>
+    <div id="patients">
+        <div id="first-patient" class="non-preferred-patient">
+            <div class="name">
+                <h3>${ui.message("emr.mergePatients.section.names")}</h3>
+                <% patient1.patient.names.each { %>
+                   <div>${it}</div>
+                <% } %>
+            </div>
+            <div>
+                <h3>${ui.message("emr.mergePatients.section.demographics")}</h3>
+                <div>${ ui.message("emr.gender." + patient1.patient.gender) }${ patient1.patient.age ? ", " + ui.message("emr.ageYears", patient1.patient.age) : "" }</div>
+                <div> ${ ui.message("emr.birthdate") }:${ui.format(patient1.patient.birthdate)}</div>
+            </div>
+            <div class="identifiers">
+                <h3>${ui.message("emr.mergePatients.section.primaryIdentifiers")}</h3>
+                <% patient1.primaryIdentifiers.each { %>
+                    <% def identifier = (it.preferred ? "<b>${it.identifier}</b>" : it.identifier) %>
+                    <div>${identifier}</div>
+                <% } %>
+            </div>
+            <div class="identifiers">
+                <h3>${ui.message("emr.mergePatients.section.paperRecordIdentifiers")}</h3>
+                <%= (!patient1.paperRecordIdentifiers ?ui.message("emr.none"): "")  %>
+                <% patient1.paperRecordIdentifiers.each { %>
+                    <% def identifier = (it.preferred ? "<b>${it.identifier}</b>" : it.identifier) %>
+                    <div>${identifier}</div>
+                <% } %>
+            </div>
+            <div class="address">
+                <h3>${ui.message("emr.mergePatients.section.addresses")}</h3>
+                <% patient1.patient.addresses.each { %>
+                    <div><%= ui.includeFragment("emr", "formatAddress", [ address:  it ]) %></div>
+                <% } %>
+            </div>
+            <div>
+                <h3>${ui.message("emr.mergePatients.section.lastSeen")}</h3>
+                <div> ${ ui.format(patient1.lastEncounter.encounterType) }</div>
+                <div> ${ ui.message("emr.atLocation", ui.format(patient1.lastEncounter.location)) }</div>
+                <div> ${ ui.message("emr.onDatetime", ui.format(patient1.lastEncounter.encounterDatetime)) }</div>
+            </div>
+            <div>
+                <h3>${ui.message("emr.mergePatients.section.activeVisit")}</h3>
+                <% def activeVisit = patient1.getActiveVisit(emrContext.sessionLocation)
+                       activeVisit = (activeVisit? ui.format(activeVisit) : ui.message("emr.none"))%>
+                <div> ${ activeVisit }</div>
+            </div>
+            <div>
+                <h3>${ui.message("emr.mergePatients.section.dataSummary")}</h3>
+                <div>${ ui.message("emr.mergePatients.section.dataSummary.numVisits", patient1.countOfVisits) }</div>
+                <div>${ ui.message("emr.mergePatients.section.dataSummary.numEncounters", patient1.countOfEncounters) } </div>
+            </div>
+        </div>
 
-    <table>
-        <%= displayList(ui.message("emr.mergePatients.section.names"), patient1.patient.names, "", patient2.patient.names, highlightPreferred) %>
-        <%= displayList(ui.message("emr.mergePatients.section.demographics"), [ patient1.patient ], "", [ patient2.patient ], formatDemographics) %>
-        <%= displayList(ui.message("emr.mergePatients.section.primaryIdentifiers"), patient1.primaryIdentifiers, "",  patient2.primaryIdentifiers, formatIdentifiers) %>
-        <%= displayList(ui.message("emr.mergePatients.section.paperRecordIdentifiers"), patient1.paperRecordIdentifiers, arrows, patient2.paperRecordIdentifiers, formatIdentifiers) %>
-        <%= displayList(ui.message("emr.mergePatients.section.addresses"), patient1.patient.addresses, "", patient2.patient.addresses, formatAddress) %>
-        <%= displayList(ui.message("emr.mergePatients.section.lastSeen"), [ patient1.lastEncounter ], "", [ patient2.lastEncounter ], formatEncounter) %>
-        <%= displayList(ui.message("emr.mergePatients.section.activeVisit"), [ patient1 ], "", [ patient2 ], formatActiveVisit) %>
-        <%= displayList(ui.message("emr.mergePatients.section.dataSummary"), [ patient1 ], "", [ patient2 ], formatDataSummary) %>
-    </table>
+        <div id="separator" class="separator">
+            <% def separatorClass = (isUnknownPatient ? "" : "hidden")  %>
+            <div id="separator-right" class="${separatorClass}"><img src="${ ui.resourceLink("uilibrary", "images/blue_arrow_right_32.png") }"></div>
+            <div id="separator-left" class="hidden"><img src="${ ui.resourceLink("uilibrary", "images/blue_arrow_left_32.png") }" ></div>
+        </div>
+
+        <% def patientClass = (isUnknownPatient ? "preferred-patient" : "non-preferred-patient")  %>
+        <div id="second-patient" class="${patientClass}">
+            <div class="name">
+                <h3>${ui.message("emr.mergePatients.section.names")}</h3>
+                <% patient2.patient.names.each { %>
+                <div>${it}</div>
+                <% } %>
+            </div>
+            <div>
+                <h3>${ui.message("emr.mergePatients.section.demographics")}</h3>
+                <div>${ ui.message("emr.gender." + patient2.patient.gender) }${ patient2.patient.age ? ", " + ui.message("emr.ageYears", patient2.patient.age) : "" }</div>
+                <div> ${ ui.message("emr.birthdate") }:${ui.format(patient2.patient.birthdate)}</div>
+            </div>
+            <div class="identifiers">
+                <h3>${ui.message("emr.mergePatients.section.primaryIdentifiers")}</h3>
+                <% patient2.primaryIdentifiers.each { %>
+                    <% def identifier = (it.preferred ? "<b>${it.identifier}</b>" : it.identifier) %>
+                    <div>${identifier}</div>
+                <% } %>
+            </div>
+            <div class="identifiers">
+                <h3>${ui.message("emr.mergePatients.section.paperRecordIdentifiers")}</h3>
+                <%= (!patient1.paperRecordIdentifiers ?ui.message("emr.none"): "")  %>
+                <% patient1.paperRecordIdentifiers.each { %>
+                    <% def identifier = (it.preferred ? "<b>${it.identifier}</b>" : it.identifier) %>
+                    <div>${identifier}</div>
+                <% } %>
+            </div>
+            <div class="address">
+                <h3>${ui.message("emr.mergePatients.section.addresses")}</h3>
+                <% patient2.patient.addresses.each { %>
+                    <div><%= ui.includeFragment("emr", "formatAddress", [ address:  it ]) %></div>
+                <% } %>
+            </div>
+            <div>
+                <h3>${ui.message("emr.mergePatients.section.lastSeen")}</h3>
+                <div> ${ ui.format(patient2.lastEncounter.encounterType) }</div>
+                <div> ${ ui.message("emr.atLocation", ui.format(patient2.lastEncounter.location)) }</div>
+                <div> ${ ui.message("emr.onDatetime", ui.format(patient2.lastEncounter.encounterDatetime)) }</div>
+            </div>
+            <div>
+                <h3>${ui.message("emr.mergePatients.section.activeVisit")}</h3>
+                <%  activeVisit = patient2.getActiveVisit(emrContext.sessionLocation)
+                    activeVisit = (activeVisit ? ui.format(activeVisit) : ui.message("emr.none")) %>
+                <div> ${ activeVisit }</div>
+            </div>
+            <div>
+                <h3>${ui.message("emr.mergePatients.section.dataSummary")}</h3>
+                <div>${ ui.message("emr.mergePatients.section.dataSummary.numVisits", patient2.countOfVisits) }</div>
+                <div>${ ui.message("emr.mergePatients.section.dataSummary.numEncounters", patient2.countOfEncounters) } </div>
+            </div>
+        </div>
+
+
+    </div>
+
 
     <div class="messages-container">
-        <em class="message-bold">${ ui.message("emr.mergePatients.confirmationSubtext") }</em>
-        <em class="message">${ ui.message("emr.mergePatients.allDataWillBeCombined") }</em>
+        <h2>
+            ${ ui.message("emr.mergePatients.confirmationSubtext") }
+            <em>${ ui.message("emr.mergePatients.allDataWillBeCombined") }</em>
+            <% if (overlappingVisits) { %>
+            <em>${ ui.message("emr.mergePatients.overlappingVisitsWillBeJoined") }</em>
+            <% } %>
+        </h2>
+    </div>
+    <% def buttonClass = (isUnknownPatient ? "button primary" : "button disabled") %>
+    <div class= "buttons">
+        <input type="button" id="cancel-button" class="button secondary" value="${ ui.message("emr.no") }"/>
+        <input type="submit" id="confirm-button" class="${buttonClass}" value="${ ui.message("emr.yesContinue") }"/>
     </div>
 
-    <input type="button" id="cancel-button" class="button secondary" value="${ ui.message("emr.no") }"/>
-
-    <input type="submit" id="confirm-button" class="button primary" value="${ ui.message("emr.yesContinue") }"/>
 </form>
