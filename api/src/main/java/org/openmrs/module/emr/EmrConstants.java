@@ -91,7 +91,8 @@ public class EmrConstants {
         put("LABEL", "bd6c1c10-38d3-11e2-81c1-0800200c9a66");
     }};
 
-    public static final String PAYMENT_AMOUNT_CONCEPT_UUID = "emr.paymentAmountConcept";
-    public static final String PAYMENT_REASON_CONCEPT_UUID = "emr.paymentReasonConcept";
-    public static final String PAYMENT_RECEIPT_NUMBER_CONCEPT_UUID = "emr.paymentReceiptNumberConcept";
+    public static final String PAYMENT_AMOUNT_CONCEPT = "emr.paymentAmountConcept";
+    public static final String PAYMENT_REASON_CONCEPT = "emr.paymentReasonConcept";
+    public static final String PAYMENT_RECEIPT_NUMBER_CONCEPT = "emr.paymentReceiptNumberConcept";
+    public static final String PAYMENT_CONSTRUCT_CONCEPT = "emr.paymentConstructConcept";
 }

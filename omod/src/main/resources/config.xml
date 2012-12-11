@@ -153,6 +153,14 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>emr.paymentConstructConcept</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the concept used to group payment observations
+        </description>
+    </globalProperty>
+
     <!-- Privileges -->
     <privilege>
         <name>Paper Records - Manage Requests</name>
