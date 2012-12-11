@@ -1,7 +1,7 @@
 <% if (errorMessage) { %>
-    <div id="error-message">${ ui.message(errorMessage) }</div>
+    <div id="error-message" class="note error"><i class="icon-remove small"></i>${ ui.message(errorMessage) }</div>
 <% } %>
 
 <% if (infoMessage) { %>
-    <div id="info-message">${ ui.message(infoMessage) }</div>
+    <div id="info-message" class="note warning"><i class="icon-warning-sign small"></i>${ ui.message(infoMessage) }</div>
 <% } %>
