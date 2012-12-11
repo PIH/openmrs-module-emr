@@ -392,6 +392,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Assert.assertNull(paperRecordService.getActivePaperRecordRequestByIdentifier("CATBALL"));
     }
 
+
     @Test
     public void markPaperRecordRequestAsSentShouldMarkRecordRequestAsSent() {
 

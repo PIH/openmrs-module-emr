@@ -32,51 +32,31 @@ public class HibernatePaperRecordRequestDAO  extends HibernateSingleClassDAO<Pap
     }
 
     @Override
-    public List<PaperRecordRequest> findPaperRecordRequests(PaperRecordRequest.Status status) {
+    public List<PaperRecordRequest> findPaperRecordRequests(List<PaperRecordRequest.Status> statusList, Patient patient, Location recordLocation, String identifier, Boolean hasIdentifier) {
 
         Criteria criteria = createPaperRecordCriteria();
-        addStatusRestriction(criteria, status);
+
+        if (statusList != null) {
+            addStatusDisjunctionRestriction(criteria, statusList);
+        }
+
+        if (patient != null) {
+            addPatientRestriction(criteria, patient);
+        }
+
+        if (recordLocation != null) {
+            addRecordLocationRestriction(criteria, recordLocation);
+        }
+
+        if (identifier != null) {
+            addIdentifierRestriction(criteria, identifier);
+        }
+
+        if (hasIdentifier != null) {
+            addHasIdentifierRestriction(criteria, hasIdentifier);
+        }
+
         addOrderByDate(criteria);
-
-        return (List<PaperRecordRequest>) criteria.list();
-    }
-    
-    @Override
-    public List<PaperRecordRequest> findPaperRecordRequests(Patient patient) {
-    	Criteria criteria = createPaperRecordCriteria();
-        addPatientRestriction(criteria, patient);
-        return (List<PaperRecordRequest>) criteria.list();
-    }
-
-	@Override
-    public List<PaperRecordRequest> findPaperRecordRequests(PaperRecordRequest.Status status, boolean hasIdentifier) {
-
-        Criteria criteria = createPaperRecordCriteria();
-        addStatusRestriction(criteria, status);
-        addHasIdentifierRestriction(criteria, hasIdentifier);
-        addOrderByDate(criteria);
-
-        return (List<PaperRecordRequest>) criteria.list();
-    }
-
-    @Override
-    public List<PaperRecordRequest> findPaperRecordRequests(List<PaperRecordRequest.Status> statusList, Patient patient, Location recordLocation) {
-
-        Criteria criteria = createPaperRecordCriteria();
-        addPatientRestriction(criteria, patient);
-        addRecordLocationRestriction(criteria, recordLocation);
-        addStatusDisjunctionRestriction(criteria, statusList);
-        addOrderByDate(criteria);
-
-        return (List<PaperRecordRequest>) criteria.list();
-    }
-
-    @Override
-    public List<PaperRecordRequest> findPaperRecordRequests(List<PaperRecordRequest.Status> statusList, String identifier) {
-
-        Criteria criteria = createPaperRecordCriteria();
-        addStatusDisjunctionRestriction(criteria, statusList);
-        addIdentifierRestriction(criteria, identifier);
 
         return (List<PaperRecordRequest>) criteria.list();
     }
@@ -91,13 +71,18 @@ public class HibernatePaperRecordRequestDAO  extends HibernateSingleClassDAO<Pap
 
     private void addStatusDisjunctionRestriction(Criteria criteria, List<PaperRecordRequest.Status> statusList) {
 
-        Disjunction statusDisjunction = Restrictions.disjunction();
-
-        for (PaperRecordRequest.Status status : statusList) {
-            statusDisjunction.add(Restrictions.eq("status", status));
+        if (statusList.size() == 1) {
+            criteria.add(Restrictions.eq("status", statusList.get(0)));
         }
+        else {
+            Disjunction statusDisjunction = Restrictions.disjunction();
 
-        criteria.add(statusDisjunction);
+            for (PaperRecordRequest.Status status : statusList) {
+                statusDisjunction.add(Restrictions.eq("status", status));
+            }
+
+            criteria.add(statusDisjunction);
+        }
     }
 
     private void addPatientRestriction(Criteria criteria, Patient patient) {

@@ -23,43 +23,6 @@ import java.util.List;
 
 public interface PaperRecordRequestDAO extends SingleClassDAO<PaperRecordRequest> {
 
-    // TODO: these could probably be refactored into a single method
-
-    /**
-     * Returns all the paper record requests with the specified status
-     *
-     * @param status
-     * @return the paper record requests with the specified status
-     */
-    List<PaperRecordRequest> findPaperRecordRequests(PaperRecordRequest.Status status);
-    
-    /**
-     * 
-     * Returns all paper record requests with the specified Patient
-     * 
-     * @param patient
-     * @return
-     */
-    List<PaperRecordRequest> findPaperRecordRequests(Patient patient);
-
-    /**
-     * Returns all paper record requests with the specified status and specified identifier
-     *
-     * @param statusList
-     * @param identifier
-     * @return
-     */
-    List<PaperRecordRequest> findPaperRecordRequests(List<PaperRecordRequest.Status> statusList, String identifier);
-
-    /**
-     * Returns all the paper record requests with the specified status that either have or don't have
-     * an identifier, based on the hasIdentifier boolean
-     *
-     * @param status
-     * @param hasIdentifier
-     * @return the paper record requests with the specified status that either have or don't have an identifier
-     */
-    List<PaperRecordRequest> findPaperRecordRequests(PaperRecordRequest.Status status, boolean hasIdentifier);
 
     /**
      * Returns all the paper record requests for the given patient and given location with ANY of the specified statuses
@@ -69,6 +32,6 @@ public interface PaperRecordRequestDAO extends SingleClassDAO<PaperRecordRequest
      * @param recordLocation
      * @return the paper record requests for the given patient and given location with ANY of the specified statuses
      */
-    List<PaperRecordRequest> findPaperRecordRequests(List<PaperRecordRequest.Status> statusList, Patient patient, Location recordLocation);
+    List<PaperRecordRequest> findPaperRecordRequests(List<PaperRecordRequest.Status> statusList, Patient patient, Location recordLocation, String identifier, Boolean hasIdentifier);
 
 }
