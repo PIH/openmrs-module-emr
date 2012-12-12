@@ -17,6 +17,7 @@ package org.openmrs.module.emr.fragment.controller;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.radiology.RadiologyRequisition;
 import org.openmrs.module.emr.radiology.RadiologyService;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
@@ -26,9 +27,10 @@ public class RadiologyRequisitionFragmentController {
 
     public FragmentActionResult orderXray(@BindParams RadiologyRequisition requisition,
                                           EmrContext emrContext,
-                                          @SpringBean RadiologyService radiologyService) {
+                                          @SpringBean RadiologyService radiologyService,
+                                          UiUtils ui) {
         if (requisition.getStudies().size() == 0) {
-            throw new IllegalArgumentException("No studies");
+            throw new IllegalArgumentException(ui.message("emr.orderXray.noStudiesSelected"));
         }
 
         radiologyService.placeRadiologyRequisition(emrContext, requisition);

@@ -33,7 +33,7 @@
 <form method="get">
 
     <h3>${ ui.message("emr.mergePatients.selectTwo") }</h3>
-    <input type= "hidden" name= "unknown-patient" value= "${isUnknownPatient}"/>
+    <input type= "hidden" name= "isUnknownPatient" value= "${isUnknownPatient}"/>
 
 
     ${ ui.includeFragment("emr", "field/autocomplete", [

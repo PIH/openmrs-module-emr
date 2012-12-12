@@ -2,15 +2,15 @@
     ui.decorateWith("emr", "standardEmrPage")
 %>
 
-<h3>Active Visits</h3>
+<h3>${ ui.message("emr.activeVisits.title") }</h3>
 
 <table id="active-visits" width="100%" border="1" cellspacing="0" cellpadding="2">
 	<thead>
 		<tr>
-			<th>ID</th>
-			<th>Name</th>
-			<th>Check-In</td>
-			<th>Last Seen</th>
+			<th>${ ui.message("emr.patient.identifier") }</th>
+			<th>${ ui.message("emr.person.name") }</th>
+			<th>${ ui.message("emr.activeVisits.checkIn") }</th>
+			<th>${ ui.message("emr.activeVisits.lastSeen") }</th>
 		</tr>
 	</thead>
 	<tbody>

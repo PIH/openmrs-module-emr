@@ -26,12 +26,14 @@ import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MergePatientsPageController {
 
     public String get(@RequestParam(required = false, value = "patient1") Patient patient1,
                     @RequestParam(required = false, value = "patient2") Patient patient2,
-                    @RequestParam(value = "unknown-patient", defaultValue = "false") boolean isUnknownPatient,
+                    @RequestParam(value = "isUnknownPatient", defaultValue = "false") boolean isUnknownPatient,
                     @InjectBeans PatientDomainWrapper wrapper1,
                     @InjectBeans PatientDomainWrapper wrapper2,
                     HttpServletRequest request,
@@ -69,11 +71,35 @@ public class MergePatientsPageController {
 
     public String post(UiUtils ui,
                        HttpServletRequest request,
+                       PageModel pageModel,
                        @RequestParam("patient1") Patient patient1,
                        @RequestParam("patient2") Patient patient2,
                        @RequestParam("preferred") Patient preferred,
+                       @RequestParam(value = "isUnknownPatient", defaultValue = "false") boolean isUnknownPatient,
+                       @InjectBeans PatientDomainWrapper preferredWrapper,
+                       @InjectBeans PatientDomainWrapper notPreferredWrapper,
                        @SpringBean("adtService") AdtService adtService) {
         Patient notPreferred = patient1.equals(preferred) ? patient2 : patient1;
+
+        preferredWrapper.setPatient(preferred);
+        notPreferredWrapper.setPatient(notPreferred);
+
+        if (preferredWrapper.isUnknownPatient() && !notPreferredWrapper.isUnknownPatient()){
+            request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE, "emr.mergePatients.unknownPatient.error");
+
+            preferredWrapper.setPatient(patient1);
+            notPreferredWrapper.setPatient(patient2);
+
+
+            Map<String, Object> params = new HashMap<String, Object>();
+
+            params.put("patient1", preferred);
+            params.put("patient2", notPreferred);
+            params.put("isUnknownPatient", isUnknownPatient);
+
+            return "redirect:" + ui.pageLink("emr","mergePatients", params);
+        }
+
         adtService.mergePatients(preferred, notPreferred);
 
         request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, "emr.mergePatients.success");

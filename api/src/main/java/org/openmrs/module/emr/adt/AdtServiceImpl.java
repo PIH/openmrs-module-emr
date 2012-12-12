@@ -308,9 +308,14 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
         encounter.setLocation(location);
         encounter.setEncounterDatetime(when);
         if (obsToCreate != null) {
+            Obs paymentGroup = new Obs();
+            paymentGroup.setObsDatetime(new Date());
+            paymentGroup.setConcept(emrProperties.getPaymentConstructConcept());
             for (Obs obs : obsToCreate) {
-                encounter.addObs(obs);
+                obs.setObsDatetime(new Date());
+                paymentGroup.addGroupMember(obs);
             }
+            encounter.addObs(paymentGroup);
         }
         if (ordersToCreate != null) {
             for (Order order : ordersToCreate) {

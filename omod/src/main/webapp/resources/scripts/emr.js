@@ -31,12 +31,8 @@ var emr = (function($) {
             location.href = url;
         },
 
-        showError: function(obj) {
-            window.alert("Error: " + obj);
-        },
-
         pageLink: function(providerName, pageName, options) {
-            var ret = '/' + OPENMRS_CONTEXT_PATH + '/pages/' + providerName + '/' + pageName + '.page';
+            var ret = '/' + OPENMRS_CONTEXT_PATH + '/' + providerName + '/' + pageName + '.page';
             return ret + toQueryString(options);
         },
 
@@ -75,7 +71,7 @@ var emr = (function($) {
                     });
                 })
                 .error(function(err) {
-                    emr.showError(err);
+                    emr.errorMessage(err);
                 });
         },
 

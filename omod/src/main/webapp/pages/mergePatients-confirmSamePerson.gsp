@@ -1,84 +1,42 @@
 <%
     ui.decorateWith("emr", "standardEmrPage", [ title: ui.message("emr.mergePatients") ])
     ui.includeCss("mirebalais", "mergePatients.css")
-
-    def highlightPreferred = {
-        it.preferred ? "<b>${ ui.format(it) }</b>" : ui.format(it)
-    }
-
-    def formatIdentifiers = {
-        it.preferred ? "<b>${ it.identifier }</b>" : it.identifier
-    }
-
-    def formatEncounter = {
-        """"${ ui.format(it.encounterType) }<br/>
-            ${ ui.message("emr.atLocation", ui.format(it.location)) }<br/>
-            ${ ui.message("emr.onDatetime", ui.format(it.encounterDatetime)) }"""
-    }
-
-    def formatAddress = {
-        ui.includeFragment("emr", "formatAddress", [ address: it ])
-    }
-
-    def formatDemographics = {
-        def birthdate = it.birthdate ? (it.birthdateEstimated ? "~" : "" + ui.format(it.birthdate)) : "?"
-        def age = it.age ?: "?"
-
-        """${ ui.message("emr.gender." + it.gender) }${ it.age ? ", " + ui.message("emr.ageYears", it.age) : "" } <br/>
-        ${ ui.message("emr.birthdate") }: ${ birthdate } """
-    }
-
-    def formatActiveVisit = {
-        def activeVisit = it.getActiveVisit(emrContext.sessionLocation)
-        activeVisit ? ui.format(activeVisit) : ui.message("emr.none")
-    }
-
-    def formatDataSummary = {
-        """${ ui.message("emr.mergePatients.section.dataSummary.numVisits", it.countOfVisits) },
-            ${ ui.message("emr.mergePatients.section.dataSummary.numEncounters", it.countOfEncounters) } """
-    }
-
-    def displayList = { title, leftList, spacerContent, rightList, formatter ->
-        def ret = """
-            <tr>
-            <td class="first-patient">
-                <div class="section-heading">${ title }</div>
-                <div class="section-content">
-        """
-        if (!leftList) {
-            ret += ui.message("emr.none")
-        }
-        leftList.each {
-            ret += (formatter != null ? formatter(it) : ui.format(it)) + "<br/>";
-        }
-        ret += """
-                </div>
-            </td>
-            <td class="spacer">${spacerContent}</span></td>
-            <td class="second-patient">
-                <div class="section-heading">${ title }</div>
-                <div class="section-content">
-                    """
-        if (!rightList) {
-            ret += ui.message("emr.none")
-        }
-        rightList.each {
-            ret += (formatter != null ? formatter(it) : ui.format(it)) + "<br/>";
-        }
-        ret += """
-                </div>
-            </td>
-        </tr>
-                    """
-    }
 %>
 
 <script type="text/javascript">
+
     var patient1Id = ${patient1.patient.id};
     var patient2Id = ${patient2.patient.id};
 
     //this value come from the request (isUnknownPatient parameter)
     var isUnknownPatient = ${isUnknownPatient};
+
+    function putFirstPatientAsTheSelectedOne() {
+        jq('#second-patient').removeClass('selected');
+        jq('#first-patient').addClass('selected');
+    }
+
+    function showLeftArrow() {
+        jq('#separator-left').removeClass('hidden');
+        jq('#separator-right').addClass('hidden');
+    }
+
+    function putSecondPatientAsTheSelectedOne() {
+        jq('#first-patient').removeClass('selected');
+        jq('#second-patient').addClass('selected');
+    }
+
+    function showRightArrow() {
+        jq('#separator-left').addClass('hidden');
+        jq('#separator-right').removeClass('hidden');
+    }
+
+    function enableConfirmButton() {
+        jq('#confirm-button').removeAttr("disabled");
+        jq('#confirm-button').removeClass("disabled");
+        jq('#confirm-button').addClass("confirm");
+    }
+
 
     jq(function() {
         jq('div').on('click','#first-patient', function() {
@@ -86,19 +44,9 @@
             if(!isUnknownPatient){
 
                 if (!jq('#first-patient').hasClass("selected")){
-
-                    jq('#second-patient').removeClass('selected');
-                    jq('#first-patient').addClass('selected');
-
-                    jq('#separator-left').removeClass('hidden');
-                    jq('#separator-right').addClass('hidden');
-
-                    jq('#confirm-button').removeAttr("disabled");
-                    jq('#confirm-button').removeClass("disabled");
-                    jq('#confirm-button').addClass("confirm");
-
-
-
+                    putFirstPatientAsTheSelectedOne();
+                    showLeftArrow();
+                    enableConfirmButton();
                     jq('#preferred').val(patient1Id);
                 }
 
@@ -110,17 +58,9 @@
             if(!isUnknownPatient){
 
                 if (!jq('#second-patient').hasClass("selected")){
-                    jq('#first-patient').removeClass('selected');
-
-                    jq('#second-patient').addClass('selected');
-
-                    jq('#separator-left').addClass('hidden');
-                    jq('#separator-right').removeClass('hidden');
-
-                    jq('#confirm-button').removeAttr("disabled");
-                    jq('#confirm-button').removeClass("disabled");
-                    jq('#confirm-button').addClass("confirm");
-
+                    putSecondPatientAsTheSelectedOne();
+                    showRightArrow();
+                    enableConfirmButton();
                     jq('#preferred').val(patient2Id);
                 }
 
@@ -279,6 +219,7 @@
 
     <% def buttonClass = (isUnknownPatient ? "button confirm" : "button disabled") %>
     <% def disabledOption = (isUnknownPatient ? "" : "disabled=\"disabled\" ") %>
+
     <div class= "buttons">
         <input type="button" id="cancel-button" class="button cancel" value="${ ui.message("emr.no") }"/>
         <input type="submit" id="confirm-button" class="${buttonClass}" ${disabledOption} value="${ ui.message("emr.yesContinue") }"/>
