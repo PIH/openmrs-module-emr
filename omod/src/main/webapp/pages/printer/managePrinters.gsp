@@ -1,11 +1,10 @@
-
 <%
     ui.decorateWith("emr", "standardEmrPage")
 %>
 
 <h3>${  ui.message("emr.printer.managePrinters") }</h3>
 
-<table class="bordered">
+<table>
     <tr>
         <th>${ ui.message("emr.printer.type") }</th>
         <th>${ ui.message("emr.printer.physicalLocation") }</th>
@@ -43,5 +42,7 @@
     </tr>
     <% } %>
 </table>
-
-<a href="/${ contextPath }/emr/printer/printer.page"><button>${ ui.message("emr.printer.add") }</button></a>
+<br/>
+<div>
+    <a href="/${ contextPath }/emr/printer/printer.page" class="button">${ ui.message("emr.printer.add") }</a>
+</div>

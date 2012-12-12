@@ -4,14 +4,17 @@
     config.require("options")
 %>
 
-<label for="${ config.id }-field">${ config.label }</label>
+<p>
+    <strong>${ config.label }</strong>
+</p>
 
 <% config.options.each {
-    def checked = it.checked || it.value == config.initialValue
-%>
-    <input type="radio" id="${ config.id }-field" class="field-value" name="${ config.formFieldName }" value="${ it.value }" <% if (checked) { %>checked="true"<% } %>/>
-    <span>${ it.label }</span>
+    def checked = it.checked || it.value == config.initialValue %>
+
+    <p>
+        <input type="radio" id="${ it.value }-field" name="${ config.formFieldName }" value="${ it.value }" <% if (checked) { %>checked="true"<% } %>/>
+        <label for="${ it.value }-field">${ it.label }</label>
+    </p>
 <% } %>
 
- ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: config.formFieldName ]) }
-
+${ ui.includeFragment("emr", "fieldErrors", [ fieldName: config.formFieldName ]) }

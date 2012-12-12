@@ -14,7 +14,7 @@
     }
 %>
 
-<form class="standard-vertical-form" method="post" action="printer.page">
+<form method="post" action="printer.page">
 
     <h3>${ ui.message("emr.printer.edit") }</h3>
 
@@ -26,8 +26,10 @@
         ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.printer.port"), formFieldName: "port",initialValue: (printer.port ?: ''), size: 10 ])} <br/>
     </fieldset>
 
-    <input type="submit" value="${ ui.message("emr.save") }" /> &nbsp;&nbsp;&nbsp;
-    <input type="button" value="${ ui.message("emr.cancel") }" onclick="javascript:window.location='${ ui.pageLink("emr", "printer/managePrinters") }'" />
+    <div>
+        <input type="button" class="cancel" value="${ ui.message("emr.cancel") }" onclick="javascript:window.location='${ ui.pageLink("emr", "printer/managePrinters") }'" />
+        <input type="submit" class="confirm value="${ ui.message("emr.save") }" />
+    </div>
 
     <input type="hidden" name="printerId" value="${ printer.id ?: ''}" />
     <input type="hidden" name="uuid" value="${ printer.uuid ?: ''}" />
