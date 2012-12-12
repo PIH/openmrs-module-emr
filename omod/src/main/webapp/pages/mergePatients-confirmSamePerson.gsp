@@ -172,8 +172,8 @@
             </div>
             <div class="row identifiers">
                 <h3>${ui.message("emr.mergePatients.section.paperRecordIdentifiers")}</h3>
-                <%= (!patient1.paperRecordIdentifiers ?ui.message("emr.none"): "")  %>
-                <% patient1.paperRecordIdentifiers.each { %>
+                <%= (!patient2.paperRecordIdentifiers ?ui.message("emr.none"): "")  %>
+                <% patient2.paperRecordIdentifiers.each { %>
                     <% def identifier = (it.preferred ? "<b>${it.identifier}</b>" : it.identifier) %>
                     <div>${identifier}</div>
                 <% } %>
