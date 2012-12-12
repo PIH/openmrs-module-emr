@@ -77,12 +77,30 @@ var emr = (function($) {
 
         successMessage: function(message) {
             jqObject.toastmessage( 'showToast', { type: 'success',
+                                              position: 'top-right',
                                               text:  message } );
         },
 
         errorMessage: function(message) {
             jqObject.toastmessage( 'showToast', { type: 'error',
+                                              position: 'top-right',
                                               text:  message } );
+        },
+
+        successAlert: function(message, options) {
+            jqObject.toastmessage( 'showToast', { type: 'success',
+                position: 'middle-center',
+                sticky: true,
+                text:  message,
+                close: options && options.close ? options.close : null } );
+        },
+
+        errorAlert: function(message, options) {
+            jqObject.toastmessage( 'showToast', { type: 'error',
+                position: 'middle-center',
+                sticky: true,
+                text:  message,
+                close: options && options.close ? options.close : null } )
         }
 
     };

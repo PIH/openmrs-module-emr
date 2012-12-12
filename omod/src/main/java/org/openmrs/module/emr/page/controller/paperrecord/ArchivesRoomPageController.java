@@ -40,7 +40,7 @@ public class ArchivesRoomPageController {
      * @param requests
      */
     public String post(@RequestParam("requestId") List<PaperRecordRequest> requests,
-                       @RequestParam(value="activeTab", required=false, defaultValue="createrequest") String activeTab,
+                       @RequestParam(value="activeTab", required=false, defaultValue="create") String activeTab,
                        @RequestParam("assignTo") Person assignTo,
                        @SpringBean PaperRecordService paperRecordService,
                        UiUtils ui,

@@ -64,20 +64,23 @@
 
             var identifier = jq('#mark-as-pulled-identifier').val();
 
-            jq.ajax({
-                url: '${ ui.actionLink('emr','paperrecord/archivesRoom','markPaperRecordRequestAsSent') }',
-                data: { identifier: identifier },
-                dataType: 'json',
-                type: 'POST'
-            })
-                    .success(function(data) {
-                        alert(data.message);
-                    })
-                    .error(function(xhr, status, err) {
-                        alert(jq.parseJSON(xhr.responseText).globalErrors[0]);
-                    })
-
-
+            if (identifier) {
+                jq.ajax({
+                    url: '${ ui.actionLink('emr','paperrecord/archivesRoom','markPaperRecordRequestAsSent') }',
+                    data: { identifier: identifier },
+                    dataType: 'json',
+                    type: 'POST'
+                })
+                        .success(function(data) {
+                            var options = [];
+                            options.close = function () { window.location.href = '${ ui.pageLink('emr','paperrecord/archivesRoom', [ activeTab : 'pull' ]) }'; }
+                            emr.successAlert(data.message, options);
+                        })
+                        .error(function(xhr, status, err) {
+                            jq('#mark-as-pulled-identifier').val('');
+                            emr.errorAlert(jq.parseJSON(xhr.responseText).globalErrors[0]);
+                        })
+            }
         });
 
 
@@ -114,7 +117,7 @@
                     <span style="display: none" data-bind="foreach: selectedRequests()">
                         <input type="hidden" name="requestId" data-bind="value: requestId"/>
                     </span>
-                    <input type="hidden" name="activeTab" value="createrequest">
+                    <input type="hidden" name="activeTab" value="create">
                     <input id="create_record_requests_button" type="submit" value="${ ui.message("emr.archivesRoom.createSelected") }"
                            data-bind="enable: selectedRequests().length > 0"/>
                 </form>
@@ -172,7 +175,7 @@
                     <!-- ko foreach:selectedRequests -->
                     <input type="hidden" name="requestId" data-bind="value: requestId"/>
                     <!-- /ko -->
-                    <input type="hidden" name="activeTab" value="pullrequest">
+                    <input type="hidden" name="activeTab" value="pull">
                     <input id="pull_record_requests_button" type="submit" value="${ ui.message("emr.archivesRoom.pullSelected") }"
                            data-bind="enable: selectedRequests().length > 0"/>
                 </form>
@@ -209,6 +212,7 @@
                         <th>${ ui.message("emr.patient.paperRecordIdentifier") }</th>
                         <th>${ ui.message("emr.archivesRoom.requestedBy.label") }</th>
                         <th>${ ui.message("emr.time") }</th>
+                        <th>&nbsp;</th>
                     </tr>
                     </thead>
                     <tbody data-bind="foreach: assignedRecordsToPull">
@@ -217,6 +221,7 @@
                         <td><span data-bind="text: dossierNumber"></span></td>
                         <td><span data-bind="text: sendToLocation"></span></td>
                         <td><span data-bind="text: timeRequested"></span></td>
+                        <td><button>${ ui.message('emr.archivesRoom.reprint.button') }</button></td>
                     </tr>
                     </tbody>
                 </table>

@@ -227,7 +227,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     }
 
     @Override
-    public PaperRecordRequest getActivePaperRecordRequestByIdentifier(String identifier) {
+    public PaperRecordRequest getPendingPaperRecordRequestByIdentifier(String identifier) {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
         List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(Arrays.asList(Status.OPEN, Status.ASSIGNED_TO_PULL, Status.ASSIGNED_TO_CREATE), null, null, identifier, null);
 
@@ -236,7 +236,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         }
         else if (requests.size() > 1) {
             // TODO: we may run into this case until we handle merging properly
-            throw new IllegalStateException("Duplicate active record requests exist with identifier " + identifier);
+            throw new IllegalStateException("Duplicate pending record requests exist with identifier " + identifier);
         }
         else {
             return requests.get(0);

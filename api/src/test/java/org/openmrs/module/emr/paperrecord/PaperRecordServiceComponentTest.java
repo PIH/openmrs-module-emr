@@ -339,7 +339,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     }
 
     @Test
-    public void testGetActiveRequestByIdentifierShouldReturnOpenRequest() {
+    public void testGetPendingRequestByIdentifierShouldReturnOpenRequest() {
 
         // all these are from the standard test dataset
         Patient patient = patientService.getPatient(2) ;
@@ -348,7 +348,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
         paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
 
-        PaperRecordRequest request = paperRecordService.getActivePaperRecordRequestByIdentifier("101");
+        PaperRecordRequest request = paperRecordService.getPendingPaperRecordRequestByIdentifier("101");
 
         Assert.assertEquals(new Integer(2), request.getPatient().getId());
         Assert.assertEquals(new Integer(1), request.getRecordLocation().getId());
@@ -360,7 +360,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     }
 
     @Test
-    public void testGetActiveRequestByIdentifierShouldReturnAssignedPullRequest() {
+    public void testGetPendingRequestByIdentifierShouldReturnAssignedPullRequest() {
 
         // all these are from the standard test dataset
         Patient patient = patientService.getPatient(2) ;
@@ -378,7 +378,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Person person = personService.getPerson(7);
         paperRecordService.assignRequests(paperRecordRequests, person);
 
-        PaperRecordRequest request = paperRecordService.getActivePaperRecordRequestByIdentifier("101");
+        PaperRecordRequest request = paperRecordService.getPendingPaperRecordRequestByIdentifier("101");
 
         Assert.assertEquals(PaperRecordRequest.Status.ASSIGNED_TO_PULL, request.getStatus());
         Assert.assertEquals(new Integer(7), request.getAssignee().getId());
@@ -387,14 +387,13 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     }
 
     @Test
-    public void testGetActiveRequestByIdentifierShouldReturnNullIfNoActiveRequests() {
+    public void testGetPendingRequestByIdentifierShouldReturnNullIfNoActiveRequests() {
         // there is a paper record request in the sample database with this identifier, but it is marked as SENT
-        Assert.assertNull(paperRecordService.getActivePaperRecordRequestByIdentifier("CATBALL"));
+        Assert.assertNull(paperRecordService.getPendingPaperRecordRequestByIdentifier("CATBALL"));
     }
 
-
     @Test
-    public void markPaperRecordRequestAsSentShouldMarkRecordRequestAsSent() {
+    public void testMarkPaperRecordRequestAsSentShouldMarkRecordRequestAsSent() {
 
         // all these are from the standard test dataset
         Patient patient = patientService.getPatient(2) ;
@@ -417,5 +416,18 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
         PaperRecordRequest returnedRequest = paperRecordService.getPaperRecordRequestById(id);
         Assert.assertEquals(PaperRecordRequest.Status.SENT, request.getStatus());
+    }
+
+    @Test
+    public void testGetSentPaperRecordRequestShouldFetchSentRecordRequest() {
+        // this identifier exists in the sample test data
+        PaperRecordRequest request = paperRecordService.getSentPaperRecordRequestByIdentifier("CATBALL");
+        Assert.assertNotNull(request);
+        Assert.assertEquals(new Integer(1), request.getId());
+    }
+
+    @Test
+    public void testGetSentRequestByIdentifierShouldReturnNullIfNoSentRequests() {
+        Assert.assertNull(paperRecordService.getPendingPaperRecordRequestByIdentifier("101"));
     }
 }

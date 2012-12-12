@@ -113,16 +113,16 @@ public interface PaperRecordService extends OpenmrsService {
     List<PaperRecordRequest> getAssignedPaperRecordRequestsToCreate();
 
     /**
-     * Returns the active (ie, open or assigned) paper record request (if any) for the record with the specified identifier
-     * (there should only be one active request per identifier & location)
+     * Returns the pending (ie, open or assigned) paper record request (if any) for the record with the specified identifier
+     * (there should only be one pending request per identifier & location)
      *
      * @param identifier
-     * @return the active (ie, open or assigned) paper record request with the specified identifier (returns null if no request found)
+     * @return the pending (ie, open or assigned) paper record request with the specified identifier (returns null if no request found)
      * @throws IllegalStateException if more than one request is found
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     // TODO: once we have multiple medical record locations, we will need to add location as a criteria
-    PaperRecordRequest getActivePaperRecordRequestByIdentifier(String identifier);
+    PaperRecordRequest getPendingPaperRecordRequestByIdentifier(String identifier);
 
 
     /**

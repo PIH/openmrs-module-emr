@@ -29,16 +29,27 @@ public class ArchivesRoomFragmentController {
                                                              @SpringBean("paperRecordService") PaperRecordService paperRecordService,
                                                              UiUtils ui) {
 
-        PaperRecordRequest paperRecordRequest = paperRecordService.getActivePaperRecordRequestByIdentifier(identifier);
+        // fetch the pending request associated with this message
+        PaperRecordRequest paperRecordRequest = paperRecordService.getPendingPaperRecordRequestByIdentifier(identifier);
 
         if (paperRecordRequest == null) {
-            return new FailureResult("This paper record has not currently been requested");
+            // if matching request found, determine what error we need to return
+            paperRecordRequest = paperRecordService.getSentPaperRecordRequestByIdentifier(identifier);
+            if (paperRecordRequest == null) {
+                return new FailureResult(ui.message("emr.archivesRoom.error.paperRecordNotRequested", ui.format(identifier)));
+            }
+            else {
+                return new FailureResult(ui.message("emr.archivesRooms.error.paperRecordAlreadySent", ui.format(identifier), ui.format(paperRecordRequest.getRequestLocation())));
+            }
+        }
+       else {
+            // otherwise, mark the record as sent
+            paperRecordService.markPaperRequestRequestAsSent(paperRecordRequest);
+            return new SuccessResult(ui.message("emr.archivesRoom.recordFound.message") + "<br/><br/>"
+                    + ui.message("emr.archivesRoom.recordNumber.label") + ": " + ui.format(identifier + "<br/><br/>"
+                    + ui.message("emr.archivesRoom.requestedBy.label") + ": " + ui.format(paperRecordRequest.getRequestLocation())));
         }
 
-
-        return new SuccessResult(identifier);
-
     }
-
 
 }

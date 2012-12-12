@@ -13,7 +13,7 @@
  */
 
 .toast-container {
-	width: 280px;
+	width: 320px;         /* widened the width to fix the problem with text overlapping the close button **/
 	z-index: 9999;
 }
 
@@ -54,7 +54,6 @@
     position: absolute;
     top:7px;
     right:7px;
-    display: none;  /* added this to hide the close checkbox */
 }
 
 .toast-item-image {

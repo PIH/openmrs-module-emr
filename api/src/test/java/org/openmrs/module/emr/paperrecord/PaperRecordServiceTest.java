@@ -375,7 +375,7 @@ public class PaperRecordServiceTest {
     }
 
     @Test
-    public void getActivePaperRecordRequestByIdentifierShouldRetrieveRequestByIdentifier() {
+    public void getPendingPaperRecordRequestByIdentifierShouldRetrieveRequestByIdentifier() {
 
         Patient patient = new Patient();
         patient.setId(15);
@@ -395,22 +395,22 @@ public class PaperRecordServiceTest {
                 argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier), argThat(new NullBoolean()))).thenReturn(Collections.singletonList(request));
         IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(request);
 
-        PaperRecordRequest returnedRequest = paperRecordService.getActivePaperRecordRequestByIdentifier(identifier);
+        PaperRecordRequest returnedRequest = paperRecordService.getPendingPaperRecordRequestByIdentifier(identifier);
         expectedRequestMatcher.matches(request);
 
     }
 
 
     @Test
-    public void getActivePaperRecordRequestByIdentifierShouldReturnNullIfNoActiveRequestWithThatIdentifier() {
+    public void getPendingPaperRecordRequestByIdentifierShouldReturnNullIfNoActiveRequestWithThatIdentifier() {
         String identifier = "ABC123";
         when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(Arrays.asList(Status.ASSIGNED_TO_CREATE, Status.ASSIGNED_TO_PULL, Status.OPEN))),
                 argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier),  argThat(new NullBoolean()))).thenReturn(null);
-        assertNull(paperRecordService.getActivePaperRecordRequestByIdentifier(identifier));
+        assertNull(paperRecordService.getPendingPaperRecordRequestByIdentifier(identifier));
     }
 
     @Test(expected = IllegalStateException.class)
-    public void getActivePaperRecordRequestByIdentifierShouldThrowIllegalStateExceptionIfMultipleActiveRequestsFound() {
+    public void getPendingPaperRecordRequestByIdentifierShouldThrowIllegalStateExceptionIfMultipleActiveRequestsFound() {
 
         Patient patient = new Patient();
         patient.setId(15);
@@ -433,7 +433,7 @@ public class PaperRecordServiceTest {
         when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(Arrays.asList(Status.ASSIGNED_TO_CREATE, Status.ASSIGNED_TO_PULL, Status.OPEN))),
                 argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier),  argThat(new NullBoolean())))
                 .thenReturn(Arrays.asList(request, anotherRequest));
-        paperRecordService.getActivePaperRecordRequestByIdentifier(identifier);
+        paperRecordService.getPendingPaperRecordRequestByIdentifier(identifier);
     }
 
     @Test
@@ -497,7 +497,7 @@ public class PaperRecordServiceTest {
         anotherRequest.setStatus(Status.SENT);
 
         when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(Collections.singletonList(Status.SENT))),
-                argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier),  argThat(new NullBoolean())))
+                argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier), argThat(new NullBoolean())))
                 .thenReturn(Arrays.asList(request, anotherRequest));
         paperRecordService.getSentPaperRecordRequestByIdentifier(identifier);
     }
@@ -611,29 +611,24 @@ public class PaperRecordServiceTest {
     }
 
     private class NullBoolean extends ArgumentMatcher<Boolean> {
-
         public boolean matches(Object o)  {
             return o == null ? true : false;
         }
-
     }
 
     private class NullLocation extends ArgumentMatcher<Location> {
-
         public boolean matches(Object o) {
             return o == null ? true : false;
         }
     }
 
     private class NullString extends ArgumentMatcher<String> {
-
         public boolean matches(Object o) {
             return o == null ? true : false;
         }
     }
 
     private class NullPatient extends ArgumentMatcher<Patient> {
-
         public boolean matches(Object o) {
             return o == null ? true : false;
         }

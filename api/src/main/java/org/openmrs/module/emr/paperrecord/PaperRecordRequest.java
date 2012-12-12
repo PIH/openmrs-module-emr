@@ -22,6 +22,61 @@ import org.openmrs.User;
 
 import java.util.Date;
 
+
+/**
+ *
+ * Modelling of Paper Records:
+ *
+ *  Paper Records are not modeled directly by a domain object with the EMR module.  Instead, the existence of a
+ *  paper record for patient is noted by the presence of a Patient Identifier of type GP_PAPER_RECORD_IDENTIFIER_TYPE
+ *  (which I'll call the record identifier).  Each record identifier has an associated location.  In the initial
+ *  deployment of the system, we all record identifiers have the same location, "Mirebalais", but it is intended in
+ *  the future to support multiple locations... for instance, if multiple hospitals are handled in the same system,
+ *  or if there are multiple sets of patient records within a single hospital (ie, perhaps the records at the
+ *  "Outpatient Clinic" and the records at the "Women's Health Clinic").
+ *
+ *  Within a single location, all the record identifiers should be unique, and a patient should have no more than
+ *  one record (since record identifiers are assigned by the EMR, and not manually, we should be able to prevent
+ *  the creation of multiple records for the same patient at the same location--BUT we will need to handle the
+ *  potential to merging of two patients, each with there own paper record).
+ *
+ *  Requests for paper records are modeled and tracked via PaperRecordRequest domain object.  Requests are made
+ *  via the PaperRecordService API.  A request is made for a certain Patient's record at a specified medical record
+ *  Location to be send to some requested Location.  Requests can have the following states:
+ *
+ *  OPEN--the initial state of a request after it is placed
+ *
+ *  ASSIGNED_TO_PULL, ASSIGNED_TO_CREATE--after a archivist has claimed responsibility for a record, it is moved
+ *  into one of these two states... if the system determines that no record for the specified patient exists at the
+ *  specified location, the request transitions into the "CREATE" state and a new record identifier is assigned.
+ *  Otherwise, the archivist is prompted with the record identifier of the record to retrieve, and the record
+ *  transitioned into the "PULL" state.
+ *
+ *  SENT--once an archivist retrieves or creates a record and enters/scans the record identifier, the request is
+ *  transitioned to the SENT state; a request in the SENT state represents that the associated record has been
+ *  "checked out" of the archive room--and therefore the requested Location on the request should be the current
+ *  location of the record.
+ *
+ *  RETURNED--one a chart is returned to the archive room and the archivist enters/scans the record identifier,
+ *  the record is transitioned to the RETURNED state, effectively ending the workflow of a Paper Record Request.
+ *
+ * All the states except for "RETURNED" are considered "active" states.  A single paper record should never have more
+ * than one request in an "active" state at any one time.  (This may change in the future if we want to allow a record
+ * that has been "SENT" to be requested by another location).
+ *
+ * A few notes--we don't currently 100% support multiple paper record locations... there are a few API methods within
+ * the PaperRecordService that will have to be modified to support filtering by location in order to fully support
+ * multiple locations. (These methods should be flagged with TO DOS referencings this point within the code)
+ *
+ * Also, although we currently don't specifically mandate that record identifiers across *all* locations, but we may
+ * want to enforce this as we add additional locations, so that given a record number we can identify the patient
+ * the record refers to without having to be in the context of a specific location.  (Since for storage and retrieval,
+ * it is convenient for records to have sequential record identifiers, we could accomplish this via an alphanumeric
+ * prefix--ie, A0000001 and B0000001. In Mirebalais we are using a prefix like this preparation for eventuality of
+ * adding multiple locations).
+ **/
+
+
 public class PaperRecordRequest extends BaseOpenmrsObject {
 
     public enum Status{ OPEN, ASSIGNED_TO_PULL, ASSIGNED_TO_CREATE, SENT, RETURNED, CANCELLED }
