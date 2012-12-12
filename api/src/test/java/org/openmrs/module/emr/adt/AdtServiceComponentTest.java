@@ -16,29 +16,43 @@ package org.openmrs.module.emr.adt;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.Encounter;
-import org.openmrs.GlobalProperty;
-import org.openmrs.Location;
-import org.openmrs.LocationTag;
-import org.openmrs.Patient;
+import org.junit.runner.RunWith;
+import org.openmrs.*;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.openmrs.module.emr.TestUtils.isJustNow;
 
+@RunWith(SpringJUnit4ClassRunner.class)
 public class AdtServiceComponentTest extends BaseModuleContextSensitiveTest {
 
+    @Autowired
     private AdtService service;
+    @Autowired
+    private EmrProperties emrProperties;
+    @Autowired
+    private ConceptService conceptService;
 
     @Before
-    public void before() {
-        service = Context.getService(AdtService.class);
+    public void before() throws Exception {
+        executeDataSet("retrospectiveCheckinComponentTestDataset.xml");
     }
 
     @Test
@@ -62,22 +76,50 @@ public class AdtServiceComponentTest extends BaseModuleContextSensitiveTest {
         outpatientDepartment.setParentLocation(parentLocation);
         locationService.saveLocation(outpatientDepartment);
 
-        // configure GPs
-        AdministrationService administrationService = Context.getAdministrationService();
-        administrationService.saveGlobalProperty(new GlobalProperty(EmrConstants.GP_AT_FACILITY_VISIT_TYPE, "c0c579b0-8e59-401d-8a4a-976a0b183519"));
-        administrationService.saveGlobalProperty(new GlobalProperty(EmrConstants.GP_CHECK_IN_ENCOUNTER_TYPE, "61ae96f4-6afe-4351-b6f8-cd4fc383cce1"));
-        administrationService.saveGlobalProperty(new GlobalProperty(EmrConstants.GP_CHECK_IN_CLERK_ENCOUNTER_ROLE, "a0b03050-c99b-11e0-9572-0800200c9a66"));
+        // configure payment observation
+        List<Obs> observations = new ArrayList<Obs>();
+        Obs paymentReasonObservation = createPaymentReasonObservation();
+        Obs paymentAmountObservation = createPaymentAmountObservation(20);
+        Obs paymentReceiptObservation = createPaymentReceiptObservation("AB23423");
+        observations.add(paymentReasonObservation);
+        observations.add(paymentAmountObservation);
+        observations.add(paymentReceiptObservation);
 
         // step 1: check in the patient (which should create a visit and an encounter)
-        Encounter checkInEncounter = service.checkInPatient(patient, outpatientDepartment, null, null, null, false);
+        Encounter checkInEncounter = service.checkInPatient(patient, outpatientDepartment, null, observations, null, false);
 
         assertThat(checkInEncounter.getVisit(), notNullValue());
         assertThat(checkInEncounter.getPatient(), is(patient));
         assertThat(checkInEncounter.getEncounterDatetime(), isJustNow());
         assertThat(checkInEncounter.getVisit().getPatient(), is(patient));
         assertThat(checkInEncounter.getVisit().getStartDatetime(), isJustNow());
+        assertThat(checkInEncounter.getObs(), containsInAnyOrder(paymentReasonObservation, paymentAmountObservation, paymentReceiptObservation));
+        assertThat(checkInEncounter.getAllObs().size(), is(1));
+        assertThat(checkInEncounter.getAllObs().iterator().next().getGroupMembers(), containsInAnyOrder(paymentReasonObservation, paymentAmountObservation, paymentReceiptObservation));
 
         // TODO once these are implemented, add Admission and Discharge to this test
+    }
+
+    private Obs createPaymentAmountObservation(double amount) {
+        Obs paymentAmount = new Obs();
+        paymentAmount.setConcept(emrProperties.getPaymentAmountConcept());
+        paymentAmount.setValueNumeric(amount);
+        return paymentAmount;
+    }
+
+    private Obs createPaymentReasonObservation() {
+        Obs paymentReason = new Obs();
+        paymentReason.setConcept(emrProperties.getPaymentReasonsConcept());
+        paymentReason.setValueCoded(conceptService.getConcept(16));
+        return paymentReason;
+    }
+
+    private Obs createPaymentReceiptObservation(String receiptNumber) {
+        Obs pr = new Obs();
+        pr.setConcept(emrProperties.getPaymentReceiptNumberConcept());
+        pr.setValueText(receiptNumber);
+
+        return pr;
     }
 
 }

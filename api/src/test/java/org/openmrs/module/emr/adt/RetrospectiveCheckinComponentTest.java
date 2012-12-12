@@ -136,6 +136,8 @@ public class RetrospectiveCheckinComponentTest extends BaseModuleContextSensitiv
         assertThat(checkinEncounter.getLocation(), is(location));
         assertThat(checkinEncounter.getProvidersByRole(emrProperties.getCheckInClerkEncounterRole()), containsInAnyOrder(clerk));
         assertThat(checkinEncounter.getObs(), containsInAnyOrder(paymentReason, paymentAmount, paymentReceipt));
+        assertThat(checkinEncounter.getAllObs().size(), is(1));
+        assertThat(checkinEncounter.getAllObs().iterator().next().getGroupMembers(), containsInAnyOrder(paymentReason, paymentAmount, paymentReceipt));
         assertThat(checkinEncounter.getEncounterDatetime(), is(checkinDate));
     }
 }
