@@ -245,6 +245,23 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     }
 
     @Override
+    public PaperRecordRequest getSentPaperRecordRequestByIdentifier(String identifier) {
+        // TODO: once we have multiple medical record locations, we will need to add location as a criteria
+        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(Status.SENT), null, null, identifier, null);
+
+        if (requests == null || requests.size() == 0) {
+            return null;
+        }
+        else if (requests.size() > 1) {
+            // TODO: we may run into this case until we handle merging properly
+            throw new IllegalStateException("Duplicate sent record requests exist with identifier " + identifier);
+        }
+        else {
+            return requests.get(0);
+        }
+    }
+
+    @Override
     public void markPaperRequestRequestAsSent(PaperRecordRequest request) {
         // I don't think we really need to do any verification here
         request.setStatus(Status.SENT);

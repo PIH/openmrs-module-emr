@@ -14,9 +14,7 @@
 
 package org.openmrs.module.emr.fragment.controller.paperrecord;
 
-import org.openmrs.Patient;
-import org.openmrs.api.PatientService;
-import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 import org.openmrs.module.emr.paperrecord.PaperRecordService;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -25,27 +23,20 @@ import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 import org.openmrs.ui.framework.fragment.action.SuccessResult;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Collections;
-import java.util.List;
-
 public class ArchivesRoomFragmentController {
 
-    public FragmentActionResult markPaperRecordRequestAsSent(@RequestParam(value = "patientIdentifier", required = true) String patientIdentifier,
+    public FragmentActionResult markPaperRecordRequestAsSent(@RequestParam(value = "identifier", required = true) String identifier,
                                                              @SpringBean("paperRecordService") PaperRecordService paperRecordService,
-                                                             @SpringBean("patientService") PatientService patientService,
-                                                             @SpringBean("emrProperties") EmrProperties emrProperties,
                                                              UiUtils ui) {
 
-        // first, fetch the patient with the specified identifier
-        List<Patient> patients = patientService.getPatients(null, patientIdentifier, Collections.singletonList(emrProperties.getPrimaryIdentifierType()),true);
+        PaperRecordRequest paperRecordRequest = paperRecordService.getActivePaperRecordRequestByIdentifier(identifier);
 
-        if (patients == null || patients.size() == 0) {
-            return new FailureResult(ui.message("emr.archivesRoom.error.noPatientWithIdentifier", ui.format(patientIdentifier)));
+        if (paperRecordRequest == null) {
+            return new FailureResult("This paper record has not currently been requested");
         }
 
 
-
-        return new SuccessResult(patientIdentifier);
+        return new SuccessResult(identifier);
 
     }
 

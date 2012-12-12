@@ -1,8 +1,6 @@
 <%
     ui.decorateWith("emr", "standardEmrPage")
 
-    ui.includeCss("emr", "dataTable.css")
-
     ui.includeJavascript("emr", "knockout-2.1.0.js")
     ui.includeJavascript("emr", "custom/recordRequest.js")
 
@@ -64,11 +62,11 @@
 
             e.preventDefault();
 
-            var patientIdentifier = jq('#mark-as-pulled-identifier').val();
+            var identifier = jq('#mark-as-pulled-identifier').val();
 
             jq.ajax({
                 url: '${ ui.actionLink('emr','paperrecord/archivesRoom','markPaperRecordRequestAsSent') }',
-                data: { patientIdentifier: patientIdentifier },
+                data: { identifier: identifier },
                 dataType: 'json',
                 type: 'POST'
             })
@@ -142,24 +140,26 @@
                 </table>
             </div>
 
-            <table id="create_requests_table" class="dataTable">
-                <thead>
-                <tr>
-                    <th>${ ui.message("emr.person.name") }</th>
-                    <th>${ ui.message("emr.patient.identifier") }</th>
-                    <th>${ ui.message("emr.location") }</th>
-                    <th>${ ui.message("emr.time") }</th>
-                </tr>
-                </thead>
-                <tbody data-bind="foreach: recordsToCreate">
-                <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), even: (\$index() % 2 == 0) }, click: \$root.selectRecordsToBeCreated" >
-                    <td><span data-bind="text: patientName"></span></td>
-                    <td><span data-bind="text: patientId"></span></td>
-                    <td><span data-bind="text: sendToLocation"></span></td>
-                    <td><span data-bind="text: timeRequested"></span></td>
-                </tr>
-                </tbody>
-            </table>
+            <div id="assignedcreaterequest">
+                <table id="assigned_create_requests_table" class="dataTable">
+                    <thead>
+                    <tr>
+                        <th>${ ui.message("emr.person.name") }</th>
+                        <th>${ ui.message("emr.patient.identifier") }</th>
+                        <th>${ ui.message("emr.location") }</th>
+                        <th>${ ui.message("emr.time") }</th>
+                    </tr>
+                    </thead>
+                    <tbody data-bind="foreach: assignedRecordsToCreate">
+                    <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), even: (\$index() % 2 == 0) }, click: \$root.selectRecordsToBeCreated" >
+                        <td><span data-bind="text: patientName"></span></td>
+                        <td><span data-bind="text: patientId"></span></td>
+                        <td><span data-bind="text: sendToLocation"></span></td>
+                        <td><span data-bind="text: timeRequested"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <div id="tab-pull">

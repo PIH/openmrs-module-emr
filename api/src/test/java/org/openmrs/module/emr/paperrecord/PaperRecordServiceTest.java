@@ -417,7 +417,6 @@ public class PaperRecordServiceTest {
 
         Location medicalRecordLocation = createMedicalRecordLocation();
         Location requestLocation = createLocation(4, "Outpatient Clinic");
-        Location newRequestLocation = createLocation(5, "ER");
 
         // generate an existing paper record request
         String identifier = "ABC123";
@@ -435,6 +434,72 @@ public class PaperRecordServiceTest {
                 argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier),  argThat(new NullBoolean())))
                 .thenReturn(Arrays.asList(request, anotherRequest));
         paperRecordService.getActivePaperRecordRequestByIdentifier(identifier);
+    }
+
+    @Test
+    public void getSentPaperRecordRequestByIdentifierShouldRetrieveRequestByIdentifier() {
+
+        Patient patient = new Patient();
+        patient.setId(15);
+
+        Location medicalRecordLocation = createMedicalRecordLocation();
+        Location requestLocation = createLocation(4, "Outpatient Clinic");
+        Location newRequestLocation = createLocation(5, "ER");
+
+        // generate an existing paper record request
+        String identifier = "ABC123";
+        PaperRecordRequest request = createExpectedRequest(patient, medicalRecordLocation, identifier);
+        request.setId(10);
+        request.setRequestLocation(requestLocation);
+        request.setDateCreated(new Date());
+        request.setStatus(Status.SENT);
+
+        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(Collections.singletonList(Status.SENT))),
+                argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier), argThat(new NullBoolean()))).thenReturn(Collections.singletonList(request));
+        IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(request);
+
+        PaperRecordRequest returnedRequest = paperRecordService.getSentPaperRecordRequestByIdentifier(identifier);
+        expectedRequestMatcher.matches(request);
+
+    }
+
+
+    @Test
+    public void getSentPaperRecordRequestByIdentifierShouldReturnNullIfNoActiveRequestWithThatIdentifier() {
+        String identifier = "ABC123";
+        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(Collections.singletonList(Status.SENT))),
+                argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier),  argThat(new NullBoolean()))).thenReturn(null);
+        assertNull(paperRecordService.getSentPaperRecordRequestByIdentifier(identifier));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void getSentPaperRecordRequestByIdentifierShouldThrowIllegalStateExceptionIfMultipleActiveRequestsFound() {
+
+        Patient patient = new Patient();
+        patient.setId(15);
+
+        Location medicalRecordLocation = createMedicalRecordLocation();
+        Location requestLocation = createLocation(4, "Outpatient Clinic");
+        Location newRequestLocation = createLocation(5, "ER");
+
+        // generate an existing paper record request
+        String identifier = "ABC123";
+        PaperRecordRequest request = createExpectedRequest(patient, medicalRecordLocation, identifier);
+        request.setId(10);
+        request.setRequestLocation(requestLocation);
+        request.setDateCreated(new Date());
+        request.setStatus(Status.SENT);
+
+        PaperRecordRequest anotherRequest = createExpectedRequest(patient, medicalRecordLocation, identifier);
+        anotherRequest.setId(11);
+        anotherRequest.setRequestLocation(requestLocation);
+        anotherRequest.setDateCreated(new Date());
+        anotherRequest.setStatus(Status.SENT);
+
+        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(Collections.singletonList(Status.SENT))),
+                argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier),  argThat(new NullBoolean())))
+                .thenReturn(Arrays.asList(request, anotherRequest));
+        paperRecordService.getSentPaperRecordRequestByIdentifier(identifier);
     }
 
     @Test

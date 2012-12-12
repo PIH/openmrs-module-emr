@@ -62,6 +62,7 @@ public interface PaperRecordService extends OpenmrsService {
      *
      * @return the list of all open paper record requests that need to be pulled
      */
+    // TODO: once we have multiple medical record locations, we will need to add location as a criteria
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     List<PaperRecordRequest> getOpenPaperRecordRequestsToPull();
 
@@ -71,6 +72,7 @@ public interface PaperRecordService extends OpenmrsService {
      *
      * @return the list of all open paper record requests that need to be created
      */
+    // TODO: once we have multiple medical record locations, we will need to add location as a criteria
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     List<PaperRecordRequest> getOpenPaperRecordRequestsToCreate();
 
@@ -111,14 +113,29 @@ public interface PaperRecordService extends OpenmrsService {
     List<PaperRecordRequest> getAssignedPaperRecordRequestsToCreate();
 
     /**
-     * Returns the active (ie, open or assigned) paper record request with the specified identifier
+     * Returns the active (ie, open or assigned) paper record request (if any) for the record with the specified identifier
+     * (there should only be one active request per identifier & location)
      *
-     * @param patient
+     * @param identifier
      * @return the active (ie, open or assigned) paper record request with the specified identifier (returns null if no request found)
      * @throws IllegalStateException if more than one request is found
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
+    // TODO: once we have multiple medical record locations, we will need to add location as a criteria
     PaperRecordRequest getActivePaperRecordRequestByIdentifier(String identifier);
+
+
+    /**
+     * Returns the "sent" paper record request (if any) for the record with specified identifier
+     * (there should only be one sent request per identifier & location)
+     *
+     * @param identifier
+     * @return returns the "sent" paper record request (if any) for the record with specified identifier
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
+    // TODO: once we have multiple medical record locations, we will need to add location as a criteria
+    PaperRecordRequest getSentPaperRecordRequestByIdentifier(String identifier);
+
 
     /**
      * Marks the specified paper record request as "sent"
