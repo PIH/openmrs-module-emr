@@ -24,51 +24,51 @@
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
 <div id="contentForm">
-<h1>X-Ray Requisition</h1>
+<h1>${ ui.message("emr.orderXray.title") }</h1>
 <form action="${ ui.actionLink("emr", "radiologyRequisition", "orderXray") }" data-bind="submit: isValid">
     <input type="hidden" name="successUrl" value="${ ui.pageLink("emr", "patient", [ patientId: patient.id ]) }"/>
     <input type="hidden" name="patient" value="${ patient.id }"/>
     <input type="hidden" name="requestedBy" value="${ currentProvider.id }"/>
 
     <div class="left-column">
-        ${ ui.includeFragment("emr", "field/textarea", [ label: "Indication", formFieldName: "clinicalHistory", labelPosition: "top", rows: 5, cols: 40 ]) }
+        ${ ui.includeFragment("emr", "field/textarea", [ label: ui.message("emr.order.indication"), formFieldName: "clinicalHistory", labelPosition: "top", rows: 5, cols: 40 ]) }
     </div>
 
     <div class="right-column">
         <div class="row">
             ${ ui.includeFragment("emr", "field/radioButtons", [
-                    label: "Timing",
+                    label: ui.message("emr.order.timing"),
                     formFieldName: "urgency",
                     options: [
-                        [ value: "ROUTINE", label: "Routine", checked: true ],
-                        [ value: "STAT", label: "STAT" ]
+                        [ value: "ROUTINE", label: ui.message("emr.order.timing.routine"), checked: true ],
+                        [ value: "STAT", label: ui.message("emr.order.timing.urgent") ]
                     ]
             ]) }
         </div>
         <div class="row">
-            <span class="radio-label">Do you need a portable x-ray?</span>
+            <span class="radio-label">${ ui.message("emr.orderXray.portableQuestion") }</span>
             <div>
                 <input type="checkbox" class="field-value" value="portable" data-bind="checked: portable"/>
-                <span>Yes</span>
+                <span>${ ui.message("emr.yes") }</span>
             </div>
-            <select name="examLocation" data-bind="visible:portable, options:locations, optionsText:'name', optionsValue:'id', optionsCaption:'Choose a location ...', value:portableLocation">
+            <select name="examLocation" data-bind="visible:portable, options:locations, optionsText:'name', optionsValue:'id', optionsCaption:'${ ui.message("emr.orderXray.examLocationQuestion") }', value:portableLocation">
             </select>
         </div>
     </div>
 
 
     <div class="left-column">
-        <label for="study-search">Type the name of a study:</label><br/>
+        <label for="study-search">${ ui.message("emr.orderXray.studySearchInstructions") }</label><br/>
         <input id="study-search" type="text"
                data-bind="autocomplete:searchTerm, search:convertedStudies, select:selectStudy, clearValue:function() { return true; }"
-               placeholder="eg. Chest x-ray"/>
+               placeholder="${ ui.message("emr.orderXray.studySearchPlaceholder") }"/>
     </div>
     <div class="right-column">
         <div data-bind="visible: selectedStudies().length == 0">
-            <span style="color: blue;">Please select at least one study.</span>
+            <span style="color: blue;">${ ui.message("emr.orderXray.noStudiesSelected") }</span>
         </div>
         <div data-bind="visible: selectedStudies().length > 0">
-            <label>Selected studies</label>
+            <label>${ ui.message("emr.orderXray.selectedStudies") }</label>
             <ul id="selected-studies" data-bind="foreach: selectedStudies">
                 <li>
                     <input type="hidden" data-bind="value: id" name="studies" />

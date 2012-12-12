@@ -46,9 +46,9 @@
 </script>
 
 <div id="search-box" class="container">
-    Which patients?
+    ${ ui.message("emr.findPatient.which.heading") }
     <%
-        def opts = [] + [ id: null, label: "All Patients" ]
+        def opts = [] + [ id: null, label: ui.message("emr.findPatient.allPatients") ]
         opts.addAll(locationsThatSupportVisits.collect { [ id: it.id, label: ui.message("emr.activeVisitAtLocation", ui.format(it)) ] })
 
         opts.each {
@@ -70,7 +70,7 @@
 <div id="results-box" class="container">
     <form id="find-patient-form">
         <input type="hidden" name="checkedInAt" value="${ checkedInAt?.id ?: "" }"/>
-        Search: <input type="text" size="40" name="q"/>
+        ${ ui.message("emr.findPatient.search") }: <input type="text" size="40" name="q"/>
     </form>
 
     <div id="results">
