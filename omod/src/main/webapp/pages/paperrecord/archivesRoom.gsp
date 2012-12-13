@@ -130,12 +130,12 @@
                         <input type="hidden" name="requestId" data-bind="value: requestId"/>
                     </span>
                     <input type="hidden" name="activeTab" value="create">
-                    <button><i class="icon-chevron-right"></i> <span>Create</span></button>
+                    <button><i class="icon-chevron-right"></i> <span>${ ui.message("emr.archivesRoom.createSelected") }</span></button>
                 </form>
             </div>
 
             <div id="assignedcreaterequest" class="box-align">
-                <h2 id="under_creation">Under Creation</h2>
+                <h2 id="under_creation">${ ui.message("emr.archivesRoom.underCreation") }</h2>
                 <table id="assigned_create_requests_table" class="dataTable">
                     <thead>
                     <tr>
