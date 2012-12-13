@@ -39,7 +39,8 @@ public class ArchivesRoomFragmentController {
                 return new FailureResult(ui.message("emr.archivesRoom.error.paperRecordNotRequested", ui.format(identifier)));
             }
             else {
-                return new FailureResult(ui.message("emr.archivesRooms.error.paperRecordAlreadySent", ui.format(identifier), ui.format(paperRecordRequest.getRequestLocation())));
+                return new FailureResult(ui.message("emr.archivesRooms.error.paperRecordAlreadySent", ui.format(identifier),
+                        ui.format(paperRecordRequest.getRequestLocation()), ui.format(paperRecordRequest.getDateStatusChanged())));
             }
         }
        else {

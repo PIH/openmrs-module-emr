@@ -169,7 +169,7 @@ public class PaperRecordRequest extends BaseOpenmrsObject {
         this.assignee = assignee;
     }
 
-    // no getter for status is intentional, so we force use of the updateStatus method
+    // no setter for status is intentional, so we force use of the updateStatus method
 
     public Status getStatus() {
         return status;

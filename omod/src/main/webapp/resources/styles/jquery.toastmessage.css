@@ -13,7 +13,7 @@
  */
 
 .toast-container {
-	width: 320px;         /* widened the width to fix the problem with text overlapping the close button **/
+	width: 350px;         /* widened the width to fix the problem with text overlapping the close button **/
 	z-index: 9999;
 }
 
