@@ -93,21 +93,6 @@
 
     });
 </script>
-<style>
-    .selected {
-        background-color: yellow;
-    }
-
-    #pullrequest, #createrequest, #assignedcreaterequest, #assignedpullrequest {
-        display: inline-block;
-        width: 45%;
-        vertical-align: top;
-        padding: 10px 10px;
-    }
-
-
-</style>
-
 <div id="tabs">
 
         <ul>
@@ -116,6 +101,7 @@
         </ul>
 
         <div id="tab-create">
+
             <div id="createrequest">
                 <h2 id="create_requests">${ ui.message("emr.archivesRoom.openCreateRequests.label") }</h2>
 
@@ -150,7 +136,7 @@
                 </table>
             </div>
 
-            <div id="assignedcreaterequest">
+            <div id="assignedcreaterequest" class="queueTable">
                 <table id="assigned_create_requests_table" class="dataTable">
                     <thead>
                     <tr>
