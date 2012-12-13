@@ -1,9 +1,0 @@
-/* line 1, ../../../compass/sass/account.scss */
-form fieldset {
-  width: 60%;
-  margin-bottom: 20px;
-}
-/* line 5, ../../../compass/sass/account.scss */
-form fieldset input[type=button] {
-  margin-top: 0;
-}
