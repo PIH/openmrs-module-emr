@@ -101,38 +101,40 @@
         </ul>
 
         <div id="tab-create">
-            <div id="createrequest" class="box-align">
-                <h2 id="create_requests">${ ui.message("emr.archivesRoom.openCreateRequests.label") }</h2>
+            <span id="createrequest">
+                <div class="box-align">
+                    <h2 id="create_requests">${ ui.message("emr.archivesRoom.openCreateRequests.label") }</h2>
 
-                <table id="create_requests_table" class="dataTable">
-                    <thead>
-                    <tr>
-                        <th>${ ui.message("emr.person.name") }</th>
-                        <th>${ ui.message("emr.patient.identifier") }</th>
-                        <th>${ ui.message("emr.location") }</th>
-                        <th>${ ui.message("emr.time") }</th>
-                    </tr>
-                    </thead>
-                    <tbody data-bind="foreach: recordsToCreate">
-                    <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), even: (\$index() % 2 == 0) }, click: \$root.selectRecordsToBeCreated" >
-                        <td><span data-bind="text: patientName"></span></td>
-                        <td><span data-bind="text: patientId"></span></td>
-                        <td><span data-bind="text: sendToLocation"></span></td>
-                        <td><span data-bind="text: timeRequested"></span></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="box-align btn">
-                <form id="post_create_requests" action="archivesRoom.page" method="post">
-                    <input type="hidden" name="assignTo" value="${ context.authenticatedUser.person.id }"/>
-                    <span style="display: none" data-bind="foreach: selectedRequests()">
-                        <input type="hidden" name="requestId" data-bind="value: requestId"/>
-                    </span>
-                    <input type="hidden" name="activeTab" value="create">
-                    <button><i class="icon-chevron-right"></i> <span>${ ui.message("emr.archivesRoom.createSelected") }</span></button>
-                </form>
-            </div>
+                    <table id="create_requests_table" class="dataTable">
+                        <thead>
+                        <tr>
+                            <th>${ ui.message("emr.person.name") }</th>
+                            <th>${ ui.message("emr.patient.identifier") }</th>
+                            <th>${ ui.message("emr.location") }</th>
+                            <th>${ ui.message("emr.time") }</th>
+                        </tr>
+                        </thead>
+                        <tbody data-bind="foreach: recordsToCreate">
+                        <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), even: (\$index() % 2 == 0) }, click: \$root.selectRecordsToBeCreated" >
+                            <td><span data-bind="text: patientName"></span></td>
+                            <td><span data-bind="text: patientId"></span></td>
+                            <td><span data-bind="text: sendToLocation"></span></td>
+                            <td><span data-bind="text: timeRequested"></span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="box-align btn">
+                    <form id="post_create_requests" action="archivesRoom.page" method="post">
+                        <input type="hidden" name="assignTo" value="${ context.authenticatedUser.person.id }"/>
+                        <span style="display: none" data-bind="foreach: selectedRequests()">
+                            <input type="hidden" name="requestId" data-bind="value: requestId"/>
+                        </span>
+                        <input type="hidden" name="activeTab" value="create">
+                        <button><i class="icon-chevron-right"></i> <span>${ ui.message("emr.archivesRoom.createSelected") }</span></button>
+                    </form>
+                </div>
+            </span>
 
             <div id="assignedcreaterequest" class="box-align">
                 <h2 id="under_creation">${ ui.message("emr.archivesRoom.underCreation") }</h2>
