@@ -72,6 +72,7 @@
                     type: 'POST'
                 })
                         .success(function(data) {
+                            jq('#mark-as-pulled-identifier').val('');
                             var options = [];
                             options.close = function () { window.location.href = '${ ui.pageLink('emr','paperrecord/archivesRoom', [ activeTab : 'pull' ]) }'; }
                             emr.successAlert(data.message, options);
@@ -83,6 +84,12 @@
             }
         });
 
+        // if an alphanumeric character is pressed, send focus to the mark-as-pulled-identifier input box
+        jq(document).keydown(function(event) {
+            if (event.which > 47 && event.which < 91) {
+                jq("#mark-as-pulled-identifier").focus();
+            }
+        })
 
     });
 </script>
