@@ -101,21 +101,8 @@
         </ul>
 
         <div id="tab-create">
-
-            <div id="createrequest">
+            <div id="createrequest" class="box-align">
                 <h2 id="create_requests">${ ui.message("emr.archivesRoom.openCreateRequests.label") }</h2>
-
-                <form id="post_create_requests" action="archivesRoom.page" method="post">
-                    <input type="hidden" name="assignTo" value="${ context.authenticatedUser.person.id }"/>
-                    <span style="display: none" data-bind="foreach: selectedRequests()">
-                        <input type="hidden" name="requestId" data-bind="value: requestId"/>
-                    </span>
-                    <input type="hidden" name="activeTab" value="create">
-                    <input id="create_record_requests_button" type="submit" value="${ ui.message("emr.archivesRoom.createSelected") }"
-                           data-bind="enable: selectedRequests().length > 0"/>
-                </form>
-
-                <br/>
 
                 <table id="create_requests_table" class="dataTable">
                     <thead>
@@ -136,8 +123,19 @@
                     </tbody>
                 </table>
             </div>
+            <div class="box-align btn">
+                <form id="post_create_requests" action="archivesRoom.page" method="post">
+                    <input type="hidden" name="assignTo" value="${ context.authenticatedUser.person.id }"/>
+                    <span style="display: none" data-bind="foreach: selectedRequests()">
+                        <input type="hidden" name="requestId" data-bind="value: requestId"/>
+                    </span>
+                    <input type="hidden" name="activeTab" value="create">
+                    <button><i class="icon-chevron-right"></i> <span>Create</span></button>
+                </form>
+            </div>
 
-            <div id="assignedcreaterequest" class="queueTable">
+            <div id="assignedcreaterequest" class="box-align">
+                <h2 id="under_creation">Under Creation</h2>
                 <table id="assigned_create_requests_table" class="dataTable">
                     <thead>
                     <tr>
