@@ -113,7 +113,7 @@ jq(function() {
             <p>
                 <label for="secretAnswer">${ ui.message("emr.user.secretAnswer") }</label>
                 <input type="password" id="secretAnswer" name="secretAnswer" value="" autocomplete="off" />
-                ${ ui.message("general.optional") }
+                ${ ui.message("emr.optional") }
                 ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "secretAnswer" ])}
             </p>
 
@@ -152,8 +152,8 @@ jq(function() {
 	<input id="createProviderAccount" type="hidden" name="createProviderAccount" value="${account.provider != null && account.provider.providerId == null}" />
 
     <div>
-        <input type="button" class="cancel" value="${ ui.message("general.cancel") }" onclick="javascript:window.location='/${ contextPath }/emr/systemAdministration.page'" />
-        <input type="button" class="confirm" id="save-button" value="${ ui.message("general.save") }" onclick="javascript:sendData()" />
+        <input type="button" class="cancel" value="${ ui.message("emr.cancel") }" onclick="javascript:window.location='/${ contextPath }/emr/systemAdministration.page'" />
+        <input type="button" class="confirm" id="save-button" value="${ ui.message("emr.save") }" onclick="javascript:sendData()" />
     </div>
 
 </form>

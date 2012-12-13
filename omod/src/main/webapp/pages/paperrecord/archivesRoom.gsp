@@ -115,6 +115,7 @@
                            data-bind="enable: selectedRequests().length > 0"/>
                 </form>
 
+                <br/>
 
                 <table id="create_requests_table" class="dataTable">
                     <thead>

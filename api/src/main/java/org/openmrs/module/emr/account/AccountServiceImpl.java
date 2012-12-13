@@ -109,7 +109,7 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 			}
 			
 			if (user.isRetired())
-				user.setRetireReason(Context.getMessageSourceService().getMessage("general.default.retireReason"));
+				user.setRetireReason(Context.getMessageSourceService().getMessage("emr.retireReason"));
 			
 			String password = null;
 			if (StringUtils.isNotBlank(account.getPassword()))
@@ -135,7 +135,7 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 		if (account.getProvider() != null) {
 			Provider provider = account.getProvider();
 			if (provider.isRetired())
-				provider.setRetireReason(Context.getMessageSourceService().getMessage("general.default.retireReason"));
+				provider.setRetireReason(Context.getMessageSourceService().getMessage("emr.retireReason"));
 			
 			account.setProvider(providerService.saveProvider(provider));
 		}
