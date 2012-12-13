@@ -19,11 +19,11 @@
     <h3>${ ui.message("emr.printer.edit") }</h3>
 
     <fieldset>
-        ${ ui.includeFragment("emr", "field/radioButtons", [ label: ui.message("emr.printer.type"), formFieldName: "type", initialValue: (printer.type ?: ''), options: typeOptions ])} <br/>
-        ${ ui.includeFragment("emr", "field/dropDown", [ label: ui.message("emr.printer.physicalLocation"), formFieldName: "physicalLocation", initialValue: (printer.physicalLocation?.id ?: ''), options: locationOptions ])} <br/>
-        ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.printer.name"), formFieldName: "name", initialValue: (printer.name ?: '') ])} <br/>
-        ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.printer.ipAddress"), formFieldName: "ipAddress", initialValue: (printer.ipAddress ?: ''), size: 10 ])} <br/>
-        ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.printer.port"), formFieldName: "port",initialValue: (printer.port ?: ''), size: 10 ])} <br/>
+        ${ ui.includeFragment("emr", "field/radioButtons", [ label: ui.message("emr.printer.type"), formFieldName: "type", initialValue: (printer.type ?: ''), options: typeOptions ])}
+        ${ ui.includeFragment("emr", "field/dropDown", [ label: ui.message("emr.printer.physicalLocation"), formFieldName: "physicalLocation", initialValue: (printer.physicalLocation?.id ?: ''), options: locationOptions ])}
+        ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.printer.name"), formFieldName: "name", initialValue: (printer.name ?: '') ])}
+        ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.printer.ipAddress"), formFieldName: "ipAddress", initialValue: (printer.ipAddress ?: '') ])}
+        ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.printer.port"), formFieldName: "port",initialValue: (printer.port ?: '') ])}
     </fieldset>
 
     <div>
