@@ -4,6 +4,14 @@
     ui.includeCss("emr", "account.css")
 
     def createAccount = (account.person.personId == null ? true : false);
+
+    def genderOptions = [ [label: ui.message("Person.gender.male"), value: 'M'],
+                          [label: ui.message("Person.gender.female"), value: 'F'] ]
+
+    def privilegeLevelOptions = []
+    privilegeLevels.each {
+        privilegeLevelOptions.push([ label: it.name, value: it.name ])
+    }
 %>
 
 <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
@@ -68,46 +76,18 @@ jq(function() {
 <form method="post" id="accountForm">
 	<fieldset>
 		<legend>${ ui.message("emr.person.details") }</legend>
-        <p>
-            <label for="givenName">${ ui.message("emr.person.givenName") }</label>
-            <input type="text" id="givenName" name="givenName" value="${(account.givenName) ? account.givenName : ""}" />
-            ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "givenName" ])}
-        </p>
 
-        <p>
-            <label for="familyName">${ ui.message("emr.person.familyName") }</label>
-            <input type="text" id="familyName" name="familyName" value="${(account.familyName) ? account.familyName : ""}" />
-            ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "familyName" ])}
-        </p>
-
-		<p>
-            <strong>${ ui.message("Person.gender") }</strong>
-        </p>
-
-        <p>
-            <input type="radio" id="male" name="gender" value="M" <% if(account.gender == 'M'|| createAccount){ %>checked=checked<% } %> />
-            <label for="male">${ ui.message("Person.gender.male") }</label>
-        </p>
-
-        <p>
-            <input type="radio" id="female" name="gender" value="F" <% if(account.gender == 'F'){ %>checked=checked<% } %> />
-            <label for="female">${ ui.message("Person.gender.female") }</label>
-        </p>
+        ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.person.givenName"), formFieldName: "givenName", initialValue: (account.givenName ?: '') ])}
+        ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.person.familyName"), formFieldName: "familyName", initialValue: (account.familyName ?: '') ])}
+        ${ ui.includeFragment("emr", "field/radioButtons", [ label: ui.message("Person.gender"), formFieldName: "gender", initialValue: (account.gender ?: 'M'), options: genderOptions ])}
 	</fieldset>
 	
 	<fieldset>
 		<legend>${ ui.message("emr.user.account.details") }</legend>
 		<div class="emr_userDetails" <% if (!account.user) { %> style="display: none" <% } %>>
-			<p>
-                <input id="enabled" type="checkbox" name="enabled" value="true" <% if(account.enabled){ %>checked='checked'<% } %> />
-                <label for="enabled">${ ui.message("emr.user.enabled") }</label>
-            </p>
-		
-            <p>
-                <label for="username">${ ui.message("emr.user.username") }</label>
-                <input type="text" name="username" id="username" value="${(account.username) ? account.username : ""}" />
-                ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "username" ])}
-            </p>
+
+            ${ ui.includeFragment("emr", "field/checkbox", [ label: ui.message("emr.user.enabled"), formFieldName: "enabled", value: "true", checked: account.enabled ])}
+            ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.user.username"), formFieldName: "username", initialValue: (account.username ?: '') ])}
 
             <% if (!showPasswordFields) { %>
                 <input class="emr_passwordDetails emr_userDetails" type="button" value="${ ui.message("emr.user.changeUserPassword") }"
@@ -127,23 +107,8 @@ jq(function() {
                 ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "confirmPassword" ])}
             </p>
 
-            <p>
-                <label for="privilegeLevel">${ ui.message("emr.user.privilegeLevel") }</label>
-
-                <select id="privilegeLevel" name="privilegeLevel">
-                    <option></option>
-                    <% privilegeLevels.each{ %>
-                        <option value="${ it.name }" <% if(account.privilegeLevel == it){ %>selected='selected'<% } %>>${ it.name }</option>
-                    <% } %>
-                </select>
-                ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "privilegeLevel" ])}
-            </p>
-
-            <p>
-                <label for="secretQuestion">${ ui.message("emr.user.secretQuestion") }</label>
-                <input type="text" id="secretQuestion" name="secretQuestion"
-                    value="${ (account.secretQuestion) ? account.secretQuestion : "" }" /> ${ ui.message("general.optional") }
-            </p>
+            ${ ui.includeFragment("emr", "field/dropDown", [ label: ui.message("emr.user.privilegeLevel"), formFieldName: "privilegeLevel", initialValue: (account.privilegeLevel ? account.privilegeLevel.getName() : ''), options: privilegeLevelOptions ])}
+            ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.user.secretQuestion"), formFieldName: "secretQuestion", initialValue: (account.secretQuestion ?: ''), optional: true ])}
 
             <p>
                 <label for="secretAnswer">${ ui.message("emr.user.secretAnswer") }</label>
@@ -157,11 +122,7 @@ jq(function() {
             </p>
 
 			<% capabilities.each{ %>
-				<p>
-                    <input type="checkbox" name="capabilities" id="${ it.name - rolePrefix }" value="${ it.name }" <% if(account.capabilities.contains(it)){ %>checked='checked'<% } %> />
-                    <label for="${ it.name - rolePrefix }">${ ui.message("emr.app." + (it.name - rolePrefix) + ".label") }</label>
-                    ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "capabilities" ])}
-                </p>
+                ${ ui.includeFragment("emr", "field/checkbox", [ label: ui.message("emr.app." + (it.name - rolePrefix) + ".label"), formFieldName: "capabilities", value: it.name, checked: account.capabilities.contains(it) ])}
             <% } %>
 		</div>
 		<div class="emr_userDetails">
@@ -175,15 +136,9 @@ jq(function() {
 	<fieldset>
 		<legend>${ ui.message("emr.provider.details") }</legend>
 		<div class="emr_providerDetails" ${ (!account.provider) ? "style='display: none'" : "" }>
-			<input id="interactsWithPatients" type="checkbox" name="interactsWithPatients" value="true" 
-				<% if(account.interactsWithPatients){ %>checked='checked'<% } %> />
-            <label for="interactsWithPatients">${ ui.message("emr.provider.interactsWithPatients") }</label>
+            ${ ui.includeFragment("emr", "field/checkbox", [ label: ui.message("emr.provider.interactsWithPatients"), formFieldName: "interactsWithPatients", value: "true", checked: account.interactsWithPatients ])}
 
-            <p>
-                <label for="providerIdentifier">${ ui.message("emr.provider.identifier") }</label>
-                <input type="text" name="providerIdentifier" id="providerIdentifier" value="${(account.providerIdentifier) ? account.providerIdentifier : ""}" />
-                ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "providerIdentifier" ])}
-            </p>
+            ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.provider.identifier"), formFieldName: "providerIdentifier", initialValue: (account.providerIdentifier ?: '') ])}
 		</div>
 		<div class="emr_providerDetails">
 		<% if(!account.provider) { %>
