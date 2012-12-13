@@ -78,12 +78,17 @@ public class AdtServiceComponentTest extends BaseModuleContextSensitiveTest {
 
         // configure payment observation
         List<Obs> observations = new ArrayList<Obs>();
-        Obs paymentReasonObservation = createPaymentReasonObservation();
-        Obs paymentAmountObservation = createPaymentAmountObservation(20);
-        Obs paymentReceiptObservation = createPaymentReceiptObservation("AB23423");
-        observations.add(paymentReasonObservation);
-        observations.add(paymentAmountObservation);
-        observations.add(paymentReceiptObservation);
+        Obs firstReason = createPaymentReasonObservation();
+        Obs firstAmount = createPaymentAmountObservation(20);
+        Obs firstReceipt = createPaymentReceiptObservation("AB23423");
+        Obs firstGroup = createPaymentGroup(firstReason, firstAmount, firstReceipt);
+        observations.add(firstGroup);
+
+        Obs secondReason = createPaymentReasonObservation();
+        Obs secondAmount = createPaymentAmountObservation(20);
+        Obs secondReceipt = createPaymentReceiptObservation("AB23423");
+        Obs secondGroup = createPaymentGroup(secondReason, secondAmount, secondReceipt);
+        observations.add(secondGroup);
 
         // step 1: check in the patient (which should create a visit and an encounter)
         Encounter checkInEncounter = service.checkInPatient(patient, outpatientDepartment, null, observations, null, false);
@@ -93,11 +98,19 @@ public class AdtServiceComponentTest extends BaseModuleContextSensitiveTest {
         assertThat(checkInEncounter.getEncounterDatetime(), isJustNow());
         assertThat(checkInEncounter.getVisit().getPatient(), is(patient));
         assertThat(checkInEncounter.getVisit().getStartDatetime(), isJustNow());
-        assertThat(checkInEncounter.getObs(), containsInAnyOrder(paymentReasonObservation, paymentAmountObservation, paymentReceiptObservation));
-        assertThat(checkInEncounter.getAllObs().size(), is(1));
-        assertThat(checkInEncounter.getAllObs().iterator().next().getGroupMembers(), containsInAnyOrder(paymentReasonObservation, paymentAmountObservation, paymentReceiptObservation));
+        assertThat(checkInEncounter.getObs(), containsInAnyOrder(firstReason, firstAmount, firstReceipt, secondReason, secondAmount, secondReceipt));
+        assertThat(checkInEncounter.getAllObs(), containsInAnyOrder(firstGroup, secondGroup));
 
         // TODO once these are implemented, add Admission and Discharge to this test
+    }
+
+    private Obs createPaymentGroup(Obs paymentReasonObservation, Obs paymentAmountObservation, Obs paymentReceiptObservation) {
+        Obs firstGroup = new Obs();
+        firstGroup.setConcept(emrProperties.getPaymentConstructConcept());
+        firstGroup.addGroupMember(paymentReasonObservation);
+        firstGroup.addGroupMember(paymentAmountObservation);
+        firstGroup.addGroupMember(paymentReceiptObservation);
+        return firstGroup;
     }
 
     private Obs createPaymentAmountObservation(double amount) {
