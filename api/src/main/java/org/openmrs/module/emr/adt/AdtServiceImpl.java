@@ -275,10 +275,12 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
         }
 
         List<Obs> paymentObservations = new ArrayList<Obs>();
-        paymentObservations.add(paymentReason);
-        paymentObservations.add(paymentAmount);
-        paymentObservations.add(paymentReceipt);
-
+        Obs paymentGroup = new Obs();
+        paymentGroup.setConcept(emrProperties.getPaymentConstructConcept());
+        paymentGroup.addGroupMember(paymentReason);
+        paymentGroup.addGroupMember(paymentAmount);
+        paymentGroup.addGroupMember(paymentReceipt);
+        paymentObservations.add(paymentGroup);
         Encounter checkinEncounter = buildEncounter(emrProperties.getCheckInEncounterType(), patient, location, checkinDate, paymentObservations, null);
         checkinEncounter.addProvider(emrProperties.getCheckInClerkEncounterRole(), clerk);
         encounterVisit.addEncounter(checkinEncounter);
