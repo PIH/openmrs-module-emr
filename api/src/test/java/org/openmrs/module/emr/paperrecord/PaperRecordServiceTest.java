@@ -280,7 +280,7 @@ public class PaperRecordServiceTest {
         Location location = new Location(1);
         PaperRecordRequest request = new PaperRecordRequest();
         request.setPatient(patient);
-        request.setStatus(PaperRecordRequest.Status.OPEN);
+        request.updateStatus(PaperRecordRequest.Status.OPEN);
         request.setRecordLocation(location);
         return request;
     }
@@ -290,7 +290,7 @@ public class PaperRecordServiceTest {
         Location location = new Location(1);
         PaperRecordRequest request = new PaperRecordRequest();
         request.setPatient(patient);
-        request.setStatus(PaperRecordRequest.Status.OPEN);
+        request.updateStatus(PaperRecordRequest.Status.OPEN);
         request.setRecordLocation(location);
         request.setIdentifier("ABC");
         return request;
@@ -452,7 +452,7 @@ public class PaperRecordServiceTest {
         request.setId(10);
         request.setRequestLocation(requestLocation);
         request.setDateCreated(new Date());
-        request.setStatus(Status.SENT);
+        request.updateStatus(Status.SENT);
 
         when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(Collections.singletonList(Status.SENT))),
                 argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier), argThat(new NullBoolean()))).thenReturn(Collections.singletonList(request));
@@ -488,13 +488,13 @@ public class PaperRecordServiceTest {
         request.setId(10);
         request.setRequestLocation(requestLocation);
         request.setDateCreated(new Date());
-        request.setStatus(Status.SENT);
+        request.updateStatus(Status.SENT);
 
         PaperRecordRequest anotherRequest = createExpectedRequest(patient, medicalRecordLocation, identifier);
         anotherRequest.setId(11);
         anotherRequest.setRequestLocation(requestLocation);
         anotherRequest.setDateCreated(new Date());
-        anotherRequest.setStatus(Status.SENT);
+        anotherRequest.updateStatus(Status.SENT);
 
         when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(Collections.singletonList(Status.SENT))),
                 argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier), argThat(new NullBoolean())))
@@ -530,7 +530,7 @@ public class PaperRecordServiceTest {
         expectedRequest.setIdentifier(identifier);
         expectedRequest.setRecordLocation(medicalRecordLocation);
         expectedRequest.setPatient(patient);
-        expectedRequest.setStatus(PaperRecordRequest.Status.OPEN);
+        expectedRequest.updateStatus(PaperRecordRequest.Status.OPEN);
         return expectedRequest;
     }
 

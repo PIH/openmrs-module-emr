@@ -99,9 +99,16 @@ public class PaperRecordRequest extends BaseOpenmrsObject {
 
     private Date dateCreated;
 
+    private Date dateStatusChanged;
+
     // TODO: we could add a type here at some point if need be
 
     public PaperRecordRequest() {
+    }
+
+    public void updateStatus(Status status) {
+        this.status = status;
+        this.dateStatusChanged = new Date();
     }
 
     @Override
@@ -162,12 +169,10 @@ public class PaperRecordRequest extends BaseOpenmrsObject {
         this.assignee = assignee;
     }
 
+    // no getter for status is intentional, so we force use of the updateStatus method
+
     public Status getStatus() {
         return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 
     public User getCreator() {
@@ -184,5 +189,13 @@ public class PaperRecordRequest extends BaseOpenmrsObject {
 
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
+    }
+
+    public Date getDateStatusChanged() {
+        return dateStatusChanged;
+    }
+
+    public void setDateStatusChanged(Date dateStatusChanged) {
+        this.dateStatusChanged = dateStatusChanged;
     }
 }

@@ -192,10 +192,10 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
             if (StringUtils.isBlank(request.getIdentifier())) {
                 String identifier = createPaperMedicalRecordNumberFor(request.getPatient(), request.getRecordLocation());
                 request.setIdentifier(identifier);
-                request.setStatus(PaperRecordRequest.Status.ASSIGNED_TO_CREATE);
+                request.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_CREATE);
             }
             else {
-                request.setStatus(PaperRecordRequest.Status.ASSIGNED_TO_PULL);
+                request.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_PULL);
             }
 
             // set the assignee and save the record
@@ -264,7 +264,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     @Override
     public void markPaperRequestRequestAsSent(PaperRecordRequest request) {
         // I don't think we really need to do any verification here
-        request.setStatus(Status.SENT);
+        request.updateStatus(Status.SENT);
         savePaperRecordRequest(request);
     }
 

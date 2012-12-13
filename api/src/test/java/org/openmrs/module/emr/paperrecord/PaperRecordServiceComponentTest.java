@@ -413,6 +413,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
         // make sure this request has been changed to "sent" in the database
         Context.flushSession();
+        Context.clearSession();
 
         PaperRecordRequest returnedRequest = paperRecordService.getPaperRecordRequestById(id);
         Assert.assertEquals(PaperRecordRequest.Status.SENT, request.getStatus());
@@ -429,5 +430,24 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     @Test
     public void testGetSentRequestByIdentifierShouldReturnNullIfNoSentRequests() {
         Assert.assertNull(paperRecordService.getPendingPaperRecordRequestByIdentifier("101"));
+    }
+
+    @Test
+    public void testUpdateStatusSetDateLastUpdated() throws InterruptedException {
+
+        PaperRecordRequest request = new PaperRecordRequest();
+
+        request.updateStatus(PaperRecordRequest.Status.OPEN);
+        Date date = request.getDateStatusChanged();
+
+        paperRecordService.savePaperRecordRequest(request);
+        int id = request.getId();
+
+        Context.flushSession();
+        Context.clearSession();
+
+        PaperRecordRequest retrievedRequest = paperRecordService.getPaperRecordRequestById(id);
+        Assert.assertNotNull(retrievedRequest.getDateStatusChanged());
+
     }
 }

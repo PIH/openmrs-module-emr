@@ -16,7 +16,10 @@
 
         <property name="dateCreated" type="java.util.Date" column="date_created"/>
 
-        <property name="status" column="status" length="50" not-null="true">
+        <property name="dateStatusChanged" type="java.util.Date" column="date_status_changed"/>
+
+        <!-- we use field access here so that we can remove getter and force the use of the update status message -->
+        <property name="status" column="status" length="50" not-null="true" access="field">
             <type name="org.openmrs.util.HibernateEnumType">
                 <param name="enumClassName">org.openmrs.module.emr.paperrecord.PaperRecordRequest$Status</param>
             </type>

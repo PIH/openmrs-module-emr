@@ -143,4 +143,13 @@
         </modifyColumn>
     </changeSet>
 
+    <changeSet id="201212132012-1" author="mgoodrich">
+        <comment>Add date_status_last_updated column</comment>
+
+        <addColumn tableName="emr_paper_record_request">
+            <column name="date_status_changed" type="datetime" />
+        </addColumn>
+
+    </changeSet>
+
 </databaseChangeLog>
