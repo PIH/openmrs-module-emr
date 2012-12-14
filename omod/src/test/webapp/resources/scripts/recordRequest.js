@@ -57,4 +57,16 @@ describe("Tests for medical record requests", function() {
         viewModel.selectNumber(2);
         expect(viewModel.selectedRequests().length).toBe(2);
     });
+
+    it("should asses that the viewModel without selected records is not valid", function() {
+        viewModel.selectNumber(0);
+        expect(viewModel.selectedRequests().length).toBe(0);
+        expect(viewModel.isValid()).toBe(false);
+    });
+
+    it("should asses that the viewModel with selected records is valid", function() {
+        viewModel.selectNumber(1);
+        expect(viewModel.selectedRequests().length).toBe(1);
+        expect(viewModel.isValid()).toBe(true);
+    });
 })

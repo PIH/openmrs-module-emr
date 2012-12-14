@@ -115,7 +115,7 @@
                         </tr>
                         </thead>
                         <tbody data-bind="foreach: recordsToCreate">
-                        <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), even: (\$index() % 2 == 0) }, click: \$root.selectRecordsToBeCreated" >
+                        <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), hover: hovered(), even: (\$index() % 2 == 0) }, event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordsToBeCreated" >
                             <td><span data-bind="text: patientName"></span></td>
                             <td><span data-bind="text: patientId"></span></td>
                             <td><span data-bind="text: sendToLocation"></span></td>
@@ -131,7 +131,7 @@
                             <input type="hidden" name="requestId" data-bind="value: requestId"/>
                         </span>
                         <input type="hidden" name="activeTab" value="create">
-                        <button><i class="icon-chevron-right"></i> <span>${ ui.message("emr.archivesRoom.createSelected") }</span></button>
+                        <button id="next" data-bind="visible: isValid()"><i class="icon-chevron-right"></i> <span>${ ui.message("emr.archivesRoom.createSelected") }</span></button>
                     </form>
                 </div>
             </span>

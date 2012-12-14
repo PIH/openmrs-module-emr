@@ -8,6 +8,7 @@ function RecordRequestModel(requestId, patientName, patientId, dossierNumber, se
     model.timeRequested = timeRequested;
     model.timeRequestedSortable = timeRequestedSortable;
     model.selected = ko.observable(false);
+    model.hovered = ko.observable(false);
 
     return model;
 }
@@ -22,6 +23,10 @@ function PullRequestsViewModel(recordsToPull) {
             recordsToPull[i].selected(i < number);
         }
     };
+
+    api.isValid = function(){
+        return api.selectedRequests().length > 0;
+    }
 
     api.selectRequestToBePulled = function(request) {
         var indexOf = recordsToPull.indexOf(request);
@@ -48,6 +53,24 @@ function CreateRequestsViewModel(recordsToCreate) {
             api.recordsToCreate()[i].selected(i <= indexOf);
         }
     };
+
+    api.isValid = function(){
+        return api.selectedRequests().length > 0;
+    }
+
+    api.hoverRecords = function(record){
+        var indexOf = api.recordsToCreate().indexOf(record);
+        for( var i=0; i < api.recordsToCreate().length; i++) {
+            api.recordsToCreate()[i].hovered(i <= indexOf);
+        }
+    }
+
+    api.unHoverRecords = function(){
+        var indexOf = api.recordsToCreate();
+        for( var i=0; i < api.recordsToCreate().length; i++) {
+            api.recordsToCreate()[i].hovered(false);
+        }
+    }
 
     api.selectedRequests = ko.computed(function() {
         return jQuery.grep(api.recordsToCreate(), function(item) {
