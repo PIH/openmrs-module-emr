@@ -2,6 +2,7 @@ package org.openmrs.module.emr.page.controller.paperrecord;
 
 import org.openmrs.Person;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 import org.openmrs.module.emr.paperrecord.PaperRecordService;
 import org.openmrs.ui.framework.UiUtils;
@@ -43,10 +44,11 @@ public class ArchivesRoomPageController {
                        @RequestParam(value="activeTab", required=false, defaultValue="create") String activeTab,
                        @RequestParam("assignTo") Person assignTo,
                        @SpringBean PaperRecordService paperRecordService,
+                       EmrContext emrContext,
                        UiUtils ui,
                        HttpSession session) {
         try {
-            paperRecordService.assignRequests(requests, assignTo);
+            paperRecordService.assignRequests(requests, assignTo, emrContext.getSessionLocation());
         } catch (IllegalStateException ex) {
             session.setAttribute(WebConstants.OPENMRS_ERROR_ATTR, ui.message("emr.archivesRoom.alreadyAssigned"));
         }

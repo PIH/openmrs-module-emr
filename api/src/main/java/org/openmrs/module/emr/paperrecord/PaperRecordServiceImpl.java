@@ -181,7 +181,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
     @Override
     @Transactional
-    public synchronized List<PaperRecordRequest> assignRequests(List<PaperRecordRequest> requests, Person assignee) {
+    public synchronized List<PaperRecordRequest> assignRequests(List<PaperRecordRequest> requests, Person assignee, Location location) {
 
         if (requests == null) {
             throw new IllegalStateException("Requests cannot be null");
@@ -209,6 +209,9 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
                 String identifier = createPaperMedicalRecordNumberFor(request.getPatient(), request.getRecordLocation());
                 request.setIdentifier(identifier);
                 request.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_CREATE);
+
+                // TODO: do we want to make printing a label configurable via a global property?
+                printPaperRecordLabel(request, location);
             }
             else {
                 request.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_PULL);

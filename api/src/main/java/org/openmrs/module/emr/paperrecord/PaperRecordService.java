@@ -89,11 +89,12 @@ public interface PaperRecordService extends OpenmrsService {
      * Sets the status to ASSIGNED_TO_PULL and the assignee to the given value, for the given requests.
      * @param requests
      * @param assignee
+     * @param location the location to print any required registration labels at
      * @return the list that was passed in, but with assignees and status set
      * @throws IllegalStateException if any of the requests are not in the OPEN status
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
-    List<PaperRecordRequest> assignRequests(List<PaperRecordRequest> requests, Person assignee);
+    List<PaperRecordRequest> assignRequests(List<PaperRecordRequest> requests, Person assignee, Location location);
 
 
     /**

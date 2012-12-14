@@ -58,10 +58,15 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 public class PaperRecordServiceTest {
 
     private PaperRecordServiceImpl paperRecordService;
+
     private PaperRecordRequestDAO mockPaperRecordDAO;
+
     private User authenticatedUser;
+
     private PatientIdentifierType paperRecordIdentifierType;
+
     private IdentifierSourceService identifierSourceService;
+
     private PatientService patientService;
 
     @Before
@@ -217,7 +222,7 @@ public class PaperRecordServiceTest {
         requests.add(buildPaperRecordRequestWithoutIdentifier());
         requests.add(buildPaperRecordRequestWithoutIdentifier());
 
-        paperRecordService.assignRequests(requests, assignTo);
+        paperRecordService.assignRequests(requests, assignTo, null);
 
         verify(mockPaperRecordDAO, times(3)).saveOrUpdate(argThat(new IsAssignedTo(assignTo, PaperRecordRequest.Status.ASSIGNED_TO_CREATE)));
     }
@@ -231,7 +236,7 @@ public class PaperRecordServiceTest {
         requests.add(buildPaperRecordRequestWithIdentifier());
         requests.add(buildPaperRecordRequestWithIdentifier());
 
-        paperRecordService.assignRequests(requests, assignTo);
+        paperRecordService.assignRequests(requests, assignTo, null);
 
         verify(mockPaperRecordDAO, times(3)).saveOrUpdate(argThat(new IsAssignedTo(assignTo, PaperRecordRequest.Status.ASSIGNED_TO_PULL)));
     }
@@ -241,7 +246,7 @@ public class PaperRecordServiceTest {
     public void testAssignRequestsShouldFailIfRequestsNull() throws Exception {
 
         Person assignTo = new Person(15);
-        paperRecordService.assignRequests(null, assignTo);
+        paperRecordService.assignRequests(null, assignTo, null);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -252,7 +257,7 @@ public class PaperRecordServiceTest {
         requests.add(buildPaperRecordRequestWithoutIdentifier());
         requests.add(buildPaperRecordRequestWithoutIdentifier());
 
-        paperRecordService.assignRequests(requests, null);
+        paperRecordService.assignRequests(requests, null, null);
     }
 
     @Test
@@ -270,7 +275,7 @@ public class PaperRecordServiceTest {
         patientIdentifier.setLocation(requests.get(0).getRecordLocation());
         patient.addIdentifier(patientIdentifier);
 
-        paperRecordService.assignRequests(requests, assignTo);
+        paperRecordService.assignRequests(requests, assignTo, null);
 
         verify(mockPaperRecordDAO, times(1)).saveOrUpdate(argThat(new IsAssignedTo(assignTo, PaperRecordRequest.Status.ASSIGNED_TO_PULL, "ABC")));
     }
@@ -545,6 +550,11 @@ public class PaperRecordServiceTest {
         @Override
         protected PatientIdentifierType getPaperRecordIdentifierType()  {
             return paperRecordIdentifierType;
+        }
+
+        @Override
+        public Boolean printPaperRecordLabel(PaperRecordRequest request, Location location) {
+            return true;
         }
 
     }

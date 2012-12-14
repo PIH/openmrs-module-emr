@@ -132,6 +132,11 @@ public class PrinterServiceImpl extends BaseOpenmrsService implements PrinterSer
     @Override
     public boolean printViaSocket(String data, Printer.Type type, Location location, String encoding) {
         Printer printer = getDefaultPrinter(location, type);
+
+        if (printer == null) {
+            throw new IllegalStateException("No default printer assigned for " + location.getDisplayString() + ". Please contact your system administrator");
+        }
+
         return printViaSocket(data, printer, encoding);
     }
 

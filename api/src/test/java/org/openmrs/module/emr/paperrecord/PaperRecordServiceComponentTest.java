@@ -179,7 +179,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
         // assign the person to the request
         Person person = personService.getPerson(7);
-        paperRecordService.assignRequests(paperRecordRequests, person);
+        paperRecordService.assignRequests(paperRecordRequests, person, null);
 
         // verify
         paperRecordRequests = paperRecordService.getAssignedPaperRecordRequestsToPull();
@@ -265,7 +265,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         PaperRecordRequest paperRecordRequest = paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
 
         Person person = personService.getPerson(7);
-        paperRecordService.assignRequests(Arrays.asList(paperRecordRequest), person);
+        paperRecordService.assignRequests(Arrays.asList(paperRecordRequest), person, null);
 
         // sanity check; make sure the record is in the database
         List<PaperRecordRequest> requests = paperRecordService.getAssignedPaperRecordRequestsToPull();
@@ -378,7 +378,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
         // assign the person to the request
         Person person = personService.getPerson(7);
-        paperRecordService.assignRequests(paperRecordRequests, person);
+        paperRecordService.assignRequests(paperRecordRequests, person, null);
 
         PaperRecordRequest request = paperRecordService.getPendingPaperRecordRequestByIdentifier("101");
 
