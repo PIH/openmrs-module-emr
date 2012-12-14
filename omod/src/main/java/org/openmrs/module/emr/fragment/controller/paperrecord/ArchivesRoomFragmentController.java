@@ -14,6 +14,7 @@
 
 package org.openmrs.module.emr.fragment.controller.paperrecord;
 
+import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 import org.openmrs.module.emr.paperrecord.PaperRecordService;
 import org.openmrs.ui.framework.UiUtils;
@@ -55,6 +56,21 @@ public class ArchivesRoomFragmentController {
                     + ui.message("emr.archivesRoom.recordNumber.label") + ": " + ui.format(identifier + "<br/><br/>"
                     + ui.message("emr.archivesRoom.requestedBy.label") + ": " + ui.format(paperRecordRequest.getRequestLocation() + "<br/><br/>"
                     + ui.message("emr.archviesRoom.requestedAt.label") + ": " + timeFormat.format(paperRecordRequest.getDateCreated()))));
+        }
+
+    }
+
+    public FragmentActionResult reprintLabel(@RequestParam("requestId") PaperRecordRequest request,
+                                             @SpringBean("paperRecordService") PaperRecordService paperRecordService,
+                                             EmrContext emrContext) {
+
+        Boolean result = paperRecordService.printPaperRecordLabel(request, emrContext.getSessionLocation());
+
+        if (result) {
+            return new SuccessResult();
+        }
+        else {
+            return new FailureResult("unable to print paper record label");
         }
 
     }
