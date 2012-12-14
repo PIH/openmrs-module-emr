@@ -24,6 +24,12 @@ function PullRequestsViewModel(recordsToPull) {
         }
     };
 
+    api.hoverNumber = function(number){
+        for (var i = 0; i < recordsToPull.length; ++i) {
+            recordsToPull[i].hovered(i < number);
+        }
+    }
+
     api.isValid = function(){
         return api.selectedRequests().length > 0;
     }
@@ -33,9 +39,27 @@ function PullRequestsViewModel(recordsToPull) {
         api.selectNumber(indexOf + 1);
     };
 
+    api.hoverRecords = function(request) {
+        var indexOf = recordsToPull.indexOf(request);
+        api.hoverNumber(indexOf + 1);
+    };
+
+    api.unHoverRecords = function(){
+        var indexOf = api.recordsToPull();
+        for( var i=0; i < api.recordsToPull().length; i++) {
+            api.recordsToPull()[i].hovered(false);
+        }
+    }
+
     api.selectedRequests = ko.computed(function() {
         return jQuery.grep(api.recordsToPull(), function(item) {
            return item.selected();
+        });
+    });
+
+    api.hoveredRequests = ko.computed(function() {
+        return jQuery.grep(api.recordsToPull(), function(item) {
+            return item.hovered();
         });
     });
 
