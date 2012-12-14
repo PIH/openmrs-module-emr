@@ -14,20 +14,34 @@
 
 package org.openmrs.module.emr.printer;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openmrs.Location;
 import org.openmrs.LocationAttributeType;
 import org.openmrs.api.LocationService;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.ServerSocket;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(IOUtils.class)
 public class PrinterServiceTest {
 
     private PrinterService printerService;
@@ -143,4 +157,59 @@ public class PrinterServiceTest {
         assertNull(printerService.getDefaultPrinter(location, Printer.Type.LABEL));
     }
 
+    @Test
+    public void shouldPrintToSocket() throws IOException {
+
+        mockStatic(IOUtils.class);
+
+        Thread socketListener = createListener();
+        socketListener.start();
+
+        Printer printer = new Printer();
+        printer.setIpAddress("127.0.0.1") ;
+        printer.setPort("9100");
+
+        String testData = "test data";
+
+        assertTrue(printerService.printViaSocket(testData, printer, "UTF-8"));
+
+        verifyStatic();
+        IOUtils.write(eq(testData), any(OutputStream.class), eq("UTF-8"));
+    }
+
+    @Test
+    public void shouldPrintToSocketUsingWindowsEncoding() throws IOException {
+
+        mockStatic(IOUtils.class);
+
+        Thread socketListener = createListener();
+        socketListener.start();
+
+        Printer printer = new Printer();
+        printer.setIpAddress("127.0.0.1") ;
+        printer.setPort("9100");
+
+        String testData = "test data";
+
+        assertTrue(printerService.printViaSocket(testData, printer, "Windows-1252"));
+
+        verifyStatic();
+        IOUtils.write(eq(testData.getBytes("Windows-1252")), any(OutputStream.class));
+    }
+
+    private Thread createListener() {
+        return new Thread( new Runnable() {
+            public void run(){
+                try {
+                    ServerSocket listener = new ServerSocket(9100);
+                    listener.setSoTimeout(2000);
+                    listener.accept();
+                }
+                catch (Exception e) {
+                }
+            }
+        });
+    }
 }
+
+

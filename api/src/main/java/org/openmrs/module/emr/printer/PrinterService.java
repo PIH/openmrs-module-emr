@@ -108,4 +108,24 @@ public interface PrinterService extends OpenmrsService {
     @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
     boolean isNameAllocatedToAnotherPrinter(Printer printer);
 
+    /**
+     * Prints the string data to the default printer of the specified type
+     * at the specific location via socket
+     *
+     * @param data
+     * @param location
+     * @return true/false whether the data was successfully send to the printer
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_ACCESS_PRINTERS)
+    boolean printViaSocket(String data, Printer.Type type, Location location, String encoding);
+
+    /**
+     * Prints the string data to the specified printer
+     *
+     * @param data
+     * @param printer
+     * @return true/false whether the data was successfully send to the printer
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PRINTERS_ACCESS_PRINTERS)
+    boolean printViaSocket(String data, Printer printer, String encoding);
 }

@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Person;
+import org.openmrs.PersonAddress;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveTest {
@@ -448,6 +450,27 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
         PaperRecordRequest retrievedRequest = paperRecordService.getPaperRecordRequestById(id);
         Assert.assertNotNull(retrievedRequest.getDateStatusChanged());
+    }
 
+    @Test
+    public void testPrintPaperRecordLabel() throws Exception {
+
+        executeDataSet("printerServiceComponentTestDataset.xml");
+
+        Patient patient = patientService.getPatient(2) ;
+
+        // remove the address associated with this patient, so that we can avoid having to configure the Address template
+        // (which isn't what we are looking to test here anyhow)
+        patient.removeAddress(patient.getPersonAddress());
+
+        PaperRecordRequest request = new PaperRecordRequest();
+        request.setIdentifier("123");
+        request.setPatient(patient);
+
+        Location location = Context.getLocationService().getLocation(3);
+
+        // this won't actually print, since no printer configured, but should return false without failing
+        Boolean result = paperRecordService.printPaperRecordLabel(request, location);
+        Assert.assertFalse(result);
     }
 }

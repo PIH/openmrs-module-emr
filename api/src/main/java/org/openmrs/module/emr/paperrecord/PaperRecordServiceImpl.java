@@ -29,6 +29,8 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.paperrecord.db.PaperRecordRequestDAO;
+import org.openmrs.module.emr.printer.Printer;
+import org.openmrs.module.emr.printer.PrinterService;
 import org.openmrs.module.emr.utils.GeneralUtils;
 import org.openmrs.module.idgen.service.IdentifierSourceService;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +56,11 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
     private IdentifierSourceService identifierSourceService;
 
+    private PrinterService printerService;
+
+    private PaperRecordLabelTemplate paperRecordLabelTemplate;
+
+
     public void setPaperRecordRequestDAO(PaperRecordRequestDAO paperRecordRequestDAO) {
         this.paperRecordRequestDAO = paperRecordRequestDAO;
     }
@@ -74,7 +81,15 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         this.patientService = patientService;
     }
 
-	@Override
+    public void setPrinterService(PrinterService printerService) {
+        this.printerService = printerService;
+    }
+
+    public void setPaperRecordLabelTemplate(PaperRecordLabelTemplate paperRecordLabelTemplate) {
+        this.paperRecordLabelTemplate = paperRecordLabelTemplate;
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public PaperRecordRequest getPaperRecordRequestById(Integer id) {
         return paperRecordRequestDAO.getById(id);
@@ -141,6 +156,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     }
 
     @Override
+    @Transactional
     public PaperRecordRequest savePaperRecordRequest(PaperRecordRequest paperRecordRequest) {
 	    PaperRecordRequest request =null;
     	if(paperRecordRequest!=null){
@@ -227,6 +243,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PaperRecordRequest getPendingPaperRecordRequestByIdentifier(String identifier) {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
         List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(Arrays.asList(Status.OPEN, Status.ASSIGNED_TO_PULL, Status.ASSIGNED_TO_CREATE), null, null, identifier, null);
@@ -245,6 +262,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PaperRecordRequest getSentPaperRecordRequestByIdentifier(String identifier) {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
         List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(Status.SENT), null, null, identifier, null);
@@ -262,10 +280,18 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     }
 
     @Override
+    @Transactional
     public void markPaperRequestRequestAsSent(PaperRecordRequest request) {
         // I don't think we really need to do any verification here
         request.updateStatus(Status.SENT);
         savePaperRecordRequest(request);
+    }
+
+    @Override
+    public Boolean printPaperRecordLabel(PaperRecordRequest request, Location location) {
+        String data = paperRecordLabelTemplate.generateLabel(request);
+        String encoding = paperRecordLabelTemplate.getEncoding();
+        return printerService.printViaSocket(data, Printer.Type.LABEL, location, encoding);
     }
 
     // leaving this method as public so that it can be tested by integration test in mirebalais module

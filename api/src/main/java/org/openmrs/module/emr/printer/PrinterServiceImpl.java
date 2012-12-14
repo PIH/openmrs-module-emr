@@ -14,6 +14,9 @@
 
 package org.openmrs.module.emr.printer;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.LocationAttribute;
 import org.openmrs.LocationAttributeType;
@@ -22,11 +25,18 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.printer.db.PrinterDAO;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.List;
 
 import static org.openmrs.module.emr.EmrConstants.LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER;
 
 public class PrinterServiceImpl extends BaseOpenmrsService implements PrinterService  {
+
+    private final Log log = LogFactory.getLog(getClass());
 
     private PrinterDAO printerDAO;
 
@@ -117,6 +127,51 @@ public class PrinterServiceImpl extends BaseOpenmrsService implements PrinterSer
     @Transactional(readOnly = true)
     public boolean isNameAllocatedToAnotherPrinter(Printer printer) {
         return printerDAO.isNameAllocatedToAnotherPrinter(printer);
+    }
+
+    @Override
+    public boolean printViaSocket(String data, Printer.Type type, Location location, String encoding) {
+        Printer printer = getDefaultPrinter(location, type);
+        return printViaSocket(data, printer, encoding);
+    }
+
+    @Override
+    public boolean printViaSocket(String data, Printer printer, String encoding) {
+
+        Socket socket = null;
+        // Create a socket with a timeout
+        try {
+            InetAddress addr = InetAddress.getByName(printer.getIpAddress());
+            SocketAddress sockaddr = new InetSocketAddress(addr, Integer.valueOf(printer.getPort()));
+
+            // Create an unbound socket
+            socket = new Socket();
+
+            // This method will block no more than timeoutMs.
+            // If the timeout occurs, SocketTimeoutException is thrown.
+            int timeoutMs = 500;   // 500ms
+            socket.connect(sockaddr, timeoutMs);
+
+            if (encoding.equals("Windows-1252")) {
+                IOUtils.write(data.toString().getBytes("Windows-1252"), socket.getOutputStream());
+            }
+            else {
+                IOUtils.write(data.toString(), socket.getOutputStream(), encoding);
+            }
+
+            return true;
+        }
+        catch (Exception e) {
+            log.error("Unable to print to printer " + printer.getName(), e);
+            return false;
+        }
+        finally{
+            try {
+                socket.close();
+            } catch (IOException e) {
+                log.error("failed to close the socket to printer " + printer.getName(), e);
+            }
+        }
     }
 
     private LocationAttributeType getLocationAttributeTypeDefaultPrinter(Printer.Type type) {

@@ -21,13 +21,16 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Person;
+import org.openmrs.PersonAddress;
 import org.openmrs.Program;
 import org.openmrs.ProgramWorkflow;
 import org.openmrs.ProgramWorkflowState;
 import org.openmrs.User;
+import org.openmrs.api.APIException;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 public class GeneralUtils {
@@ -562,6 +565,22 @@ public class GeneralUtils {
         }
 
         return true;
+    }
+
+    /**
+     * Gets the specified property (referenced by string) off of a person address
+     * Returns null if the underlying property is null
+     */
+    public static String getPersonAddressProperty(PersonAddress address, String property) {
+        try {
+            Class<?> personAddressClass = Context.loadClass("org.openmrs.PersonAddress");
+            Method getPersonAddressProperty;
+            getPersonAddressProperty = personAddressClass.getMethod("get" + property.substring(0,1).toUpperCase() + property.substring(1));
+            return (String) getPersonAddressProperty.invoke(address);
+        }
+        catch (Exception e) {
+            throw new APIException("Invalid property name " + property + " passed to getPersonAddressProperty");
+        }
     }
 
 }

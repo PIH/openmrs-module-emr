@@ -123,7 +123,7 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
     }
 
     @Test
-    public void shouldSetDefaultLabelPrinterForLocation() {
+    public void testShouldSetDefaultLabelPrinterForLocation() {
 
         Location location = locationService.getLocation(2);
         Printer printer = printerService.getPrinterById(1);
@@ -135,7 +135,7 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
     }
 
     @Test
-    public void shouldGetDefaultLabelPrinterForLocation() {
+    public void testShouldGetDefaultLabelPrinterForLocation() {
 
         Location location = locationService.getLocation(3);
         Printer printer = printerService.getPrinterById(1);  // this has been set as the default printer for location 3 in dataset
@@ -146,7 +146,7 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
     }
 
     @Test
-    public void shouldUpdateDefaultLabelPrinterForLocation() {
+    public void testShouldUpdateDefaultLabelPrinterForLocation() {
 
         Location location = locationService.getLocation(3); // a default printer for location 3 in has been set in the dataset
 
@@ -165,7 +165,7 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
 
 
     @Test
-    public void shouldRemoveDefaultLabelPrinterForLocation() {
+    public void testShouldRemoveDefaultLabelPrinterForLocation() {
         Location location = locationService.getLocation(3); // a default printer for location 3 in has been set in the dataset
         printerService.setDefaultPrinter(location, Printer.Type.LABEL, null);
 
@@ -174,7 +174,7 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
     }
 
     @Test(expected = APIException.class)
-    public void shouldNotAllowMismatchedLocationAttributeTypeandPrinterType() {
+    public void testShouldNotAllowMismatchedLocationAttributeTypeAndPrinterType() {
 
         Location location = locationService.getLocation(2);
 
@@ -195,7 +195,7 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
     }
 
     @Test
-    public void shouldGetPrinterByType() {
+    public void testShouldGetPrinterByType() {
 
         List<Printer> printers = printerService.getPrintersByType(Printer.Type.LABEL);
         Assert.assertEquals(1, printers.size());
