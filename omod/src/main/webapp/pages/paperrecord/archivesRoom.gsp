@@ -103,7 +103,7 @@
         <div id="tab-create">
             <span id="createrequest">
                 <div class="box-align">
-                    <h2 id="create_requests">${ ui.message("emr.archivesRoom.openCreateRequests.label") }</h2>
+                    <h2 id="create_requests">${ ui.message("emr.archivesRoom.newRequests.label") }</h2>
 
                     <table id="create_requests_table" class="dataTable">
                         <thead>
