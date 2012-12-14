@@ -131,7 +131,7 @@
                             <input type="hidden" name="requestId" data-bind="value: requestId"/>
                         </span>
                         <input type="hidden" name="activeTab" value="create">
-                        <button id="next" data-bind="visible: isValid()"><i class="icon-chevron-right"></i> <span>${ ui.message("emr.archivesRoom.createSelected") }</span></button>
+                        <button id="next" data-bind="css: { disabled: !isValid() }, enable: isValid()"><i class="icon-chevron-right"></i> <span>${ ui.message("emr.archivesRoom.createSelected") }</span></button>
                     </form>
                 </div>
             </span>
