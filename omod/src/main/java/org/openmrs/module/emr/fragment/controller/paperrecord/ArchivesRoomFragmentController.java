@@ -23,7 +23,12 @@ import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 import org.openmrs.ui.framework.fragment.action.SuccessResult;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 public class ArchivesRoomFragmentController {
+
+    DateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
     public FragmentActionResult markPaperRecordRequestAsSent(@RequestParam(value = "identifier", required = true) String identifier,
                                                              @SpringBean("paperRecordService") PaperRecordService paperRecordService,
@@ -48,7 +53,8 @@ public class ArchivesRoomFragmentController {
             paperRecordService.markPaperRequestRequestAsSent(paperRecordRequest);
             return new SuccessResult(ui.message("emr.archivesRoom.recordFound.message") + "<br/><br/>"
                     + ui.message("emr.archivesRoom.recordNumber.label") + ": " + ui.format(identifier + "<br/><br/>"
-                    + ui.message("emr.archivesRoom.requestedBy.label") + ": " + ui.format(paperRecordRequest.getRequestLocation())));
+                    + ui.message("emr.archivesRoom.requestedBy.label") + ": " + ui.format(paperRecordRequest.getRequestLocation() + "<br/><br/>"
+                    + ui.message("emr.archviesRoom.requestedAt.label") + ": " + timeFormat.format(paperRecordRequest.getDateCreated()))));
         }
 
     }
