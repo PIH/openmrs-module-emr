@@ -24,6 +24,8 @@ import org.openmrs.ui.framework.fragment.action.FailureResult;
 import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 import org.openmrs.ui.framework.fragment.action.SuccessResult;
 
+import java.util.Date;
+
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
@@ -89,6 +91,7 @@ public class ArchivesRoomFragmentControllerTest {
         Location location = new Location();
         location.setName("Test location");
         request.setRequestLocation(location);
+        request.setDateCreated(new Date());
 
         when(paperRecordService.getPendingPaperRecordRequestByIdentifier(eq("123"))).thenReturn(request);
 
