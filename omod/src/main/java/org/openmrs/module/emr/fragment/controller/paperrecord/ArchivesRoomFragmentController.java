@@ -15,8 +15,10 @@
 package org.openmrs.module.emr.fragment.controller.paperrecord;
 
 import org.openmrs.module.emr.EmrContext;
+import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 import org.openmrs.module.emr.paperrecord.PaperRecordService;
+import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.action.FailureResult;
@@ -26,10 +28,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ArchivesRoomFragmentController {
 
     DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
+    public List<SimpleObject> getAssignedRecordsToPull(@SpringBean("paperRecordService") PaperRecordService paperRecordService,
+                                                       @SpringBean("emrProperties") EmrProperties emrProperties,
+                                                       UiUtils ui) {
+
+        // TODO: when we have multiple archives rooms this method will have to operate by location as well
+        List<PaperRecordRequest> requests = paperRecordService.getAssignedPaperRecordRequestsToPull();
+        List<SimpleObject> results = new ArrayList<SimpleObject>();
+
+        if (requests != null && requests.size() > 0) {
+            results = convertPaperRecordRequestsToSimpleObjects(requests, emrProperties, ui);
+        }
+
+        return results;
+    }
 
     public FragmentActionResult markPaperRecordRequestAsSent(@RequestParam(value = "identifier", required = true) String identifier,
                                                              @SpringBean("paperRecordService") PaperRecordService paperRecordService,
@@ -73,6 +92,24 @@ public class ArchivesRoomFragmentController {
             return new FailureResult("unable to print paper record label");
         }
 
+    }
+
+    private List<SimpleObject> convertPaperRecordRequestsToSimpleObjects(List<PaperRecordRequest> requests, EmrProperties emrProperties, UiUtils ui) {
+
+        List<SimpleObject> results = new ArrayList<SimpleObject>();
+
+        for (PaperRecordRequest request : requests) {
+            SimpleObject result = SimpleObject.fromObject(request, ui, "requestId", "patient", "identifier", "requestLocation");
+
+            // manually add the date and patient identifier
+            result.put("dateCreated", timeFormat.format(request.getDateCreated()));
+            result.put("dateCreatedSortable", request.getDateCreated()) ;
+            result.put("patientIdentifier", ui.format(request.getPatient().getPatientIdentifier(emrProperties.getPrimaryIdentifierType()).getIdentifier()));
+
+            results.add(result);
+        }
+
+        return results;
     }
 
 }

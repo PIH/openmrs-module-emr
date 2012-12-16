@@ -25,7 +25,6 @@
 
         var pullRequestsViewModel = PullRequestsViewModel(recordsToPull);
         ko.applyBindings(pullRequestsViewModel, document.getElementById('pullrequest'));
-        //pullRequestsViewModel.selectNumber(10);
 
         var recordsToCreate = [];
         <% openRequestsToCreate.each { %>
@@ -72,10 +71,13 @@
                     type: 'POST'
                 })
                         .success(function(data) {
+                            // clear out the input box
                             jq('#mark-as-pulled-identifier').val('');
-                            var options = [];
-                            options.close = function () { window.location.href = '${ ui.pageLink('emr','paperrecord/archivesRoom', [ activeTab : 'pull' ]) }'; }
-                            emr.successAlert(data.message, options);
+
+                            // reload the list to pull
+                            assignedPullRequestsViewModel.load('${ ui.actionLink('emr','paperrecord/archivesRoom','getAssignedRecordsToPull') }');
+
+                            emr.successAlert(data.message);
                         })
                         .error(function(xhr, status, err) {
                             jq('#mark-as-pulled-identifier').val('');

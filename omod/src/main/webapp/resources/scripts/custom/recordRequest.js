@@ -109,6 +109,29 @@ function AssignedPullRequestsViewModel(assignedRecordsToPull) {
     var api = {};
     api.assignedRecordsToPull = ko.observableArray(assignedRecordsToPull);
 
+    api.load = function (url) {
+
+        // reload via ajax
+        jQuery.getJSON(url)
+            .success(function(data) {
+
+                // remove any existing entries
+                api.assignedRecordsToPull.removeAll();
+
+                // create the new list
+                jQuery.each(data, function(index, request) {
+                    api.assignedRecordsToPull.push(RecordRequestModel(request.requestId, request.patient,
+                        request.patientIdentifier, request.identifier, request.requestLocation, request.dateCreated,
+                        request.dateCreatedSortable));
+                });
+
+            })
+            .error(function(xhr, status, err) {
+                emr.errorAlert(jq.parseJSON(xhr.responseText).globalErrors[0]);
+            })
+
+    }
+
     return api;
 }
 
