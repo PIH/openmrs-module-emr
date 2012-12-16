@@ -55,7 +55,7 @@ public class ArchivesRoomFragmentController {
             return new SuccessResult(ui.message("emr.archivesRoom.recordFound.message") + "<br/><br/>"
                     + ui.message("emr.archivesRoom.recordNumber.label") + ": " + ui.format(identifier + "<br/><br/>"
                     + ui.message("emr.archivesRoom.requestedBy.label") + ": " + ui.format(paperRecordRequest.getRequestLocation() + "<br/><br/>"
-                    + ui.message("emr.archviesRoom.requestedAt.label") + ": " + timeFormat.format(paperRecordRequest.getDateCreated()))));
+                    + ui.message("emr.archivesRoom.requestedAt.label") + ": " + timeFormat.format(paperRecordRequest.getDateCreated()))));
         }
 
     }
