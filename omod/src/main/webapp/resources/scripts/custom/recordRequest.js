@@ -133,7 +133,12 @@ function AssignedPullRequestsViewModel(assignedRecordsToPull) {
     }
 
     api.printLabel = function (request) {
-        jQuery.post(emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "printLabel", { requestId: request.requestId }))
+
+        jQuery.ajax({
+            url: emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "printLabel", { requestId: request.requestId }),
+            dataType: 'json',
+            type: 'POST'
+        })
             .success(function(data) {
                 emr.successMessage(data.message);
             })
