@@ -61,7 +61,7 @@
 
             e.preventDefault();
 
-            var identifier = jq('#mark-as-pulled-identifier').val();
+            var identifier = jq.trim(jq('#mark-as-pulled-identifier').val());
 
             if (identifier) {
                 jq.ajax({
