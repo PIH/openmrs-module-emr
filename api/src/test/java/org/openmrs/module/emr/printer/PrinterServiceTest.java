@@ -204,6 +204,7 @@ public class PrinterServiceTest {
                     ServerSocket listener = new ServerSocket(9100);
                     listener.setSoTimeout(2000);
                     listener.accept();
+                    listener.close();
                 }
                 catch (Exception e) {
                 }
