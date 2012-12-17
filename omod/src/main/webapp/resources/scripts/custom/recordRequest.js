@@ -126,7 +126,9 @@ function AssignedPullRequestsViewModel(assignedRecordsToPull) {
                 });
 
             })
-            .error(emr.handleError(xhr));
+            .error(function(xhr) {
+                emr.handleError(xhr);
+            });
 
     }
 
@@ -140,9 +142,9 @@ function AssignedPullRequestsViewModel(assignedRecordsToPull) {
             .success(function(data) {
                 emr.successMessage(data.message);
             })
-            .error(function(xhr, status, err) {
-                emr.errorAlert(jq.parseJSON(xhr.responseText).globalErrors[0]);
-            })
+            .error(function(xhr) {
+                emr.handleError(xhr);
+            });
     }
 
     return api;
@@ -151,6 +153,21 @@ function AssignedPullRequestsViewModel(assignedRecordsToPull) {
 function AssignedCreateRequestsViewModel(assignedRecordsToCreate) {
     var api = {};
     api.assignedRecordsToCreate = ko.observableArray(assignedRecordsToCreate);
+
+    api.printLabel = function (request) {
+
+        jQuery.ajax({
+            url: emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "printLabel", { requestId: request.requestId }),
+            dataType: 'json',
+            type: 'POST'
+        })
+            .success(function(data) {
+                emr.successMessage(data.message);
+            })
+            .error(function(xhr) {
+                emr.handleError(xhr);
+            });
+    }
 
     return api;
 }

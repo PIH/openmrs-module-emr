@@ -146,17 +146,19 @@
                     <thead>
                     <tr>
                         <th>${ ui.message("emr.person.name") }</th>
-                        <th>${ ui.message("emr.patient.identifier") }</th>
+                        <th>${ ui.message("emr.patient.paperRecordIdentifier") }</th>
                         <th>${ ui.message("emr.location") }</th>
                         <th>${ ui.message("emr.time") }</th>
+                        <th>&nbsp;</th>
                     </tr>
                     </thead>
                     <tbody data-bind="foreach: assignedRecordsToCreate">
                     <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), hover: hovered(), even: (\$index() % 2 == 0) }, event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordsToBeCreated" >
                         <td><span data-bind="text: patientName"></span></td>
-                        <td><span data-bind="text: patientId"></span></td>
+                        <td><span data-bind="text: dossierNumber"></span></td>
                         <td><span data-bind="text: sendToLocation"></span></td>
                         <td><span data-bind="text: timeRequested"></span></td>
+                        <td><button data-bind="click: \$root.printLabel" class="button"><i class="icon-print"></i> </button></td>
                     </tr>
                     </tbody>
                 </table>
