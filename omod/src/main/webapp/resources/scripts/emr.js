@@ -101,6 +101,15 @@ var emr = (function($) {
                 sticky: true,
                 text:  message,
                 close: options && options.close ? options.close : null } )
+        },
+
+        handleError: function(xhr) {
+            if (xhr.status == 403) {
+                window.location = '/' + OPENMRS_CONTEXT_PATH;
+            }
+            else {
+                emr.errorAlert(jq.parseJSON(xhr.responseText).globalErrors[0]);
+            }
         }
 
     };

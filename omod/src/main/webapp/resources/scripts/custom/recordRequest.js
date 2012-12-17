@@ -126,9 +126,7 @@ function AssignedPullRequestsViewModel(assignedRecordsToPull) {
                 });
 
             })
-            .error(function(xhr, status, err) {
-                emr.errorAlert(jq.parseJSON(xhr.responseText).globalErrors[0]);
-            })
+            .error(emr.handleError(xhr));
 
     }
 

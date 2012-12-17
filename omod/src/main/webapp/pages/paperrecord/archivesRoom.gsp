@@ -81,7 +81,7 @@
                         })
                         .error(function(xhr, status, err) {
                             jq('#mark-as-pulled-identifier').val('');
-                            emr.errorAlert(jq.parseJSON(xhr.responseText).globalErrors[0]);
+                            emr.handleError(xhr);
                         })
             }
         });
