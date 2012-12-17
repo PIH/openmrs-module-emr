@@ -219,7 +219,7 @@
                             <td><span data-bind="text: dossierNumber"></span></td>
                             <td><span data-bind="text: sendToLocation"></span></td>
                             <td><span data-bind="text: timeRequested"></span></td>
-                            <td><button>${ ui.message('emr.archivesRoom.reprint.button') }</button></td>
+                            <td><button class="print"><i class="icon-print"></i> </button></td>
                         </tr>
                         </tbody>
                     </table>
