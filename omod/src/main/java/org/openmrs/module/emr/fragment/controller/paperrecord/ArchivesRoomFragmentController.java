@@ -35,6 +35,7 @@ public class ArchivesRoomFragmentController {
 
     DateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
+
     public List<SimpleObject> getAssignedRecordsToPull(@SpringBean("paperRecordService") PaperRecordService paperRecordService,
                                                        @SpringBean("emrProperties") EmrProperties emrProperties,
                                                        UiUtils ui) {
@@ -79,17 +80,25 @@ public class ArchivesRoomFragmentController {
 
     }
 
-    public FragmentActionResult reprintLabel(@RequestParam("requestId") PaperRecordRequest request,
+    public FragmentActionResult printLabel(@RequestParam("requestId") PaperRecordRequest request,
                                              @SpringBean("paperRecordService") PaperRecordService paperRecordService,
-                                             EmrContext emrContext) {
+                                             EmrContext emrContext,
+                                             UiUtils ui) {
 
         Boolean result = paperRecordService.printPaperRecordLabel(request, emrContext.getSessionLocation());
 
-        if (result) {
-            return new SuccessResult();
+        try {
+            if (result) {
+                return new SuccessResult(ui.message("emr.archivesRoom.printedLabel.message", request.getIdentifier()));
+            }
+            else {
+                return new FailureResult(ui.message("emr.archivesRoom.error.unableToPrintLabel"));
+            }
+
         }
-        else {
-            return new FailureResult("unable to print paper record label");
+        catch (Exception e) {
+            return new FailureResult(ui.message("emr.archivesRoom.error.unableToPrintLabel"));
+
         }
 
     }

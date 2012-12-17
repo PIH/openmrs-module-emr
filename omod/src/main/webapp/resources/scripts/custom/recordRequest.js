@@ -132,6 +132,16 @@ function AssignedPullRequestsViewModel(assignedRecordsToPull) {
 
     }
 
+    api.printLabel = function (request) {
+        jQuery.post(emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "printLabel", { requestId: request.requestId }))
+            .success(function(data) {
+                emr.successMessage(data.message);
+            })
+            .error(function(xhr, status, err) {
+                emr.errorAlert(jq.parseJSON(xhr.responseText).globalErrors[0]);
+            })
+    }
+
     return api;
 }
 
