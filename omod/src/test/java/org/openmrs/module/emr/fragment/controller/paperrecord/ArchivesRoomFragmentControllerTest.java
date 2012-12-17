@@ -199,4 +199,90 @@ public class ArchivesRoomFragmentControllerTest {
         assertThat((String) result2.get("patientIdentifier"), is("763"));
         assertThat((String) result2.get("dateCreated"), is("12:11"));
     }
+
+    @Test
+    public void testControllerShouldReturnAssignedRequestsToCreate() throws Exception {
+
+        ArchivesRoomFragmentController controller = new ArchivesRoomFragmentController();
+
+        UiUtils ui = new TestUiUtils();
+        EmrProperties emrProperties = mock(EmrProperties.class);
+        PaperRecordService paperRecordService = mock(PaperRecordService.class);
+
+        // create a couple sample paper record request to return
+        PatientIdentifierType patientIdentifierType = new PatientIdentifierType();
+
+        Patient patient = new Patient();
+        PersonName name = new PersonName();
+        name.setFamilyName("Jones");
+        name.setGivenName("Tom");
+        patient.addName(name);
+
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setIdentifier("987");
+        patientIdentifier.setIdentifierType(patientIdentifierType);
+        patient.addIdentifier(patientIdentifier);
+
+        Patient patient2 = new Patient();
+        name = new PersonName();
+        name.setFamilyName("Wallace");
+        name.setGivenName("Mike");
+        patient2.addName(name);
+
+        patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setIdentifier("763");
+        patientIdentifier.setIdentifierType(patientIdentifierType);
+        patient2.addIdentifier(patientIdentifier);
+
+        Location location = new Location();
+        location.setName("Test location");
+
+        Location location2 = new Location();
+        location2.setName("Another location");
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2012, 2, 22, 11, 10);
+
+        PaperRecordRequest request = new PaperRecordRequest();
+        request.setId(1);
+        request.setIdentifier("123");
+        request.setRequestLocation(location);
+        request.setDateCreated(calendar.getTime());
+        request.setPatient(patient);
+
+        PaperRecordRequest request2 = new PaperRecordRequest();
+        request2.setId(2);
+        request2.setIdentifier("ABC");
+        request2.setRequestLocation(location2);
+        calendar.set(2012,2,22,12, 11);
+        request2.setDateCreated(calendar.getTime());
+        request2.setPatient(patient2);
+
+        List<PaperRecordRequest> requests = new ArrayList<PaperRecordRequest>();
+        requests.add(request);
+        requests.add(request2);
+
+        when(paperRecordService.getAssignedPaperRecordRequestsToCreate()).thenReturn(requests);
+        when(emrProperties.getPrimaryIdentifierType()).thenReturn(patientIdentifierType);
+
+        List<SimpleObject> results = controller.getAssignedRecordsToCreate(paperRecordService, emrProperties, ui);
+
+        assertThat(results.size(), is(2));
+
+        SimpleObject result = results.get(0);
+        assertThat((String) result.get("requestId"), is("1"));
+        assertThat((String) result.get("requestLocation"), is("Test location"));
+        assertThat((String) result.get("identifier"), is("123"));
+        assertThat((String) result.get("patient"), is("Tom Jones"));
+        assertThat((String) result.get("patientIdentifier"), is("987"));
+        assertThat((String) result.get("dateCreated"), is("11:10"));
+
+        SimpleObject result2 = results.get(1);
+        assertThat((String) result2.get("requestId"), is("2"));
+        assertThat((String) result2.get("requestLocation"), is("Another location"));
+        assertThat((String) result2.get("identifier"), is("ABC"));
+        assertThat((String) result2.get("patient"), is("Mike Wallace"));
+        assertThat((String) result2.get("patientIdentifier"), is("763"));
+        assertThat((String) result2.get("dateCreated"), is("12:11"));
+    }
 }

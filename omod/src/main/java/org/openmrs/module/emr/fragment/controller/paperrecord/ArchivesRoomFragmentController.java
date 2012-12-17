@@ -51,6 +51,21 @@ public class ArchivesRoomFragmentController {
         return results;
     }
 
+    public List<SimpleObject> getAssignedRecordsToCreate(@SpringBean("paperRecordService") PaperRecordService paperRecordService,
+                                                         @SpringBean("emrProperties") EmrProperties emrProperties,
+                                                         UiUtils ui) {
+
+        // TODO: when we have multiple archives rooms this method will have to operate by location as well
+        List<PaperRecordRequest> requests = paperRecordService.getAssignedPaperRecordRequestsToCreate();
+        List<SimpleObject> results = new ArrayList<SimpleObject>();
+
+        if (requests != null && requests.size() > 0) {
+            results = convertPaperRecordRequestsToSimpleObjects(requests, emrProperties, ui);
+        }
+
+        return results;
+    }
+
     public FragmentActionResult markPaperRecordRequestAsSent(@RequestParam(value = "identifier", required = true) String identifier,
                                                              @SpringBean("paperRecordService") PaperRecordService paperRecordService,
                                                              UiUtils ui) {

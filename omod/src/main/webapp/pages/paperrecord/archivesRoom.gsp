@@ -57,11 +57,11 @@
         ko.applyBindings(assignedCreateRequestsViewModel, document.getElementById('assignedcreaterequest'));
 
         // handle entering bar codes
-        jq("#mark-as-pulled").submit(function (e) {
+        jq(".mark-as-pulled").submit(function (e) {
 
             e.preventDefault();
 
-            var identifier = jq.trim(jq('#mark-as-pulled-identifier').val());
+            var identifier = jq.trim(jq(this).children('.mark-as-pulled-identifier').val());
 
             if (identifier) {
                 jq.ajax({
@@ -72,24 +72,25 @@
                 })
                         .success(function(data) {
                             // clear out the input box
-                            jq('#mark-as-pulled-identifier').val('');
+                            jq('.mark-as-pulled-identifier:visible').val('');
 
-                            // reload the list to pull
+                            // reload the lists to pull and create
+                            assignedCreateRequestsViewModel.load();
                             assignedPullRequestsViewModel.load();
 
                             emr.successAlert(data.message);
                         })
                         .error(function(xhr, status, err) {
-                            jq('#mark-as-pulled-identifier').val('');
+                            jq('.mark-as-pulled-identifier:visible').val('');
                             emr.handleError(xhr);
                         })
             }
         });
 
-        // if an alphanumeric character is pressed, send focus to the mark-as-pulled-identifier input box
+        // if an alphanumeric character is pressed, send focus to the appropriate mark-as-pulled-identifier input box
         jq(document).keydown(function(event) {
             if (event.which > 47 && event.which < 91) {
-                jq("#mark-as-pulled-identifier").focus();
+                jq(".mark-as-pulled-identifier:visible").focus();
             }
         })
 
@@ -162,6 +163,17 @@
                     </tr>
                     </tbody>
                 </table>
+                <div class="sending-records">
+                    <h2>${ ui.message("emr.archivesRoom.sendingRecords.label") }</h2>
+
+                    <div id="scan-create-records" class="container">
+                        ${ ui.message("emr.archivesRoom.typeOrIdentifyBarCode.label") }
+                        <br/>
+                        <form class="mark-as-pulled">
+                            <input type="text" size="40" name="mark-as-pulled-identifier" class="mark-as-pulled-identifier"/>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -231,8 +243,8 @@
                         <div id="scan-pull-records" class="container">
                             ${ ui.message("emr.archivesRoom.typeOrIdentifyBarCode.label") }
                             <br/>
-                            <form id="mark-as-pulled">
-                                <input type="text" size="40" id="mark-as-pulled-identifier" name="mark-as-pulled-identifier"/>
+                            <form class="mark-as-pulled">
+                                <input type="text" size="40" name="mark-as-pulled-identifier" class="mark-as-pulled-identifier"/>
                             </form>
                         </div>
                     </div>
