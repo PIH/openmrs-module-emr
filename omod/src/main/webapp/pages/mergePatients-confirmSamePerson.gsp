@@ -96,7 +96,7 @@
             <div class="row name">
                 <h3>${ui.message("emr.mergePatients.section.names")}</h3>
                 <% patient1.patient.names.each { %>
-                   <div>${it}</div>
+                    <div>${it.familyName}, ${it.givenName}</div>
                 <% } %>
             </div>
             <div class="row">
@@ -155,7 +155,7 @@
             <div class="row name">
                 <h3>${ui.message("emr.mergePatients.section.names")}</h3>
                 <% patient2.patient.names.each { %>
-                <div>${it}</div>
+                    <div>${it.familyName}, ${it.givenName}</div>
                 <% } %>
             </div>
             <div class="row">
