@@ -38,7 +38,7 @@ import java.util.Date;
  *  Within a single location, all the record identifiers should be unique, and a patient should have no more than
  *  one record (since record identifiers are assigned by the EMR, and not manually, we should be able to prevent
  *  the creation of multiple records for the same patient at the same location--BUT we will need to handle the
- *  potential to merging of two patients, each with there own paper record).
+ *  potential to merging of two patients, each with their own paper record).
  *
  *  Requests for paper records are modeled and tracked via PaperRecordRequest domain object.  Requests are made
  *  via the PaperRecordService API.  A request is made for a certain Patient's record at a specified medical record
@@ -46,7 +46,7 @@ import java.util.Date;
  *
  *  OPEN--the initial state of a request after it is placed
  *
- *  ASSIGNED_TO_PULL, ASSIGNED_TO_CREATE--after a archivist has claimed responsibility for a record, it is moved
+ *  ASSIGNED_TO_PULL, ASSIGNED_TO_CREATE--after an archivist has claimed responsibility for a record, it is moved
  *  into one of these two states... if the system determines that no record for the specified patient exists at the
  *  specified location, the request transitions into the "CREATE" state and a new record identifier is assigned.
  *  Otherwise, the archivist is prompted with the record identifier of the record to retrieve, and the record
@@ -68,7 +68,7 @@ import java.util.Date;
  * the PaperRecordService that will have to be modified to support filtering by location in order to fully support
  * multiple locations. (These methods should be flagged with TO DOS referencings this point within the code)
  *
- * Also, although we currently don't specifically mandate that record identifiers across *all* locations, but we may
+ * Also, although we currently don't specifically mandate that record identifiers be unique across *all* locations, but we may
  * want to enforce this as we add additional locations, so that given a record number we can identify the patient
  * the record refers to without having to be in the context of a specific location.  (Since for storage and retrieval,
  * it is convenient for records to have sequential record identifiers, we could accomplish this via an alphanumeric
