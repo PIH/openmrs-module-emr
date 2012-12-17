@@ -112,7 +112,7 @@ function AssignedPullRequestsViewModel(assignedRecordsToPull) {
     api.load = function (url) {
 
         // reload via ajax
-        jQuery.getJSON(url)
+        jQuery.getJSON(emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "getAssignedRecordsToPull"))
             .success(function(data) {
 
                 // remove any existing entries

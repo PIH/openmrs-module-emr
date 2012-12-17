@@ -75,7 +75,7 @@
                             jq('#mark-as-pulled-identifier').val('');
 
                             // reload the list to pull
-                            assignedPullRequestsViewModel.load('${ ui.actionLink('emr','paperrecord/archivesRoom','getAssignedRecordsToPull') }');
+                            assignedPullRequestsViewModel.load();
 
                             emr.successAlert(data.message);
                         })
