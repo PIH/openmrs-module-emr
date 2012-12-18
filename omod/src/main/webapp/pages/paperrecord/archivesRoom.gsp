@@ -159,7 +159,7 @@
                         <td><span data-bind="text: dossierNumber"></span></td>
                         <td><span data-bind="text: sendToLocation"></span></td>
                         <td><span data-bind="text: timeRequested"></span></td>
-                        <td><button data-bind="click: \$root.printLabel" class="button"><i class="icon-print"></i> </button></td>
+                        <td><button data-bind="click: \$root.printLabel" class="print"><i class="icon-print"></i> </button></td>
                     </tr>
                     </tbody>
                 </table>
