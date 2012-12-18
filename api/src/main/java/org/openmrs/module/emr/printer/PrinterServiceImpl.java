@@ -150,7 +150,7 @@ public class PrinterServiceImpl extends BaseOpenmrsService implements PrinterSer
             SocketAddress sockaddr = new InetSocketAddress(addr, Integer.valueOf(printer.getPort()));
 
             // Create an unbound socket
-            socket = new Socket();
+            socket = createSocket();
 
             // This method will block no more than timeoutMs.
             // If the timeout occurs, SocketTimeoutException is thrown.
@@ -178,6 +178,12 @@ public class PrinterServiceImpl extends BaseOpenmrsService implements PrinterSer
             }
         }
     }
+
+    // do this is separate method so that we can override it for test purposes
+    protected Socket createSocket() {
+        return new Socket();
+    }
+
 
     private LocationAttributeType getLocationAttributeTypeDefaultPrinter(Printer.Type type) {
 
