@@ -207,7 +207,7 @@
                         <input type="hidden" name="requestId" data-bind="value: requestId"/>
                         <!-- /ko -->
                         <input type="hidden" name="activeTab" value="pull">
-                        <button id="nextPull" data-bind="css: { disabled: !isValid() }, enable: isValid()">
+                        <button id="nextPull" class="print" data-bind="css: { disabled: !isValid() }, enable: isValid()">
                             <i class="icon-chevron-right"></i> <span>${ ui.message("emr.archivesRoom.pullSelected") }</span>
                         </button>
                     </form>
@@ -233,7 +233,7 @@
                             <td><span data-bind="text: dossierNumber"></span></td>
                             <td><span data-bind="text: sendToLocation"></span></td>
                             <td><span data-bind="text: timeRequested"></span></td>
-                            <td><button data-bind="click: \$root.printLabel" class="button"><i class="icon-print"></i> </button></td>
+                            <td><button data-bind="click: \$root.printLabel" class="print"><i class="icon-print"></i> </button></td>
                         </tr>
                         </tbody>
                     </table>
