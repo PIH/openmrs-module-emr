@@ -31,7 +31,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
     <input type="hidden" name="requestedBy" value="${ currentProvider.id }"/>
 
     <div class="left-column">
-        ${ ui.includeFragment("emr", "field/textarea", [ label: ui.message("emr.order.indication"), formFieldName: "clinicalHistory", labelPosition: "top", rows: 5, cols: 40 ]) }
+        ${ ui.includeFragment("emr", "field/textarea", [ label: ui.message("emr.order.indication"), formFieldName: "clinicalHistory", labelPosition: "top", rows: 5, cols: 35 ]) }
     </div>
 
     <div class="right-column">
@@ -80,12 +80,10 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
     </div>
 
     <div id="bottom">
-        <button type="button" id="cancel" onclick="location.href = emr.pageLink('emr', 'patient', { patientId: <%= patient.id %> })">
-            <img src="${ ui.resourceLink("uilibrary", "images/close_32.png") }"/> <br/>
+        <button id="cancel" class="cancel" onclick="location.href = emr.pageLink('emr', 'patient', { patientId: <%= patient.id %> })">
             ${ ui.message("emr.cancel") }
         </button>
-        <button type="submit" id="next" data-bind="visible: isValid()">
-            <img src="${ ui.resourceLink("uilibrary", "images/arrow_right_32.png") }"/> <br/>
+        <button type="submit" class="confirm" id="next" data-bind="css: { disabled: !isValid() }, enable: isValid()">
             ${ ui.message("emr.next") }
         </button>
     </div>
