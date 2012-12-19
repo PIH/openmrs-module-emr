@@ -27,7 +27,8 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.messagesource.MessageSourceService;
-import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.paperrecord.db.PaperRecordMergeRequestDAO;
 import org.openmrs.module.emr.paperrecord.db.PaperRecordRequestDAO;
 import org.openmrs.module.emr.printer.Printer;
 import org.openmrs.module.emr.printer.PrinterService;
@@ -35,11 +36,11 @@ import org.openmrs.module.emr.utils.GeneralUtils;
 import org.openmrs.module.idgen.service.IdentifierSourceService;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import static org.openmrs.module.emr.paperrecord.PaperRecordRequest.PENDING_STATUSES;
 import static org.openmrs.module.emr.paperrecord.PaperRecordRequest.Status;
 
 public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperRecordService {
@@ -47,6 +48,8 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     private final Log log = LogFactory.getLog(getClass());
 
     private PaperRecordRequestDAO paperRecordRequestDAO;
+
+    private PaperRecordMergeRequestDAO paperRecordMergeRequestDAO;
 
     private AdministrationService administrationService;
 
@@ -58,11 +61,17 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
     private PrinterService printerService;
 
+    private EmrProperties emrProperties;
+
     private PaperRecordLabelTemplate paperRecordLabelTemplate;
 
 
     public void setPaperRecordRequestDAO(PaperRecordRequestDAO paperRecordRequestDAO) {
         this.paperRecordRequestDAO = paperRecordRequestDAO;
+    }
+
+    public void setPaperRecordMergeRequestDAO(PaperRecordMergeRequestDAO paperRecordMergeRequestDAO) {
+        this.paperRecordMergeRequestDAO = paperRecordMergeRequestDAO;
     }
 
     public void setMessageSourceService(MessageSourceService messageSourceService) {
@@ -83,6 +92,10 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
     public void setPrinterService(PrinterService printerService) {
         this.printerService = printerService;
+    }
+
+    public void setEmrProperties(EmrProperties emrProperties) {
+        this.emrProperties = emrProperties;
     }
 
     public void setPaperRecordLabelTemplate(PaperRecordLabelTemplate paperRecordLabelTemplate) {
@@ -116,24 +129,16 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
             throw new IllegalStateException("Request Location cannot be null");
         }
 
-        // TODO: might be valuable to switch this functionality so that if the recordLocation is not tagged as a
-        // TODO: medical record location, we search up the hierarchy until we find a location with that tag (so that the calling
-        // TODO: could just pass the request location, and this method would find the appropriate medical record location based on that location)
-
-        // fetch the appropriate identifier (if it exists)
-        PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient, getPaperRecordIdentifierType(), recordLocation);
-        String identifier = paperRecordIdentifier != null ? paperRecordIdentifier.getIdentifier() : null;
-
-        // see if there is an active request for this patient at this location
-        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(Arrays.asList(Status.OPEN, Status.ASSIGNED_TO_PULL, Status.ASSIGNED_TO_CREATE), patient, recordLocation, null, null);
+        // see if there is an pending request for this patient at this location
+        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(PENDING_STATUSES, patient, recordLocation, null, null);
 
         if (requests.size() > 1) {
             // this should not be allowed, but it could possibility happen if you merge two patients that both have
             // open paper record requests for the same location; we should fix this when we handle story #186
-            log.warn("Duplicate active record requests exist for patient " + patient);
+            log.warn("Duplicate pending record requests exist for patient " + patient);
         }
 
-        // if an active record exists, simply update that request location, don't issue a new requeset
+        // if an pending record exists, simply update that request location, don't issue a new request
         if (requests.size() > 0) {   // TODO: change this to size() == 1 once we  implement story #186 and can guarantee that there won't be multiple requests (see comment above)
             PaperRecordRequest request = requests.get(0);
             request.setRequestLocation(requestLocation);
@@ -141,7 +146,11 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
             return request;
         }
 
-        // if no active record exists, create a new request
+        // if no pending record exists, create a new request
+        // fetch the appropriate identifier (if it exists)
+        PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient, emrProperties.getPaperRecordIdentifierType(), recordLocation);
+        String identifier = paperRecordIdentifier != null ? paperRecordIdentifier.getIdentifier() : null;
+
         PaperRecordRequest request = new PaperRecordRequest();
         request.setCreator(Context.getAuthenticatedUser());
         request.setDateCreated(new Date());
@@ -249,13 +258,12 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     @Transactional(readOnly = true)
     public PaperRecordRequest getPendingPaperRecordRequestByIdentifier(String identifier) {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
-        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(Arrays.asList(Status.OPEN, Status.ASSIGNED_TO_PULL, Status.ASSIGNED_TO_CREATE), null, null, identifier, null);
+        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(PENDING_STATUSES, null, null, identifier, null);
 
         if (requests == null || requests.size() == 0) {
             return null;
         }
         else if (requests.size() > 1) {
-            // TODO: we may run into this case until we handle merging properly
             throw new IllegalStateException("Duplicate pending record requests exist with identifier " + identifier);
         }
         else {
@@ -274,7 +282,6 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
             return null;
         }
         else if (requests.size() > 1) {
-            // TODO: we may run into this case until we handle merging properly
             throw new IllegalStateException("Duplicate sent record requests exist with identifier " + identifier);
         }
         else {
@@ -284,7 +291,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
     @Override
     @Transactional
-    public void markPaperRequestRequestAsSent(PaperRecordRequest request) {
+    public void markPaperRecordRequestAsSent(PaperRecordRequest request) {
         // I don't think we really need to do any verification here
         request.updateStatus(Status.SENT);
         savePaperRecordRequest(request);
@@ -295,6 +302,51 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         String data = paperRecordLabelTemplate.generateLabel(request);
         String encoding = paperRecordLabelTemplate.getEncoding();
         return printerService.printViaSocket(data, Printer.Type.LABEL, location, encoding);
+    }
+
+    @Override
+    @Transactional
+    public void markPaperRecordsForMerge(PatientIdentifier preferredIdentifier, PatientIdentifier notPreferredIdentifier) {
+
+        if (!preferredIdentifier.getIdentifierType().equals(emrProperties.getPaperRecordIdentifierType())
+                || !notPreferredIdentifier.getIdentifierType().equals(emrProperties.getPaperRecordIdentifierType())) {
+            throw new IllegalArgumentException("One of the passed identifiers is not a paper record identifier: "
+                    + preferredIdentifier + ", " + notPreferredIdentifier);
+        }
+
+        if (!preferredIdentifier.getLocation().equals(notPreferredIdentifier.getLocation())) {
+            throw new IllegalArgumentException("Cannot merge two records from different locations: "
+                    + preferredIdentifier + ", " + notPreferredIdentifier);
+        }
+
+        // create the request
+        PaperRecordMergeRequest mergeRequest = new PaperRecordMergeRequest();
+        mergeRequest.setStatus(PaperRecordMergeRequest.Status.OPEN);
+        mergeRequest.setPreferredPatient(preferredIdentifier.getPatient());
+        mergeRequest.setNotPreferredPatient(notPreferredIdentifier.getPatient());
+        mergeRequest.setPreferredIdentifier(preferredIdentifier.getIdentifier());
+        mergeRequest.setNotPreferredIdentifier(notPreferredIdentifier.getIdentifier());
+        mergeRequest.setRecordLocation(preferredIdentifier.getLocation());
+        mergeRequest.setCreator(Context.getAuthenticatedUser());
+        mergeRequest.setDateCreated(new Date());
+
+        paperRecordMergeRequestDAO.saveOrUpdate(mergeRequest);
+    }
+
+    @Override
+    @Transactional
+    public void markPaperRecordsAsMerged(PaperRecordMergeRequest mergeRequest) {
+
+        // merge any pending paper record requests associated with the two records we are merging
+        mergePendingPaperRecordRequests(mergeRequest);
+
+        // if the archivist has just merged the records, we should be able to safely close out
+        // any request for the not preferred record, as this record should no longer exist
+        closeOutSentPaperRecordRequestsForNotPreferredRecord(mergeRequest);
+
+        // the just mark the request as merged
+        mergeRequest.setStatus(PaperRecordMergeRequest.Status.MERGED);
+        paperRecordMergeRequestDAO.saveOrUpdate(mergeRequest);
     }
 
     // leaving this method as public so that it can be tested by integration test in mirebalais module
@@ -309,7 +361,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
             return "";
         }
 
-        PatientIdentifierType paperRecordIdentifierType = getPaperRecordIdentifierType();
+        PatientIdentifierType paperRecordIdentifierType = emrProperties.getPaperRecordIdentifierType();
         String paperRecordId = "";
 
         paperRecordId = identifierSourceService.generateIdentifier(paperRecordIdentifierType, "generating a new dossier number");
@@ -321,17 +373,68 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     }
 
     protected String getPaperMedicalRecordNumberFor(Patient patient, Location medicalRecordLocation) {
-        PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient, getPaperRecordIdentifierType(), medicalRecordLocation);
+        PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient,
+                emrProperties.getPaperRecordIdentifierType(), medicalRecordLocation);
         return paperRecordIdentifier != null ? paperRecordIdentifier.getIdentifier() : "";
     }
 
-    protected PatientIdentifierType getPaperRecordIdentifierType() {
-        String uuid = administrationService.getGlobalProperty(EmrConstants.GP_PAPER_RECORD_IDENTIFIER_TYPE);
-        PatientIdentifierType paperRecordIdentifierType = patientService.getPatientIdentifierTypeByUuid(uuid);
-        if (paperRecordIdentifierType == null) {
-            throw new IllegalStateException("Configuration required: " + EmrConstants.GP_PAPER_RECORD_IDENTIFIER_TYPE);
+    private void mergePendingPaperRecordRequests(PaperRecordMergeRequest mergeRequest) {
+
+        // (note that we are not searching by patient here because the patient may have been changed during the merge)
+        List<PaperRecordRequest> preferredRequests = paperRecordRequestDAO.findPaperRecordRequests(PENDING_STATUSES,
+                null, mergeRequest.getRecordLocation(), mergeRequest.getPreferredIdentifier(), null);
+
+        if (preferredRequests.size() > 1) {
+            throw new IllegalStateException("Duplicate pending record requests exist with identifier " + mergeRequest.getPreferredIdentifier());
         }
-        return paperRecordIdentifierType;
+
+        List<PaperRecordRequest> notPreferredRequests = paperRecordRequestDAO.findPaperRecordRequests(PENDING_STATUSES,
+                null, mergeRequest.getRecordLocation(), mergeRequest.getNotPreferredIdentifier(), null);
+
+        if (notPreferredRequests.size() > 1) {
+            throw new IllegalStateException("Duplicate pending record requests exist with identifier " + mergeRequest.getNotPreferredIdentifier());
+        }
+
+        PaperRecordRequest preferredRequest = null;
+        PaperRecordRequest notPreferredRequest = null;
+
+        if (preferredRequests.size() == 1) {
+           preferredRequest = preferredRequests.get(0);
+        }
+
+        if (notPreferredRequests.size() == 1) {
+            notPreferredRequest = notPreferredRequests.get(0);
+        }
+
+        // if both the preferred and not-preferred records have a request, we need to
+        // cancel on of them
+        if (preferredRequest != null && notPreferredRequest != null) {
+            // update the request location if the non-preferred  is more recent
+            if (notPreferredRequest.getDateCreated().after(preferredRequest.getDateCreated())) {
+                preferredRequest.setRequestLocation(notPreferredRequest.getRequestLocation());
+            }
+
+            notPreferredRequest.updateStatus(Status.CANCELLED);
+            paperRecordRequestDAO.saveOrUpdate(preferredRequest);
+            paperRecordRequestDAO.saveOrUpdate(notPreferredRequest);
+        }
+
+        // if there is only a non-preferred request, we need to update it with the right identifier
+        if (preferredRequest == null && notPreferredRequest != null) {
+            notPreferredRequest.setIdentifier(mergeRequest.getPreferredIdentifier());
+            paperRecordRequestDAO.saveOrUpdate(notPreferredRequest);
+        }
+
+    }
+
+    private void closeOutSentPaperRecordRequestsForNotPreferredRecord(PaperRecordMergeRequest mergeRequest) {
+        List<PaperRecordRequest> notPreferredRequests = paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(Status.SENT), null,
+                mergeRequest.getRecordLocation(), mergeRequest.getNotPreferredIdentifier(), null);
+
+        for (PaperRecordRequest notPreferredRequest : notPreferredRequests) {
+            notPreferredRequest.updateStatus(Status.RETURNED);
+            paperRecordRequestDAO.saveOrUpdate(notPreferredRequest);
+        }
     }
 
 }

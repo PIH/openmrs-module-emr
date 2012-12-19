@@ -20,7 +20,9 @@ import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.User;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -79,7 +81,11 @@ import java.util.Date;
 
 public class PaperRecordRequest extends BaseOpenmrsObject {
 
-    public enum Status{ OPEN, ASSIGNED_TO_PULL, ASSIGNED_TO_CREATE, SENT, RETURNED, CANCELLED }
+    public static enum Status{ OPEN, ASSIGNED_TO_PULL, ASSIGNED_TO_CREATE, SENT, RETURNED, CANCELLED }
+
+    public static List<Status> PENDING_STATUSES = Arrays.asList(Status.OPEN, Status.ASSIGNED_TO_PULL, Status.ASSIGNED_TO_CREATE);
+
+    public static List<Status> ACTIVE_STATUSES = Arrays.asList(Status.OPEN, Status.ASSIGNED_TO_PULL, Status.ASSIGNED_TO_CREATE, Status.SENT);
 
     private Integer requestId;
 

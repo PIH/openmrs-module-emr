@@ -16,6 +16,7 @@ package org.openmrs.module.emr.paperrecord;
 
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.Person;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.OpenmrsService;
@@ -144,7 +145,7 @@ public interface PaperRecordService extends OpenmrsService {
      * @param request
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
-    void markPaperRequestRequestAsSent(PaperRecordRequest request);
+    void markPaperRecordRequestAsSent(PaperRecordRequest request);
 
 
     /**
@@ -158,5 +159,22 @@ public interface PaperRecordService extends OpenmrsService {
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     Boolean printPaperRecordLabel(PaperRecordRequest request, Location location);
 
+
+    /**
+     * Creates a request to merge two paper records
+     *
+     * @param preferredIdentifier the identifier of the preferred paper record
+     * @param notPreferredIdentifier the identifier of the non-preferred paper record
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS)
+    void markPaperRecordsForMerge(PatientIdentifier preferredIdentifier, PatientIdentifier notPreferredIdentifier);
+
+    /**
+     * Marks that the paper record merge request has been completed
+     *
+     * @param mergeRequest
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
+    void markPaperRecordsAsMerged(PaperRecordMergeRequest mergeRequest);
 }
 

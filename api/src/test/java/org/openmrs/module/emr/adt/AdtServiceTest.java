@@ -28,6 +28,8 @@ import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.Person;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
@@ -105,6 +107,7 @@ public class AdtServiceTest {
     private Location mirebalaisHospital;
     private Location outpatientDepartment;
     private PersonAttributeType unknownPatientPersonAttributeType;
+    private PatientIdentifierType paperRecordIdentifierType;
 
     @Before
     public void setup() {
@@ -145,6 +148,8 @@ public class AdtServiceTest {
         unknownPatientPersonAttributeType.setName(UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME);
         unknownPatientPersonAttributeType.setFormat("java.lang.String");
 
+        paperRecordIdentifierType = new PatientIdentifierType();
+
         emrProperties = mock(EmrProperties.class);
         when(emrProperties.getVisitExpireHours()).thenReturn(10);
         when(emrProperties.getCheckInEncounterType()).thenReturn(checkInEncounterType);
@@ -152,6 +157,7 @@ public class AdtServiceTest {
         when(emrProperties.getCheckInClerkEncounterRole()).thenReturn(checkInClerkEncounterRole);
         when(emrProperties.getCheckInClerkEncounterRole()).thenReturn(checkInClerkEncounterRole);
         when(emrProperties.getUnknownPatientPersonAttributeType()).thenReturn(unknownPatientPersonAttributeType);
+        when(emrProperties.getPaperRecordIdentifierType()).thenReturn(paperRecordIdentifierType);
 
         AdtServiceImpl service = new AdtServiceImpl();
         service.setPatientService(mockPatientService);
@@ -572,6 +578,32 @@ public class AdtServiceTest {
         assertThat(preferred.getAttribute(unknownPatientPersonAttributeType), is(preferredIsUnknownAttribute));
     }
 
+    @Test
+    public void testThatMergingTwoPatientsWithMedicalRecordIdentifierAtSameLocationMarksPaperRecordsForMerge() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        Location someLocation = new Location();
+        Location anotherLocation = new Location();
+
+        PatientIdentifier preferredIdentifier =  new PatientIdentifier("123", paperRecordIdentifierType, someLocation);
+        PatientIdentifier anotherPreferredIdentifier = new PatientIdentifier("789", paperRecordIdentifierType, anotherLocation); // this is a "fake out" one
+        PatientIdentifier notPreferredIdentifier = new PatientIdentifier("456", paperRecordIdentifierType, someLocation);
+
+        preferred.addIdentifier(anotherPreferredIdentifier);
+        preferred.addIdentifier(preferredIdentifier);
+        notPreferred.addIdentifier(notPreferredIdentifier);
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService).markPaperRecordsForMerge(preferredIdentifier, notPreferredIdentifier);
+        verify(mockPatientService).voidPatientIdentifier(notPreferredIdentifier, "voided during patient merge");
+
+        // make sure a merge request is not created for the record at the other location
+        verify(mockPaperRecordService, never()).markPaperRecordsForMerge(anotherPreferredIdentifier, notPreferredIdentifier);
+    }
+
     private Encounter buildEncounter(Patient patient, Date encounterDatetime) {
         Encounter encounter = new Encounter();
         encounter.setPatient(patient);
@@ -588,5 +620,7 @@ public class AdtServiceTest {
         visit.setStopDatetime(endDate);
         return visit;
     }
+
+
 
 }

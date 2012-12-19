@@ -86,7 +86,7 @@ public class ArchivesRoomFragmentController {
         }
        else {
             // otherwise, mark the record as sent
-            paperRecordService.markPaperRequestRequestAsSent(paperRecordRequest);
+            paperRecordService.markPaperRecordRequestAsSent(paperRecordRequest);
             return new SuccessResult(ui.message("emr.archivesRoom.recordFound.message") + "<br/><br/>"
                     + ui.message("emr.archivesRoom.recordNumber.label") + ": " + ui.format(identifier + "<br/><br/>"
                     + ui.message("emr.archivesRoom.requestedBy.label") + ": " + ui.format(paperRecordRequest.getRequestLocation() + "<br/><br/>"

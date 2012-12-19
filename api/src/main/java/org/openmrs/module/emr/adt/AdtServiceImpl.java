@@ -23,6 +23,7 @@ import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Order;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.Provider;
@@ -506,7 +507,24 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
                 }
             }
         }
-        
+
+        // see if we need to create any requests to merge paper records (look for paper record identifiers at the same location)
+        List<PatientIdentifier> preferredPaperRecordIdentifiers = preferred.getPatientIdentifiers(emrProperties.getPaperRecordIdentifierType());
+        List<PatientIdentifier> notPreferredPaperRecordIdentifiers = notPreferred.getPatientIdentifiers(emrProperties.getPaperRecordIdentifierType());
+
+        for (PatientIdentifier preferredPaperRecordIdentifier : preferredPaperRecordIdentifiers) {
+            for (PatientIdentifier notPreferredPaperRecordIdentifier: notPreferredPaperRecordIdentifiers) {
+                if (preferredPaperRecordIdentifier.getLocation().equals(notPreferredPaperRecordIdentifier.getLocation())) {
+                    paperRecordService.markPaperRecordsForMerge(preferredPaperRecordIdentifier, notPreferredPaperRecordIdentifier);
+                    // void the non-preferred identifier, so that is doesn't get copied over
+                    // TODO: is this correct the thing to do? should we do this within the service method
+                    patientService.voidPatientIdentifier(notPreferredPaperRecordIdentifier, "voided during patient merge");
+                }
+
+            }
+        }
+
+        // copy over any existing paper record requests to the preferred patient
         List<PaperRecordRequest> moveToPreferred = paperRecordService.getPaperRecordRequestsByPatient(notPreferred);
         for(PaperRecordRequest paperRecordRequest : moveToPreferred){
             paperRecordRequest.setPatient(preferred);

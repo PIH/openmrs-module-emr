@@ -20,7 +20,6 @@ import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Person;
-import org.openmrs.PersonAddress;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
@@ -30,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveTest {
@@ -411,7 +409,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         // store the id for future retrieval
         int id = request.getId();
 
-        paperRecordService.markPaperRequestRequestAsSent(request);
+        paperRecordService.markPaperRecordRequestAsSent(request);
 
         // make sure this request has been changed to "sent" in the database
         Context.flushSession();

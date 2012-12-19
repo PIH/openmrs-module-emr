@@ -107,7 +107,7 @@ public class ArchivesRoomFragmentControllerTest {
 
         FragmentActionResult result = controller.markPaperRecordRequestAsSent("123", paperRecordService, ui);
 
-        verify(paperRecordService).markPaperRequestRequestAsSent(request);
+        verify(paperRecordService).markPaperRecordRequestAsSent(request);
         assertThat(result, instanceOf(SuccessResult.class));
         SuccessResult successResult = (SuccessResult) result;
         assertThat(successResult.getMessage(), containsString("123"));

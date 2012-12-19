@@ -32,6 +32,7 @@ public interface PaperRecordRequestDAO extends SingleClassDAO<PaperRecordRequest
      * @param recordLocation
      * @return the paper record requests for the given patient and given location with ANY of the specified statuses
      */
-    List<PaperRecordRequest> findPaperRecordRequests(List<PaperRecordRequest.Status> statusList, Patient patient, Location recordLocation, String identifier, Boolean hasIdentifier);
+    List<PaperRecordRequest> findPaperRecordRequests(List<PaperRecordRequest.Status> statusList, Patient patient,
+                                                     Location recordLocation, String identifier, Boolean hasIdentifier);
 
 }
