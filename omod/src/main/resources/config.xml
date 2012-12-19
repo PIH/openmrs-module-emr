@@ -51,6 +51,14 @@
     </globalProperty>
 
     <globalProperty>
+        <property>emr.triageEncounterType</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the encounter type used for quick triage (e.g. at a vitals capture station)
+        </description>
+    </globalProperty>
+
+    <globalProperty>
         <property>emr.checkInEncounterType</property>
         <defaultValue></defaultValue>
         <description>

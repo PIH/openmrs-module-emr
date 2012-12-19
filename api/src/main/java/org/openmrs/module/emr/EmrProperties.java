@@ -52,6 +52,10 @@ public class EmrProperties extends ModuleProperties {
         return getEncounterTypeByGlobalProperty(EmrConstants.GP_CHECK_IN_ENCOUNTER_TYPE);
     }
 
+    public EncounterType getTriageEncounterType() {
+        return getEncounterTypeByGlobalProperty(EmrConstants.GP_TRIAGE_ENCOUNTER_TYPE);
+    }
+
     public EncounterRole getClinicianEncounterRole() {
         return getEncounterRoleByGlobalProperty(EmrConstants.GP_CLINICIAN_ENCOUNTER_ROLE);
     }
