@@ -2,6 +2,7 @@
     display: inline-block;
     width: 45%;
     padding-bottom: 20px;
+    vertical-align: top;
 }
 .left-column {
     clear: left;
