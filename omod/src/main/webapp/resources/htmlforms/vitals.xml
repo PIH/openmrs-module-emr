@@ -1,0 +1,76 @@
+<!-- TODO fix formEncounterType and encounterRole-->
+<htmlform formUuid="68728aa6-4985-11e2-8815-657001b58a90" formName="Vitals" formEncounterType="1373cf95-06e8-468b-a3da-360ac1cf026d" formVersion="1.0">
+
+    <script type="text/javascript">
+        $j(function() {
+            var setupDisplay = function(id) {
+                getField(id + ".value").change(function() {
+                    $j(".display-value-" + id).html(getValue(id + ".value"));
+                });
+            }
+            setupDisplay("temperature_c");
+            setupDisplay("bp_systolic");
+            setupDisplay("bp_diastolic");
+        });
+    </script>
+
+    <div class="encounter-details">
+        <encounterDate default="now" showTime="true"/>
+        <encounterProviderAndRole default="currentUser" encounterRole="a0b03050-c99b-11e0-9572-0800200c9a66" required="true"/>
+        <encounterLocation/>
+    </div>
+
+    <p>
+        <label>Temperature</label>
+        <obs conceptId="PIH:TEMPERATURE (C)" showUnits="true" id="temperature_c"/>
+    </p>
+
+    <p>
+        <label>Blood Pressure</label>
+        <div class="left">
+            <obs conceptId="PIH:SYSTOLIC BLOOD PRESSURE" id="bp_systolic"/>
+        </div>
+        <div class="left">
+            /
+        </div>
+        <div class="left">
+            <obs conceptId="PIH:DIASTOLIC BLOOD PRESSURE" id="bp_diastolic"/>
+        </div>
+    </p>
+
+    <div class="question">
+        <div class="widget">
+            <obs conceptId="PIH:PULSE"/>
+        </div>
+    </div>
+
+    <div class="question">
+        <div class="widget">
+            <obs conceptId="PIH:RESPIRATORY RATE"/>
+        </div>
+    </div>
+
+    <div class="question">
+        <div class="widget">
+            <obs conceptId="PIH:BLOOD OXYGEN SATURATION"/>
+        </div>
+    </div>
+
+    <div class="question">
+        <div class="widget">
+            <obs conceptId="PIH:WEIGHT (KG)"/>
+        </div>
+    </div>
+
+    <div class="summary">
+        <div>
+            Temperature (C): <span class="display-value-temperature_c"></span>
+        </div>
+        <div>
+            BP: <span class="display-value-bp_systolic"/> / <span class="display-value-bp_diastolic"/>
+        </div>
+    </div>
+
+    <submit/>
+
+</htmlform>
