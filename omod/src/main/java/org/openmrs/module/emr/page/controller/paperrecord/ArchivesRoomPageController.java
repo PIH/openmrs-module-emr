@@ -1,12 +1,12 @@
 package org.openmrs.module.emr.page.controller.paperrecord;
 
 import org.openmrs.Person;
+import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 import org.openmrs.module.emr.paperrecord.PaperRecordService;
 import org.openmrs.ui.framework.UiUtils;
-import org.openmrs.ui.framework.WebConstants;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,7 +50,8 @@ public class ArchivesRoomPageController {
         try {
             paperRecordService.assignRequests(requests, assignTo, emrContext.getSessionLocation());
         } catch (IllegalStateException ex) {
-            session.setAttribute(WebConstants.OPENMRS_ERROR_ATTR, ui.message("emr.archivesRoom.alreadyAssigned"));
+            // TODO fix this
+            throw new APIException(ex);
         }
         return "redirect:emr/paperrecord/archivesRoom.page?activeTab=" + activeTab;
     }
