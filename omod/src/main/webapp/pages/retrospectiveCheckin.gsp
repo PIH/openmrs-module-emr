@@ -2,13 +2,11 @@
     ui.decorateWith("emr", "standardEmrPage")
     ui.includeJavascript("emr", "navigator.js", Integer.MAX_VALUE - 20)
     ui.includeJavascript("emr", "custom/retrospectiveCheckin.js", Integer.MAX_VALUE - 25)
-    ui.includeCss("emr", "retrospectiveCheckin.css")
 %>
 
 <script type="text/javascript">
     jQuery(function() {
-        ko.applyBindings(RetrospectiveCheckinViewModel(${locations}, ${paymentReasons}, ${paymentAmounts}), jq('#content').get(0));
-        FormNavigator(jQuery('#submitButton'), jQuery('#cancelButton'));
+        initFormNavigation(jQuery('#submitButton'), jQuery('#cancelButton'));
     });
 </script>
 <script type="text/html" id="optionsList-template">
@@ -20,59 +18,69 @@
 </script>
 
 
-<h1>Retrospective Check-in</h1>
-<section id="checkinInformation">
-    <img class="field_check" src="${ui.resourceLink("emr", "images/checked.png")}"
-        data-bind="style: {visibility:checkinInfoIsValid() ? 'visible':'hidden'}" />
-    <span class="label">Check-in information</span>
-    <span class="value" data-bind="text:patientName"></span> -
-    <span class="value" data-bind="text:locationName"></span> -
-    <span class="value" data-bind="text:checkinDate"></span>
+${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
-    <ul>
-        <li>
-            <label for="patientIdentifier">Patient identifier</label>
-            <input id="patientIdentifier" type="text" data-bind="value:patientIdentifier" />
-        </li>
-        <li data-bind="template: {name:'optionsList-template', foreach:locations}"></li>
-        <li>
-            <label for="checkinDate_day">Check-in date</label>
-            <input id="checkinDate_day" type="text" data-bind="value:checkinDay" maxlength="2" placeholder="Day"/>
-            <span> / </span>
-            <input id="checkinDate_month" type="text" data-bind="value:checkinMonth" maxlength="2" placeholder="Month"/>
-            <span> / </span>
-            <input id="checkinDate_year" type="text" data-bind="value:checkinYear" maxlength="4" placeholder="Year"/>
-        </li>
-        <li>
-            <label for="checkinTime_hour">Check-in time</label>
-            <input id="checkinTime_hour" data-bind="value:checkinHour" maxlength="2" placeholder="Hour"/>
-            <span> : </span>
-            <input id="checkinTime_minutes" data-bind="value:checkinMinutes" maxlength="2" placeholder="Minutes"/>
-        </li>
-    </ul>
-</section>
+<div id="content" class="container">
+    <h3 class="title">Retrospective Check-in</h3>
+    <form>
+        <section id="checkinInformation">
+            <span class="title">Check-in information</span>
 
-<section id="paymentInformation">
-    <img class="field_check" src="${ui.resourceLink("emr", "images/checked.png")}"
-        data-bind="style: {visibility: paymentInfoIsValid() ? 'visible':'hidden'}" />
-    <span class="label">Payment</span>
-    <span class="value" data-bind="text:paymentReason"></span>
-    <span class="value" data-bind="text:amountPaid"></span>
+            <div class="form_question">
+                ${ ui.includeFragment("emr", "field/dropdown", [
+                        label: ui.message("emr.retrospectiveCheckin.location.label"),
+                        formFieldName:"locations",
+                        options:locations])}
+            </div>
 
-    <ul>
-        <li data-bind="template: {name:'optionsList-template', foreach:paymentReasons}"></li>
-        <li data-bind="template: {name:'optionsList-template', foreach:paymentAmounts}"></li>
-        <li>
-            <label for="receiptNumber">Receipt number</label>
-            <input id="receiptNumber" data-bind="value:receiptNumber, valueUpdate:'afterkeydown'" />
-        </li>
-    </ul>
-</section>
+            <div class="form_question">
+                ${ ui.includeFragment("emr", "field/text", [
+                        label: ui.message("emr.retrospectiveCheckin.checkinDate.day.label"),
+                        formFieldName: "checkinDate_day",
+                        left: true
+                ])}
+                ${ ui.includeFragment("emr", "field/text", [
+                        label: ui.message("emr.retrospectiveCheckin.checkinDate.month.label"),
+                        formFieldName: "checkinDate_month",
+                        left: true
+                ])}
+                ${ ui.includeFragment("emr", "field/text", [
+                        label: ui.message("emr.retrospectiveCheckin.checkinDate.year.label"),
+                        formFieldName: "checkinDate_year",
+                        left: true
+                ])}
+            </div>
+        </section>
 
-<div class="actions">
-    <a id="cancelButton" href="#" class="cancel">Cancel</a>
-    <input id="submitButton" type="button" class="submit" value="Submit"
-           data-bind="style: {visibility:paymentInfoIsValid() && checkinInfoIsValid() ? 'visible':'hidden'}, click: registerCheckin" />
+        <section id="paymentInformation">
+            <span class="title">Payment information</span>
+
+            <div class="form_question">
+                ${ ui.includeFragment("emr", "field/dropdown", [
+                        label: ui.message("emr.retrospectiveCheckin.paymentReason.label"),
+                        formFieldName:"paymentReason",
+                        options:paymentReasons])}
+            </div>
+            <div class="form_question">
+                ${ ui.includeFragment("emr", "field/dropdown", [
+                        label: ui.message("emr.retrospectiveCheckin.paymentAmount.label"),
+                        formFieldName:"paymentAmount",
+                        options:paymentAmounts])}
+            </div>
+            <div class="form_question">
+                ${ ui.includeFragment("emr", "field/text", [
+                        label: ui.message("emr.retrospectiveCheckin.receiptNumber.label"),
+                        formFieldName: "receiptNumber"
+                ])}
+            </div>
+        </section>
+    </form>
+
+    <div class="actions">
+        <a id="cancelButton" href="#" class="cancel">Cancel</a>
+        <input id="submitButton" type="button" class="submit" value="Submit"
+               data-bind="style: {visibility:paymentInfoIsValid() && checkinInfoIsValid() ? 'visible':'hidden'}, click: registerCheckin" />
+    </div>
+
+    <div id="dialogMessage"></div>
 </div>
-
-<div id="dialogMessage"></div>
