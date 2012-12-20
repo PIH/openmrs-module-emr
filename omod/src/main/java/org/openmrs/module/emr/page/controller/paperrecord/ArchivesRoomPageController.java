@@ -18,6 +18,8 @@ import static org.openmrs.module.emr.EmrConstants.PRIMARY_IDENTIFIER_TYPE;
 
 public class ArchivesRoomPageController {
 
+    // TODO: perhaps we can get rid of this table entirely
+
     public void get(PageModel model,
                     @RequestParam(value="activeTab", required=false, defaultValue="createrequest") String activeTab,
                     @SpringBean PaperRecordService paperRecordService,
