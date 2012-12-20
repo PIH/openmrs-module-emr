@@ -70,4 +70,5 @@
         <property name="priority" value="10"/>
         <property name="formDefinitionFromUiResource" value="emr:htmlforms/vitals.xml"/>
     </bean>
+
 </beans>
