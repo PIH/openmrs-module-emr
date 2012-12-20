@@ -184,7 +184,7 @@ public class ArchivesRoomFragmentControllerTest {
         assertThat(results.size(), is(2));
 
         SimpleObject result = results.get(0);
-        assertThat((String) result.get("requestId"), is("1"));
+        assertThat((Integer) result.get("requestId"), is(1));
         assertThat((String) result.get("requestLocation"), is("Test location"));
         assertThat((String) result.get("identifier"), is("123"));
         assertThat((String) result.get("patient"), is("Tom Jones"));
@@ -192,7 +192,7 @@ public class ArchivesRoomFragmentControllerTest {
         assertThat((String) result.get("dateCreated"), is("11:10"));
 
         SimpleObject result2 = results.get(1);
-        assertThat((String) result2.get("requestId"), is("2"));
+        assertThat((Integer) result2.get("requestId"), is(2));
         assertThat((String) result2.get("requestLocation"), is("Another location"));
         assertThat((String) result2.get("identifier"), is("ABC"));
         assertThat((String) result2.get("patient"), is("Mike Wallace"));
