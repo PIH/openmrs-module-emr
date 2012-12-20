@@ -22,14 +22,16 @@ import java.util.List;
 public class RetrospectiveCheckinPageController {
 
     public void get(@SpringBean("locationService") LocationService locationService,
-                           @SpringBean("conceptService") ConceptService conceptService,
-                           UiUtils ui,
-                           PageModel model) {
+                    @SpringBean("conceptService") ConceptService conceptService,
+                    @RequestParam("patientId") Patient patient,
+                    UiUtils ui,
+                    PageModel model) {
 
         Concept amountPaidConcept = conceptService.getConceptByUuid("5d1bc5de-6a35-4195-8631-7322941fe528");
-        model.addAttribute("locations", ui.toJson(getLocations(locationService)));
-        model.addAttribute("paymentReasons", ui.toJson(getPaymentReasons(conceptService)));
-        model.addAttribute("paymentAmounts", ui.toJson(getPossiblePaymentAmounts()));
+        model.addAttribute("patient", patient);
+        model.addAttribute("locations", getLocations(locationService));
+        model.addAttribute("paymentReasons", getPaymentReasons(conceptService));
+        model.addAttribute("paymentAmounts", getPossiblePaymentAmounts());
     }
 
     public String post(UiUtils ui,
