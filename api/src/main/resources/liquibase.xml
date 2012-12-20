@@ -152,4 +152,57 @@
 
     </changeSet>
 
+    <changeSet id="20121220-2" author="mgoodrich">
+        <comment>Adds paper record merge request table</comment>
+        <createTable tableName="emr_paper_record_merge_request">
+            <column name="merge_request_id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="preferred_identifier" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="not_preferred_identifier" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="varchar(50)" defaultValue="OPEN">
+                <constraints nullable="false" />
+            </column>
+            <column name="preferred_patient" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="not_preferred_patient" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="record_location" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creator" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="uuid" type="char(38)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="merge_record_location_id_location_id_fk"
+                                 baseTableName="emr_paper_record_merge_request" baseColumnNames="record_location"
+                                 referencedTableName="location" referencedColumnNames="location_id"/>
+
+        <addForeignKeyConstraint constraintName="merge_creator_user_id_fk"
+                                 baseTableName="emr_paper_record_merge_request" baseColumnNames="creator"
+                                 referencedTableName="users" referencedColumnNames="user_id" />
+
+        <addForeignKeyConstraint constraintName="preferred_patient_patient_id_fk"
+                                 baseTableName="emr_paper_record_merge_request" baseColumnNames="preferred_patient"
+                                 referencedTableName="patient" referencedColumnNames="patient_id" />
+
+        <addForeignKeyConstraint constraintName="not_preferred_patient_patient_id_fk"
+                                 baseTableName="emr_paper_record_merge_request" baseColumnNames="not_preferred_patient"
+                                 referencedTableName="patient" referencedColumnNames="patient_id" />
+
+    </changeSet>
+
 </databaseChangeLog>
