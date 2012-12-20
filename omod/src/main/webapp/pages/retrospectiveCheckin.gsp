@@ -2,11 +2,12 @@
     ui.decorateWith("emr", "standardEmrPage")
     ui.includeJavascript("emr", "navigator.js", Integer.MAX_VALUE - 20)
     ui.includeJavascript("emr", "custom/retrospectiveCheckin.js", Integer.MAX_VALUE - 25)
+    ui.includeCss("emr", "retrospectiveCheckin.css")
 %>
 
 <script type="text/javascript">
     jQuery(function() {
-        initFormNavigation(jQuery('#submitButton'), jQuery('#cancelButton'));
+        KeyboardController();
     });
 </script>
 <script type="text/html" id="optionsList-template">
