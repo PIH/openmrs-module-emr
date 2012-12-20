@@ -132,18 +132,13 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
             throw new IllegalStateException("Request Location cannot be null");
         }
 
-        // see if there is an pending request for this patient at this location
+        // fetch any pending request for this patient at this location
         List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(PENDING_STATUSES, patient, recordLocation, null, null);
 
-        if (requests.size() > 1) {
-            // this should not be allowed, but it could possibility happen if you merge two patients that both have
-            // open paper record requests for the same location; we should fix this when we handle story #186
-            log.warn("Duplicate pending record requests exist for patient " + patient);
-        }
-
-        // if an pending records exists, simply update that request location, don't issue a new request
-        if (requests.size() > 0) {   // TODO: change this to size() == 1 once we  implement story #186 and can guarantee that there won't be multiple requests (see comment above)
-            PaperRecordRequest request = requests.get(0);
+        // if pending records exists, simply update that request location, don't issue a new request
+        // (there should rarely be more than one pending record for a single patient, but this *may* happen if two
+        // patients with pending records are merged)
+        for (PaperRecordRequest request : requests) {
             request.setRequestLocation(requestLocation);
             paperRecordRequestDAO.saveOrUpdate(request);
             return request;
