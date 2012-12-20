@@ -16,45 +16,20 @@ var QuestionItem = function(elem) {
 }
 
 var Question = function(elem) {
-    var previousQuestion, nextQuestion;
+    var model = {};
     var element = $(elem);
     var items = _.map(element.find("input, select"), function(i) {
         return QuestionItem(i);
-    });
+    })
 
-
-    var model = {};
     model.isSelected = false;
 
-    model.definePreviousQuestion = function(question) {
-        previousQuestion = question;
-    };
-    model.defineNextQuestion = function(question) {
-        nextQuestion = question;
-    };
     model.focusIn = function() {
         model.isSelected = true;
-        element.addClass("focused");
     };
     model.focusOut = function() {
         model.isSelected = false;
-        element.removeClass("focused");
     };
-    model.moveToPreviousQuestion = function() {
-        if(previousQuestion) {
-            model.focusOut();
-            previousQuestion.focusIn();
-        }
-    };
-    model.moveToNextQuestion = function() {
-        if(nextQuestion) {
-            model.focusOut();
-            nextQuestion.focusIn();
-        }
-    };
-    model.escape = function() {
-        model.focusOut();
-    }
 
     return model;
 }
@@ -65,14 +40,6 @@ var Section = function(elem) {
     var title = element.find("span.title").text();
     var questions = _.map(element.find("div.form_question"), function(q) {
        return Question(q);
-    });
-    _.each(questions, function(q, index) {
-        if(index != 0) {
-            q.definePreviousQuestion(questions[index-1]);
-        }
-        if(index != questions.len - 1) {
-            q.defineNextQuestion(questions[index+1]);
-        }
     });
 
     var isThereAQuestionSelected = function() {
@@ -95,18 +62,18 @@ var Section = function(elem) {
         nextSection = section;
     };
     model.moveToNextSection = function() {
-        if( isThereAQuestionSelected() ) return null;
+        if( isThereAQuestionSelected() ) return false;
 
         model.hide();
         nextSection.show();
-        return nextSection;
+        return true;
     };
     model.moveToPreviousSection = function() {
-        if( isThereAQuestionSelected() ) return null;
+        if( isThereAQuestionSelected() ) return false;
 
         model.hide();
         previousSection.show();
-        return previousSection;
+        return true;
     };
 
     model.moveToNextQuestion = function() {
@@ -123,12 +90,6 @@ var Section = function(elem) {
             currentQuestion.moveToPreviousQuestion();
         }
     }
-    model.escape = function() {
-        var currentQuestion = getSelectedQuestion();
-        if( currentQuestion ) {
-            currentQuestion.escape();
-        }
-    }
 
     model.hide = function() {
         model.isSelected = false;
@@ -143,9 +104,16 @@ var Section = function(elem) {
 }
 
 function KeyboardController() {
-    var sections = _.map($('section'), function(s) {
+    $('body').keydown(function(ev) {
+
+    });
+}
+
+function initFormNavigation(submitElement, cancelElement) {
+    sections = _.map($('section'), function(s) {
         return Section(s);
     });
+    var p, n;
     _.each(sections, function(s, index) {
         if(index != 0) {
             s.hide();
@@ -153,36 +121,6 @@ function KeyboardController() {
         }
         if(index != sections.len - 1) {
             s.defineNextSection(sections[index+1]);
-        }
-    });
-    var currentSection = sections[0];
-
-    $('body').keydown(function(key) {
-        var keycode = key.which;
-        if(keycode == 39) {
-            var s = currentSection.moveToNextSection();
-            if( s ) {
-                currentSection = s;
-                key.preventDefault();
-            }
-        }
-        if(keycode == 37) {
-            var s = currentSection.moveToPreviousSection();
-            if( s ) {
-                currentSection = s;
-                key.preventDefault();
-            }
-        }
-
-        if(keycode == 38) {
-            currentSection.moveToPreviousQuestion();
-        }
-        if(keycode == 40) {
-            currentSection.moveToNextQuestion();
-        }
-
-        if(keycode == 27) {
-            currentSection.escape();
         }
     });
 }
