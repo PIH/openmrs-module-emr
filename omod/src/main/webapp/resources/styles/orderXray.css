@@ -44,11 +44,12 @@
 .row {
     display: table-row;
 }
-.row .radio-label , .row div {
-    display: table-cell;
-    padding-right: 1.0em;
-    white-space: nowrap;
+
+.row input, .row span, .row select, .row input[type="checkbox"] {
+    display: inline-block;
+    float: none;
 }
+
 #contentForm {
     padding-left: 50px;
     padding-right: 50px;

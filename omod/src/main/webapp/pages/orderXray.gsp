@@ -31,7 +31,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
     <input type="hidden" name="requestedBy" value="${ currentProvider.id }"/>
 
     <div class="left-column">
-        ${ ui.includeFragment("emr", "field/textarea", [ label: ui.message("emr.order.indication"), formFieldName: "clinicalHistory", labelPosition: "top", rows: 5, cols: 35 ]) }
+        ${ ui.includeFragment("emr", "field/textarea", [ label:"<strong>" + ui.message("emr.order.indication") + "</strong>", formFieldName: "clinicalHistory", labelPosition: "top", rows: 5, cols: 35 ]) }
     </div>
 
     <div class="right-column">
@@ -46,19 +46,19 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             ]) }
         </div>
         <div class="row">
-            <span class="radio-label">${ ui.message("emr.orderXray.portableQuestion") }</span>
-            <div>
+            <p><strong>${ ui.message("emr.orderXray.portableQuestion") }</strong></p>
+            <p>
                 <input type="checkbox" class="field-value" value="portable" data-bind="checked: portable"/>
                 <span>${ ui.message("emr.yes") }</span>
-            </div>
-            <select name="examLocation" data-bind="visible:portable, options:locations, optionsText:'name', optionsValue:'id', optionsCaption:'${ ui.message("emr.orderXray.examLocationQuestion") }', value:portableLocation">
-            </select>
+                <select name="examLocation" data-bind="enable:portable, options:locations, optionsText:'name', optionsValue:'id', optionsCaption:'${ ui.message("emr.orderXray.examLocationQuestion") }', value:portableLocation">
+                </select>
+            </p>
         </div>
     </div>
 
 
     <div class="left-column">
-        <label for="study-search">${ ui.message("emr.orderXray.studySearchInstructions") }</label><br/>
+        <label for="study-search"><strong>${ ui.message("emr.orderXray.studySearchInstructions") }</strong></label><br/>
         <input id="study-search" type="text"
                data-bind="autocomplete:searchTerm, search:convertedStudies, select:selectStudy, clearValue:function() { return true; }"
                placeholder="${ ui.message("emr.orderXray.studySearchPlaceholder") }"/>
