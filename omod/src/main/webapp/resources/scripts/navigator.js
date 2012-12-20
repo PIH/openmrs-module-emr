@@ -52,6 +52,9 @@ var Question = function(elem) {
             nextQuestion.focusIn();
         }
     };
+    model.escape = function() {
+        model.focusOut();
+    }
 
     return model;
 }
@@ -120,6 +123,12 @@ var Section = function(elem) {
             currentQuestion.moveToPreviousQuestion();
         }
     }
+    model.escape = function() {
+        var currentQuestion = getSelectedQuestion();
+        if( currentQuestion ) {
+            currentQuestion.escape();
+        }
+    }
 
     model.hide = function() {
         model.isSelected = false;
@@ -170,6 +179,10 @@ function KeyboardController() {
         }
         if(keycode == 40) {
             currentSection.moveToNextQuestion();
+        }
+
+        if(keycode == 27) {
+            currentSection.escape();
         }
     });
 }
