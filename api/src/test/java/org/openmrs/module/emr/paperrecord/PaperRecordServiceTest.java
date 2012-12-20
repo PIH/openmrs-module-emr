@@ -524,7 +524,7 @@ public class PaperRecordServiceTest {
                 patient2, identifier1.getIdentifier(), identifier2.getIdentifier(), medicalRecordLocation));
 
         verify(mockPaperRecordMergeRequestDAO).saveOrUpdate(argThat(expectedMergeRequestMatcher));
-
+        verify(mockPatientService).voidPatientIdentifier(identifier2, "voided during paper record merge");
     }
 
     @Test(expected = IllegalArgumentException.class)

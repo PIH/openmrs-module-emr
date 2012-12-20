@@ -498,6 +498,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Assert.assertNotNull(request.getDateCreated());
         Assert.assertEquals(Context.getAuthenticatedUser(), request.getCreator());
 
+        Assert.assertTrue(notPreferredIdentifier.isVoided());
     }
 
     @Test

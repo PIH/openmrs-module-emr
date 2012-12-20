@@ -141,7 +141,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
             log.warn("Duplicate pending record requests exist for patient " + patient);
         }
 
-        // if an pending record exists, simply update that request location, don't issue a new request
+        // if an pending records exists, simply update that request location, don't issue a new request
         if (requests.size() > 0) {   // TODO: change this to size() == 1 once we  implement story #186 and can guarantee that there won't be multiple requests (see comment above)
             PaperRecordRequest request = requests.get(0);
             request.setRequestLocation(requestLocation);
@@ -334,6 +334,10 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         mergeRequest.setDateCreated(new Date());
 
         paperRecordMergeRequestDAO.saveOrUpdate(mergeRequest);
+
+        // void the non-preferred identifier; we do this now (instead of when the merge is confirmed)
+        // so that all new requests for records for this patient use the right identifier
+        patientService.voidPatientIdentifier(notPreferredIdentifier, "voided during paper record merge");
     }
 
     @Override

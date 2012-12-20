@@ -516,11 +516,7 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
             for (PatientIdentifier notPreferredPaperRecordIdentifier: notPreferredPaperRecordIdentifiers) {
                 if (preferredPaperRecordIdentifier.getLocation().equals(notPreferredPaperRecordIdentifier.getLocation())) {
                     paperRecordService.markPaperRecordsForMerge(preferredPaperRecordIdentifier, notPreferredPaperRecordIdentifier);
-                    // void the non-preferred identifier, so that is doesn't get copied over
-                    // TODO: is this correct the thing to do? should we do this within the service method
-                    patientService.voidPatientIdentifier(notPreferredPaperRecordIdentifier, "voided during patient merge");
                 }
-
             }
         }
 

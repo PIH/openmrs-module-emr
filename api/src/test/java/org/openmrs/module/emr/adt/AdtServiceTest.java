@@ -598,7 +598,6 @@ public class AdtServiceTest {
         service.mergePatients(preferred, notPreferred);
 
         verify(mockPaperRecordService).markPaperRecordsForMerge(preferredIdentifier, notPreferredIdentifier);
-        verify(mockPatientService).voidPatientIdentifier(notPreferredIdentifier, "voided during patient merge");
 
         // make sure a merge request is not created for the record at the other location
         verify(mockPaperRecordService, never()).markPaperRecordsForMerge(anotherPreferredIdentifier, notPreferredIdentifier);
