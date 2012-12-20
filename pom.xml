@@ -34,9 +34,10 @@
 	
 	<properties>
 		<openMRSVersion>1.9.3-SNAPSHOT</openMRSVersion>
-        <uiframeworkVersion>2.2.1</uiframeworkVersion>
+        <uiframeworkVersion>2.5-SNAPSHOT</uiframeworkVersion>
         <appframeworkVersion>1.4-SNAPSHOT</appframeworkVersion>
         <idgenVersion>2.4-SNAPSHOT</idgenVersion>
+        <htmlformentryVersion>2.0.3-SNAPSHOT</htmlformentryVersion>
         <springVersion>3.0.5.RELEASE</springVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -107,6 +108,12 @@
             <artifactId>idgen-api</artifactId>
             <version>${idgenVersion}</version>
             <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>htmlformentry-api</artifactId>
+            <version>${htmlformentryVersion}</version>
             <scope>provided</scope>
         </dependency>
         <!-- End OpenMRS modules -->

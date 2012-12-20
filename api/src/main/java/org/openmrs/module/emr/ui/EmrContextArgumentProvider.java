@@ -17,8 +17,11 @@ package org.openmrs.module.emr.ui;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.Provider;
+import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.api.PatientService;
+import org.openmrs.api.ProviderService;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.adt.AdtService;
@@ -37,6 +40,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -59,6 +63,10 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
     @Autowired
     @Qualifier("emrProperties")
     EmrProperties emrProperties;
+
+    @Autowired
+    @Qualifier("providerService")
+    ProviderService providerService;
 
     @Override
     public void configureModel(PageContext pageContext) {
@@ -109,6 +117,18 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
         String patientId = request.getParameter("patientId");
         if (StringUtils.isEmpty(patientId)) {
             patientId = request.getParameter("patient");
+        }
+
+        if (emrContext.getUserContext() != null) {
+            User authenticatedUser = emrContext.getUserContext().getAuthenticatedUser();
+            if (authenticatedUser != null && authenticatedUser.getPerson() != null) {
+                Collection<Provider> providers = providerService.getProvidersByPerson(authenticatedUser.getPerson());
+                if (providers.size() > 1) {
+                    throw new IllegalStateException("Can't handle users with multiple provider accounts");
+                } else if (providers.size() == 1) {
+                    emrContext.setCurrentProvider(providers.iterator().next());
+                }
+            }
         }
 
         if (StringUtils.isNotEmpty(patientId)) {

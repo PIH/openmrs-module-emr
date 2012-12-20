@@ -16,6 +16,7 @@ package org.openmrs.module.emr;
 
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.Provider;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
@@ -37,6 +38,8 @@ public class EmrContext {
     Location sessionLocation;
 
     Patient currentPatient;
+
+    Provider currentProvider;
 
     VisitSummary activeVisitSummary;
 
@@ -100,6 +103,14 @@ public class EmrContext {
 
     public boolean isAuthenticated() {
         return userContext.isAuthenticated();
+    }
+
+    public Provider getCurrentProvider() {
+        return currentProvider;
+    }
+
+    public void setCurrentProvider(Provider currentProvider) {
+        this.currentProvider = currentProvider;
     }
 
     /**

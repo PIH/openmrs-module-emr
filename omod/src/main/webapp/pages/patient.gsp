@@ -12,8 +12,13 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
 
 Actions:
 <ul>
-    <% availableTasks.each { %>
-        <li><a href="/${ contextPath }/${ it.getUrl(emrContext) }">${ it.getLabel(emrContext) }</a></li>
+    <% availableTasks.each {
+        def url = it.getUrl(emrContext)
+        if (!url.startsWith("/")) {
+            url = "/" + contextPath + "/" + url
+        }
+    %>
+        <li><a href="${ url }">${ it.getLabel(emrContext) }</a></li>
     <% } %>
 </ul>
 
@@ -42,7 +47,7 @@ Visits and Encounters:
             ${ ui.format(v.visitType) } at ${ ui.format(v.location) } from ${ ui.format(v.startDatetime) } to ${ ui.format(v.stopDatetime) }
             <ul>
                 <% v.encounters.findAll { !it.voided } .each { %>
-                    <li>${ ui.format(it.encounterType) } at ${ ui.format(it.encounterDatetime) }</li>
+                    <li><a href="${ ui.pageLink("emr", "encounter", [ patientId: patient.patient.id, encounterId: it.id ]) }">${ ui.format(it.encounterType) } at ${ ui.format(it.encounterDatetime) }</a></li>
                 <% } %>
             </ul>
         </li>
