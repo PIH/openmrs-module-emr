@@ -4,7 +4,7 @@
     ui.includeJavascript("emr", "knockout-2.1.0.js")
     ui.includeJavascript("emr", "custom/recordRequest.js")
 
-    def timeFormat = new java.text.SimpleDateFormat("HH:mm")
+    def timeFormat = new java.text.SimpleDateFormat("dd/MM HH:mm")
 
 %>
 
