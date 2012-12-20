@@ -3,7 +3,7 @@
     config.require("formFieldName")
 %>
 
-<p>
+<p <% if (config.left) { %> class="left" <% } %> >
     <label for="${ config.id }-field">
         ${ config.label }
     </label>
