@@ -2,100 +2,13 @@
     ui.decorateWith("emr", "standardEmrPage")
 
     ui.includeJavascript("emr", "knockout-2.1.0.js")
-    ui.includeJavascript("emr", "custom/recordRequest.js")
+    ui.includeJavascript("emr", "paperrecord/recordRequest.js")
+    ui.includeJavascript("emr", "paperrecord/archivesRoom.js")
 
     def timeFormat = new java.text.SimpleDateFormat("dd/MM HH:mm")
 
 %>
 
-<script type="text/javascript">
-    jq(document).ready( function() {
-
-        jq("#tabs").tabs();
-
-        jq('#tabs').tabs('select', '#tab-${ activeTab }');
-
-
-        var recordsToPull = [];
-        <% openRequestsToPull.each { %>
-             recordsToPull.push(RecordRequestModel(
-                ${it.requestId}, "${ui.format(it.patient)}", "${ui.format(it.patient.getPatientIdentifier(primaryIdentifierType).identifier)}", "${it.identifier}", "${ui.format(it.requestLocation)}", "${timeFormat.format(it.dateCreated)}", ${it.dateCreated.time}
-            ));
-        <% } %>
-
-        var pullRequestsViewModel = PullRequestsViewModel(recordsToPull);
-        ko.applyBindings(pullRequestsViewModel, document.getElementById('pullrequest'));
-
-        var recordsToCreate = [];
-        <% openRequestsToCreate.each { %>
-            recordsToCreate.push(RecordRequestModel(
-                    ${it.requestId}, "${ui.format(it.patient)}", "${ui.format(it.patient.getPatientIdentifier(primaryIdentifierType).identifier)}", "${it.identifier}", "${ui.format(it.requestLocation)}", "${timeFormat.format(it.dateCreated)}", ${it.dateCreated.time}
-            ));
-        <% } %>
-
-        var createRequestsViewModel = CreateRequestsViewModel(recordsToCreate);
-        ko.applyBindings(createRequestsViewModel, document.getElementById('createrequest'));
-
-        var assignedRecordsToPull = [];
-        <% assignedRequestsToPull.each { %>
-            assignedRecordsToPull.push(RecordRequestModel(
-                    ${it.requestId}, "${ui.format(it.patient)}", "${ui.format(it.patient.getPatientIdentifier(primaryIdentifierType).identifier)}", "${it.identifier}", "${ui.format(it.requestLocation)}", "${timeFormat.format(it.dateCreated)}", ${it.dateCreated.time}
-            ));
-        <% } %>
-
-        var assignedPullRequestsViewModel = AssignedPullRequestsViewModel(assignedRecordsToPull);
-        ko.applyBindings(assignedPullRequestsViewModel, document.getElementById('assignedpullrequest'));
-
-        var assignedRecordsToCreate = [];
-        <% assignedRequestsToCreate.each { %>
-        assignedRecordsToCreate.push(RecordRequestModel(
-                ${it.requestId}, "${ui.format(it.patient)}", "${ui.format(it.patient.getPatientIdentifier(primaryIdentifierType).identifier)}", "${it.identifier}", "${ui.format(it.requestLocation)}", "${timeFormat.format(it.dateCreated)}", ${it.dateCreated.time}
-        ));
-        <% } %>
-
-        var assignedCreateRequestsViewModel = AssignedCreateRequestsViewModel(assignedRecordsToCreate);
-        ko.applyBindings(assignedCreateRequestsViewModel, document.getElementById('assignedcreaterequest'));
-
-        // handle entering bar codes
-        jq(".mark-as-pulled").submit(function (e) {
-
-            e.preventDefault();
-
-            var identifier = jq.trim(jq(this).children('.mark-as-pulled-identifier').val());
-
-            if (identifier) {
-                jq.ajax({
-                    url: '${ ui.actionLink('emr','paperrecord/archivesRoom','markPaperRecordRequestAsSent') }',
-                    data: { identifier: identifier },
-                    dataType: 'json',
-                    type: 'POST'
-                })
-                        .success(function(data) {
-                            // clear out the input box
-                            jq('.mark-as-pulled-identifier:visible').val('');
-
-                            // reload the lists to pull and create
-                            assignedCreateRequestsViewModel.load();
-                            assignedPullRequestsViewModel.load();
-
-                            emr.successAlert(data.message);
-                        })
-                        .error(function(xhr, status, err) {
-                            jq('.mark-as-pulled-identifier:visible').val('');
-                            emr.handleError(xhr);
-                        })
-            }
-        });
-
-        // if an alphanumeric character is pressed, send focus to the appropriate mark-as-pulled-identifier input box
-        jq(document).keydown(function(event) {
-            if (event.which > 47 && event.which < 91) {
-                jq(".mark-as-pulled-identifier:visible").focus();
-            }
-        })
-
-    });
-</script>
 <div id="tabs">
 
         <ul>

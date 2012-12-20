@@ -63,6 +63,29 @@ function PullRequestsViewModel(recordsToPull) {
         });
     });
 
+    api.load = function() {
+
+        // reload via ajax
+        jQuery.getJSON(emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "getOpenRecordsToPull"))
+            .success(function(data) {
+
+                // remove any existing entries
+                api.recordsToPull.removeAll();
+
+                // create the new list
+                jQuery.each(data, function(index, request) {
+                    api.recordsToPull.push(RecordRequestModel(request.requestId, request.patient,
+                        request.patientIdentifier, request.identifier, request.requestLocation, request.dateCreated,
+                        request.dateCreatedSortable));
+                });
+
+            })
+            .error(function(xhr) {
+                emr.handleError(xhr);
+            });
+
+    }
+
     return api;
 }
 
@@ -102,6 +125,29 @@ function CreateRequestsViewModel(recordsToCreate) {
         });
     });
 
+    api.load = function() {
+
+        // reload via ajax
+        jQuery.getJSON(emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "getOpenRecordsToCreate"))
+            .success(function(data) {
+
+                // remove any existing entries
+                api.recordsToCreate.removeAll();
+
+                // create the new list
+                jQuery.each(data, function(index, request) {
+                    api.recordsToCreate.push(RecordRequestModel(request.requestId, request.patient,
+                        request.patientIdentifier, request.identifier, request.requestLocation, request.dateCreated,
+                        request.dateCreatedSortable));
+                });
+
+            })
+            .error(function(xhr) {
+                emr.handleError(xhr);
+            });
+
+    }
+
     return api;
 }
 
@@ -109,7 +155,7 @@ function AssignedPullRequestsViewModel(assignedRecordsToPull) {
     var api = {};
     api.assignedRecordsToPull = ko.observableArray(assignedRecordsToPull);
 
-    api.load = function (url) {
+    api.load = function() {
 
         // reload via ajax
         jQuery.getJSON(emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "getAssignedRecordsToPull"))
@@ -154,7 +200,7 @@ function AssignedCreateRequestsViewModel(assignedRecordsToCreate) {
     var api = {};
     api.assignedRecordsToCreate = ko.observableArray(assignedRecordsToCreate);
 
-    api.load = function (url) {
+    api.load = function() {
 
         // reload via ajax
         jQuery.getJSON(emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "getAssignedRecordsToCreate"))

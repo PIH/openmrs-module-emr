@@ -33,7 +33,38 @@ import java.util.List;
 
 public class ArchivesRoomFragmentController {
 
+    // TODO: can we use something in the UiUtils method to do this
     DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
+    public List<SimpleObject> getOpenRecordsToPull(@SpringBean("paperRecordService") PaperRecordService paperRecordService,
+                                                   @SpringBean("emrProperties") EmrProperties emrProperties,
+                                                   UiUtils ui) {
+
+        // TODO: when we have multiple archives rooms this method will have to operate by location as well
+        List<PaperRecordRequest> requests = paperRecordService.getOpenPaperRecordRequestsToPull();
+        List<SimpleObject> results = new ArrayList<SimpleObject>();
+
+        if (requests != null && requests.size() > 0) {
+            results = convertPaperRecordRequestsToSimpleObjects(requests, emrProperties, ui);
+        }
+
+        return results;
+    }
+
+    public List<SimpleObject> getOpenRecordsToCreate(@SpringBean("paperRecordService") PaperRecordService paperRecordService,
+                                                        @SpringBean("emrProperties") EmrProperties emrProperties,
+                                                        UiUtils ui) {
+
+        // TODO: when we have multiple archives rooms this method will have to operate by location as well
+        List<PaperRecordRequest> requests = paperRecordService.getOpenPaperRecordRequestsToCreate();
+        List<SimpleObject> results = new ArrayList<SimpleObject>();
+
+        if (requests != null && requests.size() > 0) {
+            results = convertPaperRecordRequestsToSimpleObjects(requests, emrProperties, ui);
+        }
+
+        return results;
+    }
 
 
     public List<SimpleObject> getAssignedRecordsToPull(@SpringBean("paperRecordService") PaperRecordService paperRecordService,

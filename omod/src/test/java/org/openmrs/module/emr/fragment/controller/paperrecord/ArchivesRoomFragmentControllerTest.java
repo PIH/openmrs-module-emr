@@ -14,6 +14,7 @@
 
 package org.openmrs.module.emr.fragment.controller.paperrecord;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -46,13 +47,29 @@ import static org.mockito.Mockito.when;
 
 public class ArchivesRoomFragmentControllerTest {
 
+    private ArchivesRoomFragmentController controller;
+
+    private UiUtils ui;
+
+    private PaperRecordService paperRecordService;
+
+    private EmrProperties emrProperties;
+
+    private PatientIdentifierType patientIdentifierType = new PatientIdentifierType();
+
+    @Before
+    public void setup() {
+
+        controller = new ArchivesRoomFragmentController();
+        ui = new TestUiUtils();
+
+        paperRecordService = mock(PaperRecordService.class);
+        emrProperties = mock(EmrProperties.class);
+
+    }
+
     @Test
     public void testControllerShouldReturnFailureResultIfNoMatchingRequestFound() throws Exception {
-
-        ArchivesRoomFragmentController controller = new ArchivesRoomFragmentController();
-
-        UiUtils ui = new TestUiUtils();
-        PaperRecordService paperRecordService = mock(PaperRecordService.class);
 
         when(paperRecordService.getPendingPaperRecordRequestByIdentifier(eq("123"))).thenReturn(null);
         when(paperRecordService.getSentPaperRecordRequestByIdentifier(eq("123"))).thenReturn(null);
@@ -67,11 +84,6 @@ public class ArchivesRoomFragmentControllerTest {
 
     @Test
     public void testControllerShouldReturnFailureResultIfSentRequestFound() throws Exception {
-
-        ArchivesRoomFragmentController controller = new ArchivesRoomFragmentController();
-
-        UiUtils ui = new TestUiUtils();
-        PaperRecordService paperRecordService = mock(PaperRecordService.class);
 
         PaperRecordRequest request = new PaperRecordRequest();
         Location location = new Location();
@@ -92,11 +104,6 @@ public class ArchivesRoomFragmentControllerTest {
     @Test
     public void testControllerShouldMarkRecordAsSent() throws Exception {
 
-        ArchivesRoomFragmentController controller = new ArchivesRoomFragmentController();
-
-        UiUtils ui = new TestUiUtils();
-        PaperRecordService paperRecordService = mock(PaperRecordService.class);
-
         PaperRecordRequest request = new PaperRecordRequest();
         Location location = new Location();
         location.setName("Test location");
@@ -115,102 +122,58 @@ public class ArchivesRoomFragmentControllerTest {
     }
 
     @Test
+    public void testControllerShouldReturnOpenRequestsToPull() throws Exception {
+
+        List<PaperRecordRequest> requests = createSamplePaperRecordRequestList();
+
+        when(paperRecordService.getOpenPaperRecordRequestsToPull()).thenReturn(requests);
+        when(emrProperties.getPrimaryIdentifierType()).thenReturn(patientIdentifierType);
+
+        List<SimpleObject> results = controller.getOpenRecordsToPull(paperRecordService, emrProperties, ui);
+
+        assertProperResultsList(results);
+    }
+
+    @Test
+    public void testControllerShouldReturnOpenRequestsToCreate() throws Exception {
+
+        List<PaperRecordRequest> requests = createSamplePaperRecordRequestList();
+
+        when(paperRecordService.getOpenPaperRecordRequestsToCreate()).thenReturn(requests);
+        when(emrProperties.getPrimaryIdentifierType()).thenReturn(patientIdentifierType);
+
+        List<SimpleObject> results = controller.getOpenRecordsToCreate(paperRecordService, emrProperties, ui);
+
+        assertProperResultsList(results);
+    }
+
+    @Test
     public void testControllerShouldReturnAssignedRequestsToPull() throws Exception {
 
-        ArchivesRoomFragmentController controller = new ArchivesRoomFragmentController();
-
-        UiUtils ui = new TestUiUtils();
-        EmrProperties emrProperties = mock(EmrProperties.class);
-        PaperRecordService paperRecordService = mock(PaperRecordService.class);
-
-        // create a couple sample paper record request to return
-        PatientIdentifierType patientIdentifierType = new PatientIdentifierType();
-
-        Patient patient = new Patient();
-        PersonName name = new PersonName();
-        name.setFamilyName("Jones");
-        name.setGivenName("Tom");
-        patient.addName(name);
-
-        PatientIdentifier patientIdentifier = new PatientIdentifier();
-        patientIdentifier.setIdentifier("987");
-        patientIdentifier.setIdentifierType(patientIdentifierType);
-        patient.addIdentifier(patientIdentifier);
-
-        Patient patient2 = new Patient();
-        name = new PersonName();
-        name.setFamilyName("Wallace");
-        name.setGivenName("Mike");
-        patient2.addName(name);
-
-        patientIdentifier = new PatientIdentifier();
-        patientIdentifier.setIdentifier("763");
-        patientIdentifier.setIdentifierType(patientIdentifierType);
-        patient2.addIdentifier(patientIdentifier);
-
-        Location location = new Location();
-        location.setName("Test location");
-
-        Location location2 = new Location();
-        location2.setName("Another location");
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2012, 2, 22, 11, 10);
-
-        PaperRecordRequest request = new PaperRecordRequest();
-        request.setId(1);
-        request.setIdentifier("123");
-        request.setRequestLocation(location);
-        request.setDateCreated(calendar.getTime());
-        request.setPatient(patient);
-
-        PaperRecordRequest request2 = new PaperRecordRequest();
-        request2.setId(2);
-        request2.setIdentifier("ABC");
-        request2.setRequestLocation(location2);
-        calendar.set(2012,2,22,12, 11);
-        request2.setDateCreated(calendar.getTime());
-        request2.setPatient(patient2);
-
-        List<PaperRecordRequest> requests = new ArrayList<PaperRecordRequest>();
-        requests.add(request);
-        requests.add(request2);
+        List<PaperRecordRequest> requests = createSamplePaperRecordRequestList();
 
         when(paperRecordService.getAssignedPaperRecordRequestsToPull()).thenReturn(requests);
         when(emrProperties.getPrimaryIdentifierType()).thenReturn(patientIdentifierType);
 
         List<SimpleObject> results = controller.getAssignedRecordsToPull(paperRecordService, emrProperties, ui);
 
-        assertThat(results.size(), is(2));
-
-        SimpleObject result = results.get(0);
-        assertThat((String) result.get("requestId"), is("1"));
-        assertThat((String) result.get("requestLocation"), is("Test location"));
-        assertThat((String) result.get("identifier"), is("123"));
-        assertThat((String) result.get("patient"), is("Tom Jones"));
-        assertThat((String) result.get("patientIdentifier"), is("987"));
-        assertThat((String) result.get("dateCreated"), is("11:10"));
-
-        SimpleObject result2 = results.get(1);
-        assertThat((String) result2.get("requestId"), is("2"));
-        assertThat((String) result2.get("requestLocation"), is("Another location"));
-        assertThat((String) result2.get("identifier"), is("ABC"));
-        assertThat((String) result2.get("patient"), is("Mike Wallace"));
-        assertThat((String) result2.get("patientIdentifier"), is("763"));
-        assertThat((String) result2.get("dateCreated"), is("12:11"));
+        assertProperResultsList(results);
     }
 
     @Test
     public void testControllerShouldReturnAssignedRequestsToCreate() throws Exception {
 
-        ArchivesRoomFragmentController controller = new ArchivesRoomFragmentController();
+        List<PaperRecordRequest> requests = createSamplePaperRecordRequestList();
 
-        UiUtils ui = new TestUiUtils();
-        EmrProperties emrProperties = mock(EmrProperties.class);
-        PaperRecordService paperRecordService = mock(PaperRecordService.class);
+        when(paperRecordService.getAssignedPaperRecordRequestsToCreate()).thenReturn(requests);
+        when(emrProperties.getPrimaryIdentifierType()).thenReturn(patientIdentifierType);
 
-        // create a couple sample paper record request to return
-        PatientIdentifierType patientIdentifierType = new PatientIdentifierType();
+        List<SimpleObject> results = controller.getAssignedRecordsToCreate(paperRecordService, emrProperties, ui);
+
+        assertProperResultsList(results);
+    }
+
+    private List<PaperRecordRequest> createSamplePaperRecordRequestList() {
 
         Patient patient = new Patient();
         PersonName name = new PersonName();
@@ -262,10 +225,10 @@ public class ArchivesRoomFragmentControllerTest {
         requests.add(request);
         requests.add(request2);
 
-        when(paperRecordService.getAssignedPaperRecordRequestsToCreate()).thenReturn(requests);
-        when(emrProperties.getPrimaryIdentifierType()).thenReturn(patientIdentifierType);
+        return requests;
+    }
 
-        List<SimpleObject> results = controller.getAssignedRecordsToCreate(paperRecordService, emrProperties, ui);
+    private void assertProperResultsList(List<SimpleObject> results) {
 
         assertThat(results.size(), is(2));
 
@@ -284,5 +247,6 @@ public class ArchivesRoomFragmentControllerTest {
         assertThat((String) result2.get("patient"), is("Mike Wallace"));
         assertThat((String) result2.get("patientIdentifier"), is("763"));
         assertThat((String) result2.get("dateCreated"), is("12:11"));
+
     }
 }
