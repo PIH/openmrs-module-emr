@@ -7,6 +7,9 @@ import org.openmrs.User;
 
 import java.util.Date;
 
+/**
+ * Represents a request to merge two existing paper records from the same record location
+ */
 public class PaperRecordMergeRequest extends BaseOpenmrsObject {
 
     public enum Status { OPEN, MERGED }

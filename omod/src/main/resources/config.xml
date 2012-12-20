@@ -29,6 +29,7 @@
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
 	    PaperRecordRequest.hbm.xml
+        PaperRecordMergeRequest.hbm.xml
         RadiologyOrder.hbm.xml
         Printer.hbm.xml
 	</mappingFiles>
@@ -47,14 +48,6 @@
         <defaultValue></defaultValue>
         <description>
             UUID of the encounter type used for placing orders (e.g. requisitioning radiology studies)
-        </description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>emr.triageEncounterType</property>
-        <defaultValue></defaultValue>
-        <description>
-            UUID of the encounter type used for quick triage (e.g. at a vitals capture station)
         </description>
     </globalProperty>
 

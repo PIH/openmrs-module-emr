@@ -50,6 +50,11 @@
                         <property name="sessionFactory"><ref bean="sessionFactory"/></property>
                     </bean>
                 </property>
+                <property name="paperRecordMergeRequestDAO">
+                    <bean class="${project.parent.groupId}.${project.parent.artifactId}.paperrecord.db.HibernatePaperRecordMergeRequestDAO">
+                        <property name="sessionFactory"><ref bean="sessionFactory"/></property>
+                    </bean>
+                </property>
                 <property name="administrationService" ref="adminService" />
                 <property name="patientService" ref="patientService" />
                 <property name="messageSourceService" ref="messageSourceService" />

@@ -108,7 +108,10 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         return paperRecordRequestDAO.getById(id);
     }
 
-    // TODO: these could probably be refactored into a single method
+    @Override
+    public PaperRecordMergeRequest getPaperRecordMergeRequestById(Integer id) {
+       return paperRecordMergeRequestDAO.getById(id);
+    }
 
     @Override
     @Transactional
@@ -347,6 +350,11 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         // the just mark the request as merged
         mergeRequest.setStatus(PaperRecordMergeRequest.Status.MERGED);
         paperRecordMergeRequestDAO.saveOrUpdate(mergeRequest);
+    }
+
+    @Override
+    public List<PaperRecordMergeRequest> getOpenPaperRecordMergeRequests() {
+        return paperRecordMergeRequestDAO.findPaperRecordMergeRequest(Collections.singletonList(PaperRecordMergeRequest.Status.OPEN));
     }
 
     // leaving this method as public so that it can be tested by integration test in mirebalais module

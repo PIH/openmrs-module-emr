@@ -56,17 +56,13 @@ public class HibernatePaperRecordRequestDAO  extends HibernateSingleClassDAO<Pap
             addHasIdentifierRestriction(criteria, hasIdentifier);
         }
 
-        addOrderByDate(criteria);
+        addOrderByDateCreated(criteria);
 
         return (List<PaperRecordRequest>) criteria.list();
     }
 
     private Criteria createPaperRecordCriteria() {
         return sessionFactory.getCurrentSession().createCriteria(PaperRecordRequest.class);
-    }
-
-    private void addStatusRestriction(Criteria criteria, PaperRecordRequest.Status status) {
-        criteria.add(Restrictions.eq("status", status));
     }
 
     private void addStatusDisjunctionRestriction(Criteria criteria, List<PaperRecordRequest.Status> statusList) {
@@ -107,7 +103,7 @@ public class HibernatePaperRecordRequestDAO  extends HibernateSingleClassDAO<Pap
         }
     }
 
-    private void addOrderByDate(Criteria criteria) {
+    private void addOrderByDateCreated(Criteria criteria) {
         criteria.addOrder(Order.asc("dateCreated"));
     }
 

@@ -17,5 +17,11 @@ package org.openmrs.module.emr.paperrecord.db;
 import org.openmrs.module.emr.api.db.SingleClassDAO;
 import org.openmrs.module.emr.paperrecord.PaperRecordMergeRequest;
 
+import java.util.List;
+
 public interface PaperRecordMergeRequestDAO extends SingleClassDAO<PaperRecordMergeRequest> {
+
+
+    List<PaperRecordMergeRequest> findPaperRecordMergeRequest(List<PaperRecordMergeRequest.Status> statusList);
+
 }

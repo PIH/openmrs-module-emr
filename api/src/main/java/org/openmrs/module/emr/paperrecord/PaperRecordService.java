@@ -37,7 +37,16 @@ public interface PaperRecordService extends OpenmrsService {
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     PaperRecordRequest getPaperRecordRequestById(Integer id);
-    
+
+    /**
+     * Fetches the Paper Record Merge Request with the specified id
+     *
+     * @param id
+     * @return
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
+    PaperRecordMergeRequest getPaperRecordMergeRequestById(Integer id);
+
     /**
      * Fetches all Paper Record Requests for the specified Patient
      * 
@@ -176,5 +185,12 @@ public interface PaperRecordService extends OpenmrsService {
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     void markPaperRecordsAsMerged(PaperRecordMergeRequest mergeRequest);
+
+    /**
+     * Returns all merge requets with status = OPEN
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
+    List<PaperRecordMergeRequest> getOpenPaperRecordMergeRequests();
+
 }
 
