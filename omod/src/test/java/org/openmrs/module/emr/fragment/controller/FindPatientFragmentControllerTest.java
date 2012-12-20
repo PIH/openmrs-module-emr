@@ -29,6 +29,7 @@ import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -58,11 +59,11 @@ public class FindPatientFragmentControllerTest {
         SimpleObject o = new FindPatientFragmentController().simplify(ui, emrProperties, patient);
 
         assertEquals("Barack", PropertyUtils.getProperty(o, "preferredName.givenName"));
-        assertEquals("", PropertyUtils.getProperty(o, "preferredName.middleName"));
+        assertNull(PropertyUtils.getProperty(o, "preferredName.middleName"));
         assertEquals("Obama", PropertyUtils.getProperty(o, "preferredName.familyName"));
         assertEquals("Barack Obama", PropertyUtils.getProperty(o, "preferredName.fullName"));
         assertEquals("04-Aug-1961", PropertyUtils.getProperty(o, "birthdate"));
-        assertEquals("false", PropertyUtils.getProperty(o, "birthdateEstimated"));
+        assertEquals(Boolean.FALSE, PropertyUtils.getProperty(o, "birthdateEstimated"));
         assertEquals("M", PropertyUtils.getProperty(o, "gender"));
 
         Object primaryIdentifier = ((List) o.get("primaryIdentifiers")).get(0);
