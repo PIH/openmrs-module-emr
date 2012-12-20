@@ -5,8 +5,6 @@
     ui.includeJavascript("emr", "paperrecord/recordRequest.js")
     ui.includeJavascript("emr", "paperrecord/archivesRoom.js")
 
-    def timeFormat = new java.text.SimpleDateFormat("dd/MM HH:mm")
-
 %>
 
 <div id="tabs">

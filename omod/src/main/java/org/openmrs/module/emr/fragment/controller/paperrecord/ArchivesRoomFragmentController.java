@@ -34,7 +34,7 @@ import java.util.List;
 public class ArchivesRoomFragmentController {
 
     // TODO: can we use something in the UiUtils method to do this
-    DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+    DateFormat timeFormat = new SimpleDateFormat("dd/MM HH:mm");
 
     public List<SimpleObject> getOpenRecordsToPull(@SpringBean("paperRecordService") PaperRecordService paperRecordService,
                                                    @SpringBean("emrProperties") EmrProperties emrProperties,
