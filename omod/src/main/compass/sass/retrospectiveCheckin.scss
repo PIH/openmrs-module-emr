@@ -1,9 +1,8 @@
 @import "colors";
 
 .form_question {
-    input, select {
-        display: none;
-    }
+    border: 1px solid black;
+
     .left {
         float: none;
         display: inline-block;
@@ -11,12 +10,5 @@
 }
 
 .form_question.focused {
-    background-color: $pihSecondaryBlue;
-
-    input, select {
-        display: block;
-    }
-    input:focus, select:focus {
-        border: 2px solid green;
-    }
+    border: 2px solid red;
 }
