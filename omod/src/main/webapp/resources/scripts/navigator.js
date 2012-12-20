@@ -16,19 +16,41 @@ var QuestionItem = function(elem) {
 }
 
 var Question = function(elem) {
-    var model = {};
+    var previousQuestion, nextQuestion;
     var element = $(elem);
     var items = _.map(element.find("input, select"), function(i) {
         return QuestionItem(i);
-    })
+    });
 
+
+    var model = {};
     model.isSelected = false;
 
+    model.definePreviousQuestion = function(question) {
+        previousQuestion = question;
+    };
+    model.defineNextQuestion = function(question) {
+        nextQuestion = question;
+    };
     model.focusIn = function() {
         model.isSelected = true;
+        element.addClass("focused");
     };
     model.focusOut = function() {
         model.isSelected = false;
+        element.removeClass("focused");
+    };
+    model.moveToPreviousQuestion = function() {
+        if(previousQuestion) {
+            model.focusOut();
+            previousQuestion.focusIn();
+        }
+    };
+    model.moveToNextQuestion = function() {
+        if(nextQuestion) {
+            model.focusOut();
+            nextQuestion.focusIn();
+        }
     };
 
     return model;
@@ -40,6 +62,14 @@ var Section = function(elem) {
     var title = element.find("span.title").text();
     var questions = _.map(element.find("div.form_question"), function(q) {
        return Question(q);
+    });
+    _.each(questions, function(q, index) {
+        if(index != 0) {
+            q.definePreviousQuestion(questions[index-1]);
+        }
+        if(index != questions.len - 1) {
+            q.defineNextQuestion(questions[index+1]);
+        }
     });
 
     var isThereAQuestionSelected = function() {
@@ -62,18 +92,18 @@ var Section = function(elem) {
         nextSection = section;
     };
     model.moveToNextSection = function() {
-        if( isThereAQuestionSelected() ) return false;
+        if( isThereAQuestionSelected() ) return null;
 
         model.hide();
         nextSection.show();
-        return true;
+        return nextSection;
     };
     model.moveToPreviousSection = function() {
-        if( isThereAQuestionSelected() ) return false;
+        if( isThereAQuestionSelected() ) return null;
 
         model.hide();
         previousSection.show();
-        return true;
+        return previousSection;
     };
 
     model.moveToNextQuestion = function() {
@@ -104,16 +134,9 @@ var Section = function(elem) {
 }
 
 function KeyboardController() {
-    $('body').keydown(function(ev) {
-
-    });
-}
-
-function initFormNavigation(submitElement, cancelElement) {
-    sections = _.map($('section'), function(s) {
+    var sections = _.map($('section'), function(s) {
         return Section(s);
     });
-    var p, n;
     _.each(sections, function(s, index) {
         if(index != 0) {
             s.hide();
@@ -121,6 +144,32 @@ function initFormNavigation(submitElement, cancelElement) {
         }
         if(index != sections.len - 1) {
             s.defineNextSection(sections[index+1]);
+        }
+    });
+    var currentSection = sections[0];
+
+    $('body').keydown(function(key) {
+        var keycode = key.which;
+        if(keycode == 39) {
+            var s = currentSection.moveToNextSection();
+            if( s ) {
+                currentSection = s;
+                key.preventDefault();
+            }
+        }
+        if(keycode == 37) {
+            var s = currentSection.moveToPreviousSection();
+            if( s ) {
+                currentSection = s;
+                key.preventDefault();
+            }
+        }
+
+        if(keycode == 38) {
+            currentSection.moveToPreviousQuestion();
+        }
+        if(keycode == 40) {
+            currentSection.moveToNextQuestion();
         }
     });
 }
