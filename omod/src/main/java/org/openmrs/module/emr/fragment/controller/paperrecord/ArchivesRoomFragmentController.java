@@ -14,6 +14,7 @@
 
 package org.openmrs.module.emr.fragment.controller.paperrecord;
 
+import org.openmrs.Person;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
@@ -95,6 +96,21 @@ public class ArchivesRoomFragmentController {
         }
 
         return results;
+    }
+
+    public FragmentActionResult assignRequests(@RequestParam("requestId[]") List<PaperRecordRequest> requests,
+                                                @SpringBean("paperRecordService") PaperRecordService paperRecordService,
+                                                EmrContext emrContext, UiUtils ui) {
+
+        Person assignTo = emrContext.getUserContext().getAuthenticatedUser().getPerson();
+
+        try {
+            paperRecordService.assignRequests(requests, assignTo, emrContext.getSessionLocation());
+            return new SuccessResult(ui.message("emr.archivesRoom.assignRecords.message"));
+        } catch (IllegalStateException ex) {
+            return new FailureResult(ui.message("emr.archivesRoom.error.unableToAssignRecords"));
+        }
+
     }
 
     public FragmentActionResult markPaperRecordRequestAsSent(@RequestParam(value = "identifier", required = true) String identifier,

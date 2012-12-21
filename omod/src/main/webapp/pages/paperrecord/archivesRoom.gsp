@@ -39,16 +39,9 @@
                     </table>
                 </div>
                 <div class="box-align btn">
-                    <form id="post_create_requests" action="archivesRoom.page" method="post">
-                        <input type="hidden" name="assignTo" value="${ context.authenticatedUser.person.id }"/>
-                        <span style="display: none" data-bind="foreach: selectedRequests()">
-                            <input type="hidden" name="requestId" data-bind="value: requestId"/>
-                        </span>
-                        <input type="hidden" name="activeTab" value="create">
-                        <button id="nextCreate" data-bind="css: { disabled: !isValid() }, enable: isValid()">
-                            <i class="icon-chevron-right"></i> <span>${ ui.message("emr.archivesRoom.createSelected") }</span>
-                        </button>
-                    </form>
+                    <button id="assign-to-create-button" data-bind="css: { disabled: !isValid() }, enable: isValid()">
+                        <i class="icon-chevron-right"></i> <span>${ ui.message("emr.archivesRoom.createSelected") }</span>
+                    </button>
                 </div>
             </span>
 
@@ -112,16 +105,9 @@
                     </table>
                 </div>
                 <div class="box-align btn">
-                    <form id="post_pull_requests" action="archivesRoom.page" method="post">
-                        <input type="hidden" name="assignTo" value="${ context.authenticatedUser.person.id }"/>
-                        <!-- ko foreach:selectedRequests -->
-                        <input type="hidden" name="requestId" data-bind="value: requestId"/>
-                        <!-- /ko -->
-                        <input type="hidden" name="activeTab" value="pull">
-                        <button id="nextPull" class="print" data-bind="css: { disabled: !isValid() }, enable: isValid()">
-                            <i class="icon-chevron-right"></i> <span>${ ui.message("emr.archivesRoom.pullSelected") }</span>
-                        </button>
-                    </form>
+                    <button id="assign-to-pull-button" class="print" data-bind="css: { disabled: !isValid() }, enable: isValid()">
+                        <i class="icon-chevron-right"></i> <span>${ ui.message("emr.archivesRoom.pullSelected") }</span>
+                    </button>>
                 </div>
             </span>
                 <div id="assignedpullrequest" class="box-align">
