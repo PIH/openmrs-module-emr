@@ -1,4 +1,3 @@
-
 <%
     ui.decorateWith("emr", "standardEmrPage", [ title: ui.message("emr.systemAdministration") ])
 
@@ -6,27 +5,27 @@
 %>
 
 <div id="tasks">
-    <a href="${ ui.pageLink("emr", "manageAccounts") }">
+    <a class="button big" href="${ ui.pageLink("emr", "manageAccounts") }">
         <div class="task">
-            <img src="${ ui.resourceLink("uilibrary", "images/address_book_32.png")}"/>
+            <i class="icon-book"></i>
             ${ ui.message("emr.task.accountManagement.label") }
         </div>
     </a>
-    <a href="${ ui.pageLink("emr", "printer/managePrinters") }">
+    <a class="button big" href="${ ui.pageLink("emr", "printer/managePrinters") }">
         <div class="task">
-            <img src="${ ui.resourceLink("uilibrary", "images/printer.gif")}"/>
+            <i class="icon-print"></i>
             ${ ui.message("emr.printer.managePrinters") }
         </div>
     </a>
-    <a href="${ ui.pageLink("emr", "printer/defaultPrinters") }">
+    <a class="button big" href="${ ui.pageLink("emr", "printer/defaultPrinters") }">
         <div class="task">
-            <img src="${ ui.resourceLink("uilibrary", "images/printer.gif")}"/>
+            <i class="icon-print"></i>
             ${ ui.message("emr.printer.defaultPrinters") }
         </div>
     </a>
-    <a href="${ ui.pageLink("emr", "mergePatients") }">
+    <a class="button big" href="${ ui.pageLink("emr", "mergePatients") }">
         <div class="task">
-            <img src="${ ui.resourceLink("uilibrary", "images/users_32.png")}"/>
+            <i class="icon-group"></i>
             ${ ui.message("emr.mergePatients") }
         </div>
     </a>
