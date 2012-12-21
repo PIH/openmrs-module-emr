@@ -39,7 +39,7 @@
     </bean>
     <bean id="emrRetrospectiveCheckin" class="org.openmrs.module.appframework.SimpleAppDescriptor">
         <property name="id" value="emr.retrospectiveCheckin"/>
-        <property name="label" value="Retrospective Checkin"/>
+        <property name="label" value="Retrospective Check-In"/>
         <property name="homepageUrl" value="emr/retrospectiveCheckin.page"/>
         <property name="iconUrl" value="icon-paste"/>
     </bean>

@@ -4,9 +4,8 @@ jq(document).ready( function() {
 
     // set up tabs
     jq("#tabs").tabs();
-    jq('#tabs').tabs('select', '#tab-${ activeTab }');
 
-    // set up models for the tables
+    // set up models for the table
     var pullRequestsViewModel = PullRequestsViewModel([]);
     ko.applyBindings(pullRequestsViewModel, document.getElementById('pullrequest'));
 
@@ -58,6 +57,61 @@ jq(document).ready( function() {
                     })
         }
     });
+
+    // handle assignment buttons
+    jq('#assign-to-create-button').click(function(e) {
+
+        e.preventDefault();
+
+        var requestIds = [];
+
+        jQuery.each(createRequestsViewModel.selectedRequests(), function(index, request) {
+            requestIds.push(request.requestId);
+        });
+
+        jQuery.ajax({
+            url: emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "assignRequests"),
+            data: { requestId: requestIds },
+            dataType: 'json',
+            type: 'POST'
+        })
+            .success(function(data) {
+                createRequestsViewModel.load();
+                assignedCreateRequestsViewModel.load();
+
+                emr.successMessage(data.message);
+            })
+            .error(function(xhr) {
+                emr.handleError(xhr);
+            });
+    })
+
+    jq('#assign-to-pull-button').click(function(e) {
+
+        e.preventDefault();
+
+        var requestIds = [];
+
+        jQuery.each(pullRequestsViewModel.selectedRequests(), function(index, request) {
+            requestIds.push(request.requestId);
+        });
+
+        jQuery.ajax({
+            url: emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "assignRequests"),
+            data: { requestId: requestIds },
+            dataType: 'json',
+            type: 'POST'
+        })
+            .success(function(data) {
+                pullRequestsViewModel.load();
+                assignedPullRequestsViewModel.load();
+
+                emr.successMessage(data.message);
+            })
+            .error(function(xhr) {
+                emr.handleError(xhr);
+            });
+    })
 
     // if an alphanumeric character is pressed, send focus to the appropriate mark-as-pulled-identifier input box
     jq(document).keydown(function(event) {
