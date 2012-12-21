@@ -20,7 +20,11 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.Person;
 import org.openmrs.PersonName;
+import org.openmrs.User;
+import org.openmrs.api.context.UserContext;
+import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.TestUiUtils;
 import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
@@ -55,6 +59,16 @@ public class ArchivesRoomFragmentControllerTest {
 
     private EmrProperties emrProperties;
 
+    private EmrContext emrContext;
+
+    private UserContext userContext;
+
+    private User authenicatedUser;
+
+    private Person authenicatedUserPerson;
+
+    private Location sessionLocation;
+
     private PatientIdentifierType patientIdentifierType = new PatientIdentifierType();
 
     @Before
@@ -65,7 +79,18 @@ public class ArchivesRoomFragmentControllerTest {
 
         paperRecordService = mock(PaperRecordService.class);
         emrProperties = mock(EmrProperties.class);
+        emrContext = mock(EmrContext.class);
+        userContext = mock(UserContext.class);
 
+        authenicatedUserPerson = new Person();
+        authenicatedUser = new User();
+        authenicatedUser.setPerson(authenicatedUserPerson);
+
+        sessionLocation = new Location();
+
+        when(userContext.getAuthenticatedUser()).thenReturn(authenicatedUser);
+        when(emrContext.getUserContext()).thenReturn(userContext);
+        when(emrContext.getSessionLocation()).thenReturn(sessionLocation);
     }
 
     @Test
@@ -171,6 +196,17 @@ public class ArchivesRoomFragmentControllerTest {
         List<SimpleObject> results = controller.getAssignedRecordsToCreate(paperRecordService, emrProperties, ui);
 
         assertProperResultsList(results);
+    }
+
+    @Test
+    public void testControllerShouldAssignRequsets() throws Exception {
+
+        List<PaperRecordRequest> requests = createSamplePaperRecordRequestList();
+
+        FragmentActionResult result = controller.assignRequests(requests, paperRecordService, emrContext, ui);
+
+        assertThat(result, instanceOf(SuccessResult.class));
+        verify(paperRecordService).assignRequests(eq(requests), eq(authenicatedUser.getPerson()), eq(sessionLocation));
     }
 
     private List<PaperRecordRequest> createSamplePaperRecordRequestList() {
