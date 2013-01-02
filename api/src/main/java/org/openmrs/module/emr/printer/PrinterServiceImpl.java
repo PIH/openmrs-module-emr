@@ -130,18 +130,20 @@ public class PrinterServiceImpl extends BaseOpenmrsService implements PrinterSer
     }
 
     @Override
-    public boolean printViaSocket(String data, Printer.Type type, Location location, String encoding) {
+    public void printViaSocket(String data, Printer.Type type, Location location, String encoding)
+        throws UnableToPrintViaSocketException {
         Printer printer = getDefaultPrinter(location, type);
 
         if (printer == null) {
             throw new IllegalStateException("No default printer assigned for " + location.getDisplayString() + ". Please contact your system administrator");
         }
 
-        return printViaSocket(data, printer, encoding);
+        printViaSocket(data, printer, encoding);
     }
 
     @Override
-    public boolean printViaSocket(String data, Printer printer, String encoding) {
+    public void printViaSocket(String data, Printer printer, String encoding)
+        throws UnableToPrintViaSocketException {
 
         Socket socket = null;
         // Create a socket with a timeout
@@ -163,16 +165,15 @@ public class PrinterServiceImpl extends BaseOpenmrsService implements PrinterSer
             else {
                 IOUtils.write(data.toString(), socket.getOutputStream(), encoding);
             }
-
-            return true;
         }
         catch (Exception e) {
-            log.error("Unable to print to printer " + printer.getName(), e);
-            return false;
+            throw new UnableToPrintViaSocketException("Unable to print to printer " + printer.getName(), e);
         }
         finally{
             try {
-                socket.close();
+                if (socket != null) {
+                    socket.close();
+                }
             } catch (IOException e) {
                 log.error("failed to close the socket to printer " + printer.getName(), e);
             }

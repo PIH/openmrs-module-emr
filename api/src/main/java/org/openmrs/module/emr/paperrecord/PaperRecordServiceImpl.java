@@ -296,10 +296,17 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     }
 
     @Override
-    public Boolean printPaperRecordLabel(PaperRecordRequest request, Location location) {
+    public void printPaperRecordLabel(PaperRecordRequest request, Location location) {
         String data = paperRecordLabelTemplate.generateLabel(request);
         String encoding = paperRecordLabelTemplate.getEncoding();
-        return printerService.printViaSocket(data, Printer.Type.LABEL, location, encoding);
+
+        try {
+            printerService.printViaSocket(data, Printer.Type.LABEL, location, encoding);
+        }
+        catch (Exception e) {
+            throw new UnableToPrintPaperRecordLabelException("Unable to print paper record label for request " + request, e);
+        }
+
     }
 
     @Override

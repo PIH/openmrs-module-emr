@@ -114,18 +114,18 @@ public interface PrinterService extends OpenmrsService {
      *
      * @param data
      * @param location
-     * @return true/false whether the data was successfully send to the printer
      */
     @Authorized(EmrConstants.PRIVILEGE_PRINTERS_ACCESS_PRINTERS)
-    boolean printViaSocket(String data, Printer.Type type, Location location, String encoding);
+    void printViaSocket(String data, Printer.Type type, Location location, String encoding)
+        throws UnableToPrintViaSocketException;
 
     /**
      * Prints the string data to the specified printer
      *
      * @param data
      * @param printer
-     * @return true/false whether the data was successfully send to the printer
      */
     @Authorized(EmrConstants.PRIVILEGE_PRINTERS_ACCESS_PRINTERS)
-    boolean printViaSocket(String data, Printer printer, String encoding);
+    void printViaSocket(String data, Printer printer, String encoding)
+        throws UnableToPrintViaSocketException;
 }

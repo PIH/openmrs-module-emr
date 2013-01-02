@@ -166,7 +166,7 @@ public interface PaperRecordService extends OpenmrsService {
      * @return true/false whether or not the print job was successfully sent to the printer
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
-    Boolean printPaperRecordLabel(PaperRecordRequest request, Location location);
+    void printPaperRecordLabel(PaperRecordRequest request, Location location);
 
 
     /**
