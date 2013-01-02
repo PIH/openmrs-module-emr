@@ -112,7 +112,11 @@ public class ArchivesRoomFragmentController {
         try {
             paperRecordService.assignRequests(requests, assignTo, emrContext.getSessionLocation());
             return new SuccessResult(ui.message("emr.archivesRoom.assignRecords.message"));
-        } catch (IllegalStateException ex) {
+        }
+        catch (UnableToPrintPaperRecordLabelException ex) {
+            return new FailureResult(ui.message("emr.archivesRoom.error.unableToPrintLabel"));
+        }
+        catch (IllegalStateException ex) {
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToAssignRecords"));
         }
 
