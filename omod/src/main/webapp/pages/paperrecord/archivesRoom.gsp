@@ -107,7 +107,7 @@
                 <div class="box-align btn">
                     <button id="assign-to-pull-button" class="print" data-bind="css: { disabled: !isValid() }, enable: isValid()">
                         <i class="icon-chevron-right"></i> <span>${ ui.message("emr.archivesRoom.pullSelected") }</span>
-                    </button>>
+                    </button>
                 </div>
             </span>
                 <div id="assignedpullrequest" class="box-align">
