@@ -455,7 +455,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Assert.assertNotNull(retrievedRequest.getDateStatusChanged());
     }
 
-    @Test
+    @Test(expected = UnableToPrintPaperRecordLabelException.class)
     public void testPrintPaperRecordLabel() throws Exception {
 
         executeDataSet("printerServiceComponentTestDataset.xml");
@@ -472,9 +472,8 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
         Location location = Context.getLocationService().getLocation(3);
 
-        // this won't actually print, since no printer configured, but should return false without failing
-        Boolean result = paperRecordService.printPaperRecordLabel(request, location);
-        Assert.assertFalse(result);
+        // try printing when no printer is configured
+        paperRecordService.printPaperRecordLabel(request, location);
     }
 
     @Test

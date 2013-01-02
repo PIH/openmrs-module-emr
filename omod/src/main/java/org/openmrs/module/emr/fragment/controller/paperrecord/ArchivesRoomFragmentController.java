@@ -19,6 +19,7 @@ import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 import org.openmrs.module.emr.paperrecord.PaperRecordService;
+import org.openmrs.module.emr.paperrecord.UnableToPrintPaperRecordLabelException;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -107,7 +108,11 @@ public class ArchivesRoomFragmentController {
         try {
             paperRecordService.assignRequests(requests, assignTo, emrContext.getSessionLocation());
             return new SuccessResult(ui.message("emr.archivesRoom.assignRecords.message"));
-        } catch (IllegalStateException ex) {
+        }
+        catch (UnableToPrintPaperRecordLabelException ex) {
+            return new FailureResult(ui.message("emr.archivesRoom.error.unableToPrintLabel"));
+        }
+        catch (IllegalStateException ex) {
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToAssignRecords"));
         }
 
@@ -147,16 +152,9 @@ public class ArchivesRoomFragmentController {
                                              EmrContext emrContext,
                                              UiUtils ui) {
 
-        Boolean result = paperRecordService.printPaperRecordLabel(request, emrContext.getSessionLocation());
-
         try {
-            if (result) {
-                return new SuccessResult(ui.message("emr.archivesRoom.printedLabel.message", request.getIdentifier()));
-            }
-            else {
-                return new FailureResult(ui.message("emr.archivesRoom.error.unableToPrintLabel"));
-            }
-
+            paperRecordService.printPaperRecordLabel(request, emrContext.getSessionLocation());
+            return new SuccessResult(ui.message("emr.archivesRoom.printedLabel.message", request.getIdentifier()));
         }
         catch (Exception e) {
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToPrintLabel"));

@@ -36,7 +36,6 @@ import java.net.UnknownHostException;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
@@ -169,7 +168,7 @@ public class PrinterServiceTest {
     }
 
     @Test
-    public void shouldPrintToSocket() throws IOException {
+    public void shouldPrintToSocket() throws IOException, UnableToPrintViaSocketException {
 
         mockStatic(IOUtils.class);
 
@@ -179,7 +178,7 @@ public class PrinterServiceTest {
 
         String testData = "test data";
 
-        assertTrue(printerService.printViaSocket(testData, printer, "UTF-8"));
+        printerService.printViaSocket(testData, printer, "UTF-8");
         verify(mockedSocket).connect(argThat(new IsExpectedSocketAddress("127.0.0.1", "9100")), eq(500));
         verify(mockedSocket).getOutputStream();
 
@@ -188,7 +187,7 @@ public class PrinterServiceTest {
     }
 
     @Test
-    public void shouldPrintToSocketUsingWindowsEncoding() throws IOException {
+    public void shouldPrintToSocketUsingWindowsEncoding() throws IOException, UnableToPrintViaSocketException {
 
         mockStatic(IOUtils.class);
 
@@ -198,13 +197,42 @@ public class PrinterServiceTest {
 
         String testData = "test data";
 
-        assertTrue(printerService.printViaSocket(testData, printer, "Windows-1252"));
+        printerService.printViaSocket(testData, printer, "Windows-1252");
         verify(mockedSocket).connect(argThat(new IsExpectedSocketAddress("127.0.0.1", "9100")), eq(500));
         verify(mockedSocket).getOutputStream();
 
         verifyStatic();
         IOUtils.write(eq(testData.getBytes("Windows-1252")), any(OutputStream.class));
     }
+
+    @Test(expected = UnableToPrintViaSocketException.class)
+    public void shouldFailIfInvalidIpAddress() throws UnableToPrintViaSocketException {
+
+        mockStatic(IOUtils.class);
+
+        Printer printer = new Printer();
+        printer.setIpAddress("999.999.999.999") ;
+        printer.setPort("9100");
+
+        String testData = "test data";
+
+        printerService.printViaSocket(testData, printer, "UTF-8");
+    }
+
+    @Test(expected = UnableToPrintViaSocketException.class)
+    public void shouldFailIfInvalidPort() throws UnableToPrintViaSocketException {
+
+        mockStatic(IOUtils.class);
+
+        Printer printer = new Printer();
+        printer.setIpAddress("127.0.0.1") ;
+        printer.setPort("bad_port");
+
+        String testData = "test data";
+
+        printerService.printViaSocket(testData, printer, "UTF-8");
+    }
+
 
     public class PrinterServiceStub extends PrinterServiceImpl {
 

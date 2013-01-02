@@ -820,8 +820,8 @@ public class PaperRecordServiceTest {
         }
 
         @Override
-        public Boolean printPaperRecordLabel(PaperRecordRequest request, Location location) {
-            return true;
+        public void printPaperRecordLabel(PaperRecordRequest request, Location location) {
+
         }
 
     }

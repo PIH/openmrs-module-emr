@@ -14,6 +14,7 @@ import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.printer.Printer;
 import org.openmrs.module.emr.printer.PrinterServiceImpl;
+import org.openmrs.module.emr.printer.UnableToPrintViaSocketException;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -169,7 +170,7 @@ public class DefaultZplPaperRecordLabelTemplateTest {
 
     @Test
     @Ignore
-    public void testPrintingLabel() {
+    public void testPrintingLabel() throws UnableToPrintViaSocketException {
 
         Patient patient = new Patient();
         patient.setGender("F");
