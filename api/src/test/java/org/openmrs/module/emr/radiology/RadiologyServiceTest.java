@@ -61,7 +61,7 @@ public class RadiologyServiceTest {
         User authenticatedUser = new User();
         PowerMockito.when(Context.getAuthenticatedUser()).thenReturn(authenticatedUser);
 
-        patient = new Patient();
+        patient = new Patient(1);
         orderType = new OrderType();
         clinicalHistory = "Patient fell from a building";
         provider = new Provider();
