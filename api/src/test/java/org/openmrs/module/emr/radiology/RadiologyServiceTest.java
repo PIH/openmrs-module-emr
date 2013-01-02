@@ -14,7 +14,6 @@ import org.openmrs.Location;
 import org.openmrs.Order;
 import org.openmrs.OrderType;
 import org.openmrs.Patient;
-import org.openmrs.Person;
 import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.Visit;
@@ -62,9 +61,7 @@ public class RadiologyServiceTest {
         User authenticatedUser = new User();
         PowerMockito.when(Context.getAuthenticatedUser()).thenReturn(authenticatedUser);
 
-        Person person = new Person(1);
-        patient = new Patient(person);
-
+        patient = new Patient();
         orderType = new OrderType();
         clinicalHistory = "Patient fell from a building";
         provider = new Provider();
@@ -139,6 +136,7 @@ public class RadiologyServiceTest {
     @Test
     public void shouldPlaceOrderEvenIfThereIsNoVisit() {
         RadiologyRequisition radiologyRequisition = new RadiologyRequisition();
+        radiologyRequisition.setPatient(patient);
 
         when(emrContext.getActiveVisitSummary()).thenReturn(null);
 
