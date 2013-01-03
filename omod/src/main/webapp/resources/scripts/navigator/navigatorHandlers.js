@@ -33,9 +33,9 @@ function FieldsHandler(questionsHandler) {
                 return true;
             }
         } else {
-            var question = questionsHandler.selectedQuestion();
-            if(question && showFirstFieldIfNoneIsActive) {
-                question.fields[0].toggleSelection();
+            if(showFirstFieldIfNoneIsActive) {
+                questionsHandler.selectedQuestion() || questionsHandler.handleDownKey();
+                questionsHandler.selectedQuestion().fields[0].toggleSelection();
                 return true;
             }
         }
