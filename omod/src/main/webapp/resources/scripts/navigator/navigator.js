@@ -25,6 +25,7 @@ function initKeyboardHandlersChain() {
 
 function KeyboardController() {
     var handlerChainRoot = initKeyboardHandlersChain();
+    handlerChainRoot.handleTabKey();
 
     $('body').keydown(function(key) {
         switch(key.which) {
