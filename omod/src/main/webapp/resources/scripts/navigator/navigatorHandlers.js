@@ -5,14 +5,74 @@ function FieldsHandler(questionsHandler) {
         return _.find(fields, function(f) { return f.isSelected; });
     };
 
-    model.isSelected = false;
-    model.focusIn = function() {
-        model.isSelected = true;
-        element.focus();
+    var delegateIfNoSelectedFieldTo = function(delegatedFunction) {
+        if(!selectedField()) {
+            return delegatedFunction();
+        }
+        return false;
+    }
+    var switchActiveQuestions = function(previousFieldParentQuestion, currentFieldParentQuestion) {
+        if(previousFieldParentQuestion != currentFieldParentQuestion) {
+            previousFieldParentQuestion.toggleSelection();
+            if(previousFieldParentQuestion.parentSection != currentFieldParentQuestion.parentSection) {
+                previousFieldParentQuestion.parentSection.toggleSelection();
+                currentFieldParentQuestion.parentSection.toggleSelection();
+            }
+            currentFieldParentQuestion.toggleSelection();
+        }
     };
-    model.focusOut = function() {
-        model.isSelected = false;
-        element.blur();
+    var switchActiveField = function(fieldIndexUpdater, showFirstFieldIfNoneIsActive) {
+        var field = selectedField();
+        if(field) {
+            var idx = _.indexOf(fields, field);
+            var newField = fields[fieldIndexUpdater(idx)];
+            if(newField) {
+                field.toggleSelection();
+                switchActiveQuestions(field.parentQuestion, newField.parentQuestion);
+                newField.toggleSelection();
+                return true;
+            }
+        } else {
+            var question = questionsHandler.selectedQuestion();
+            if(question && showFirstFieldIfNoneIsActive) {
+                question.fields[0].toggleSelection();
+                return true;
+            }
+        }
+        return false;
+    };
+
+
+    var api = {};
+    api.addField = function(field) {
+        fields.push(field);
+    };
+    api.handleLeftKey = function() {
+        return delegateIfNoSelectedFieldTo(questionsHandler.handleLeftKey);
+    };
+    api.handleRightKey = function() {
+        return delegateIfNoSelectedFieldTo(questionsHandler.handleRightKey);
+    };
+    api.handleUpKey = function() {
+        return delegateIfNoSelectedFieldTo(questionsHandler.handleUpKey);
+    };
+    api.handleDownKey = function() {
+        return delegateIfNoSelectedFieldTo(questionsHandler.handleDownKey);
+    };
+    api.handleTabKey = function() {
+        return switchActiveField(function(i) { return i+1; }, true);
+    };
+    api.handleShiftTabKey = function() {
+        return switchActiveField(function(i) { return i-1; }, false);
+    };
+    api.handleEscKey = function() {
+        var field = selectedField();
+        if(field) {
+            field.toggleSelection();
+            return true;
+        } else {
+            return questionsHandler.handleEscKey();
+        }
     };
 
     return model;
