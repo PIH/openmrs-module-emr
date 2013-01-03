@@ -20,6 +20,7 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.adt.AdtService;
+import org.openmrs.module.emr.visit.VisitDomainWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -155,5 +156,15 @@ public class PatientDomainWrapper {
             }
         }
         return unknownPatient;
+    }
+
+    public List<VisitDomainWrapper> getAllVisitsUsingWrappers() {
+        List<VisitDomainWrapper> visitDomainWrappers = new ArrayList<VisitDomainWrapper>();
+
+        for (Visit visit : getAllVisits()) {
+            visitDomainWrappers.add(new VisitDomainWrapper(visit));
+        }
+
+        return visitDomainWrappers;
     }
 }

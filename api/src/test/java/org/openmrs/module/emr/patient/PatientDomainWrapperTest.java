@@ -6,12 +6,20 @@ import org.junit.Test;
 import org.openmrs.Patient;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
+import org.openmrs.Visit;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.adt.AdtService;
+import org.openmrs.module.emr.visit.VisitDomainWrapper;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -21,13 +29,15 @@ public class PatientDomainWrapperTest {
     private PatientDomainWrapper patientDomainWrapper;
     private EmrProperties emrProperties;
     private Patient patient;
+    private VisitService visitService;
 
     @Before
     public void setUp() throws Exception {
         patient = new Patient();
         emrProperties = mock(EmrProperties.class);
+        visitService = mock(VisitService.class);
         patientDomainWrapper = new PatientDomainWrapper(patient, emrProperties, mock(AdtService.class),
-                                                        mock(VisitService.class), mock(EncounterService.class) );
+                visitService, mock(EncounterService.class) );
     }
 
     @Test
@@ -45,6 +55,15 @@ public class PatientDomainWrapperTest {
 
         assertTrue(patientDomainWrapper.isUnknownPatient());
 
+    }
+
+    @Test
+    public void shouldCreateAListOfVisitDomainWrappersBasedOnVisitListFromVisitService(){
+        when(visitService.getVisitsByPatient(patient, true, false)).thenReturn(asList(new Visit(), new Visit(), new Visit()));
+
+        List<VisitDomainWrapper> visitDomainWrappers =  patientDomainWrapper.getAllVisitsUsingWrappers();
+
+        assertThat(visitDomainWrappers.size(), is(3));
     }
 
 
