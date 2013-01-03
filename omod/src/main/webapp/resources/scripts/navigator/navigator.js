@@ -45,10 +45,11 @@ function KeyboardController() {
                 break;
             case 9:
                 if(event.shiftKey) {
-                    handlerChainRoot.handleShiftTabKey() && key.preventDefault();
+                    handlerChainRoot.handleShiftTabKey();
                 } else {
-                    handlerChainRoot.handleTabKey() && key.preventDefault();
+                    handlerChainRoot.handleTabKey();
                 }
+                key.preventDefault()
                 break;
             default:
                 break;
