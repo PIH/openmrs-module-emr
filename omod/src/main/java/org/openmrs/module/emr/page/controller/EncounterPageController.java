@@ -16,6 +16,7 @@ package org.openmrs.module.emr.page.controller;
 
 import org.openmrs.Encounter;
 import org.openmrs.module.emr.EmrContext;
+import org.openmrs.module.htmlformentry.extension.html.FormEntryHandlerExtension;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -27,7 +28,16 @@ public class EncounterPageController {
     public void get(EmrContext emrContext,
                     @RequestParam("encounterId") Encounter encounter,
                     PageModel pageModel) {
+
+        String displayWith = null;
+        if (encounter.getForm() != null) {
+            if (new FormEntryHandlerExtension().getFormsModuleCanView().contains(encounter.getForm())) {
+                displayWith = "htmlformentry";
+            }
+        }
+
         pageModel.addAttribute("patient", emrContext.getCurrentPatient());
         pageModel.addAttribute("encounter", encounter);
+        pageModel.addAttribute("displayWith", displayWith);
     }
 }
