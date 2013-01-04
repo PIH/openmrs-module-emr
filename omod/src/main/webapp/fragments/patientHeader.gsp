@@ -22,7 +22,7 @@
         </span>
     </div>
 
-    <!--div class="identifiers">
+    <div class="identifiers">
         ID:
         <%= patient.primaryIdentifiers.collect{ it.identifier }.join(", ") %>
         <% if (patient.paperRecordIdentifiers) { %>
@@ -30,7 +30,7 @@
             ${ ui.format(emrProperties.paperRecordIdentifierType) }:
             <%= patient.paperRecordIdentifiers.collect{ it.identifier }.join(", ") %>
         <% } %>
-    </div-->
+    </div>
 
     <div class="unknown-patient" style=<%= (!patient.unknownPatient) ? "display:none" : "" %>>
         ${ ui.message("emr.patient.temporaryRecord") } <br/>
