@@ -59,8 +59,10 @@ import java.util.List;
  *  "checked out" of the archive room--and therefore the requested Location on the request should be the current
  *  location of the record.
  *
- *  RETURNED--one a chart is returned to the archive room and the archivist enters/scans the record identifier,
+ *  RETURNED--one a record is returned to the archive room and the archivist enters/scans the record identifier,
  *  the record is transitioned to the RETURNED state, effectively ending the workflow of a Paper Record Request.
+ *
+ *  CANCELLED--nots that a request has been cancelled without being fulfilled
  *
  * All the states except for "RETURNED" are considered "active" states.  A single paper record should never have more
  * than one request in an "active" state at any one time.  (This may change in the future if we want to allow a record

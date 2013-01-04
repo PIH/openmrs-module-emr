@@ -42,7 +42,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static org.openmrs.module.emr.paperrecord.PaperRecordRequest.PENDING_STATUSES;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -55,6 +54,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.openmrs.module.emr.paperrecord.PaperRecordRequest.PENDING_STATUSES;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
@@ -503,6 +503,33 @@ public class PaperRecordServiceTest {
         verify(mockPaperRecordDAO).saveOrUpdate(argThat(expectedRequestMatcher));
 
     }
+
+    @Test
+    public void testMarkPaperRecordRequestsAsReturnedShouldMarkSentPaperRecordRequestsAsReturned() {
+
+        Patient patient = new Patient();
+        patient.setId(15);
+
+        Location medicalRecordLocation = createMedicalRecordLocation();
+
+        PatientIdentifier identifier = createIdentifier(medicalRecordLocation, "ABCZYX");
+        patient.addIdentifier(identifier);
+
+        PaperRecordRequest request = createPaperRecordRequest(patient, medicalRecordLocation, "ABCZYX");
+        request.setDateCreated(new Date());
+        request.updateStatus(Status.SENT);
+
+        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(Collections.singletonList(Status.SENT))),
+                argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier.toString()), argThat(new NullBoolean())))
+                .thenReturn(Collections.singletonList(request));
+
+        paperRecordService.markPaperRecordRequestsAsReturned("ABCZYX");
+
+        assertThat(request.getStatus(), is(Status.RETURNED));
+        IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(request);
+        verify(mockPaperRecordDAO).saveOrUpdate(argThat(expectedRequestMatcher));
+    }
+
 
     @Test
     public void testMarkPapersRecordForMergeShouldCreatePaperRecordMergeRequest() throws Exception {

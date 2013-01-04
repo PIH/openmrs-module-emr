@@ -156,9 +156,14 @@ public interface PaperRecordService extends OpenmrsService {
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     void markPaperRecordRequestAsSent(PaperRecordRequest request);
 
+    /**
+     * Marks all active requests with the specified identifier as returned
+     */
+    // TODO: once we have multiple medical record locations, we will need to add location as a criteria
+    void markPaperRecordRequestsAsReturned(String identifier);
 
     /**
-     * Prints a label for the paper record assocaited wth the request
+     * Prints a label for the paper record associated wth the request
      * at the default location
      *
      * @param request

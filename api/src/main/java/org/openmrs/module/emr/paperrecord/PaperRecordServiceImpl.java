@@ -296,6 +296,21 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     }
 
     @Override
+    @Transactional
+    public void markPaperRecordRequestsAsReturned(String identifier) {
+        // TODO: once we have multiple medical record locations, we will need to add location as a criteria
+
+        // we should never have more than one request in the sent state for the same record, but there
+        // shouldn't be any harm in marking them all as closed if we do
+
+        for (PaperRecordRequest request : paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(Status.SENT),
+                null, null, identifier, null)) {
+            request.updateStatus(Status.RETURNED);
+            savePaperRecordRequest(request);
+        }
+    }
+
+    @Override
     public void printPaperRecordLabel(PaperRecordRequest request, Location location) {
         String data = paperRecordLabelTemplate.generateLabel(request);
         String encoding = paperRecordLabelTemplate.getEncoding();

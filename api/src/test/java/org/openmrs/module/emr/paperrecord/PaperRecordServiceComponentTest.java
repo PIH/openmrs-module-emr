@@ -425,6 +425,68 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     }
 
     @Test
+    public void testMarkPaperRecordRequestsAsReturnedShouldMarkSentRecordRequestAsReturned() {
+
+        // all these are from the standard test dataset
+        Patient patient = patientService.getPatient(2) ;
+        Location medicalRecordLocation = locationService.getLocation(1);
+        Location requestLocation = locationService.getLocation(3);
+
+        // request a record
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        // retrieve that record
+        PaperRecordRequest request = paperRecordService.getOpenPaperRecordRequestsToPull().get(0);
+
+        // store the id and identifier for future retrieval
+        int id = request.getId();
+
+        // mark the record as sent
+        paperRecordService.markPaperRecordRequestAsSent(request);
+
+        // mark it as returned
+        paperRecordService.markPaperRecordRequestsAsReturned(request.getIdentifier());
+
+        // make sure this request has been changed to "returned" in the database
+        Context.flushSession();
+        Context.clearSession();
+
+        PaperRecordRequest returnedRequest = paperRecordService.getPaperRecordRequestById(id);
+        Assert.assertEquals(PaperRecordRequest.Status.RETURNED, request.getStatus());
+    }
+
+    @Test
+    public void testMarkPaperRecordRequestsAsReturnedShouldNotMarkOpenRequestAsReturned() {
+
+        // all these are from the standard test dataset
+        Patient patient = patientService.getPatient(2) ;
+        Location medicalRecordLocation = locationService.getLocation(1);
+        Location requestLocation = locationService.getLocation(3);
+
+        // request a record
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        // retrieve that record
+        PaperRecordRequest request = paperRecordService.getOpenPaperRecordRequestsToPull().get(0);
+
+        // store the id and identifier for future retrieval
+        int id = request.getId();
+
+        // note that we don't mark the record as sent here
+
+        // mark it as returned
+        paperRecordService.markPaperRecordRequestsAsReturned(request.getIdentifier());
+
+        // make sure this request has been changed to "returned" in the database
+        Context.flushSession();
+        Context.clearSession();
+
+        // confirm that status is still OPEN
+        PaperRecordRequest returnedRequest = paperRecordService.getPaperRecordRequestById(id);
+        Assert.assertEquals(PaperRecordRequest.Status.OPEN, request.getStatus());
+    }
+
+    @Test
     public void testGetSentPaperRecordRequestShouldFetchSentRecordRequest() {
         // this identifier exists in the sample test data
         PaperRecordRequest request = paperRecordService.getSentPaperRecordRequestByIdentifier("CATBALL");
