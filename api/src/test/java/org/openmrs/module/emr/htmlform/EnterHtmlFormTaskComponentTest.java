@@ -72,7 +72,7 @@ public class EnterHtmlFormTaskComponentTest extends BaseModuleContextSensitiveTe
         assertThat(htmlForm.getForm().getVersion(), is(formVersion));
         assertThat(htmlForm.getXmlData(), is(xmlContent));
 
-        FormEntrySession formEntrySession = new FormEntrySession(new Patient(), htmlForm, FormEntryContext.Mode.ENTER);
+        FormEntrySession formEntrySession = new FormEntrySession(new Patient(), htmlForm, FormEntryContext.Mode.ENTER, null);
         String html = formEntrySession.getHtmlToDisplay();
         assertThat(html, containsString("name=\"w2\""));
         assertThat(html, containsString("onBlur=\"checkNumber("));

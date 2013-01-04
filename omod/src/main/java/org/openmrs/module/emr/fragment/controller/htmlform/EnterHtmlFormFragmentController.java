@@ -38,6 +38,7 @@ import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +61,8 @@ public class EnterHtmlFormFragmentController {
                            @FragmentParam(value = "encounter", required = false) Encounter encounter,
                            @FragmentParam(value = "visit", required = false) Visit visit,
                            @FragmentParam(value = "returnUrl", required = false) String returnUrl,
-                           FragmentModel model) throws Exception {
+                           FragmentModel model,
+                           HttpSession httpSession) throws Exception {
 
         config.require("patient", "htmlFormId | formId | formUuid | definitionResource | encounter");
 
@@ -76,6 +78,9 @@ public class EnterHtmlFormFragmentController {
         }
         if (hf == null && encounter != null) {
             form = encounter.getForm();
+            if (form == null) {
+                throw new IllegalArgumentException("Cannot view a form-less encounter unless you specify which form to use");
+            }
             hf = HtmlFormEntryUtil.getService().getHtmlFormByForm(encounter.getForm());
             if (hf == null)
                 throw new IllegalArgumentException("The form for the specified encounter (" + encounter.getForm() + ") does not have an HtmlForm associated with it");
@@ -86,10 +91,10 @@ public class EnterHtmlFormFragmentController {
         // the code below doesn't handle the HFFS case where you might want to _add_ data to an existing encounter
         FormEntrySession fes;
         if (encounter != null) {
-            fes = new FormEntrySession(patient, encounter, FormEntryContext.Mode.EDIT, hf);
+            fes = new FormEntrySession(patient, encounter, FormEntryContext.Mode.EDIT, hf, httpSession);
         }
         else {
-            fes = new FormEntrySession(patient, hf);
+            fes = new FormEntrySession(patient, hf, httpSession);
         }
 
         if (returnUrl != null) {
@@ -148,9 +153,9 @@ public class EnterHtmlFormFragmentController {
 
         FormEntrySession fes;
         if (encounter != null) {
-            fes = new FormEntrySession(patient, encounter, FormEntryContext.Mode.EDIT, hf);
+            fes = new FormEntrySession(patient, encounter, FormEntryContext.Mode.EDIT, hf, request.getSession());
         } else {
-            fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER);
+            fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, request.getSession());
         }
 
         if (returnUrl != null) {

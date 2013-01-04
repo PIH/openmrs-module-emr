@@ -100,7 +100,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         config.put("patient", patient);
         config.put("definitionResource", resourcePath);
 
-        controller.controller(config, htmlFormEntryService, formService, resourceFactory, patient, null, null, null, resourcePath, null, null, null, model);
+        controller.controller(config, htmlFormEntryService, formService, resourceFactory, patient, null, null, null, resourcePath, null, null, null, model, null);
 
         FormEntrySession command = (FormEntrySession) model.getAttribute("command");
         String html = command.getHtmlToDisplay();

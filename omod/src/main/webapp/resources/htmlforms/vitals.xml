@@ -1,28 +1,72 @@
 <!-- TODO fix formEncounterType and encounterRole-->
 <htmlform formUuid="68728aa6-4985-11e2-8815-657001b58a90" formName="Vitals" formEncounterType="1373cf95-06e8-468b-a3da-360ac1cf026d" formVersion="1.0">
 
-    <script type="text/javascript">
-        $j(function() {
-            var setupDisplay = function(id) {
-                getField(id + ".value").change(function() {
-                    $j(".display-value-" + id).html(getValue(id + ".value"));
+    <style type="text/css">
+        .encounter-details {
+            display: none;
+        }
+    </style>
+
+    <ifMode mode="ENTER">
+        <script type="text/javascript">
+            $j(function() {
+                var setupDisplay = function(id) {
+                    getField(id + ".value").change(function() {
+                        $j(".display-value-" + id).html(getValue(id + ".value"));
+                    });
+                }
+                setupDisplay("temperature_c");
+                setupDisplay("bp_systolic");
+                setupDisplay("bp_diastolic");
+                setupDisplay("heart_rate");
+                setupDisplay("respiratory_rate");
+                setupDisplay("o2_sat");
+                setupDisplay("weight");
+
+                $j('#temperature-c-or-f').change(function() {
+                    checkNumber(this, 'temperature-error', true, 25, 110);
+                    if ($j(this).hasClass('legalValue')) {
+                        var temp = $j('#temperature-c-or-f').val();
+                        if (temp > 60) {
+                            // fahrenheit
+                            temp = (temp - 32) * 5 / 9;
+                            temp = temp.toFixed(1); // round to one digit after the decimal point
+                            $j("#temperature-units-chosen").html("F");
+                        } else {
+                            $j("#temperature-units-chosen").html("C");
+                        }
+                        setValue('temperature_c.value', temp);
+
+                        $j(".display-value-temperature_c").html(temp);
+
+                    } else {
+                        setValue('temperature_c.value', null);
+                    }
                 });
-            }
-            setupDisplay("temperature_c");
-            setupDisplay("bp_systolic");
-            setupDisplay("bp_diastolic");
-        });
-    </script>
+            });
+        </script>
+    </ifMode>
 
     <div class="encounter-details">
-        <encounterDate default="now" showTime="true"/>
-        <encounterProviderAndRole default="currentUser" encounterRole="a0b03050-c99b-11e0-9572-0800200c9a66" required="true"/>
-        <encounterLocation/>
+        When? <encounterDate default="now" showTime="true"/>
+        Who? <encounterProviderAndRole default="currentUser" encounterRole="a0b03050-c99b-11e0-9572-0800200c9a66" required="true"/>
+        Where? <encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/>
     </div>
 
     <p>
         <label>Temperature</label>
-        <obs conceptId="PIH:TEMPERATURE (C)" showUnits="true" id="temperature_c"/>
+        <ifMode mode="ENTER">
+            <input type="text" size="3" id="temperature-c-or-f"/>
+            <span class="error" style="display: none" id="temperature-error"></span>
+            in C or F
+            <span id="temperature-units-chosen"></span>
+            <div class="hidden">
+                <obs conceptId="PIH:TEMPERATURE (C)" showUnits="true" id="temperature_c"/>
+            </div>
+        </ifMode>
+        <ifMode mode="VIEW">
+            <obs conceptId="PIH:TEMPERATURE (C)" showUnits="true" id="temperature_c"/>
+        </ifMode>
     </p>
 
     <p>
@@ -38,38 +82,56 @@
         </div>
     </p>
 
-    <div class="question">
-        <div class="widget">
-            <obs conceptId="PIH:PULSE"/>
-        </div>
-    </div>
+    <p>
+        <label>
+            Heart Rate
+        </label>
+        <obs conceptId="PIH:PULSE" showUnits="true" id="heart_rate"/>
+    </p>
 
-    <div class="question">
-        <div class="widget">
-            <obs conceptId="PIH:RESPIRATORY RATE"/>
-        </div>
-    </div>
+    <p>
+        <label>
+            Respiratory Rate
+        </label>
+        <obs conceptId="PIH:RESPIRATORY RATE" showUnits="true" id="respiratory_rate"/>
+    </p>
 
-    <div class="question">
-        <div class="widget">
-            <obs conceptId="PIH:BLOOD OXYGEN SATURATION"/>
-        </div>
-    </div>
+    <p>
+        <label>
+            O2 Sat
+        </label>
+        <obs conceptId="PIH:BLOOD OXYGEN SATURATION" showUnits="true" id="o2_sat"/>
+    </p>
 
-    <div class="question">
-        <div class="widget">
-            <obs conceptId="PIH:WEIGHT (KG)"/>
-        </div>
-    </div>
+    <p>
+        <label>
+            Weight
+        </label>
+        <obs conceptId="PIH:WEIGHT (KG)" showUnits="true" id="weight"/>
+    </p>
 
-    <div class="summary">
-        <div>
-            Temperature (C): <span class="display-value-temperature_c"></span>
+    <ifMode mode="ENTER">
+        <div class="summary">
+            <div>
+                Temperature (C): <span class="display-value-temperature_c"></span>
+            </div>
+            <div>
+                BP: <span class="display-value-bp_systolic"/> / <span class="display-value-bp_diastolic"/>
+            </div>
+            <div>
+                Heart Rate (/min): <span class="display-value-heart_rate"/>
+            </div>
+            <div>
+                Respiratory Rate (/min): <span class="display-value-respiratory_rate"/>
+            </div>
+            <div>
+                O2 Sat (%): <span class="display-value-o2_sat"/>
+            </div>
+            <div>
+                Weight (kg): <span class="display-value-weight"/>
+            </div>
         </div>
-        <div>
-            BP: <span class="display-value-bp_systolic"/> / <span class="display-value-bp_diastolic"/>
-        </div>
-    </div>
+    </ifMode>
 
     <submit/>
 
