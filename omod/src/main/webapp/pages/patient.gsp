@@ -5,42 +5,25 @@
 
     def timeFormat = new java.text.SimpleDateFormat("HH:mm")
 
-%>
+    ui.includeCss("emr", "patientDashboard.css")
 
-<style type="text/css">
-    #visits ul {
-        margin-left: 2.5em;
-    }
-</style>
+%>
 
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
 
-Actions:
-<ul>
-    <% availableTasks.each { %>
-        <li><a href="/${ contextPath }/${ it.getUrl(emrContext) }">${ it.getLabel(emrContext) }</a></li>
-    <% } %>
-</ul>
 
-<br/>
+<div class="dashboard menu">
+    <ul>
+        <li> <a href="/${ contextPath }/emr/patient.page?patientId=${ patient.patient.patientId }">${ui.message("emr.patientDashBoard.visits")}</a> </li>
+    </ul>
 
-Orders:
-<ul>
-<% if (!orders) { %>
-    <li>None</li>
-<% } %>
-<% orders.each { %>
-    <li>
-        <b>${ ui.format(it.concept) }</b>
-        Ordered by ${ ui.format(it.creator) }
-        on ${ ui.format(it.dateCreated) }
-    </li>
-<% } %>
-</ul>
+</div>
 
-<br/>
 
-${ui.message("emr.patientDashBoard.visits")}
+<div class="dashboard">
+
+
+<h3>${ui.message("emr.patientDashBoard.visits")}</h3>
 
 <table>
     <thead>
@@ -59,3 +42,11 @@ ${ui.message("emr.patientDashBoard.visits")}
     <% } %>
 </table>
 
+    Actions:
+    <ul>
+        <% availableTasks.each { %>
+        <li><a href="/${ contextPath }/${ it.getUrl(emrContext) }">${ it.getLabel(emrContext) }</a></li>
+        <% } %>
+    </ul>
+
+</div>

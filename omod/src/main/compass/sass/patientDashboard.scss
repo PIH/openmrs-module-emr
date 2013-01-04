@@ -1,0 +1,20 @@
+@import "colors";
+
+.dashboard {
+  display: inline-block;
+
+  &.menu {
+    vertical-align: top;
+    width: 200px;
+
+    a {
+      color: $text;
+    }
+
+    li {
+      border-bottom: 2px solid #EEEEEE;
+    }
+
+  }
+
+}
