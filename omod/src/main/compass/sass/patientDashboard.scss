@@ -2,17 +2,22 @@
 
 .dashboard {
   display: inline-block;
+  border-left: 2px solid $darkerGray;
+  padding-left: 15px;
 
   &.menu {
     vertical-align: top;
     width: 200px;
+    border: 0;
 
     a {
       color: $text;
+      font-size: 1.2em;
     }
 
     li {
       border-bottom: 2px solid #EEEEEE;
+      padding: 5px;
     }
 
   }

@@ -1,0 +1,46 @@
+@import "colors";
+
+
+.patient-header {
+  border-bottom: 2px solid $darkerGray;
+  position: relative;
+  z-index: 0;
+
+
+  .demographics, .identifiers, .gender, .surname, .givenName {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  .gender {
+    margin-top: 5px;
+  }
+
+  .name {
+    font-weight: bold;
+    font-size: 1.4em;
+  }
+
+  .close {
+    clear: left;
+  }
+
+  .legend {
+    font-size: 0.8em;
+    color: $darkerGray;
+  }
+}
+
+.active-visit, .unknown-patient {
+  display: inline-block;
+  margin-right: 2em;
+  padding-top: 1em;
+  vertical-align: top;
+}
+
+.unknown-patient{
+  color: red;
+}
+
+
+

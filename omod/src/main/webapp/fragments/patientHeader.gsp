@@ -1,55 +1,28 @@
 <%
     def patient = config.patient
+
+    ui.includeCss("emr", "patientHeader.css")
 %>
-<style class="text/css">
-    .patient-header {
-        border-bottom: 1px gray solid;
-        position: relative;
-        z-index: 0;
-    }
 
-    .patient-header .icon , .patient-header .demographics , .patient-header .identifiers, .active-visit, .unknown-patient {
-        display: inline-block;
-        margin-right: 2em;
-    }
-
-    .unknown-patient{
-        color: red;
-    <% if (!patient.unknownPatient) {  %>
-        display: none;
-    <% } %>
-    }
-
-    .patient-header .demographics , .patient-header .identifiers, .active-visit, .unknown-patient {
-        padding-top: 1em;
-        vertical-align: top;
-    }
-
-    .patient-header .name {
-        font-weight: bold;
-        font-size: 1.4em;
-    }
-
-    .patient-header .close {
-        clear: left;
-    }
-</style>
 
 <div class="patient-header">
-    <img class="icon" src="${ ui.resourceLink("emr", "images/patient_" + patient.gender + ".gif") }"/>
 
     <div class="demographics">
-        <span class="name">${ ui.format(patient.patient) }</span>
-        <br/>
-        ${ ui.message("emr.gender." + patient.gender) }
-        <% if (patient.age) { %>
-            ${ ui.message("emr.ageYears", patient.age) }
-        <% } else { %>
-            ${ ui.message("emr.unknownAge") }
-        <% } %>
+        <div class="surname"><span class="name">${ ui.format(patient.patient.familyName) } ,</span> <br/> <span class="legend">surname</span> </div>
+        <div class="givenName"><span class="name">${ ui.format(patient.patient.givenName) }</span> <br/> <span class="legend">name</span></div>
     </div>
 
-    <div class="identifiers">
+    <div class="gender">
+        <span>${ ui.message("emr.gender." + patient.gender) } |
+        <% if (patient.age) { %>
+        ${ ui.message("emr.ageYears", patient.age) }
+        <% } else { %>
+        ${ ui.message("emr.unknownAge") }
+        <% } %>
+        </span>
+    </div>
+
+    <!--div class="identifiers">
         ID:
         <%= patient.primaryIdentifiers.collect{ it.identifier }.join(", ") %>
         <% if (patient.paperRecordIdentifiers) { %>
@@ -57,9 +30,9 @@
             ${ ui.format(emrProperties.paperRecordIdentifierType) }:
             <%= patient.paperRecordIdentifiers.collect{ it.identifier }.join(", ") %>
         <% } %>
-    </div>
+    </div-->
 
-    <div class="unknown-patient">
+    <div class="unknown-patient" style=<%= (!patient.unknownPatient) ? "display:none" : "" %>>
         ${ ui.message("emr.patient.temporaryRecord") } <br/>
         <form action="/${ contextPath }/emr/mergePatients.page" method="get">
             <input type="hidden" name="isUnknownPatient" value="true" />
