@@ -44,7 +44,7 @@ var SectionModel = function(elem) {
 
     var model = {};
     model.isSelected = false;
-    model.questions = _.map(element.find("div.form_question"), function(q) {
+    model.questions = _.map(element.find("fieldset"), function(q) {
         return QuestionModel(model, q);
     });
     model.toggleSelection = function() {

@@ -1,14 +1,55 @@
 @import "colors";
 
-.form_question {
-    border: 1px solid black;
+form section span {
+    display: block;
+}
 
+fieldset {
+    border: none !important;
+    position: relative;
+    margin: 10px 0 10px 0;
+
+
+    legend {
+        position: absolute;
+        top: 1em;
+        color: $darkerGrey;
+    }
+
+    label, input, select {
+        display: none !important;
+    }
     .left {
         float: none;
         display: inline-block;
     }
 }
 
-.form_question.focused {
-    border: 2px solid red;
+fieldset.focused {
+    background-color: $lighterGrey;
+    border: 3px solid $pihPrimaryPurple !important;
+    margin-top: 30px !important;
+    padding: 20px;
+
+    legend {
+        color: $pihPrimaryPurple;
+        font-weight: 900;
+        top: -1.5em;
+    }
+
+    label {
+        display: block !important;
+        font-weight: bold;
+    }
+
+    input, select {
+        display: block !important;
+    }
+    input:focus, select:focus {
+        border: 2px solid green;
+    }
+}
+
+.actions {
+    margin-top: 20px;
 }

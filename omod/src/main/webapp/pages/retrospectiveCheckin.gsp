@@ -29,14 +29,16 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
         <section id="checkinInformation">
             <span class="title">Check-in information</span>
 
-            <div class="form_question">
+            <fieldset>
+                <legend>Check-in location</legend>
                 ${ ui.includeFragment("emr", "field/dropdown", [
                         label: ui.message("emr.retrospectiveCheckin.location.label"),
                         formFieldName:"locations",
                         options:locations])}
-            </div>
+            </fieldset>
 
-            <div class="form_question">
+            <fieldset>
+                <legend>Check-in date</legend>
                 ${ ui.includeFragment("emr", "field/text", [
                         label: ui.message("emr.retrospectiveCheckin.checkinDate.day.label"),
                         formFieldName: "checkinDate_day",
@@ -52,30 +54,33 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                         formFieldName: "checkinDate_year",
                         left: true
                 ])}
-            </div>
+            </fieldset>
         </section>
 
         <section id="paymentInformation">
             <span class="title">Payment information</span>
 
-            <div class="form_question">
+            <fieldset>
+                <legend>Payment Reason</legend>
                 ${ ui.includeFragment("emr", "field/dropdown", [
                         label: ui.message("emr.retrospectiveCheckin.paymentReason.label"),
                         formFieldName:"paymentReason",
                         options:paymentReasons])}
-            </div>
-            <div class="form_question">
+            </fieldset>
+            <fieldset>
+                <legend>Payment Amount</legend>
                 ${ ui.includeFragment("emr", "field/dropdown", [
                         label: ui.message("emr.retrospectiveCheckin.paymentAmount.label"),
                         formFieldName:"paymentAmount",
                         options:paymentAmounts])}
-            </div>
-            <div class="form_question">
+            </fieldset>
+            <fieldset>
+                <legend>Receipt Number</legend>
                 ${ ui.includeFragment("emr", "field/text", [
                         label: ui.message("emr.retrospectiveCheckin.receiptNumber.label"),
                         formFieldName: "receiptNumber"
                 ])}
-            </div>
+            </fieldset>
         </section>
     </form>
 
