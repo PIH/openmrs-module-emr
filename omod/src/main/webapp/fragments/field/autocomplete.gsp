@@ -1,10 +1,4 @@
 <%
-    // config supports "label"
-    // config.require("label")
-
-    //config supports "placeholder"
-    //config.require("placeholder")
-
     config.require("formFieldName")
     config.require("fragment")
     config.require("action")
@@ -41,6 +35,7 @@
                             });
                         }
                         response(data);
+                        <%=  config.function %>
                     }
                 }).complete(function(){
                      xhr = null;
@@ -85,7 +80,7 @@
 
 <span class="autocomplete-label">${ config.label }</span>
 <div>
-    <input type="hidden" class="field-value" id="${ config.id }-value" name="${ config.formFieldName }" value="${ config.patientId}"/>
+    <input type="hidden" class="field-value" id="${ config.id }-value" name="${ config.formFieldName }" <%=  (config.patientId!=null) ? "value=" + config.patientId : ""  %>  />
     <input type="text" class="field-display" id="${ config.id }-search" ${disabled} placeholder="${ config.placeholder ?: '' }" value="${value}" size="40"/>
 </div>
 

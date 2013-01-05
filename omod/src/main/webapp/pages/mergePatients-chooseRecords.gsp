@@ -1,6 +1,7 @@
 <%
     ui.decorateWith("emr", "standardEmrPage", [ title: ui.message("emr.mergePatients") ])
     ui.includeCss("mirebalais", "mergePatients.css")
+    ui.includeJavascript("emr", "mergePatients.js")
 
     def id = ""
     def fullName = ""
@@ -12,23 +13,6 @@
 
 %>
 
-<script type="text/javascript">
-    jq(function() {
-        jq('input[type=text]').first().focus();
-
-        jq('#cancel-button').click(function() {
-            window.history.back();
-        });
-    });
-
-    function labelFunction(item) {
-        var id = item.patientId;
-        if (item.primaryIdentifiers[0]) {
-            id = item.primaryIdentifiers[0].identifier;
-        }
-        return id + ' - ' + item.preferredName.fullName;
-    }
-</script>
 
 <form method="get">
 
@@ -46,7 +30,8 @@
             itemLabelFunction: "labelFunction",
             patientId: id,
             disabled: isUnknownPatient,
-            value: fullName
+            value: fullName,
+            function: "verifyPatientsToMerge('" + ui.message("emr.mergePatients.error.samePatient") + "');"
     ])}
 
     <br/>
@@ -58,7 +43,8 @@
             fragment: "findPatient",
             action: "search",
             itemValueProperty: "patientId",
-            itemLabelFunction: "labelFunction"
+            itemLabelFunction: "labelFunction",
+            function: "verifyPatientsToMerge('" + ui.message("emr.mergePatients.error.samePatient")+ "');"
     ])}
 
     <br/>
@@ -66,7 +52,7 @@
     <p>
         <input class="cancel" type="button" id="cancel-button" value="${ ui.message("emr.cancel") }"/>
 
-        <input class="confirm" type="submit" value="${ ui.message("emr.continue") }"/>
+        <input class="confirm disabled" type="submit" disabled="disabled" id="confirm-button" value="${ ui.message("emr.continue") }"/>
     </p>
 
 </form>
