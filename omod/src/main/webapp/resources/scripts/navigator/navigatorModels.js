@@ -12,14 +12,30 @@ function FieldModel(question, elem) {
             element.blur();
         }
     };
+    model.value = function() {
+        var selectedOption = element.find('option:selected');
+        if(selectedOption.length > 0) {
+            return selectedOption.text();
+        }
+        if(element.val()) {
+            return element.val();
+        }
+        return "";
+    }
 
     return model;
 }
 
 var QuestionModel = function(section, elem) {
     var element = $(elem);
-    var model = {};
+    var questionLegend = element.find('legend').first();
+    questionLegend.append("<span></span>");
+    var valueElement = questionLegend.find('span').first();
+    var computedValue = function() {
+        return _.reduce(model.fields, function(memo, f) { return memo + " " + f.value();}, "");
+    }
 
+    var model = {};
     model.parentSection = section;
     model.fields = _.map(element.find("input, select"), function(i) {
         return FieldModel(model, i);
@@ -29,8 +45,11 @@ var QuestionModel = function(section, elem) {
         model.isSelected = !model.isSelected;
         if(model.isSelected) {
             element.addClass("focused");
+            valueElement.text("");
         } else {
             element.removeClass("focused");
+            valueElement.text(computedValue())
+            valueElement.show();
         }
     }
 

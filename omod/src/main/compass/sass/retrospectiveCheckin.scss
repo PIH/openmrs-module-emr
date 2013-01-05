@@ -6,6 +6,7 @@ form section span {
 
 fieldset {
     border: none !important;
+    boder-top: 1px !important;
     position: relative;
     margin: 10px 0 10px 0;
 
@@ -14,6 +15,13 @@ fieldset {
         position: absolute;
         top: 1em;
         color: $darkerGrey;
+        width: 100%;
+
+        span {
+            display: inline;
+            padding-left: 2%;
+            text-transform: none;
+        }
     }
 
     label, input, select {
@@ -39,14 +47,10 @@ fieldset.focused {
 
     label {
         display: block !important;
-        font-weight: bold;
     }
 
     input, select {
         display: block !important;
-    }
-    input:focus, select:focus {
-        border: 2px solid green;
     }
 }
 
