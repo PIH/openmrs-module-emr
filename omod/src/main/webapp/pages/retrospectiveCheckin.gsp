@@ -34,26 +34,26 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 ${ ui.includeFragment("emr", "field/dropdown", [
                         label: ui.message("emr.retrospectiveCheckin.location.label"),
                         formFieldName:"locations",
-                        options:locations])}
+                        options:locations,
+                        showEmptyLabel: false,
+                        maximumSize: 8
+                ])}
             </fieldset>
 
             <fieldset>
-                <legend>Check-in date</legend>
+                <legend>Check-in date <span>213456</span></legend>
                 ${ ui.includeFragment("emr", "field/text", [
                         label: ui.message("emr.retrospectiveCheckin.checkinDate.day.label"),
                         formFieldName: "checkinDate_day",
-                        left: true
-                ])}
+                        left: true])}
                 ${ ui.includeFragment("emr", "field/text", [
                         label: ui.message("emr.retrospectiveCheckin.checkinDate.month.label"),
                         formFieldName: "checkinDate_month",
-                        left: true
-                ])}
+                        left: true])}
                 ${ ui.includeFragment("emr", "field/text", [
                         label: ui.message("emr.retrospectiveCheckin.checkinDate.year.label"),
                         formFieldName: "checkinDate_year",
-                        left: true
-                ])}
+                        left: true])}
             </fieldset>
         </section>
 
@@ -65,14 +65,18 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 ${ ui.includeFragment("emr", "field/dropdown", [
                         label: ui.message("emr.retrospectiveCheckin.paymentReason.label"),
                         formFieldName:"paymentReason",
-                        options:paymentReasons])}
+                        options:paymentReasons,
+                        showEmptyLabel: false,
+                        maximumSize: 10])}
             </fieldset>
             <fieldset>
                 <legend>Payment Amount</legend>
                 ${ ui.includeFragment("emr", "field/dropdown", [
                         label: ui.message("emr.retrospectiveCheckin.paymentAmount.label"),
                         formFieldName:"paymentAmount",
-                        options:paymentAmounts])}
+                        options:paymentAmounts,
+                        showEmptyLabel: false,
+                        maximumSize: 10])}
             </fieldset>
             <fieldset>
                 <legend>Receipt Number</legend>
