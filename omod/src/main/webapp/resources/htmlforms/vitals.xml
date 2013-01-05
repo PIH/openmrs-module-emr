@@ -1,12 +1,6 @@
 <!-- TODO fix formEncounterType and encounterRole-->
 <htmlform formUuid="68728aa6-4985-11e2-8815-657001b58a90" formName="Vitals" formEncounterType="1373cf95-06e8-468b-a3da-360ac1cf026d" formVersion="1.0">
 
-    <style type="text/css">
-        .encounter-details {
-            display: none;
-        }
-    </style>
-
     <ifMode mode="ENTER">
         <script type="text/javascript">
             $j(function() {
@@ -47,71 +41,73 @@
         </script>
     </ifMode>
 
-    <div class="encounter-details">
+    <section id="encounter-details" sectionTag="section" headerStyle="title" headerLabel="Encounter Details">
         When? <encounterDate default="now" showTime="true"/>
         Who? <encounterProviderAndRole default="currentUser" encounterRole="a0b03050-c99b-11e0-9572-0800200c9a66" required="true"/>
         Where? <encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/>
-    </div>
+    </section>
+    
+    <section id="vitals" sectionTag="section" headerStyle="title" headerLabel="Vitals">
+        <fieldset>
+            <legend>Temperature</legend>
 
-    <p>
-        <label>Temperature</label>
-        <ifMode mode="ENTER">
-            <input type="text" size="3" id="temperature-c-or-f"/>
-            <span class="error" style="display: none" id="temperature-error"></span>
-            in C or F
-            <span id="temperature-units-chosen"></span>
-            <div class="hidden">
+            <ifMode mode="ENTER">
+                <input type="text" size="3" id="temperature-c-or-f"/>
+                <span class="error" style="display: none" id="temperature-error"></span>
+                in C or F
+                <span id="temperature-units-chosen"></span>
+                <div class="hidden">
+                    <obs conceptId="PIH:TEMPERATURE (C)" showUnits="true" id="temperature_c"/>
+                </div>
+            </ifMode>
+            <ifMode mode="VIEW">
                 <obs conceptId="PIH:TEMPERATURE (C)" showUnits="true" id="temperature_c"/>
+            </ifMode>
+        </fieldset>
+
+        <fieldset>
+            <legend>Blood Pressure</legend>
+
+            <div class="left">
+                <obs conceptId="PIH:SYSTOLIC BLOOD PRESSURE" id="bp_systolic"/>
             </div>
-        </ifMode>
-        <ifMode mode="VIEW">
-            <obs conceptId="PIH:TEMPERATURE (C)" showUnits="true" id="temperature_c"/>
-        </ifMode>
-    </p>
+            <div class="left">
+                /
+            </div>
+            <div class="left">
+                <obs conceptId="PIH:DIASTOLIC BLOOD PRESSURE" id="bp_diastolic"/>
+            </div>
+        </fieldset>
 
-    <p>
-        <label>Blood Pressure</label>
-        <div class="left">
-            <obs conceptId="PIH:SYSTOLIC BLOOD PRESSURE" id="bp_systolic"/>
-        </div>
-        <div class="left">
-            /
-        </div>
-        <div class="left">
-            <obs conceptId="PIH:DIASTOLIC BLOOD PRESSURE" id="bp_diastolic"/>
-        </div>
-    </p>
+        <fieldset>
+            <legend>Heart Rate</legend>
 
-    <p>
-        <label>
-            Heart Rate
-        </label>
-        <obs conceptId="PIH:PULSE" showUnits="true" id="heart_rate"/>
-    </p>
+            <obs conceptId="PIH:PULSE" showUnits="true" id="heart_rate"/>
+        </fieldset>
 
-    <p>
-        <label>
-            Respiratory Rate
-        </label>
-        <obs conceptId="PIH:RESPIRATORY RATE" showUnits="true" id="respiratory_rate"/>
-    </p>
+        <fieldset>
+            <legend>Respiratory Rate</legend>
 
-    <p>
-        <label>
-            O2 Sat
-        </label>
-        <obs conceptId="PIH:BLOOD OXYGEN SATURATION" showUnits="true" id="o2_sat"/>
-    </p>
+            <obs conceptId="PIH:RESPIRATORY RATE" showUnits="true" id="respiratory_rate"/>
+        </fieldset>
 
-    <p>
-        <label>
-            Weight
-        </label>
-        <obs conceptId="PIH:WEIGHT (KG)" showUnits="true" id="weight"/>
-    </p>
+        <fieldset>
+            <legend>O2 Sat</legend>
+
+            <obs conceptId="PIH:BLOOD OXYGEN SATURATION" showUnits="true" id="o2_sat"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Weight</legend>
+
+            <obs conceptId="PIH:WEIGHT (KG)" showUnits="true" id="weight"/>
+        </fieldset>
+
+    </section>
+
 
     <ifMode mode="ENTER">
-        <div class="summary">
+        <section id="summary">
             <div>
                 Temperature (C): <span class="display-value-temperature_c"></span>
             </div>
@@ -130,7 +126,7 @@
             <div>
                 Weight (kg): <span class="display-value-weight"/>
             </div>
-        </div>
+        </section>
     </ifMode>
 
     <submit/>
