@@ -14,6 +14,7 @@
         function setSearchValue(objectItem){
             jq('#${ config.id }-value').val(objectItem.${ config.itemValueProperty });
             jq('#${ config.id }-search').val(${ config.itemLabelFunction }(objectItem));
+            <%=  config.function %>
         };
 
         jq('#${ config.id }-search').autocomplete({
