@@ -74,11 +74,20 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
 	}
 
     @Test
-    public void testFindPatientsByIdentifier() throws Exception {
+    public void testFindPatientsByPrimaryIdentifier() throws Exception {
         administrationService.setGlobalProperty(EmrConstants.PRIMARY_IDENTIFIER_TYPE, "1");
         List<Patient> patients = service.findPatients("6TS-4", null, null, null);
         assertEquals(1, patients.size());
         assertContainsElementWithProperty(patients, "patientId", 7);
+    }
+
+    @Test
+    public void testFindPatientsByPaperRecordNumber() throws Exception {
+        administrationService.setGlobalProperty(EmrConstants.PRIMARY_IDENTIFIER_TYPE, "1");
+        administrationService.setGlobalProperty(EmrConstants.GP_PAPER_RECORD_IDENTIFIER_TYPE, "2");
+        List<Patient> patients = service.findPatients("12345K", null, null, null);
+        assertEquals(1, patients.size());
+        assertContainsElementWithProperty(patients, "patientId", 6);
     }
 	
 	@Test
