@@ -54,6 +54,8 @@ public class EmrConstants {
     public static final String LOCATION_TAG_SUPPORTS_VISITS = "Visit Location";
 
     public static final String LOCATION_TAG_SUPPORTS_LOGIN = "Login Location";
+
+    public static final String LOCATION_TAG_MEDICAL_RECORD_LOCATION = "Medical Record Location";
     
     public static final String ROLE_PREFIX_CAPABILITY = "Application Role: ";
 

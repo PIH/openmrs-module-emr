@@ -25,8 +25,8 @@ jq(document).ready( function() {
     assignedPullRequestsViewModel.load();
 
 
-    // handle entering bar codes
-    jq(".mark-as-pulled").submit(function (e) {
+    // handle entering identifiers to mark records as pulled
+    jq('.mark-as-pulled').submit(function (e) {
 
         e.preventDefault();
 
@@ -57,6 +57,34 @@ jq(document).ready( function() {
                     })
         }
     });
+
+    // handle entering identifiers to mark records as sent
+    jq('.mark-as-returned').submit(function (e) {
+
+        e.preventDefault();
+
+        var identifier = jq.trim(jq(this).children('.mark-as-returned-identifier').val());
+
+        if (identifier) {
+            jq.ajax({
+                url: emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "markPaperRecordRequestAsReturned"),
+                data: { identifier: identifier },
+                dataType: 'json',
+                type: 'POST'
+            })
+                .success(function(data) {
+                    // clear out the input box
+                    jq('.mark-as-returned-identifier:visible').val('');
+                    emr.successAlert(data.message);
+                })
+                .error(function(xhr, status, err) {
+                    jq('.mark-as-returned-identifier:visible').val('');
+                    emr.handleError(xhr);
+                })
+        }
+
+    });
+
 
     // handle assignment buttons
     jq('#assign-to-create-button').click(function(e) {
@@ -114,9 +142,12 @@ jq(document).ready( function() {
     })
 
     // if an alphanumeric character is pressed, send focus to the appropriate mark-as-pulled-identifier input box
+    // or the mark-as-returned input box (since only one input box will ever be visible, we can simply call the focus
+    // for both of them types and only one will be picked up)
     jq(document).keydown(function(event) {
         if (event.which > 47 && event.which < 91) {
             jq(".mark-as-pulled-identifier:visible").focus();
+            jq(".mark-as-returned-identifier:visible").focus();
         }
     })
 

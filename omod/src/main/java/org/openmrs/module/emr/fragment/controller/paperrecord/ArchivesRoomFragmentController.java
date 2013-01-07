@@ -17,6 +17,7 @@ package org.openmrs.module.emr.fragment.controller.paperrecord;
 import org.openmrs.Person;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.paperrecord.NoMatchingPaperMedicalRequestException;
 import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 import org.openmrs.module.emr.paperrecord.PaperRecordService;
 import org.openmrs.module.emr.paperrecord.UnableToPrintPaperRecordLabelException;
@@ -34,6 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ArchivesRoomFragmentController {
+
+    // TODO: should we make sure that all these calls are wrapped in try/catch so that we can return
+    // TODO: some kind of error message in the case of unexpected error?
 
     // TODO: can we use something in the UiUtils method to do this
     DateFormat timeFormat = new SimpleDateFormat("HH:mm dd/MM");
@@ -115,6 +119,10 @@ public class ArchivesRoomFragmentController {
         catch (IllegalStateException ex) {
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToAssignRecords"));
         }
+        catch (Exception e) {
+            // generic catch-all
+            return new FailureResult(ui.message("emr.error.systemError"));
+        }
 
     }
 
@@ -122,27 +130,60 @@ public class ArchivesRoomFragmentController {
                                                              @SpringBean("paperRecordService") PaperRecordService paperRecordService,
                                                              UiUtils ui) {
 
-        // fetch the pending request associated with this message
-        PaperRecordRequest paperRecordRequest = paperRecordService.getPendingPaperRecordRequestByIdentifier(identifier);
+        try {
+            // fetch the pending request associated with this message
+            PaperRecordRequest paperRecordRequest = paperRecordService.getPendingPaperRecordRequestByIdentifier(identifier);
 
-        if (paperRecordRequest == null) {
-            // if matching request found, determine what error we need to return
-            paperRecordRequest = paperRecordService.getSentPaperRecordRequestByIdentifier(identifier);
             if (paperRecordRequest == null) {
-                return new FailureResult(ui.message("emr.archivesRoom.error.paperRecordNotRequested", ui.format(identifier)));
+                // if matching request found, determine what error we need to return
+                paperRecordRequest = paperRecordService.getSentPaperRecordRequestByIdentifier(identifier);
+                if (paperRecordRequest == null) {
+                    return new FailureResult(ui.message("emr.archivesRoom.error.paperRecordNotRequested", ui.format(identifier)));
+                }
+                else {
+                    return new FailureResult(ui.message("emr.archivesRooms.error.paperRecordAlreadySent", ui.format(identifier),
+                            ui.format(paperRecordRequest.getRequestLocation()), ui.format(paperRecordRequest.getDateStatusChanged())));
+                }
             }
-            else {
-                return new FailureResult(ui.message("emr.archivesRooms.error.paperRecordAlreadySent", ui.format(identifier),
-                        ui.format(paperRecordRequest.getRequestLocation()), ui.format(paperRecordRequest.getDateStatusChanged())));
+           else {
+                // otherwise, mark the record as sent
+                paperRecordService.markPaperRecordRequestAsSent(paperRecordRequest);
+                return new SuccessResult(ui.message("emr.archivesRoom.recordFound.message") + "<br/><br/>"
+                        + ui.message("emr.archivesRoom.recordNumber.label") + ": " + ui.format(identifier) + "<br/><br/>"
+                        + ui.message("emr.archivesRoom.requestedBy.label") + ": " + ui.format(paperRecordRequest.getRequestLocation() + "<br/><br/>"
+                        + ui.message("emr.archivesRoom.requestedAt.label") + ": " + timeFormat.format(paperRecordRequest.getDateCreated())));
             }
         }
-       else {
-            // otherwise, mark the record as sent
-            paperRecordService.markPaperRecordRequestAsSent(paperRecordRequest);
-            return new SuccessResult(ui.message("emr.archivesRoom.recordFound.message") + "<br/><br/>"
-                    + ui.message("emr.archivesRoom.recordNumber.label") + ": " + ui.format(identifier + "<br/><br/>"
-                    + ui.message("emr.archivesRoom.requestedBy.label") + ": " + ui.format(paperRecordRequest.getRequestLocation() + "<br/><br/>"
-                    + ui.message("emr.archivesRoom.requestedAt.label") + ": " + timeFormat.format(paperRecordRequest.getDateCreated()))));
+        catch (Exception e) {
+            // generic catch-all
+            return new FailureResult(ui.message("emr.error.systemError"));
+        }
+
+    }
+
+    public FragmentActionResult markPaperRecordRequestAsReturned(@RequestParam(value = "identifier", required = true) String identifier,
+                                                                @SpringBean("paperRecordService") PaperRecordService paperRecordService,
+                                                                @SpringBean("emrContext") EmrContext emrContext,
+                                                                UiUtils ui) {
+
+        try {
+            paperRecordService.markPaperRecordRequestsAsReturned(identifier);
+            return new SuccessResult(ui.message("emr.archivesRoom.recordReturned.message") + "<br/><br/>"
+                    + ui.message("emr.archivesRoom.recordNumber.label") + ": " + ui.format(identifier));
+        }
+        catch (NoMatchingPaperMedicalRequestException e)  {
+           // as long as this record exists, we can return a success message
+            if (paperRecordService.paperRecordExists(identifier, emrContext.getSessionLocation())) {
+                return new SuccessResult(ui.message("emr.archivesRoom.recordReturned.message") + "<br/><br/>"
+                        + ui.message("emr.archivesRoom.recordNumber.label") + ": " + ui.format(identifier));
+            }
+            else {
+                return new FailureResult(ui.message("emr.archivesRoom.error.noPaperRecordExists", ui.format(identifier)));
+            }
+        }
+        catch (Exception e) {
+            // generic catch-all
+            return new FailureResult(ui.message("emr.error.systemError"));
         }
 
     }

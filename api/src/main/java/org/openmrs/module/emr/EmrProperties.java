@@ -84,6 +84,10 @@ public class EmrProperties extends ModuleProperties {
         return locationService.getLocationTagByName(EmrConstants.LOCATION_TAG_SUPPORTS_LOGIN);
     }
 
+    public LocationTag getMedicalRecordLocationLocationTag() {
+        return locationService.getLocationTagByName(EmrConstants.LOCATION_TAG_MEDICAL_RECORD_LOCATION);
+    }
+
     public PatientIdentifierType getPrimaryIdentifierType() {
         return getPatientIdentifierTypeByGlobalProperty(EmrConstants.PRIMARY_IDENTIFIER_TYPE, true);
     }

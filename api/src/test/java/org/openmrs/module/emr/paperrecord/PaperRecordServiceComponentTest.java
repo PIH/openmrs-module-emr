@@ -16,6 +16,7 @@ package org.openmrs.module.emr.paperrecord;
 
 import junit.framework.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -59,6 +60,68 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     public void testThatServiceIsConfiguredCorrectly() {
         Assert.assertNotNull("Couldn't autowire PaperRecordService", paperRecordService);
         Assert.assertNotNull("Couldn't get PaperRecordService from Context", Context.getService(PaperRecordService.class));
+    }
+
+    @Test
+    public void testPaperMedicalRecordExistsReturnsTrueIfPaperMedicalRecordExists() {
+
+        // from the standard test dataset
+        Location medicalRecordLocation = locationService.getLocation(1);
+
+        // this identifier exists in the standard test data set
+        Assert.assertTrue(paperRecordService.paperRecordExists("101", medicalRecordLocation));
+    }
+
+    @Test
+    public void testPaperMedicalRecordExistsReturnsTrueWhenUsingChildLocationOfMedicalRecordLocation() {
+
+        // a child location of location defined in paperRecordServiceComponentTestDataset
+        Location medicalRecordLocation = locationService.getLocation(1001);
+
+        // this identifier exists in the standard test data set
+        Assert.assertTrue(paperRecordService.paperRecordExists("101", medicalRecordLocation));
+    }
+
+    @Test
+    public void testPaperMedicalRecordExistsReturnsFalseIfPaperMedicalRecordDoesNotExist() {
+
+        // from the standard test dataset
+        Location medicalRecordLocation = locationService.getLocation(1);
+
+        // this identifier exists in the standard test data set
+        Assert.assertFalse(paperRecordService.paperRecordExists("112", medicalRecordLocation));
+    }
+
+    // TODO: unignore once TRUNK-3867 is fixed
+    @Test
+    @Ignore
+    public void testPaperMedicalRecordExistsReturnsFalseIfIdentifierIsInUseButWrongLocation() {
+
+        // from the standard test dataset
+        Location medicalRecordLocation = locationService.getLocation(2);
+
+        // this identifier exists in the standard test data set
+        Assert.assertFalse(paperRecordService.paperRecordExists("101", medicalRecordLocation));
+    }
+
+    @Test
+    public void testPaperMedicalRecordExistsReturnsFalseIfIdentifierIsInUseButWrongIdentifierType() {
+
+        // from the standard test dataset
+        Location medicalRecordLocation = locationService.getLocation(1);
+
+        // this identifier exists in the standard test data set
+        Assert.assertFalse(paperRecordService.paperRecordExists("6TS-4", medicalRecordLocation));
+    }
+
+    @Test
+    public void testPaperMedicalRecordExistsReturnsFalseIfIdentifierVoided() {
+
+        // from the standard test dataset
+        Location medicalRecordLocation = locationService.getLocation(1);
+
+        // this identifier exists in the standard test data set
+        Assert.assertFalse(paperRecordService.paperRecordExists("ABC123", medicalRecordLocation));
     }
 
     @Test
@@ -425,7 +488,8 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     }
 
     @Test
-    public void testMarkPaperRecordRequestsAsReturnedShouldMarkSentRecordRequestAsReturned() {
+    public void testMarkPaperRecordRequestsAsReturnedShouldMarkSentRecordRequestAsReturned()
+        throws Exception {
 
         // all these are from the standard test dataset
         Patient patient = patientService.getPatient(2) ;
@@ -455,8 +519,9 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Assert.assertEquals(PaperRecordRequest.Status.RETURNED, request.getStatus());
     }
 
-    @Test
-    public void testMarkPaperRecordRequestsAsReturnedShouldNotMarkOpenRequestAsReturned() {
+    @Test(expected = NoMatchingPaperMedicalRequestException.class)
+    public void testMarkPaperRecordRequestsAsReturnedShouldThrowExceptionIfNoMatchingRequestInSentState()
+        throws Exception{
 
         // all these are from the standard test dataset
         Patient patient = patientService.getPatient(2) ;
@@ -469,21 +534,8 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         // retrieve that record
         PaperRecordRequest request = paperRecordService.getOpenPaperRecordRequestsToPull().get(0);
 
-        // store the id and identifier for future retrieval
-        int id = request.getId();
-
-        // note that we don't mark the record as sent here
-
         // mark it as returned
         paperRecordService.markPaperRecordRequestsAsReturned(request.getIdentifier());
-
-        // make sure this request has been changed to "returned" in the database
-        Context.flushSession();
-        Context.clearSession();
-
-        // confirm that status is still OPEN
-        PaperRecordRequest returnedRequest = paperRecordService.getPaperRecordRequestById(id);
-        Assert.assertEquals(PaperRecordRequest.Status.OPEN, request.getStatus());
     }
 
     @Test

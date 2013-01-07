@@ -44,9 +44,11 @@ import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
@@ -100,6 +102,31 @@ public class PaperRecordServiceTest {
         paperRecordService.setIdentifierSourceService(mockIdentifierSourceService);
         paperRecordService.setPatientService(mockPatientService);
         paperRecordService.setEmrProperties(mockEmrProperties);
+    }
+
+    @Test
+    public void testPaperRecordExistsShouldReturnTrueIfPaperMedicalRecordExists() {
+
+        Location medicalRecordLocation = createMedicalRecordLocation();
+        PatientIdentifier identifier = createIdentifier(medicalRecordLocation, "ABCZYX");
+
+        when(mockPatientService.getPatientIdentifiers("ABCZYX", Collections.singletonList(paperRecordIdentifierType),
+                Collections.singletonList(medicalRecordLocation), null, null))
+                .thenReturn(Collections.singletonList(identifier));
+
+        assertTrue(paperRecordService.paperRecordExists("ABCZYX", medicalRecordLocation));
+    }
+
+    @Test
+    public void testPaperRecordExistsShouldReturnFalseIfPaperMedicalRecordDoesNotExists() {
+
+        Location medicalRecordLocation = createMedicalRecordLocation();
+
+        when(mockPatientService.getPatientIdentifiers("ABCZYX", Collections.singletonList(paperRecordIdentifierType),
+                Collections.singletonList(medicalRecordLocation), null, null))
+                .thenReturn(new ArrayList<PatientIdentifier>());
+
+        assertFalse(paperRecordService.paperRecordExists("ABCZYX", medicalRecordLocation));
     }
 
     @Test
@@ -505,7 +532,8 @@ public class PaperRecordServiceTest {
     }
 
     @Test
-    public void testMarkPaperRecordRequestsAsReturnedShouldMarkSentPaperRecordRequestsAsReturned() {
+    public void testMarkPaperRecordRequestsAsReturnedShouldMarkSentPaperRecordRequestsAsReturned()
+        throws Exception {
 
         Patient patient = new Patient();
         patient.setId(15);
@@ -528,6 +556,17 @@ public class PaperRecordServiceTest {
         assertThat(request.getStatus(), is(Status.RETURNED));
         IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(request);
         verify(mockPaperRecordDAO).saveOrUpdate(argThat(expectedRequestMatcher));
+    }
+
+    @Test(expected = NoMatchingPaperMedicalRequestException.class)
+    public void testMarkPaperRecordRequestsAsReturnedShouldThrowExceptionIfNoMatchingRequest()
+            throws Exception {
+
+        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(Collections.singletonList(Status.SENT))),
+                argThat(new NullPatient()), argThat(new NullLocation()), eq("ABCZYX"), argThat(new NullBoolean())))
+                .thenReturn(new ArrayList<PaperRecordRequest>());
+
+        paperRecordService.markPaperRecordRequestsAsReturned("ABCZYX");
     }
 
 
@@ -849,6 +888,11 @@ public class PaperRecordServiceTest {
         @Override
         public void printPaperRecordLabel(PaperRecordRequest request, Location location) {
 
+        }
+
+        @Override
+        protected Location getMedicalRecordLocationAssociatedWith(Location location) {
+            return location;
         }
 
     }

@@ -103,6 +103,15 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     }
 
     @Override
+    public boolean paperRecordExists(String identifier, Location location) {
+
+        List<PatientIdentifier> identifiers = patientService.getPatientIdentifiers(identifier, Collections.singletonList(emrProperties.getPaperRecordIdentifierType()),
+                Collections.singletonList(getMedicalRecordLocationAssociatedWith(location)), null, null);
+
+        return identifiers != null && identifiers.size() > 0 ? true : false;
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public PaperRecordRequest getPaperRecordRequestById(Integer id) {
         return paperRecordRequestDAO.getById(id);
@@ -297,14 +306,20 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
     @Override
     @Transactional
-    public void markPaperRecordRequestsAsReturned(String identifier) {
+    public void markPaperRecordRequestsAsReturned(String identifier)
+        throws NoMatchingPaperMedicalRequestException {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
+
+        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(Status.SENT),
+                null, null, identifier, null);
+
+        if (requests.size() == 0) {
+            throw new NoMatchingPaperMedicalRequestException();
+        }
 
         // we should never have more than one request in the sent state for the same record, but there
         // shouldn't be any harm in marking them all as closed if we do
-
-        for (PaperRecordRequest request : paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(Status.SENT),
-                null, null, identifier, null)) {
+        for (PaperRecordRequest request : requests) {
             request.updateStatus(Status.RETURNED);
             savePaperRecordRequest(request);
         }
@@ -400,6 +415,21 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
         return paperRecordId;
     }
+
+
+    protected Location getMedicalRecordLocationAssociatedWith(Location location) {
+
+        if (location != null) {
+            if (location.hasTag(emrProperties.getMedicalRecordLocationLocationTag().toString())) {
+                return location;
+            } else {
+                return getMedicalRecordLocationAssociatedWith(location.getParentLocation());
+            }
+        }
+
+        throw new IllegalStateException("There is no matching location with the tag: " + emrProperties.getMedicalRecordLocationLocationTag().toString());
+    }
+
 
     protected String getPaperMedicalRecordNumberFor(Patient patient, Location medicalRecordLocation) {
         PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient,

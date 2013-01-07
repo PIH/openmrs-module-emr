@@ -30,6 +30,18 @@ import java.util.List;
 public interface PaperRecordService extends OpenmrsService {
 
     /**
+     * Returns true/false if a paper medical record exist at the specified location with the specified identifier
+     * (We assume a record exists if the specified identifier has been assigned to a patient at the
+     * specified location)
+     *
+     * @param identifier
+     * @param paperMedicalRecordLocation
+     * @return
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS)
+    boolean paperRecordExists(String identifier, Location location);
+
+    /**
      * Fetches the Paper Record Request with the specified id
      *
      * @param id primary key of the paper record request to retrieve
@@ -72,7 +84,7 @@ public interface PaperRecordService extends OpenmrsService {
      *
      * @return the list of all open paper record requests that need to be pulled
      */
-    // TODO: once we have multiple medical record locations, we will need to add location as a criteria
+    // TODO: once we have multiple medical record locations, we will need to add location as a criteria (see paperRecordExists)
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     List<PaperRecordRequest> getOpenPaperRecordRequestsToPull();
 
@@ -82,7 +94,7 @@ public interface PaperRecordService extends OpenmrsService {
      *
      * @return the list of all open paper record requests that need to be created
      */
-    // TODO: once we have multiple medical record locations, we will need to add location as a criteria
+    // TODO: once we have multiple medical record locations, we will need to add location as a criteria (see paperRecordExists)
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     List<PaperRecordRequest> getOpenPaperRecordRequestsToCreate();
 
@@ -132,7 +144,7 @@ public interface PaperRecordService extends OpenmrsService {
      * @throws IllegalStateException if more than one request is found
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
-    // TODO: once we have multiple medical record locations, we will need to add location as a criteria
+    // TODO: once we have multiple medical record locations, we will need to add location as a criteria (see paperRecordExists)
     PaperRecordRequest getPendingPaperRecordRequestByIdentifier(String identifier);
 
 
@@ -144,7 +156,7 @@ public interface PaperRecordService extends OpenmrsService {
      * @return returns the "sent" paper record request (if any) for the record with specified identifier
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
-    // TODO: once we have multiple medical record locations, we will need to add location as a criteria
+    // TODO: once we have multiple medical record locations, we will need to add location as a criteria (see paperRecordExists)
     PaperRecordRequest getSentPaperRecordRequestByIdentifier(String identifier);
 
 
@@ -159,8 +171,9 @@ public interface PaperRecordService extends OpenmrsService {
     /**
      * Marks all active requests with the specified identifier as returned
      */
-    // TODO: once we have multiple medical record locations, we will need to add location as a criteria
-    void markPaperRecordRequestsAsReturned(String identifier);
+    // TODO: once we have multiple medical record locations, we will need to add location as a criteria (see paperRecordExists)
+    void markPaperRecordRequestsAsReturned(String identifier)
+        throws NoMatchingPaperMedicalRequestException;
 
     /**
      * Prints a label for the paper record associated wth the request

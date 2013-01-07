@@ -12,6 +12,7 @@
         <ul>
             <li><a id="tab-selector-create" href="#tab-create">${ ui.message("emr.archivesRoom.newRecords.label") }</a></li>
             <li><a id="tab-selector-pull" href="#tab-pull">${ ui.message("emr.archivesRoom.existingRecords.label") }</a></li>
+            <li><a id="tab-selector-return" href="#tab-return">${ ui.message("emr.archivesRoom.returnRecords.label") }</a></li>
         </ul>
 
         <div id="tab-create">
@@ -146,6 +147,20 @@
                         </div>
                     </div>
                 </div>
+        </div>
+
+        <div id="tab-return">
+
+                <h2>${ ui.message("emr.archivesRoom.returningRecords.label") }</h2>
+
+                <div id="scan-returned-records" class="container">
+                    ${ ui.message("emr.archivesRoom.typeOrIdentifyBarCode.label") }
+                    <br/>
+                    <form class="mark-as-returned">
+                        <input type="text" size="40" name="mark-as-returned-identifier" class="mark-as-returned-identifier"/>
+                    </form>
+                </div>
+
         </div>
 
 </div>
