@@ -14,10 +14,7 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class RetrospectiveCheckinPageController {
 
@@ -41,10 +38,12 @@ public class RetrospectiveCheckinPageController {
                        @SpringBean("emrProperties")EmrProperties emrProperties,
                        @RequestParam("patientId") Patient patient,
                        @RequestParam("locationId") Location location,
-                       @RequestParam("checkinDate") Date date,
+                       @RequestParam("checkinDate_day") Integer checkinDateDay,
+                       @RequestParam("checkinDate_month") Integer checkinDateMonth,
+                       @RequestParam("checkinDate_year") Integer checkinDateYear,
                        @RequestParam("paymentReasonId") Integer paymentReasonId,
-                       @RequestParam("paidAmount") Double paidAmount,
-                       @RequestParam("paymentReceipt") String receiptNumber) {
+                       @RequestParam("paidAmountId") Double paidAmount,
+                       @RequestParam("receiptNumber") String receiptNumber) {
 
         Collection<Provider> providers = providerService.getProvidersByPerson(Context.getAuthenticatedUser().getPerson());
         Provider checkInClerk = providers.iterator().next();
@@ -53,8 +52,10 @@ public class RetrospectiveCheckinPageController {
         Obs paymentAmount = createPaymentAmountObservation(emrProperties, paidAmount);
         Obs paymentReceipt = createPaymentReceiptObservation(emrProperties, receiptNumber);
 
-        adtService.createCheckinInRetrospective(patient, location, checkInClerk, paymentReason, paymentAmount, paymentReceipt, date);
-        return "redirect:" + ui.pageLink("mirebalais", "home");
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(checkinDateYear, checkinDateMonth-1, checkinDateDay);
+        adtService.createCheckinInRetrospective(patient, location, checkInClerk, paymentReason, paymentAmount, paymentReceipt, calendar.getTime());
+        return "redirect:" + ui.pageLink("emr", "patient", SimpleObject.create("patientId", patient.getId()));
     }
 
     private Obs createPaymentReceiptObservation(EmrProperties emrProperties, String receiptNumber) {
