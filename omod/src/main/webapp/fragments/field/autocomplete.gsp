@@ -69,6 +69,11 @@
                 if(${ config.onExactMatchFunction } !==null ){
                      ${ config.onExactMatchFunction }(items[0]);
                 }
+            }else if(items.length ==1 && (items[0].patientId ==0 )){
+                setSearchValue(items[0]);
+                jq.each( items , function(i, item){
+                    self._renderItem(ul, item);
+                });
             }else{
                 jq.each( items , function(i, item){
                     self._renderItem(ul, item);

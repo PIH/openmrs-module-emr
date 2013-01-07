@@ -4,6 +4,26 @@ jq(function() {
     jq('#cancel-button').click(function() {
         window.history.back();
     });
+
+    jq("#choose-first-search").keyup(function(){
+        var length = jq("#choose-first-search").val().length;
+
+        if(length<3){
+            jq("#choose-first-value").val('');
+            disableButton();
+        }
+
+    });
+
+    jq("#choose-second-search").keyup(function(){
+        var length = jq("#choose-second-search").val().length;
+
+        if(length<3){
+            jq("#choose-second-value").val('');
+            disableButton();
+        }
+
+    });
 });
 
 function labelFunction(item) {
@@ -37,11 +57,12 @@ function verifyPatientsToMerge(message, items, fieldId ){
         hiddenId = secondValue;
     }
 
-    if(items.length==1 && items[0].patientId == hiddenId){
+    if(items.length==1 && (items[0].patientId == hiddenId || items[0].patientId==0)){
         items[0].patientId = 0;
         items[0].label = message;
 
         disableButton();
+        return ;
     } else {
         for (var i = 0 ; i < items.length ; i++){
             if (items[i].patientId == hiddenId){
@@ -55,7 +76,7 @@ function verifyPatientsToMerge(message, items, fieldId ){
         }
     }
 
-    if (firstValue!="" && items.length > 0) {
+    if (firstValue!="" && firstValue!="0" && items.length > 0) {
         enableButton();
     }
 
