@@ -29,6 +29,7 @@ function FieldModel(question, elem) {
 var QuestionModel = function(section, elem) {
     var element = $(elem);
     var questionLegend = element.find('legend').first();
+    var questionTitle = questionLegend.text();
     questionLegend.append("<span></span>");
     var valueElement = questionLegend.find('span').first();
     var computedValue = function() {
@@ -51,6 +52,12 @@ var QuestionModel = function(section, elem) {
             valueElement.text(computedValue())
             valueElement.show();
         }
+    };
+    model.title = function() {
+        return questionTitle;
+    }
+    model.value = function() {
+        return computedValue();
     }
 
     return model;
@@ -72,6 +79,48 @@ var SectionModel = function(elem) {
             element.show();
             title.addClass("focused");
         } else {
+            element.hide();
+            title.removeClass("focused");
+        }
+    };
+    model.moveTitleTo = function(el) {
+        title.detach();
+        title.appendTo(el);
+    }
+
+    return model;
+}
+
+var ConfirmationSectionModel = function(elem, regularSections) {
+    var element = $(elem);
+    var sections = regularSections;
+    var title = element.find("span.title").first();
+
+    element.append("<div id='dataCanvas'></div>");
+    var blah = element.find('#dataCanvas').first();
+    element.hide();
+
+    var showDataForConfirmation = function() {
+        _.each(sections, function(s) {
+            _.each(s.questions, function(q) {
+                blah.append("<p>" + q.title() + "<span>" + q.value() + "</span></p>");
+            })
+        });
+    };
+
+    var model = {};
+    model.isSelected = false;
+    model.questions = _.map(element.find("p"), function(q) {
+        return QuestionModel(model, q);
+    });
+    model.toggleSelection = function() {
+        model.isSelected = !model.isSelected;
+        if(model.isSelected) {
+            showDataForConfirmation();
+            element.show();
+            title.addClass("focused");
+        } else {
+            blah.empty();
             element.hide();
             title.removeClass("focused");
         }

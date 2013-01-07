@@ -40,7 +40,7 @@ fieldset {
     }
 }
 
-fieldset.focused {
+fieldset.focused, div#dataCanvas {
     background-color: $lighterGrey;
     border: 3px solid $pihPrimaryPurple !important;
     margin-top: 30px !important;
@@ -59,8 +59,4 @@ fieldset.focused {
     input, select {
         display: block !important;
     }
-}
-
-.actions {
-    margin-top: 20px;
 }

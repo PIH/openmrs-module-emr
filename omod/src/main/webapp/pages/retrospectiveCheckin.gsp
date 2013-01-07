@@ -86,13 +86,11 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 ])}
             </fieldset>
         </section>
+
+        <div id="confirmation">
+            <span class="title">Confirm</span>
+            <p>Confirm submission? <input type="button" value="Yes" /> or <input type="button" value="No" /></p>
+
+        </div>
     </form>
-
-    <div class="actions">
-        <a id="cancelButton" href="#" class="cancel">Cancel</a>
-        <input id="submitButton" type="button" class="submit" value="Submit"
-               data-bind="style: {visibility:paymentInfoIsValid() && checkinInfoIsValid() ? 'visible':'hidden'}, click: registerCheckin" />
-    </div>
-
-    <div id="dialogMessage"></div>
 </div>

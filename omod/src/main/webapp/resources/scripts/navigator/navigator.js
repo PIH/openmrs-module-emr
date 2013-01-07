@@ -10,6 +10,9 @@ function initFormModels() {
     });
 
     sections[0].toggleSelection();
+    var confirmationSection = ConfirmationSectionModel($('#confirmation'), _.clone(sections));
+    confirmationSection.moveTitleTo(breadcrumb);
+    sections.push(confirmationSection);
     return sections;
 }
 
