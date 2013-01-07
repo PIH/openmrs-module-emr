@@ -14,7 +14,7 @@
         function setSearchValue(objectItem){
             jq('#${ config.id }-value').val(objectItem.${ config.itemValueProperty });
             jq('#${ config.id }-search').val(${ config.itemLabelFunction }(objectItem));
-            <%=  config.function %>
+
         };
 
         jq('#${ config.id }-search').autocomplete({
@@ -61,6 +61,8 @@
 
         jq('#${ config.id }-search').data('autocomplete')._renderMenu = function(ul, items){
             var self= this;
+            var fieldId =  '${ config.id }';
+            <%=  config.function %>
             if(items.length ==1 && (items[0].patientId !==0 )){
                 setSearchValue(items[0]);
                 if(${ config.onExactMatchFunction } !==null ){
@@ -80,7 +82,7 @@
 
 <span class="autocomplete-label">${ config.label }</span>
 <div>
-    <input type="hidden" class="field-value" id="${ config.id }-value" name="${ config.formFieldName }" <%=  (config.patientId!=null) ? "value=" + config.patientId : ""  %>  />
+    <input type="hidden" class="field-value" id="${ config.id }-value" name="${ config.formFieldName }" <%=  (config.patientId!=null && config.patientId!="" ) ? "value=" + config.patientId : ""  %>  />
     <input type="text" class="field-display" id="${ config.id }-search" ${disabled} placeholder="${ config.placeholder ?: '' }" value="${value}" size="40"/>
 </div>
 

@@ -31,7 +31,7 @@
             patientId: id,
             disabled: isUnknownPatient,
             value: fullName,
-            function: "verifyPatientsToMerge('" + ui.message("emr.mergePatients.error.samePatient") + "');"
+            function: "verifyPatientsToMerge('" + ui.message("emr.patient.notFound") + "', items, fieldId);"
     ])}
 
     <br/>
@@ -44,7 +44,7 @@
             action: "search",
             itemValueProperty: "patientId",
             itemLabelFunction: "labelFunction",
-            function: "verifyPatientsToMerge('" + ui.message("emr.mergePatients.error.samePatient")+ "');"
+            function: "verifyPatientsToMerge('" + ui.message("emr.patient.notFound") + "', items, fieldId);"
     ])}
 
     <br/>
