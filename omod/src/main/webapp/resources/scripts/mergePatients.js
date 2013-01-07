@@ -11,6 +11,10 @@ jq(function() {
         if(length<3){
             jq("#choose-first-value").val('');
             disableButton();
+        } else {
+            if (jq("#choose-first-value").val()){
+                enableButton();
+            }
         }
 
     });
@@ -21,6 +25,10 @@ jq(function() {
         if(length<3){
             jq("#choose-second-value").val('');
             disableButton();
+        } else {
+            if (jq("#choose-second-value").val()){
+                enableButton();
+            }
         }
 
     });
@@ -70,13 +78,12 @@ function verifyPatientsToMerge(message, items, fieldId ){
                 //remove item from array
                 items.splice(i, 1);
 
-                enableButton();
                 return;
             }
         }
     }
 
-    if (firstValue!="" && firstValue!="0" && items.length > 0) {
+    if (firstValue!="" && firstValue!="0" && secondValue!="" && secondValue!="0") {
         enableButton();
     }
 
