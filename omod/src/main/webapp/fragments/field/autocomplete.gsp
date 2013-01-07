@@ -36,7 +36,6 @@
                             });
                         }
                         response(data);
-                        <%=  config.function %>
                     }
                 }).complete(function(){
                      xhr = null;

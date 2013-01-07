@@ -20,6 +20,9 @@ function verifyPatientsToMerge(message){
 
     if (firstValue!="" && secondValue!="" && (firstValue == secondValue)){
         emr.errorAlert(message);
+        jq("#confirm-button").attr("disabled","disabled");
+        jq("#confirm-button").addClass('disabled');
+
     } else if (firstValue!="" && secondValue!="") {
         jq("#confirm-button").removeAttr("disabled");
         jq("#confirm-button").removeClass("disabled");
