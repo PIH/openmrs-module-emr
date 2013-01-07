@@ -12,6 +12,7 @@
         var xhr=null;
 
         function setSearchValue(objectItem){
+            objectItem.textValue = jq('#${ config.id }-search').val();
             jq('#${ config.id }-value').val(objectItem.${ config.itemValueProperty });
             jq('#${ config.id }-search').val(${ config.itemLabelFunction }(objectItem));
 

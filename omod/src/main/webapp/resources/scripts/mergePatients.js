@@ -8,10 +8,12 @@ jq(function() {
 
 function labelFunction(item) {
     var id = item.patientId;
-    if (item.primaryIdentifiers[0]) {
+    if (id != 0 && item.primaryIdentifiers && item.primaryIdentifiers[0]) {
         id = item.primaryIdentifiers[0].identifier;
+        return id + ' - ' + item.preferredName.fullName;
+    }else{
+        return item.textValue;
     }
-    return id + ' - ' + item.preferredName.fullName;
 }
 
 function enableButton(){
@@ -43,6 +45,7 @@ function verifyPatientsToMerge(message, items, fieldId ){
     } else {
         for (var i = 0 ; i < items.length ; i++){
             if (items[i].patientId == hiddenId){
+
                 //remove item from array
                 items.splice(i, 1);
 
