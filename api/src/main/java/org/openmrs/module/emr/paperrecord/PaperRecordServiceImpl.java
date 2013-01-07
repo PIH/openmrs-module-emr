@@ -124,7 +124,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
     @Override
     @Transactional
-    public PaperRecordRequest requestPaperRecord(Patient patient, Location recordLocation, Location requestLocation) {
+    public PaperRecordRequest requestPaperRecord(Patient patient, Location location, Location requestLocation) {
 
         // TODO: we will have to handle the case if there is already a request for this patient's record in the "SENT" state
         // TODO: (ie, what to do if the record is already out on the floor--right now it will just create a new request)
@@ -133,13 +133,17 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
             throw new IllegalStateException("Patient cannot be null");
         }
 
-        if (recordLocation == null) {
+        if (location == null) {
             throw new IllegalStateException("Record Location cannot be null");
         }
 
         if (requestLocation == null) {
             throw new IllegalStateException("Request Location cannot be null");
         }
+
+        // fetch the nearest medical record location (or just return the given location if it is a valid
+        // medical record location)
+        Location recordLocation = getMedicalRecordLocationAssociatedWith(location);
 
         // fetch any pending request for this patient at this location
         List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(PENDING_STATUSES, patient, recordLocation, null, null);

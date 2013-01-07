@@ -72,7 +72,9 @@ public interface PaperRecordService extends OpenmrsService {
      * Requests the paper record for the specified patient for the specified location
      *
      * @param patient the patient whose record we are requesting
-     * @param recordLocation the location of the record (ie, "Mirebalais Hospital")
+     * @param recordLocation the location of the record (ie, "Mirebalais Hospital"); if the specified location is not
+     *                       a medical record location, will search up the location hierarchy for a valid medical
+     *                       record location
      * @param requestLocation the location where the record is to be sent
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS)

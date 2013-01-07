@@ -151,11 +151,38 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     }
 
     @Test
+    public void testRequestPaperRecordFromChildLocation() {
+
+        // all these are from the standard test dataset
+        Patient patient = patientService.getPatient(2) ;
+        Location medicalRecordLocation = locationService.getLocation(1001);
+        Location requestLocation = locationService.getLocation(3);
+
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        // first, make sure that this record is not returned by the "to create" service method
+        Assert.assertEquals(0, paperRecordService.getOpenPaperRecordRequestsToCreate().size());
+
+        // make sure the record is in the database
+        List<PaperRecordRequest> requests = paperRecordService.getOpenPaperRecordRequestsToPull();
+        Assert.assertEquals(1, requests.size());
+        PaperRecordRequest request = requests.get(0);
+        Assert.assertEquals(new Integer(2), request.getPatient().getId());
+        Assert.assertEquals(new Integer(1), request.getRecordLocation().getId());
+        Assert.assertEquals(new Integer(3), request.getRequestLocation().getId());
+        Assert.assertEquals("101", request.getIdentifier());
+        Assert.assertEquals(PaperRecordRequest.Status.OPEN, request.getStatus());
+        Assert.assertNull(request.getAssignee());
+
+    }
+
+
+    @Test
     public void testRequestPaperRecordWhenNoValidPatientIdentifierForPaperRecord() {
 
         // all these are from the standard test dataset
         Patient patient = patientService.getPatient(2) ;
-        Location medicalRecordLocation = locationService.getLocation(3);
+        Location medicalRecordLocation = locationService.getLocation(2);
         Location requestLocation = locationService.getLocation(3);
 
         paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
@@ -168,7 +195,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Assert.assertEquals(1, requests.size());
         PaperRecordRequest request = requests.get(0);
         Assert.assertEquals(new Integer(2), request.getPatient().getId());
-        Assert.assertEquals(new Integer(3), request.getRecordLocation().getId());
+        Assert.assertEquals(new Integer(2), request.getRecordLocation().getId());
         Assert.assertEquals(new Integer(3), request.getRequestLocation().getId());
         Assert.assertEquals(null, request.getIdentifier());
         Assert.assertEquals(PaperRecordRequest.Status.OPEN, request.getStatus());
@@ -360,9 +387,9 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     public void testRequestPaperRecordWhenSamePatientButDifferentMedicalRecordLocation() {
 
         // all these are from the standard test dataset
-        Patient patient = patientService.getPatient(2) ;
+        Patient patient = patientService.getPatient(6) ;
         Location medicalRecordLocation = locationService.getLocation(2);
-        Location anotherMedicalRecordLocation = locationService.getLocation(3);
+        Location anotherMedicalRecordLocation = locationService.getLocation(1);
         Location requestLocation = locationService.getLocation(1);
 
         paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
