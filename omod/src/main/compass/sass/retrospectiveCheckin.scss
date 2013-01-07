@@ -1,13 +1,23 @@
 @import "colors";
 
-form div.formBreadcrumb span.title {
-    display: inline-block;
-    padding: 2px 5px;
-    margin: 2px 5px;
-    border: 2px solid $pihPrimaryPurple;
+form {
+    div.formBreadcrumb span.title {
+        display: inline-block;
+        padding: 2px 5px;
+        margin: 2px 5px;
+        border: 2px solid $pihPrimaryPurple;
 
-    &.focused {
-        background-color: $lighterGrey;
+        &.focused {
+            background-color: $lighterGrey;
+        }
+    }
+
+    input, select {
+        border: 3px solid white !important;
+
+        &:focus {
+            border: 3px solid $pihSecondaryBlue !important;
+        }
     }
 }
 
@@ -17,6 +27,26 @@ fieldset {
     position: relative;
     margin: 10px 0 10px 0;
 
+    &.focused {
+        background-color: $lighterGrey;
+        border: 3px solid $pihPrimaryPurple !important;
+        margin-top: 30px !important;
+        padding: 20px;
+
+        legend {
+            color: $pihPrimaryPurple;
+            font-weight: 900;
+            top: -1.5em;
+        }
+
+        label {
+            display: block !important;
+        }
+
+        input, select {
+            display: block !important;
+        }
+    }
 
     legend {
         position: absolute;
@@ -40,23 +70,34 @@ fieldset {
     }
 }
 
-fieldset.focused, div#dataCanvas {
-    background-color: $lighterGrey;
-    border: 3px solid $pihPrimaryPurple !important;
-    margin-top: 30px !important;
-    padding: 20px;
+div#confirmation {
+    div#confirmationQuestion {
+        display: none;
 
-    legend {
-        color: $pihPrimaryPurple;
-        font-weight: 900;
-        top: -1.5em;
+        &.focused {
+            display: block;
+        }
     }
 
-    label {
-        display: block !important;
-    }
+    div#dataCanvas {
+        background-color: $lighterGrey;
+        border: 3px solid $pihPrimaryPurple !important;
+        margin-top: 30px !important;
+        padding: 20px;
 
-    input, select {
-        display: block !important;
+        ul {
+            display: table;
+
+            li {
+                display: table-row;
+                span {
+                    display: table-cell;
+                    padding: 1px 5px;
+                    &.label {
+                        text-align: right;
+                    }
+                }
+            }
+        }
     }
 }

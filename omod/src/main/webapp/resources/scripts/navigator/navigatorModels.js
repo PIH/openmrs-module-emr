@@ -7,6 +7,7 @@ function FieldModel(question, elem) {
     model.toggleSelection = function() {
         model.isSelected = !model.isSelected;
         if(model.isSelected) {
+            console.log(element);
             element.focus();
         } else {
             element.blur();
@@ -97,20 +98,22 @@ var ConfirmationSectionModel = function(elem, regularSections) {
     var title = element.find("span.title").first();
 
     element.append("<div id='dataCanvas'></div>");
-    var blah = element.find('#dataCanvas').first();
+    var dataCanvas = element.find('#dataCanvas').first();
     element.hide();
 
     var showDataForConfirmation = function() {
+        dataCanvas.append("<ul></ul>");
+        var listElement = dataCanvas.find("ul").first();
         _.each(sections, function(s) {
             _.each(s.questions, function(q) {
-                blah.append("<p>" + q.title() + "<span>" + q.value() + "</span></p>");
+                listElement.append("<li><span class='label'>" + q.title() + "</span><span>" + q.value() + "</span></li>");
             })
         });
     };
 
     var model = {};
     model.isSelected = false;
-    model.questions = _.map(element.find("p"), function(q) {
+    model.questions = _.map(element.find("#confirmationQuestion"), function(q) {
         return QuestionModel(model, q);
     });
     model.toggleSelection = function() {
@@ -120,7 +123,7 @@ var ConfirmationSectionModel = function(elem, regularSections) {
             element.show();
             title.addClass("focused");
         } else {
-            blah.empty();
+            dataCanvas.empty();
             element.hide();
             title.removeClass("focused");
         }
