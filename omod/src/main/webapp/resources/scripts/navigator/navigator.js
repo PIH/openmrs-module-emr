@@ -1,6 +1,12 @@
 function initFormModels() {
-    var sections = _.map($('section'), function(s) {
-        return SectionModel(s);
+    var formElement = $('div#content > form').first();
+    formElement.prepend('<div class="formBreadcrumb"></div>');
+    var breadcrumb = formElement.find('div.formBreadcrumb').first();
+
+    var sections = _.map(formElement.find('section'), function(s) {
+        var section = SectionModel(s);
+        section.moveTitleTo(breadcrumb);
+        return section;
     });
 
     sections[0].toggleSelection();

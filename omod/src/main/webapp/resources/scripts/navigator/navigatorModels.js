@@ -58,7 +58,7 @@ var QuestionModel = function(section, elem) {
 
 var SectionModel = function(elem) {
     var element = $(elem);
-    var title = element.find("span.title").text();
+    var title = element.find("span.title").first();
     element.hide();
 
     var model = {};
@@ -70,9 +70,15 @@ var SectionModel = function(elem) {
         model.isSelected = !model.isSelected;
         if(model.isSelected) {
             element.show();
+            title.addClass("focused");
         } else {
             element.hide();
+            title.removeClass("focused");
         }
+    };
+    model.moveTitleTo = function(el) {
+        title.detach();
+        title.appendTo(el);
     }
 
     return model;
