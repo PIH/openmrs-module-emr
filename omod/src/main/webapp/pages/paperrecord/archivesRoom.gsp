@@ -153,7 +153,7 @@
 
                 <h2>${ ui.message("emr.archivesRoom.returningRecords.label") }</h2>
 
-                <div id="scan-returned-records" class="container">
+                <div id="scan-returned-records" class="box-align">
                     ${ ui.message("emr.archivesRoom.typeOrIdentifyBarCode.label") }
                     <br/>
                     <form class="mark-as-returned">
