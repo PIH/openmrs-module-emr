@@ -74,51 +74,116 @@ function FieldsHandler(questionsHandler) {
             return questionsHandler.handleEscKey();
         }
     };
-
-    return model;
+    return api;
 }
 
-var Question = function(elem) {
-    var previousQuestion, nextQuestion;
-    var element = $(elem);
-    var items = _.map(element.find("input, select"), function(i) {
-        return QuestionItem(i);
-    });
+function QuestionsHandler(sectionsHandler) {
+    var questions = [];
+    var sectionsHandler = sectionsHandler;
 
-
-    var model = {};
-    model.isSelected = false;
-
-    model.definePreviousQuestion = function(question) {
-        previousQuestion = question;
+    var api = {};
+    api.addQuestion = function(question) {
+        questions.push(question);
     };
-    model.defineNextQuestion = function(question) {
-        nextQuestion = question;
+    api.selectedQuestion = function() {
+        return _.find(questions, function(q) { return q.isSelected; });
     };
-    model.focusIn = function() {
-        model.isSelected = true;
-        element.addClass("focused");
-    };
-    model.focusOut = function() {
-        model.isSelected = false;
-        element.removeClass("focused");
-    };
-    model.moveToPreviousQuestion = function() {
-        if(previousQuestion) {
-            model.focusOut();
-            previousQuestion.focusIn();
+    api.handleLeftKey = function() {
+        if(!api.selectedQuestion()) {
+            return sectionsHandler.handleLeftKey();
         }
+        return false;
     };
-    model.moveToNextQuestion = function() {
-        if(nextQuestion) {
-            model.focusOut();
-            nextQuestion.focusIn();
+    api.handleRightKey = function() {
+        if(!api.selectedQuestion()) {
+            return sectionsHandler.handleRightKey();
         }
+        return false;
     };
-    model.escape = function() {
-        model.focusOut();
+    api.handleUpKey = function() {
+        var question = api.selectedQuestion();
+        if(question) {
+            var idx = _.indexOf(questions, question);
+            if(idx > 0) {
+                question.toggleSelection();
+                questions[idx-1].toggleSelection();
+                if(question.parentSection != questions[idx-1].parentSection) {
+                    question.parentSection.toggleSelection();
+                    questions[idx-1].parentSection.toggleSelection();
+                }
+                return true;
+            }
+        }
+        return false;
+    };
+    api.handleDownKey = function() {
+        var question = api.selectedQuestion();
+        if(question) {
+            var idx = _.indexOf(questions, question);
+            if(idx < questions.length-1) {
+                question.toggleSelection();
+                questions[idx+1].toggleSelection();
+                if(question.parentSection != questions[idx+1].parentSection) {
+                    question.parentSection.toggleSelection();
+                    questions[idx+1].parentSection.toggleSelection();
+                }
+                return true;
+            }
+        } else {
+            var section = sectionsHandler.selectedSection();
+            section.questions[0].toggleSelection();
+            return true;
+        }
+        return false;
+    };
+    api.handleEscKey = function() {
+        var question = api.selectedQuestion();
+        if(question) {
+            question.toggleSelection();
+            return true;
+        }
+        return false;
+    };
+    return api;
+}
+
+function SectionsHandler() {
+    var sections = [];
+
+    var api = {};
+    api.addSection = function(section) {
+        sections.push(section);
+    };
+    api.selectedSection = function() {
+        return _.find(sections, function(s) { return s.isSelected; });
+    };
+    api.currentSection = function() {
+        return api.selectedSection();
     }
-
+    api.handleLeftKey = function() {
+        var section = api.selectedSection();
+        if(section) {
+            var idx = _.indexOf(sections, section);
+            if(idx > 0) {
+                section.toggleSelection();
+                sections[idx-1].toggleSelection();
+                return true;
+            }
+        };
+        return false;
+    };
+    api.handleRightKey = function() {
+        var section = api.selectedSection();
+        if(section) {
+            var idx = _.indexOf(sections, section);
+            if(idx < sections.length-1) {
+                section.toggleSelection();
+                sections[idx+1].toggleSelection();
+                return true;
+            }
+        };
+        return false;
+    };
 
     return api;
 }
