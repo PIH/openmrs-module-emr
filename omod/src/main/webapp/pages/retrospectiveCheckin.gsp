@@ -25,7 +25,9 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
 <div id="content" class="container">
     <h3 class="title">Retrospective Check-in</h3>
-    <form>
+    <form method="POST">
+        <input type="hidden" name="patientId" value="${patient.id}" />
+
         <section id="checkinInformation">
             <span class="title">Check-in information</span>
 
@@ -33,7 +35,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 <legend>Check-in location</legend>
                 ${ ui.includeFragment("emr", "field/dropdown", [
                         label: ui.message("emr.retrospectiveCheckin.location.label"),
-                        formFieldName:"locations",
+                        formFieldName:"locationId",
                         options:locations,
                         showEmptyLabel: false,
                         maximumSize: 8
@@ -41,7 +43,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             </fieldset>
 
             <fieldset>
-                <legend>Check-in date <span>213456</span></legend>
+                <legend>Check-in date</legend>
                 ${ ui.includeFragment("emr", "field/text", [
                         label: ui.message("emr.retrospectiveCheckin.checkinDate.day.label"),
                         formFieldName: "checkinDate_day",
@@ -64,7 +66,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 <legend>Payment Reason</legend>
                 ${ ui.includeFragment("emr", "field/dropdown", [
                         label: ui.message("emr.retrospectiveCheckin.paymentReason.label"),
-                        formFieldName:"paymentReason",
+                        formFieldName:"paymentReasonId",
                         options:paymentReasons,
                         showEmptyLabel: false,
                         maximumSize: 10])}
@@ -73,7 +75,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 <legend>Payment Amount</legend>
                 ${ ui.includeFragment("emr", "field/dropdown", [
                         label: ui.message("emr.retrospectiveCheckin.paymentAmount.label"),
-                        formFieldName:"paymentAmount",
+                        formFieldName:"paidAmountId",
                         options:paymentAmounts,
                         showEmptyLabel: false,
                         maximumSize: 10])}
@@ -89,7 +91,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
         <div id="confirmation">
             <span class="title">Confirm</span>
-            <p>Confirm submission? <input type="button" value="Yes" /> or <input type="button" value="No" /></p>
+            <p>Confirm submission? <input type="submit" value="Yes" /> or <input type="button" value="No" /></p>
 
         </div>
     </form>
