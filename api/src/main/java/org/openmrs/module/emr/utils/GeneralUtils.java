@@ -29,9 +29,13 @@ import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.util.OpenmrsConstants;
+import org.openmrs.web.WebUtil;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class GeneralUtils {
 
@@ -581,6 +585,22 @@ public class GeneralUtils {
         catch (Exception e) {
             throw new APIException("Invalid property name " + property + " passed to getPersonAddressProperty");
         }
+    }
+
+    /**
+     * Given a user, returns the default locale (if any) for that user
+     * Returns null if no default locate
+     */
+    public static Locale getDefaultLocale(User user) {
+
+        if (user.getUserProperties() != null
+                && user.getUserProperties().containsKey(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCALE)) {
+            String localeString = user.getUserProperty(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCALE);
+            Locale locale = WebUtil.normalizeLocale(localeString);
+            return locale;
+        }
+
+        return null;
     }
 
 }
