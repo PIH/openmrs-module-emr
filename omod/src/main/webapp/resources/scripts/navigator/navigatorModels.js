@@ -5,13 +5,19 @@ function FieldModel(question, elem) {
     model.parentQuestion = question;
     model.isSelected = false;
     model.toggleSelection = function() {
-        model.isSelected = !model.isSelected;
         if(model.isSelected) {
-            console.log(element);
-            element.focus();
+            model.unselect();
         } else {
-            element.blur();
+            model.select();
         }
+    };
+    model.select = function() {
+        model.isSelected = true;
+        element.focus();
+    };
+    model.unselect = function() {
+        model.isSelected = false;
+        element.blur();
     };
     model.value = function() {
         var selectedOption = element.find('option:selected');
@@ -44,15 +50,25 @@ var QuestionModel = function(section, elem) {
     });
     model.isSelected = false;
     model.toggleSelection = function() {
-        model.isSelected = !model.isSelected;
         if(model.isSelected) {
-            element.addClass("focused");
-            valueElement.text("");
+            model.unselect();
         } else {
-            element.removeClass("focused");
-            valueElement.text(computedValue())
-            valueElement.show();
+            model.select();
         }
+    };
+    model.select = function() {
+        model.isSelected = true;
+        element.addClass("focused");
+        valueElement.text("");
+    };
+    model.unselect = function() {
+        model.isSelected = false;
+        element.removeClass("focused");
+        valueElement.text(computedValue())
+        valueElement.show();
+        _.each(model.fields, function(f) {
+            f.unselect();
+        });
     };
     model.title = function() {
         return questionTitle;
@@ -75,18 +91,31 @@ var SectionModel = function(elem) {
         return QuestionModel(model, q);
     });
     model.toggleSelection = function() {
-        model.isSelected = !model.isSelected;
         if(model.isSelected) {
-            element.show();
-            title.addClass("focused");
+            model.unselect();
         } else {
-            element.hide();
-            title.removeClass("focused");
+            model.select();
         }
+    };
+    model.select = function() {
+        model.isSelected = true;
+        element.show();
+        title.addClass("focused");
+    };
+    model.unselect = function() {
+        model.isSelected = false;
+        element.hide();
+        title.removeClass("focused");
+        _.each(model.questions, function(q) {
+            q.unselect();
+        });
     };
     model.moveTitleTo = function(el) {
         title.detach();
         title.appendTo(el);
+    };
+    model.title = function() {
+        return title;
     }
 
     return model;
@@ -117,20 +146,30 @@ var ConfirmationSectionModel = function(elem, regularSections) {
         return QuestionModel(model, q);
     });
     model.toggleSelection = function() {
-        model.isSelected = !model.isSelected;
         if(model.isSelected) {
-            showDataForConfirmation();
-            element.show();
-            title.addClass("focused");
+            model.unselect();
         } else {
-            dataCanvas.empty();
-            element.hide();
-            title.removeClass("focused");
+            model.select();
         }
+    };
+    model.select = function() {
+        model.isSelected = true;
+        showDataForConfirmation();
+        element.show();
+        title.addClass("focused");
+    };
+    model.unselect = function() {
+        model.isSelected = false;
+        dataCanvas.empty();
+        element.hide();
+        title.removeClass("focused");
     };
     model.moveTitleTo = function(el) {
         title.detach();
         title.appendTo(el);
+    };
+    model.title = function() {
+        return title;
     }
 
     return model;
