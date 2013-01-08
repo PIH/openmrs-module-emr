@@ -6,12 +6,14 @@ import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.api.UserService;
 import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.emr.utils.GeneralUtils;
 import org.openmrs.util.OpenmrsConstants;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -42,6 +44,8 @@ public class Account {
 	private String password;
 	
 	private String confirmPassword;
+
+    private Locale defaultLocale;
 	
 	private Set<Role> capabilities;
 	
@@ -78,6 +82,7 @@ public class Account {
 			setUsername(user.getUsername());
 			setEnabled(!user.isRetired());
 			setSecretQuestion(user.getSecretQuestion());
+            setDefaultLocale(GeneralUtils.getDefaultLocale(user));
 			
 			setCapabilities(new HashSet<Role>());
 			for (Role role : user.getAllRoles()) {
@@ -233,8 +238,22 @@ public class Account {
 	public void setConfirmPassword(String confirmPassword) {
 		this.confirmPassword = confirmPassword;
 	}
-	
-	/**
+
+    /**
+     * @param defaultLocale
+     */
+    public void setDefaultLocale(Locale defaultLocale) {
+        this.defaultLocale = defaultLocale;
+    }
+
+    /**
+     * @return defaultLocale
+     */
+    public Locale getDefaultLocale() {
+        return defaultLocale;
+    }
+
+    /**
 	 * @return the capabilities
 	 */
 	public Set<Role> getCapabilities() {

@@ -6,7 +6,7 @@
 <p>
     <label for="${ config.id }-field">${ config.label ?: '' }</label>
     <select id="${ config.id }-field" name="${ config.formFieldName}" />
-        <option value="">${ config.emptyOptionLabel ?: ''}</option>
+        <option value="" class="empty-option">${ config.emptyOptionLabel ?: ''}</option>
 
         <% config.options.each {
             def selected = it.selected || it.value == config.initialValue

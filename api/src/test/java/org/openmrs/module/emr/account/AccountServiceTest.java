@@ -16,6 +16,7 @@ import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.TestUtils;
+import org.openmrs.util.OpenmrsConstants;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Arrays;
@@ -90,6 +91,7 @@ public class AccountServiceTest {
 		User user = new User();
 		user.setPerson(person);
 		user.setUsername(username);
+        user.setUserProperty(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCALE, "ht");
 		
 		PersonService personService = Mockito.mock(PersonService.class);
 		accountService.setPersonService(personService);
@@ -103,6 +105,7 @@ public class AccountServiceTest {
 		Assert.assertEquals(person, account.getPerson());
 		Assert.assertEquals(identifier, account.getProviderIdentifier());
 		Assert.assertEquals(username, account.getUsername());
+        Assert.assertEquals("ht", account.getDefaultLocale().toString());
 	}
 	
 	/**
