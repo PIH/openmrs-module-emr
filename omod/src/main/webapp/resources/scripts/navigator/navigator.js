@@ -71,6 +71,8 @@ function KeyboardController() {
                 }
                 key.preventDefault()
                 break;
+            case 13:
+                handlerChainRoot.handleTabKey();
             default:
                 break;
         }
