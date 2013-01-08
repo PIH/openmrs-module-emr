@@ -21,13 +21,13 @@ function initFormModels() {
 }
 
 function initKeyboardHandlersChain(sections, questions, fields) {
-    var sectionsHandler = SectionsHandler();
+    var sectionsHandler = SectionsKeyboardHandler();
     _.each(sections, function(s) { sectionsHandler.addSection(s); });
 
-    var questionsHandler = QuestionsHandler(sectionsHandler);
+    var questionsHandler = QuestionsKeyboardHandler(sectionsHandler);
     _.each(questions, function(q) { questionsHandler.addQuestion(q); });
 
-    var fieldsHandler = FieldsHandler(questionsHandler);
+    var fieldsHandler = FieldsKeyboardHandler(questionsHandler);
     _.each(fields, function(f) { fieldsHandler.addField(f); });
 
     return fieldsHandler;
@@ -78,60 +78,3 @@ function KeyboardController() {
         }
     });
 }
-
-var SectionMouseHandler = function(sectionModels) {
-    var sections = sectionModels;
-    _.each(sections, function(s) {
-        s.title().click( function() {
-            clickedSection(s);
-        });
-    });
-
-    var clickedSection = function(section) {
-        _.each(sections, function(s) {
-           if(section == s) {
-               s.select();
-           } else {
-               s.unselect();
-           }
-        });
-    }
-};
-
-var QuestionsMouseHandler = function(questionModels) {
-    var questions = questionModels;
-    _.each(questions, function(q) {
-        q.questionLegend().click(function() {
-            clickedQuestion(q);
-        });
-    });
-
-    var clickedQuestion = function(question) {
-        _.each(questions, function(q) {
-           if(question == q) {
-               q.select();
-           } else {
-               q.unselect();
-           }
-        });
-    };
-};
-
-var FieldsMouseHandler = function(fieldsModels) {
-    var fields = fieldsModels;
-    _.each(fields, function(f) {
-        f.element().click(function() {
-            clickedField(f);
-        });
-    });
-
-    var clickedField = function(field) {
-        _.each(fields, function(f) {
-            if( field == f ) {
-                f.select();
-            } else {
-                f.unselect();
-            }
-        })
-    };
-};
