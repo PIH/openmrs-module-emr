@@ -28,6 +28,9 @@ function FieldModel(question, elem) {
             return element.val();
         }
         return "";
+    };
+    model.element = function() {
+        return element;
     }
 
     return model;
@@ -70,12 +73,15 @@ var QuestionModel = function(section, elem) {
             f.unselect();
         });
     };
+    model.questionLegend = function() {
+        return questionLegend;
+    }
     model.title = function() {
         return questionTitle;
-    }
+    };
     model.value = function() {
         return computedValue();
-    }
+    };
 
     return model;
 }
