@@ -32,6 +32,17 @@ jq(function() {
         }
 
     });
+
+    jq(document).live('click','li a', function(){
+        var firstValue = jq("#choose-first-value").val();
+        var secondValue = jq("#choose-second-value").val();
+
+        if (firstValue!="" && firstValue!="0" && secondValue!="" && secondValue!="0"){
+            enableButton();
+        } else {
+            disableButton();
+        }
+    });
 });
 
 function labelFunction(item) {
