@@ -13,30 +13,37 @@ function initFormModels() {
 
     var confirmationSection = ConfirmationSectionModel($('#confirmation'), _.clone(sections));
     confirmationSection.moveTitleTo(breadcrumb);
-
     sections.push(confirmationSection);
-    SectionMouseHandler(sections);
-    return sections;
+
+    var questions = _.flatten( _.map(sections, function(s) { return s.questions; }), true);
+    var fields = _.flatten(_.map(questions, function(q) { return q.fields; }), true);
+    return [sections, questions, fields];
 }
 
-function initKeyboardHandlersChain() {
-    var sections = initFormModels();
+function initKeyboardHandlersChain(sections, questions, fields) {
     var sectionsHandler = SectionsHandler();
     _.each(sections, function(s) { sectionsHandler.addSection(s); });
 
-    var questions = _.flatten( _.map(sections, function(s) { return s.questions; }), true);
     var questionsHandler = QuestionsHandler(sectionsHandler);
     _.each(questions, function(q) { questionsHandler.addQuestion(q); });
 
-    var fields = _.flatten(_.map(questions, function(q) { return q.fields; }), true);
     var fieldsHandler = FieldsHandler(questionsHandler);
     _.each(fields, function(f) { fieldsHandler.addField(f); });
 
     return fieldsHandler;
 }
 
+function initMouseHandlers(sections, questions, fields) {
+    SectionMouseHandler(sections);
+    QuestionsMouseHandler(questions);
+    FieldsMouseHandler(fields);
+}
+
 function KeyboardController() {
-    var handlerChainRoot = initKeyboardHandlersChain();
+    var modelsList = initFormModels();
+    var sections=modelsList[0], questions=modelsList[1], fields=modelsList[2];
+    initMouseHandlers(sections, questions, fields);
+    var handlerChainRoot = initKeyboardHandlersChain(sections, questions, fields);
     handlerChainRoot.handleTabKey();
 
     $('body').keydown(function(key) {
@@ -79,7 +86,6 @@ var SectionMouseHandler = function(sectionModels) {
     });
 
     var clickedSection = function(section) {
-        console.log(section);
         _.each(sections, function(s) {
            if(section == s) {
                s.select();
@@ -88,4 +94,42 @@ var SectionMouseHandler = function(sectionModels) {
            }
         });
     }
-}
+};
+
+var QuestionsMouseHandler = function(questionModels) {
+    var questions = questionModels;
+    _.each(questions, function(q) {
+        q.questionLegend().click(function() {
+            clickedQuestion(q);
+        });
+    });
+
+    var clickedQuestion = function(question) {
+        _.each(questions, function(q) {
+           if(question == q) {
+               q.select();
+           } else {
+               q.unselect();
+           }
+        });
+    };
+};
+
+var FieldsMouseHandler = function(fieldsModels) {
+    var fields = fieldsModels;
+    _.each(fields, function(f) {
+        f.element().click(function() {
+            clickedField(f);
+        });
+    });
+
+    var clickedField = function(field) {
+        _.each(fields, function(f) {
+            if( field == f ) {
+                f.select();
+            } else {
+                f.unselect();
+            }
+        })
+    };
+};
