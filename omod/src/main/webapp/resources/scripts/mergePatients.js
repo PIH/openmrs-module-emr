@@ -33,7 +33,7 @@ jq(function() {
 
     });
 
-    jq(document).live('click','li a', function(){
+    jq(document).on('click','li a', function(){
         var firstValue = jq("#choose-first-value").val();
         var secondValue = jq("#choose-second-value").val();
 
