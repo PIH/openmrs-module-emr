@@ -10,9 +10,12 @@ function initFormModels() {
     });
 
     sections[0].toggleSelection();
+
     var confirmationSection = ConfirmationSectionModel($('#confirmation'), _.clone(sections));
     confirmationSection.moveTitleTo(breadcrumb);
+
     sections.push(confirmationSection);
+    SectionMouseHandler(sections);
     return sections;
 }
 
@@ -65,4 +68,24 @@ function KeyboardController() {
                 break;
         }
     });
+}
+
+var SectionMouseHandler = function(sectionModels) {
+    var sections = sectionModels;
+    _.each(sections, function(s) {
+        s.title().click( function() {
+            clickedSection(s);
+        });
+    });
+
+    var clickedSection = function(section) {
+        console.log(section);
+        _.each(sections, function(s) {
+           if(section == s) {
+               s.select();
+           } else {
+               s.unselect();
+           }
+        });
+    }
 }
