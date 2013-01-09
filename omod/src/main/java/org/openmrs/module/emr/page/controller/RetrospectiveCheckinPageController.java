@@ -21,6 +21,7 @@ public class RetrospectiveCheckinPageController {
     public void get(@SpringBean("locationService") LocationService locationService,
                     @SpringBean("conceptService") ConceptService conceptService,
                     @RequestParam("patientId") Patient patient,
+                    @RequestParam("uiOption") Integer uiOption,
                     UiUtils ui,
                     PageModel model) {
 
@@ -29,6 +30,7 @@ public class RetrospectiveCheckinPageController {
         model.addAttribute("locations", getLocations(locationService));
         model.addAttribute("paymentReasons", getPaymentReasons(conceptService));
         model.addAttribute("paymentAmounts", getPossiblePaymentAmounts());
+        model.addAttribute("uiOption", uiOption);
     }
 
     public String post(UiUtils ui,
