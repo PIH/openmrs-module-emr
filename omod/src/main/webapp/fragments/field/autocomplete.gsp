@@ -65,11 +65,13 @@
             <%=  config.function %>
             if(items.length ==1 && (items[0].patientId !==0 )){
                 setSearchValue(items[0]);
+                <%=  config.function %>
                 if(${ config.onExactMatchFunction } !==null ){
                      ${ config.onExactMatchFunction }(items[0]);
                 }
             }else if(items.length ==1 && (items[0].patientId ==0 )){
                 setSearchValue(items[0]);
+                <%=  config.function %>
                 jq.each( items , function(i, item){
                     self._renderItem(ul, item);
                 });

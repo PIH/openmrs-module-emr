@@ -13,6 +13,19 @@ function RecordRequestModel(requestId, patientName, patientId, dossierNumber, se
     return model;
 }
 
+function MergeRequestsModel(mergeRequestId, preferredName, preferredIdentifier, notPreferredIdentifier, notPreferredName, dateCreated, dateCreatedSortable){
+    var model = {};
+    model.mergeRequestId = mergeRequestId;
+    model.preferredName = preferredName;
+    model.preferredIdentifier = preferredIdentifier;
+    model.notPreferredIdentifier = notPreferredIdentifier;
+    model.notPreferredName = notPreferredName;
+    model.dateCreated = dateCreated;
+    model.dateCreatedSortable = dateCreatedSortable;
+
+    return model;
+}
+
 
 function PullRequestsViewModel(recordsToPull) {
     var api = {};
@@ -194,6 +207,34 @@ function AssignedPullRequestsViewModel(assignedRecordsToPull) {
     }
 
     return api;
+}
+
+function MergeRequestsViewModel(requestsToMerge){
+    var api = {};
+    api.requestsToMerge = ko.observableArray(requestsToMerge);
+
+    api.load = function() {
+
+        jQuery.getJSON(emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "getOpenRecordsToMerge"))
+            .success(function(data) {
+
+                api.requestsToMerge.removeAll();
+
+                // create the new list
+                jQuery.each(data, function(index, request) {
+                    api.requestsToMerge.push(MergeRequestsModel(request.mergeRequestId, request.preferredName,
+                        request.preferredIdentifier, request.notPreferredIdentifier, request.notPreferredName,
+                        request.dateCreated, request.dateCreatedSortable));
+
+                });
+
+            })
+            .error(function(xhr) {
+                emr.handleError(xhr);
+            });
+
+    };
+
 }
 
 function AssignedCreateRequestsViewModel(assignedRecordsToCreate) {
