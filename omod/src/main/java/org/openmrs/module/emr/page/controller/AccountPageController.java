@@ -21,6 +21,7 @@ import org.openmrs.PersonName;
 import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
@@ -63,12 +64,14 @@ public class AccountPageController {
     }
 
 	public void get(PageModel model, @MethodParam("getAccount") Account account,
-	                @SpringBean("accountService") AccountService accountService) {
+	                @SpringBean("accountService") AccountService accountService,
+                    @SpringBean("adminService") AdministrationService administrationService) {
 
 		model.addAttribute("account", account);
 		model.addAttribute("capabilities", accountService.getAllCapabilities());
 		model.addAttribute("privilegeLevels", accountService.getAllPrivilegeLevels());
         model.addAttribute("rolePrefix", EmrConstants.ROLE_PREFIX_CAPABILITY);
+        model.addAttribute("allowedLocales", administrationService.getAllowedLocales());
 		model.addAttribute("showPasswordFields", false);
 	}
 	

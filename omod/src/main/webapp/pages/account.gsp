@@ -12,6 +12,11 @@
     privilegeLevels.each {
         privilegeLevelOptions.push([ label: it.name, value: it.name ])
     }
+
+    def allowedLocalesOptions = []
+    allowedLocales.each {
+        allowedLocalesOptions.push([ label: it.displayName, value: it ])
+    }
 %>
 
 <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
@@ -107,7 +112,7 @@ jq(function() {
                 ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "confirmPassword" ])}
             </p>
 
-            ${ ui.includeFragment("emr", "field/dropDown", [ label: ui.message("emr.user.privilegeLevel"), formFieldName: "privilegeLevel", initialValue: (account.privilegeLevel ? account.privilegeLevel.getName() : ''), options: privilegeLevelOptions ])}
+            ${ ui.includeFragment("emr", "field/dropDown", [ label: ui.message("emr.user.privilegeLevel"), emptyOptionLabel: ui.message("emr.chooseOne"), formFieldName: "privilegeLevel", initialValue: (account.privilegeLevel ? account.privilegeLevel.getName() : ''), options: privilegeLevelOptions ])}
             ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.user.secretQuestion"), formFieldName: "secretQuestion", initialValue: (account.secretQuestion ?: ''), optional: true ])}
 
             <p>
@@ -115,6 +120,10 @@ jq(function() {
                 <input type="password" id="secretAnswer" name="secretAnswer" value="" autocomplete="off" />
                 ${ ui.message("emr.optional") }
                 ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "secretAnswer" ])}
+            </p>
+
+            <p>
+                ${ ui.includeFragment("emr", "field/dropDown", [ label: ui.message("emr.user.defaultLocale"), emptyOptionLabel: ui.message("emr.chooseOne"), formFieldName: "defaultLocale", initialValue: (account.defaultLocale ?: ''), options: allowedLocalesOptions ])}
             </p>
 
             <p>

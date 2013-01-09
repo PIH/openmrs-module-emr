@@ -13,6 +13,7 @@ import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.util.OpenmrsConstants;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -110,7 +111,9 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 			
 			if (user.isRetired())
 				user.setRetireReason(Context.getMessageSourceService().getMessage("emr.retireReason"));
-			
+
+            user.setUserProperty(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCALE, account.getDefaultLocale().toString());
+
 			String password = null;
 			if (StringUtils.isNotBlank(account.getPassword()))
 				password = account.getPassword();
