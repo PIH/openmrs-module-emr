@@ -41,12 +41,26 @@
         </script>
     </ifMode>
 
-    <section id="encounter-details" sectionTag="section" headerStyle="title" headerLabel="Encounter Details">
-        When? <encounterDate default="now" showTime="true"/>
-        Who? <encounterProviderAndRole default="currentUser" encounterRole="a0b03050-c99b-11e0-9572-0800200c9a66" required="true"/>
-        Where? <encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/>
-    </section>
-    
+    <div class="hidden" id="encounter-details" sectionTag="section" headerStyle="title" headerLabel="Encounter Details">
+        <fieldset>
+            <legend>When?</legend>
+
+            <encounterDate default="now" showTime="true"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Who?</legend>
+
+            <encounterProviderAndRole default="currentUser" encounterRole="a0b03050-c99b-11e0-9572-0800200c9a66" required="true"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Where?</legend>
+
+            <encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/>
+        </fieldset>
+    </div>
+
     <section id="vitals" sectionTag="section" headerStyle="title" headerLabel="Vitals">
         <fieldset>
             <legend>Temperature</legend>
@@ -71,9 +85,7 @@
             <div class="left">
                 <obs conceptId="PIH:SYSTOLIC BLOOD PRESSURE" id="bp_systolic"/>
             </div>
-            <div class="left">
-                /
-            </div>
+            /
             <div class="left">
                 <obs conceptId="PIH:DIASTOLIC BLOOD PRESSURE" id="bp_diastolic"/>
             </div>
@@ -107,26 +119,12 @@
 
 
     <ifMode mode="ENTER">
-        <section id="summary">
-            <div>
-                Temperature (C): <span class="display-value-temperature_c"></span>
+        <div id="confirmation">
+            <span class="title">Confirm</span>
+            <div id="confirmationQuestion">
+                Confirm submission? <input type="submit" value="Yes" /> or <input type="button" value="No" />
             </div>
-            <div>
-                BP: <span class="display-value-bp_systolic"/> / <span class="display-value-bp_diastolic"/>
-            </div>
-            <div>
-                Heart Rate (/min): <span class="display-value-heart_rate"/>
-            </div>
-            <div>
-                Respiratory Rate (/min): <span class="display-value-respiratory_rate"/>
-            </div>
-            <div>
-                O2 Sat (%): <span class="display-value-o2_sat"/>
-            </div>
-            <div>
-                Weight (kg): <span class="display-value-weight"/>
-            </div>
-        </section>
+        </div>
     </ifMode>
 
     <submit/>

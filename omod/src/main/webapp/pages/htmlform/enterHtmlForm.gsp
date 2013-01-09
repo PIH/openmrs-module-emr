@@ -10,7 +10,7 @@
 
 <script type="text/javascript">
     jQuery(function() {
-        KeyboardController();
+        KeyboardController(jq('#htmlform').first());
     });
 </script>
 
