@@ -1,25 +1,48 @@
 @import "colors";
+@import "compass";
 
-.dashboard {
-  display: inline-block;
-  border-left: 2px solid $darkerGray;
-  padding-left: 15px;
-
-  &.menu {
+.dashboard-container {
+  aside {
+    display: inline-block;
     vertical-align: top;
-    width: 200px;
-    border: 0;
+    background: white;
+    width: 220px;
+    text-align: left;
+    ul {
+      li {
+        border: 1px solid #EEE;
+        border-bottom: none;
+        border-right: none;
 
-    a {
-      color: $text;
-      font-size: 1.2em;
+        a {
+          display: block;
+          padding: 10px;
+        }
+        &:first-child {
+          @include border-top-left-radius(3px);
+        }
+        &:last-child {
+          @include border-bottom-left-radius(3px);
+          border-bottom: 1px solid #EEE;
+        }
+      }
     }
-
-    li {
-      border-bottom: 2px solid #EEEEEE;
-      padding: 5px;
+    .actions {
+      margin-top: 20px;
+      .button {
+        display: block;
+        text-align: center;
+        margin: 10px 20px;
+      }
     }
-
   }
 
+  .dashboard {
+    display: inline-block;
+    border-left: 3px solid #EEE;
+    text-align: left;
+    padding: 10px;
+    margin-left: -5px;
+    background: #F9F9F9;
+  }
 }

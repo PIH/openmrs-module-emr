@@ -9,7 +9,7 @@
   border-bottom: 1px solid #EEE;
   margin: -5px;
   margin-bottom: 10px;
-  padding: 10px;
+  padding: 5px 10px;
 
   .demographics {
     display: inline-block;
@@ -59,6 +59,7 @@
     span {
       background: #666;
       color: white;
+      letter-spacing: 1px;
       margin: 5px;
       display: inline-block;
       padding: 3px 8px;
