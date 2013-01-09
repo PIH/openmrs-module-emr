@@ -41,7 +41,6 @@ public class VisitDomainWrapperTest {
     @Test
     public void shouldReturnDifferenceInDaysBetweenCurrentDateAndStartDateWhenStartDateTimeIsBiggerThanCurrentDateTime(){
         Calendar startDate = Calendar.getInstance();
-        startDate.add(HOUR_OF_DAY, 1);
         startDate.add(DAY_OF_MONTH, -5);
 
         when(visit.getStartDatetime()).thenReturn(startDate.getTime());
