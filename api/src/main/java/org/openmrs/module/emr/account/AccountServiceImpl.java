@@ -112,7 +112,8 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 			if (user.isRetired())
 				user.setRetireReason(Context.getMessageSourceService().getMessage("emr.retireReason"));
 
-            user.setUserProperty(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCALE, account.getDefaultLocale().toString());
+            user.setUserProperty(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCALE,
+                    account.getDefaultLocale() != null ? account.getDefaultLocale().toString() : null);
 
 			String password = null;
 			if (StringUtils.isNotBlank(account.getPassword()))
