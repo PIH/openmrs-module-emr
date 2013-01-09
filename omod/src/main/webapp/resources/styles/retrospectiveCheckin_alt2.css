@@ -1,0 +1,38 @@
+/* line 4, ../../../compass/sass/retrospectiveCheckin_alt2.scss */
+form div.formBreadcrumb {
+  display: inline-block;
+  width: 20%;
+  vertical-align: top;
+}
+/* line 9, ../../../compass/sass/retrospectiveCheckin_alt2.scss */
+form div.formBreadcrumb .title {
+  display: block;
+  color: #2bbed8;
+}
+/* line 13, ../../../compass/sass/retrospectiveCheckin_alt2.scss */
+form div.formBreadcrumb .title.focused {
+  color: white;
+  background-color: #2bbed8;
+}
+/* line 20, ../../../compass/sass/retrospectiveCheckin_alt2.scss */
+form div#spacer {
+  display: none;
+}
+/* line 24, ../../../compass/sass/retrospectiveCheckin_alt2.scss */
+form section {
+  display: inline-block;
+  background-color: #eaebf0;
+  width: 78%;
+}
+/* line 29, ../../../compass/sass/retrospectiveCheckin_alt2.scss */
+form section fieldset {
+  border: none;
+}
+/* line 32, ../../../compass/sass/retrospectiveCheckin_alt2.scss */
+form section fieldset legend {
+  display: none;
+}
+/* line 37, ../../../compass/sass/retrospectiveCheckin_alt2.scss */
+form section fieldset input:focus, form section fieldset select:focus {
+  border: 2px solid #2bbed8;
+}

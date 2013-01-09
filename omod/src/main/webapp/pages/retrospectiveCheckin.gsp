@@ -1,10 +1,30 @@
 <%
     ui.decorateWith("emr", "standardEmrPage")
-    ui.includeJavascript("emr", "navigator/navigator.js", Integer.MAX_VALUE - 20)
-    ui.includeJavascript("emr", "navigator/navigatorHandlers.js", Integer.MAX_VALUE - 21)
-    ui.includeJavascript("emr", "navigator/navigatorModels.js", Integer.MAX_VALUE - 21)
-    ui.includeJavascript("emr", "custom/retrospectiveCheckin.js", Integer.MAX_VALUE - 25)
-    ui.includeCss("emr", "retrospectiveCheckin.css")
+
+    switch(uiOption) {
+        case 0:
+            ui.includeJavascript("emr", "navigator/navigator.js", Integer.MAX_VALUE - 20)
+            ui.includeJavascript("emr", "navigator/navigatorHandlers.js", Integer.MAX_VALUE - 21)
+            ui.includeJavascript("emr", "navigator/navigatorModels.js", Integer.MAX_VALUE - 21)
+            ui.includeJavascript("emr", "custom/retrospectiveCheckin.js", Integer.MAX_VALUE - 25)
+            ui.includeCss("emr", "retrospectiveCheckin.css")
+            break
+        case 1:
+            ui.includeJavascript("emr", "navigator/navigator.js", Integer.MAX_VALUE - 20)
+            ui.includeJavascript("emr", "navigator/navigatorHandlers.js", Integer.MAX_VALUE - 21)
+            ui.includeJavascript("emr", "navigator/navigatorModels.js", Integer.MAX_VALUE - 21)
+            ui.includeJavascript("emr", "custom/retrospectiveCheckin.js", Integer.MAX_VALUE - 25)
+            ui.includeCss("emr", "retrospectiveCheckin_alt1.css")
+            break
+        case 2:
+            ui.includeJavascript("emr", "navigator/navigator.js", Integer.MAX_VALUE - 20)
+            ui.includeJavascript("emr", "navigator/navigatorHandlers.js", Integer.MAX_VALUE - 21)
+            ui.includeJavascript("emr", "navigator/navigatorModels.js", Integer.MAX_VALUE - 21)
+            ui.includeJavascript("emr", "custom/retrospectiveCheckin.js", Integer.MAX_VALUE - 25)
+            ui.includeCss("emr", "retrospectiveCheckin_alt2.css")
+            break
+    }
+
 %>
 
 <script type="text/javascript">
@@ -29,7 +49,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
         <input type="hidden" name="patientId" value="${patient.id}" />
 
         <section id="checkinInformation">
-            <span class="title">Check-in information</span>
+            <span class="title">Check-in info</span>
 
             <fieldset>
                 <legend>Check-in location</legend>
@@ -71,7 +91,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
         </section>
 
         <section id="paymentInformation">
-            <span class="title">Payment information</span>
+            <span class="title">Payment info</span>
 
             <fieldset>
                 <legend>Payment Reason</legend>
