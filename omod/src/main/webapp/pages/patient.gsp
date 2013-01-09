@@ -49,3 +49,4 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
 
     </div>
 </div>
+

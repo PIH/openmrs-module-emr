@@ -24,6 +24,13 @@ jq(document).ready( function() {
     assignedCreateRequestsViewModel.load();
     assignedPullRequestsViewModel.load();
 
+    // set up auto-refresh of tables every 2 minutes
+    setInterval(function() {
+        pullRequestsViewModel.load();
+        createRequestsViewModel.load()
+        assignedCreateRequestsViewModel.load();
+        assignedPullRequestsViewModel.load();
+    }, 120000)
 
     // handle entering identifiers to mark records as pulled
     jq('.mark-as-pulled').submit(function (e) {

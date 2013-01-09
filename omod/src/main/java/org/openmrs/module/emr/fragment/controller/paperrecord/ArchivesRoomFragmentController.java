@@ -119,10 +119,6 @@ public class ArchivesRoomFragmentController {
         catch (IllegalStateException ex) {
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToAssignRecords"));
         }
-        catch (Exception e) {
-            // generic catch-all
-            return new FailureResult(ui.message("emr.error.systemError"));
-        }
 
     }
 
