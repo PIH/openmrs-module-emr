@@ -53,7 +53,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
             <fieldset>
                 <legend>Check-in location</legend>
-                ${ ui.includeFragment("emr", "field/dropdown", [
+                ${ ui.includeFragment("emr", "field/dropDown", [
                         label: ui.message("emr.retrospectiveCheckin.location.label"),
                         formFieldName:"locationId",
                         options:locations,
@@ -64,7 +64,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
             <fieldset>
                 <legend>Check-in provider</legend>
-                ${ ui.includeFragment("emr", "field/dropdown", [
+                ${ ui.includeFragment("emr", "field/dropDown", [
                         label: "Provider",
                         formFieldName:"locationId",
                         options:locations,
@@ -95,7 +95,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
             <fieldset>
                 <legend>Payment Reason</legend>
-                ${ ui.includeFragment("emr", "field/dropdown", [
+                ${ ui.includeFragment("emr", "field/dropDown", [
                         label: ui.message("emr.retrospectiveCheckin.paymentReason.label"),
                         formFieldName:"paymentReasonId",
                         options:paymentReasons,
@@ -104,7 +104,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             </fieldset>
             <fieldset>
                 <legend>Payment Amount</legend>
-                ${ ui.includeFragment("emr", "field/dropdown", [
+                ${ ui.includeFragment("emr", "field/dropDown", [
                         label: ui.message("emr.retrospectiveCheckin.paymentAmount.label"),
                         formFieldName:"paidAmountId",
                         options:paymentAmounts,
@@ -121,7 +121,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
             <fieldset>
                 <legend>Payment Reason</legend>
-                ${ ui.includeFragment("emr", "field/dropdown", [
+                ${ ui.includeFragment("emr", "field/dropDown", [
                         label: ui.message("emr.retrospectiveCheckin.paymentReason.label"),
                         formFieldName:"paymentReasonId",
                         options:paymentReasons,
@@ -130,7 +130,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             </fieldset>
             <fieldset>
                 <legend>Payment Amount</legend>
-                ${ ui.includeFragment("emr", "field/dropdown", [
+                ${ ui.includeFragment("emr", "field/dropDown", [
                         label: ui.message("emr.retrospectiveCheckin.paymentAmount.label"),
                         formFieldName:"paidAmountId",
                         options:paymentAmounts,
