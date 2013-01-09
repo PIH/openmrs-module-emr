@@ -22,7 +22,7 @@
 }
 
 #selected-studies li {
-    border: 1px black solid;
+    border: 1px #eee solid;
     border-radius: 5px;
     background-color: #e0e0e0;
     padding: 0.5em 1em 0.5em 1em;
