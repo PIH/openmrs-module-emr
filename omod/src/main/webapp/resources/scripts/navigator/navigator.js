@@ -1,5 +1,8 @@
-function initFormModels() {
-    var formElement = $('div#content > form').first();
+function initFormModels(formEl) {
+    var formElement = formEl;
+    if (!formElement) {
+        formElement = $('div#content > form').first();
+    }
     formElement.prepend('<div id="spacer"></div>');
     formElement.prepend('<div class="formBreadcrumb"></div>');
     var spacer = formElement.find('div#spacer').first();
@@ -41,8 +44,8 @@ function initMouseHandlers(sections, questions, fields) {
     FieldsMouseHandler(fields);
 }
 
-function KeyboardController() {
-    var modelsList = initFormModels();
+function KeyboardController(formElement) {
+    var modelsList = initFormModels(formElement);
     var sections=modelsList[0], questions=modelsList[1], fields=modelsList[2], spacer=modelsList[3];
     initMouseHandlers(sections, questions, fields);
     var handlerChainRoot = initKeyboardHandlersChain(sections, questions, fields);
