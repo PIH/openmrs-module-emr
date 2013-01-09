@@ -82,6 +82,12 @@ var QuestionModel = function(section, elem) {
     model.value = function() {
         return computedValue();
     };
+    model.hide = function() {
+        element.hide();
+    };
+    model.show = function() {
+        element.show();
+    };
 
     return model;
 }

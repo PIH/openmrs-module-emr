@@ -43,6 +43,17 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             </fieldset>
 
             <fieldset>
+                <legend>Check-in provider</legend>
+                ${ ui.includeFragment("emr", "field/dropdown", [
+                        label: "Provider",
+                        formFieldName:"locationId",
+                        options:locations,
+                        showEmptyLabel: false,
+                        maximumSize: 8
+                ])}
+            </fieldset>
+
+            <fieldset>
                 <legend>Check-in date</legend>
                 ${ ui.includeFragment("emr", "field/text", [
                         label: ui.message("emr.retrospectiveCheckin.checkinDate.day.label"),
@@ -61,6 +72,32 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
         <section id="paymentInformation">
             <span class="title">Payment information</span>
+
+            <fieldset>
+                <legend>Payment Reason</legend>
+                ${ ui.includeFragment("emr", "field/dropdown", [
+                        label: ui.message("emr.retrospectiveCheckin.paymentReason.label"),
+                        formFieldName:"paymentReasonId",
+                        options:paymentReasons,
+                        showEmptyLabel: false,
+                        maximumSize: 10])}
+            </fieldset>
+            <fieldset>
+                <legend>Payment Amount</legend>
+                ${ ui.includeFragment("emr", "field/dropdown", [
+                        label: ui.message("emr.retrospectiveCheckin.paymentAmount.label"),
+                        formFieldName:"paidAmountId",
+                        options:paymentAmounts,
+                        showEmptyLabel: false,
+                        maximumSize: 10])}
+            </fieldset>
+            <fieldset>
+                <legend>Receipt Number</legend>
+                ${ ui.includeFragment("emr", "field/text", [
+                        label: ui.message("emr.retrospectiveCheckin.receiptNumber.label"),
+                        formFieldName: "receiptNumber"
+                ])}
+            </fieldset>
 
             <fieldset>
                 <legend>Payment Reason</legend>
