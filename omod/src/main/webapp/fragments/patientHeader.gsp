@@ -8,27 +8,33 @@
 <div class="patient-header">
 
     <div class="demographics">
-        <div class="surname"><span class="name">${ ui.format(patient.patient.familyName) } ,</span> <br/> <span class="legend">surname</span> </div>
-        <div class="givenName"><span class="name">${ ui.format(patient.patient.givenName) }</span> <br/> <span class="legend">name</span></div>
+        <h1 class="name">
+            <span>${ ui.format(patient.patient.familyName) },<em>surname</em></span>
+            <span>${ ui.format(patient.patient.givenName) }<em>name</em></span>
+        </h1>
+        <div class="gender-age">
+            <span>${ ui.message("emr.gender." + patient.gender) }</span>
+
+            <% if (patient.age) { %>
+            <span>${ ui.message("emr.ageYears", patient.age) }</span>
+            <% } else { %>
+            <span>${ ui.message("emr.unknownAge") }</span>
+            <% } %>
+        </div>
     </div>
 
-    <div class="gender">
-        <span>${ ui.message("emr.gender." + patient.gender) } |
-        <% if (patient.age) { %>
-        ${ ui.message("emr.ageYears", patient.age) }
-        <% } else { %>
-        ${ ui.message("emr.unknownAge") }
-        <% } %>
-        </span>
-    </div>
 
     <div class="identifiers">
-        ID:
-        <%= patient.primaryIdentifiers.collect{ it.identifier }.join(", ") %>
+        <em>ID number</em>
+        <% patient.primaryIdentifiers.each{ %>
+            <span>${it.identifier}</span>
+        <% } %>
         <% if (patient.paperRecordIdentifiers) { %>
-            <br/>
-            ${ ui.format(emrProperties.paperRecordIdentifierType) }:
-            <%= patient.paperRecordIdentifiers.collect{ it.identifier }.join(", ") %>
+            <br />
+            <em>${ ui.format(emrProperties.paperRecordIdentifierType) }</em>
+            <% patient.paperRecordIdentifiers.each{ %>
+                <span>${it.identifier }</span>
+            <% } %>
         <% } %>
     </div>
 

@@ -1,0 +1,94 @@
+/* line 4, ../../../compass/sass/patientHeader.scss */
+.patient-header {
+  position: relative;
+  overflow: hidden;
+  background: #F9F9F9;
+  z-index: 0;
+  border-bottom: 1px solid #eeeeee;
+  margin: -5px;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+/* line 14, ../../../compass/sass/patientHeader.scss */
+.patient-header .demographics {
+  display: inline-block;
+  position: relative;
+  float: left;
+  vertical-align: top;
+}
+/* line 19, ../../../compass/sass/patientHeader.scss */
+.patient-header .demographics h1 {
+  display: inline-block;
+  margin: 0;
+}
+/* line 22, ../../../compass/sass/patientHeader.scss */
+.patient-header .demographics h1 span {
+  display: inline-block;
+}
+/* line 24, ../../../compass/sass/patientHeader.scss */
+.patient-header .demographics h1 span em {
+  font-size: 0.4em;
+  color: #888;
+  border-top: 1px solid #dddddd;
+  display: block;
+}
+/* line 32, ../../../compass/sass/patientHeader.scss */
+.patient-header .demographics .gender-age {
+  display: block;
+  vertical-align: text-bottom;
+  font-size: 0.9em;
+}
+/* line 36, ../../../compass/sass/patientHeader.scss */
+.patient-header .demographics .gender-age span {
+  margin-right: 10px;
+}
+/* line 38, ../../../compass/sass/patientHeader.scss */
+.patient-header .demographics .gender-age span:before {
+  content: "·";
+  padding-right: 5px;
+}
+/* line 45, ../../../compass/sass/patientHeader.scss */
+.patient-header .identifiers {
+  max-width: 320px;
+  display: inline-block;
+  float: right;
+  text-align: right;
+  margin-left: 20px;
+}
+/* line 51, ../../../compass/sass/patientHeader.scss */
+.patient-header .identifiers em {
+  width: 120px;
+  display: inline-block;
+  color: #888;
+  font-style: normal;
+  font-size: 0.9em;
+  border-bottom: 1px solid #dddddd;
+}
+/* line 59, ../../../compass/sass/patientHeader.scss */
+.patient-header .identifiers span {
+  background: #666;
+  color: white;
+  margin: 5px;
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 0.8em;
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+  -o-border-radius: 50px;
+  -ms-border-radius: 50px;
+  -khtml-border-radius: 50px;
+  border-radius: 50px;
+}
+
+/* line 72, ../../../compass/sass/patientHeader.scss */
+.active-visit, .unknown-patient {
+  display: inline-block;
+  margin-right: 2em;
+  padding-top: 1em;
+  vertical-align: top;
+}
+
+/* line 79, ../../../compass/sass/patientHeader.scss */
+.unknown-patient {
+  color: red;
+}
