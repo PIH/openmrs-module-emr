@@ -26,12 +26,15 @@ fieldset {
     boder-top: 1px !important;
     position: relative;
     margin: 10px 0 10px 0;
+    padding: 0px !important;
+    height: 30px;
 
     &.focused {
         background-color: $lighterGrey;
         border: 3px solid $pihPrimaryPurple !important;
         margin-top: 30px !important;
-        padding: 20px;
+        padding: 20px !important;
+        height: auto;
 
         legend {
             color: $pihPrimaryPurple;
