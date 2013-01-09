@@ -5,45 +5,40 @@ jq(function() {
         window.history.back();
     });
 
-    jq("#choose-first-search").keyup(function(){
-        var length = jq("#choose-first-search").val().length;
+    jq('div input[type=text]').keyup(function(){
+        var firstSearch = jq("#choose-first-search").val();
+        var secondSearch = jq("#choose-second-search").val();
 
-        if(length<3){
-            jq("#choose-first-value").val('');
-            disableButton();
-        } else {
-            if (jq("#choose-first-value").val()){
-                enableButton();
-            }
-        }
-
-    });
-
-    jq("#choose-second-search").keyup(function(){
-        var length = jq("#choose-second-search").val().length;
-
-        if(length<3){
-            jq("#choose-second-value").val('');
-            disableButton();
-        } else {
-            if (jq("#choose-second-value").val()){
-                enableButton();
-            }
-        }
-
-    });
-
-    jq(document).on('click','li a', function(){
         var firstValue = jq("#choose-first-value").val();
         var secondValue = jq("#choose-second-value").val();
 
-        if (firstValue!="" && firstValue!="0" && secondValue!="" && secondValue!="0"){
-            enableButton();
-        } else {
-            disableButton();
-        }
+        verifyIfButtonShouldBeEnabled(firstSearch, secondSearch, firstValue, secondValue);
+    });
+
+    jq(document).on('click','li a', function(){
+        var firstSearch = jq("#choose-first-search").val();
+        var secondSearch = jq("#choose-second-search").val();
+
+        var firstValue = jq("#choose-first-value").val();
+        var secondValue = jq("#choose-second-value").val();
+
+        verifyIfButtonShouldBeEnabled(firstSearch, secondSearch, firstValue, secondValue);
     });
 });
+
+function verifyIfButtonShouldBeEnabled(firstSearch, secondSearch, firstValue, secondValue) {
+
+    if (firstSearch.length <3 || secondSearch.length<3){
+        disableButton();
+        return ;
+    }
+
+    if (firstValue != "" && firstValue != "0" && secondValue != "" && secondValue != "0") {
+        enableButton();
+    } else {
+        disableButton();
+    }
+}
 
 function labelFunction(item) {
     var id = item.patientId;
@@ -69,6 +64,8 @@ function verifyPatientsToMerge(message, items, fieldId ){
     var hiddenId = '';
     var firstValue = jq("#choose-first-value").val();
     var secondValue = jq("#choose-second-value").val();
+    var firstSearch = jq("#choose-first-search").val();
+    var secondSearch = jq("#choose-second-search").val();
 
     if(fieldId=='choose-second'){
         hiddenId = firstValue;
@@ -94,8 +91,6 @@ function verifyPatientsToMerge(message, items, fieldId ){
         }
     }
 
-    if (firstValue!="" && firstValue!="0" && secondValue!="" && secondValue!="0") {
-        enableButton();
-    }
+    verifyIfButtonShouldBeEnabled(firstSearch, secondSearch, firstValue, secondValue);
 
 }
