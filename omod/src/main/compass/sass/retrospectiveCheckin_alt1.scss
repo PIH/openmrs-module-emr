@@ -13,6 +13,11 @@ ul#formBreadcrumb {
         border-bottom: none;
         border-right: none;
         padding: 10px;
+
+        ul {
+            display: none;
+        }
+
         &:first-child {
             @include border-top-left-radius(4px);
         }

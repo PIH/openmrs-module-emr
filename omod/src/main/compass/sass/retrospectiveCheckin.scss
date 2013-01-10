@@ -9,6 +9,10 @@ form {
             margin: 2px 5px;
             border: 2px solid $pihPrimaryPurple;
 
+            ul {
+                display: none;
+            }
+
             &.doing {
                 background-color: $lighterGrey;
             }
