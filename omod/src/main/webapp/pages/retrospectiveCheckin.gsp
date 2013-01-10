@@ -50,7 +50,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                         formFieldName:"locationId",
                         options:locations,
                         hideEmptyLabel: true,
-                        maximumSize: 8
+                        maximumSize: 5
                 ])}
             </fieldset>
 
@@ -58,10 +58,10 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 <legend>Check-in provider</legend>
                 ${ ui.includeFragment("emr", "field/dropDown", [
                         label: "Provider",
-                        formFieldName:"locationId",
-                        options:locations,
+                        formFieldName:"providerId",
+                        options:providers,
                         hideEmptyLabel: true,
-                        maximumSize: 8
+                        maximumSize: 5
                 ])}
             </fieldset>
 
@@ -92,7 +92,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                         formFieldName:"paymentReasonId",
                         options:paymentReasons,
                         hideEmptyLabel: true,
-                        maximumSize: 10])}
+                        maximumSize: 5])}
             </fieldset>
             <fieldset>
                 <legend>Payment Amount</legend>
@@ -101,7 +101,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                         formFieldName:"paidAmountId",
                         options:paymentAmounts,
                         hideEmptyLabel: true,
-                        maximumSize: 10])}
+                        maximumSize: 5])}
             </fieldset>
             <fieldset>
                 <legend>Receipt Number</legend>

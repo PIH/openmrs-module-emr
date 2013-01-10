@@ -19,6 +19,7 @@ import java.util.*;
 public class RetrospectiveCheckinPageController {
 
     public void get(@SpringBean("locationService") LocationService locationService,
+                    @SpringBean("providerService") ProviderService providerService,
                     @SpringBean("conceptService") ConceptService conceptService,
                     @RequestParam("patientId") Patient patient,
                     @RequestParam("uiOption") Integer uiOption,
@@ -28,6 +29,7 @@ public class RetrospectiveCheckinPageController {
         Concept amountPaidConcept = conceptService.getConceptByUuid("5d1bc5de-6a35-4195-8631-7322941fe528");
         model.addAttribute("patient", patient);
         model.addAttribute("locations", getLocations(locationService));
+        model.addAttribute("providers", getClerkProviders(providerService));
         model.addAttribute("paymentReasons", getPaymentReasons(conceptService));
         model.addAttribute("paymentAmounts", getPossiblePaymentAmounts());
         model.addAttribute("uiOption", uiOption);
@@ -124,5 +126,18 @@ public class RetrospectiveCheckinPageController {
         }
         return items;
 
+    }
+
+    private List<SimpleObject> getClerkProviders(ProviderService providerService) {
+        List<SimpleObject> items = new ArrayList<SimpleObject>();
+        List<Provider> clerks = providerService.getAllProviders(false);
+        for(Provider clerk: clerks) {
+            SimpleObject item = new SimpleObject();
+            item.put("value", clerk.getProviderId());
+            item.put("label", clerk.getName());
+            items.add(item);
+        }
+
+        return items;
     }
 }
