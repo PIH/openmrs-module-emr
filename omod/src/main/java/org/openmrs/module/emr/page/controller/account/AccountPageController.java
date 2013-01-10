@@ -11,7 +11,7 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.emr.page.controller;
+package org.openmrs.module.emr.page.controller.account;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -22,11 +22,13 @@ import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.PersonService;
+import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrConstants;
-import org.openmrs.module.emr.account.Account;
+import org.openmrs.module.emr.account.AccountDomainWrapper;
 import org.openmrs.module.emr.account.AccountService;
 import org.openmrs.module.emr.account.AccountValidator;
 import org.openmrs.ui.framework.annotation.BindParams;
@@ -45,14 +47,17 @@ public class AccountPageController {
 	
 	protected final Log log = LogFactory.getLog(getClass());
 
-    public Account getAccount(@RequestParam(value = "personId", required = false) Person person,
+    // TODO: better way to inject these?
+    // TODO: handle the new initialization through the service
+    public AccountDomainWrapper getAccount(@RequestParam(value = "personId", required = false) Person person,
                                 @SpringBean("accountService") AccountService accountService,
-                                @SpringBean("userService") UserService userService) {
-        Account account;
+                                @SpringBean("providerService") ProviderService providerService,
+                                @SpringBean("userService") UserService userService,
+                                @SpringBean("personService") PersonService personService) {
+
+        AccountDomainWrapper account;
         if (person == null) {
-            Person newPerson = new Person();
-            newPerson.addName(new PersonName());
-            account = new Account(newPerson, userService);
+            account = new AccountDomainWrapper((new Person()), accountService, userService, providerService, personService);
         }
         else {
             account = accountService.getAccountByPerson(person);
@@ -63,7 +68,7 @@ public class AccountPageController {
         return account;
     }
 
-	public void get(PageModel model, @MethodParam("getAccount") Account account,
+	public void get(PageModel model, @MethodParam("getAccount") AccountDomainWrapper account,
 	                @SpringBean("accountService") AccountService accountService,
                     @SpringBean("adminService") AdministrationService administrationService) {
 
@@ -72,32 +77,21 @@ public class AccountPageController {
 		model.addAttribute("privilegeLevels", accountService.getAllPrivilegeLevels());
         model.addAttribute("rolePrefix", EmrConstants.ROLE_PREFIX_CAPABILITY);
         model.addAttribute("allowedLocales", administrationService.getAllowedLocales());
-		model.addAttribute("showPasswordFields", false);
 	}
 	
-	public String post(@MethodParam("getAccount") @BindParams Account account, BindingResult errors,
-                       @RequestParam(value = "enabled", defaultValue = "false") boolean enabled,
-                       @RequestParam(value = "interactsWithPatients", defaultValue = "false") boolean interactsWithPatients,
-	                   @RequestParam(value = "createProviderAccount") boolean createProviderAccount,
-	                   @RequestParam(value = "createUserAccount") boolean createUserAccount,
+	public String post(@MethodParam("getAccount") @BindParams AccountDomainWrapper account, BindingResult errors,
+                       @RequestParam(value = "providerEnabled", defaultValue = "false") boolean providerEnabled,
+                       @RequestParam(value = "userEnabled", defaultValue = "false") boolean userEnabled,
                        @SpringBean("messageSource") MessageSource messageSource,
                        @SpringBean("messageSourceService") MessageSourceService messageSourceService,
 	                   @SpringBean("accountService") AccountService accountService,
+                       @SpringBean("adminService") AdministrationService administrationService,
 	                   @SpringBean("accountValidator") AccountValidator accountValidator, PageModel model,
 	                   HttpServletRequest request) {
-		
-		if (createUserAccount && account.getUser() == null) {
-			User user = new User();
-			account.setUser(user);
-		}
 
-		if (createProviderAccount && account.getProvider() == null) {
-			Provider provider = new Provider();
-			account.setProvider(provider);
-		}
-
-        account.setEnabled(enabled);
-        account.setInteractsWithPatients(interactsWithPatients);
+        // manually bind providerEnabled and userEnabled (since checkboxes don't submit anything if unchecked)
+        account.setProviderEnabled(providerEnabled);
+        account.setUserEnabled(userEnabled);
 
 		accountValidator.validate(account, errors);
 		
@@ -108,7 +102,7 @@ public class AccountPageController {
 				request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
                         messageSourceService.getMessage("emr.account.saved"));
 				
-				return "redirect:/emr/account.page?personId=" + account.getPerson().getPersonId();
+				return "redirect:/emr/account/account.page?personId=" + account.getPerson().getPersonId();
 			}
 			catch (Exception e) {
 				log.warn("Some error occurred while saving account details:", e);
@@ -117,27 +111,22 @@ public class AccountPageController {
 			}
 		} else {
             sendErrorMessage(errors, messageSource, request);
-		}
-		
-		model.addAttribute("account", account);
-		model.addAttribute("capabilities", accountService.getAllCapabilities());
-		model.addAttribute("privilegeLevels", accountService.getAllPrivilegeLevels());
-		model.addAttribute("errors", errors);
-		model.addAttribute("showPasswordFields",
-		    StringUtils.isNotBlank(account.getPassword()) || StringUtils.isNotBlank(account.getConfirmPassword())
-		            || createUserAccount);
+        }
 
-        return "redirect:/emr/account.page" + returnParameters(account);
+        // reload page on error
+        // TODO: show password fields toggle should work better
+
+        model.addAttribute("errors", errors);
+        model.addAttribute("account", account);
+        model.addAttribute("capabilities", accountService.getAllCapabilities());
+        model.addAttribute("privilegeLevels", accountService.getAllPrivilegeLevels());
+        model.addAttribute("rolePrefix", EmrConstants.ROLE_PREFIX_CAPABILITY);
+        model.addAttribute("allowedLocales", administrationService.getAllowedLocales());
+
+        return "account/account";
+
 	}
 
-    private String returnParameters(Account account) {
-        Person person = account.getPerson();
-        Integer personId = person.getPersonId();
-        if (personId==null){
-            return "";
-        }
-        return "?personId=" + personId;
-    }
 
     private void sendErrorMessage(BindingResult errors, MessageSource messageSource, HttpServletRequest request) {
         List<ObjectError> allErrors = errors.getAllErrors();
@@ -163,4 +152,5 @@ public class AccountPageController {
         }
         return message;
     }
+
 }

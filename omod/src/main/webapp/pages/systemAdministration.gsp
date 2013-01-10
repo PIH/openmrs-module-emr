@@ -5,7 +5,7 @@
 %>
 
 <div id="tasks">
-    <a class="button big" href="${ ui.pageLink("emr", "manageAccounts") }">
+    <a class="button big" href="${ ui.pageLink("emr", "account/manageAccounts") }">
         <div class="task">
             <i class="icon-book"></i>
             ${ ui.message("emr.task.accountManagement.label") }

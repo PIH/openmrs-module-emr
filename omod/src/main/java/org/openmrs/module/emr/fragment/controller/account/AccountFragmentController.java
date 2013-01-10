@@ -15,10 +15,11 @@
 package org.openmrs.module.emr.fragment.controller.account;
 
 import org.openmrs.Person;
-import org.openmrs.module.emr.account.Account;
+import org.openmrs.module.emr.account.AccountDomainWrapper;
 import org.openmrs.module.emr.account.AccountService;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
+import org.openmrs.ui.framework.fragment.action.FailureResult;
 import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 import org.openmrs.ui.framework.fragment.action.SuccessResult;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,9 +32,15 @@ public class AccountFragmentController {
     public FragmentActionResult unlock(@RequestParam("personId") Person person,
                                        @SpringBean("accountService") AccountService accountService,
                                        UiUtils ui) {
-        Account account = accountService.getAccountByPerson(person);
-        account.unlock();
-        return new SuccessResult(ui.message("emr.account.unlocked.successMessage"));
+
+        try {
+            AccountDomainWrapper account = accountService.getAccountByPerson(person);
+            account.unlock();
+            return new SuccessResult(ui.message("emr.account.unlocked.successMessage"));
+        }
+        catch (Exception e) {
+            return new FailureResult(ui.message("emr.account.unlock.failedMessage"));
+        }
     }
 
 }

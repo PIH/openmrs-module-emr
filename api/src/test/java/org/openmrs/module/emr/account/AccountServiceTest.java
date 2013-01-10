@@ -67,7 +67,7 @@ public class AccountServiceTest {
 		when(userService.getAllUsers()).thenReturn(Arrays.asList(user1, user2, daemonUser));
 		when(providerService.getAllProviders()).thenReturn(Arrays.asList(provider1, provider2));
 		
-		List<Account> accounts = accountService.getAllAccounts();
+		List<AccountDomainWrapper> accounts = accountService.getAllAccounts();
 		Assert.assertEquals(3, accounts.size());
 		assertThat(accounts,
                 TestUtils.isCollectionOfExactlyElementsWithProperties("person", person1, person2, person3));
@@ -92,6 +92,10 @@ public class AccountServiceTest {
 		user.setPerson(person);
 		user.setUsername(username);
         user.setUserProperty(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCALE, "ht");
+
+        Role fullPrivilegeLevel = new Role();
+        fullPrivilegeLevel.setRole(EmrConstants.ROLE_PREFIX_PRIVILEGE_LEVEL + "Full");
+        user.addRole(fullPrivilegeLevel);
 		
 		PersonService personService = Mockito.mock(PersonService.class);
 		accountService.setPersonService(personService);
@@ -100,12 +104,14 @@ public class AccountServiceTest {
 		    Arrays.asList(provider));
 		when(userService.getUsersByPerson(argThat(TestUtils.equalsMatcher(person)), any(Boolean.class))).thenReturn(
 		    Arrays.asList(user));
-		Account account = accountService.getAccount(personId);
+
+		AccountDomainWrapper account = accountService.getAccount(personId);
 		Assert.assertNotNull(account);
 		Assert.assertEquals(person, account.getPerson());
 		Assert.assertEquals(identifier, account.getProviderIdentifier());
 		Assert.assertEquals(username, account.getUsername());
         Assert.assertEquals("ht", account.getDefaultLocale().toString());
+        Assert.assertEquals(fullPrivilegeLevel, account.getPrivilegeLevel());
 	}
 	
 	/**
@@ -120,7 +126,7 @@ public class AccountServiceTest {
 		user.setPerson(person);
 		when(userService.getUsersByPerson(argThat(TestUtils.equalsMatcher(person)), any(Boolean.class))).thenReturn(
 		    Arrays.asList(user));
-		Account account = accountService.getAccountByPerson(person);
+		AccountDomainWrapper account = accountService.getAccountByPerson(person);
 		Assert.assertNotNull(account);
 		Assert.assertEquals(person, account.getPerson());
 	}
@@ -138,7 +144,7 @@ public class AccountServiceTest {
 		provider.setPerson(person);
 		when(providerService.getProvidersByPerson(argThat(TestUtils.equalsMatcher(person)), any(Boolean.class))).thenReturn(
 		    Arrays.asList(provider));
-		Account account = accountService.getAccountByPerson(person);
+		AccountDomainWrapper account = accountService.getAccountByPerson(person);
 		Assert.assertNotNull(account);
 		Assert.assertEquals(person, account.getPerson());
 	}

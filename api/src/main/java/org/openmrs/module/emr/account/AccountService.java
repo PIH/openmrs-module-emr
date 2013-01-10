@@ -13,7 +13,7 @@ public interface AccountService {
 	 * @return
 	 * @should get all unique accounts
 	 */
-	public List<Account> getAllAccounts();
+	List<AccountDomainWrapper> getAllAccounts();
 	
 	/**
 	 * Save the account details to the database
@@ -21,7 +21,7 @@ public interface AccountService {
 	 * @param account
 	 * @return
 	 */
-	public Account saveAccount(Account account);
+	void saveAccount(AccountDomainWrapper account);
 	
 	/**
 	 * Gets an account for the person with the specified personId
@@ -29,7 +29,7 @@ public interface AccountService {
 	 * @return
 	 * @should return the account for the person with the specified personId
 	 */
-	public Account getAccount(Integer personId);
+	AccountDomainWrapper getAccount(Integer personId);
 	
 	/**
 	 * Gets an account for the Specified person object
@@ -38,7 +38,7 @@ public interface AccountService {
 	 * @should return the account for the specified person if they are associated to a user
 	 * @should return the account for the specified person if they are associated to a provider
 	 */
-	public Account getAccountByPerson(Person person);
+	AccountDomainWrapper getAccountByPerson(Person person);
 	
 	/**
 	 * Gets all Capabilities, i.e roles with the {@link EmrConstants#ROLE_PREFIX_CAPABILITY} prefix
@@ -46,7 +46,7 @@ public interface AccountService {
 	 * @return a list of Roles
 	 * @should return all roles with the capability prefix
 	 */
-	public List<Role> getAllCapabilities();
+	List<Role> getAllCapabilities();
 	
 	/**
 	 * Gets all Privilege Levels, i.e roles with the
@@ -55,7 +55,7 @@ public interface AccountService {
 	 * @return a list of Roles
 	 * @should return all roles with the privilege level prefix
 	 */
-	public List<Role> getAllPrivilegeLevels();
+	 List<Role> getAllPrivilegeLevels();
 	
 	/**
 	 * By convention, anything not defined as #getApplicationPrivileges() is an API-level privilege
