@@ -49,7 +49,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                         label: ui.message("emr.retrospectiveCheckin.location.label"),
                         formFieldName:"locationId",
                         options:locations,
-                        showEmptyLabel: false,
+                        hideEmptyLabel: true,
                         maximumSize: 8
                 ])}
             </fieldset>
@@ -60,7 +60,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                         label: "Provider",
                         formFieldName:"locationId",
                         options:locations,
-                        showEmptyLabel: false,
+                        hideEmptyLabel: true,
                         maximumSize: 8
                 ])}
             </fieldset>
@@ -91,7 +91,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                         label: ui.message("emr.retrospectiveCheckin.paymentReason.label"),
                         formFieldName:"paymentReasonId",
                         options:paymentReasons,
-                        showEmptyLabel: false,
+                        hideEmptyLabel: true,
                         maximumSize: 10])}
             </fieldset>
             <fieldset>
@@ -100,7 +100,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                         label: ui.message("emr.retrospectiveCheckin.paymentAmount.label"),
                         formFieldName:"paidAmountId",
                         options:paymentAmounts,
-                        showEmptyLabel: false,
+                        hideEmptyLabel: true,
                         maximumSize: 10])}
             </fieldset>
             <fieldset>
