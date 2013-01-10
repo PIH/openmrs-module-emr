@@ -17,10 +17,8 @@ package org.openmrs.module.emr.fragment.controller.paperrecord;
 import org.openmrs.Person;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
-import org.openmrs.module.emr.paperrecord.NoMatchingPaperMedicalRequestException;
-import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
-import org.openmrs.module.emr.paperrecord.PaperRecordService;
-import org.openmrs.module.emr.paperrecord.UnableToPrintPaperRecordLabelException;
+import org.openmrs.module.emr.paperrecord.*;
+import org.openmrs.module.emr.patient.PatientDomainWrapper;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -40,7 +38,9 @@ public class ArchivesRoomFragmentController {
     // TODO: some kind of error message in the case of unexpected error?
 
     // TODO: can we use something in the UiUtils method to do this
-    DateFormat timeFormat = new SimpleDateFormat("dd/MM HH:mm");
+
+    DateFormat timeFormat = new SimpleDateFormat("HH:mm dd/MM");
+    private DateFormat dateFormat;
 
     public List<SimpleObject> getOpenRecordsToPull(@SpringBean("paperRecordService") PaperRecordService paperRecordService,
                                                    @SpringBean("emrProperties") EmrProperties emrProperties,
@@ -72,6 +72,19 @@ public class ArchivesRoomFragmentController {
         return results;
     }
 
+    public List<SimpleObject> getOpenRecordsToMerge(@SpringBean("paperRecordService") PaperRecordService paperRecordService,
+                                                     @SpringBean("emrProperties") EmrProperties emrProperties,
+                                                     UiUtils ui) {
+
+        List<PaperRecordMergeRequest> requests = paperRecordService.getOpenPaperRecordMergeRequests();
+        List<SimpleObject> results = new ArrayList<SimpleObject>();
+
+        if (requests != null && requests.size() > 0) {
+            results = convertPaperRecordMergeRequestsToSimpleObjects(requests, emrProperties, ui);
+        }
+
+        return results;
+    }
 
     public List<SimpleObject> getAssignedRecordsToPull(@SpringBean("paperRecordService") PaperRecordService paperRecordService,
                                                        @SpringBean("emrProperties") EmrProperties emrProperties,
@@ -216,6 +229,46 @@ public class ArchivesRoomFragmentController {
         }
 
         return results;
+    }
+
+
+    private List<SimpleObject> convertPaperRecordMergeRequestsToSimpleObjects(List<PaperRecordMergeRequest> requests, EmrProperties emrProperties, UiUtils ui) {
+        List<SimpleObject> results = new ArrayList<SimpleObject>();
+        dateFormat = new SimpleDateFormat("dd/MM HH:mm");
+
+        for (PaperRecordMergeRequest request : requests) {
+            SimpleObject result = createASingleResult(ui, request);
+
+            results.add(result);
+        }
+
+        return results;
+    }
+
+    private SimpleObject createASingleResult(UiUtils ui, PaperRecordMergeRequest request) {
+        SimpleObject result = SimpleObject.fromObject(request, ui, "mergeRequestId", "preferredIdentifier", "notPreferredIdentifier");
+
+        result.put("dateCreated", dateFormat.format(request.getDateCreated()));
+        result.put("dateCreatedSortable", request.getDateCreated());
+
+        putDataFromPreferredPatient(request, result);
+        putDataFromNonPreferredPatient(request, result);
+
+        return result;
+    }
+
+    private void putDataFromNonPreferredPatient(PaperRecordMergeRequest request, SimpleObject result) {
+        PatientDomainWrapper notPreferredPatient = new PatientDomainWrapper();
+        notPreferredPatient.setPatient(request.getNotPreferredPatient());
+
+        result.put("notPreferredName", notPreferredPatient.getFormattedName());
+    }
+
+    private void putDataFromPreferredPatient(PaperRecordMergeRequest request, SimpleObject result) {
+        PatientDomainWrapper preferredPatient = new PatientDomainWrapper();
+        preferredPatient.setPatient(request.getPreferredPatient());
+
+        result.put("preferredName", preferredPatient.getFormattedName());
     }
 
 }

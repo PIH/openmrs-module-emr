@@ -18,11 +18,17 @@ jq(document).ready( function() {
     var assignedCreateRequestsViewModel = AssignedCreateRequestsViewModel([]);
     ko.applyBindings(assignedCreateRequestsViewModel, document.getElementById('assignedcreaterequest'));
 
+    var mergeRequestsViewModel = MergeRequestsViewModel([]);
+    ko.applyBindings(mergeRequestsViewModel, document.getElementById('mergeRequests'));
+
+
     // load the tables
     pullRequestsViewModel.load();
     createRequestsViewModel.load()
     assignedCreateRequestsViewModel.load();
     assignedPullRequestsViewModel.load();
+    mergeRequestsViewModel.load();
+
 
     // set up auto-refresh of tables every 2 minutes
     setInterval(function() {

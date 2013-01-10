@@ -235,6 +235,8 @@ function MergeRequestsViewModel(requestsToMerge){
 
     };
 
+    return api;
+
 }
 
 function AssignedCreateRequestsViewModel(assignedRecordsToCreate) {

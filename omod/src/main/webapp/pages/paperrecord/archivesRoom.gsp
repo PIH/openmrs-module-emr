@@ -5,13 +5,16 @@
     ui.includeJavascript("emr", "paperrecord/recordRequest.js")
     ui.includeJavascript("emr", "paperrecord/archivesRoom.js")
 
+    ui.includeCss("emr", "archivesRoom.css")
+
 %>
 
-<div id="tabs">
+<div id="tabs" xmlns="http://www.w3.org/1999/html">
 
         <ul>
             <li><a id="tab-selector-create" href="#tab-create">${ ui.message("emr.archivesRoom.newRecords.label") }</a></li>
             <li><a id="tab-selector-pull" href="#tab-pull">${ ui.message("emr.archivesRoom.existingRecords.label") }</a></li>
+            <li><a id="tab-selector-merge" href="#tab-merge">${ ui.message("emr.archivesRoom.mergingRecords.label") }</a></li>
             <li><a id="tab-selector-return" href="#tab-return">${ ui.message("emr.archivesRoom.returnRecords.label") }</a></li>
         </ul>
 
@@ -147,6 +150,31 @@
                         </div>
                     </div>
                 </div>
+        </div>
+        <div id="tab-merge">
+            <div id="mergeRequests">
+                <h2> Physical records missing merge: </h2>
+                <ul>
+                    <li class="date">
+                       <h4>12/01</h4>
+                    </li>
+                    <li class="row">
+                        <div class="patient">
+                           <div class="content"> <i class="icon-folder-open medium"></i></div><div class="content"> #A001231 <br/> Smith, John </div>
+                        </div>
+                        <div class="arrow">
+                            <i class="icon-chevron-right medium"></i>
+                        </div>
+                        <div class="patient">
+                            <div class="content"> <i class="icon-folder-open medium"></i></div><div class="content"> #A001231 <br/> Smith, John </div>
+                        </div>
+                        <div class="checkbox-done">
+                            <input type="checkbox" />
+                            <label>Done</label>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <div id="tab-return">
