@@ -64,5 +64,20 @@ public class PatientDomainWrapperTest {
         assertThat(visitDomainWrappers.size(), is(3));
     }
 
+    @Test
+    public void shouldReturnFormattedName(){
+        patient = mock(Patient.class);
+
+        patientDomainWrapper =  new PatientDomainWrapper(patient, emrProperties, mock(AdtService.class),
+                visitService, mock(EncounterService.class) );
+
+        when(patient.getGivenName()).thenReturn("John");
+        when(patient.getFamilyName()).thenReturn("Dover");
+
+        String formattedName = patientDomainWrapper.getFormattedName();
+
+        assertThat(formattedName, is("Dover, John"));
+    }
+
 
 }

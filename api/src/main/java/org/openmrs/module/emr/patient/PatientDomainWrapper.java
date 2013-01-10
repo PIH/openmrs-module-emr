@@ -182,4 +182,8 @@ public class PatientDomainWrapper {
 
         return visitDomainWrappers;
     }
+
+    public String getFormattedName() {
+        return patient.getFamilyName() + ", " + patient.getGivenName();
+    }
 }

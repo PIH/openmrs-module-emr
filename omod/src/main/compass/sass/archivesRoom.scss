@@ -1,0 +1,49 @@
+@import "colors";
+@import "compass";
+
+.date h4{
+  border-bottom: 1px solid #ccc;
+  color: $text;
+  margin: 0px;
+}
+
+#mergeRequests ul {
+  margin: 0 60px;
+}
+
+.row {
+  border-bottom: 1px solid #ccc;
+  text-align:center;
+  background: #EEE;
+  position: relative;
+  font-size: 0.9em;
+
+  .patient {
+    border: 1px solid #ccc;
+    display: inline-block;
+    margin: 10px;
+    padding: 5px;
+    background: white;
+    @include border-radius(5px);
+
+    .content {
+      display: inline-block;
+
+      i: {
+        padding: 0;
+        line-height: 1em;
+      }
+    }
+  }
+
+  .arrow {
+    display: inline-block;
+  }
+
+  .checkbox-done {
+    display: inline-block;
+    position: absolute;
+    top: 32%;
+    right: 2%;
+  }
+}
