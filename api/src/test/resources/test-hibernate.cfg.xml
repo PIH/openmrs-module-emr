@@ -10,5 +10,6 @@
         <mapping resource="RadiologyOrder.hbm.xml"/>
         <mapping resource="Printer.hbm.xml"/>
         <mapping resource="IdentifierSource.hbm.xml" />
+        <mapping resource="HtmlFormEntryHtmlForm.hbm.xml" />
     </session-factory>
 </hibernate-configuration>

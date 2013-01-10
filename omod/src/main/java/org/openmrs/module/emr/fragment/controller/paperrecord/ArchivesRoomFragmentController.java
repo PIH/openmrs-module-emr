@@ -40,7 +40,7 @@ public class ArchivesRoomFragmentController {
     // TODO: some kind of error message in the case of unexpected error?
 
     // TODO: can we use something in the UiUtils method to do this
-    DateFormat timeFormat = new SimpleDateFormat("HH:mm dd/MM");
+    DateFormat timeFormat = new SimpleDateFormat("dd/MM HH:mm");
 
     public List<SimpleObject> getOpenRecordsToPull(@SpringBean("paperRecordService") PaperRecordService paperRecordService,
                                                    @SpringBean("emrProperties") EmrProperties emrProperties,
@@ -118,10 +118,6 @@ public class ArchivesRoomFragmentController {
         }
         catch (IllegalStateException ex) {
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToAssignRecords"));
-        }
-        catch (Exception e) {
-            // generic catch-all
-            return new FailureResult(ui.message("emr.error.systemError"));
         }
 
     }

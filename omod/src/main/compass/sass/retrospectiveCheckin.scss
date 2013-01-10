@@ -1,100 +1,126 @@
 @import "colors";
 
-.label {
-    font-size: 1.2em;
-    font-weight: bold;
-    padding: 5px 10px 5px 10px;
-}
+form {
+    ul#formBreadcrumb {
 
-input {
-    font-size: 1.2em;
-}
+        li {
+            display: inline-block;
+            padding: 2px 5px;
+            margin: 2px 5px;
+            border: 2px solid $pihPrimaryPurple;
 
-section {
-	margin: 10px 20px 10px 20px;
-	img.field_check {
-	    vertical-align: middle;
-	}
-	ul {
-	    display: none;
-	}
-}
-
-section.focused {
-	background-color: #37ADE3;
-	color: #FFFFFF;
-	border-radius: 10px;
-
-	span.value {
-	    display: none;
-	}
-	ul {
-	    display: block;
-	    list-style: none;
-	    padding: 20px 0px 20px 50px;
-	    li {
-	        margin: 3px 0px;
-            label {
-                font-weight: bold;
-                margin: 0px 5px;
+            ul {
+                display: none;
             }
-            .optionsList {
-                display: inline-block;
-                background-color: white;
-                color: black;
-                border: 3px solid #F0F0F0;
-                padding: 5px;
-                margin-bottom: 20px;
 
-                .selectedOption {
-                  background-color: #BBB;
-                  font-weight: bold;
-                }
-
-                .option {
-                  font-size: 1.0em;
-                  display: block;
-                  padding: 3px 15px;
-                  width: 250px;
-                }
-
-                .option:hover, .option:focus, .focusedOption {
-                  background-color: $blue;
-                  color: white;
-                }
-            }
-            input, select {
-                border: 3px solid #F0F0F0;
-                display: inline;
-            }
-            .focusedQuestion {
-                border-color: #FCBD02;
-            }
-            div {
-                margin-left: 50px;
+            &.doing {
+                background-color: $lighterGrey;
             }
         }
-	}
+    }
+
+    input, select {
+        border: 3px solid white !important;
+
+        &:focus {
+            border: 3px solid $pihSecondaryBlue !important;
+        }
+    }
+}
+section {
+    display: none !important;
+
+    &.focused {
+        display: block !important;
+    }
+
+    fieldset {
+        border: none !important;
+        boder-top: 1px !important;
+        position: relative;
+        margin: 10px 0 10px 0;
+        padding: 0px !important;
+        height: 30px;
+
+        &.focused {
+            background-color: $lighterGrey;
+            border: 3px solid $pihPrimaryPurple !important;
+            margin-top: 30px !important;
+            padding: 20px !important;
+            height: auto;
+
+            legend {
+                color: $pihPrimaryPurple;
+                font-weight: 900;
+                top: -1.5em;
+            }
+
+            label {
+                display: block !important;
+            }
+
+            input, select {
+                display: block !important;
+            }
+        }
+
+        legend {
+            position: absolute;
+            top: 1em;
+            color: $darkerGrey;
+            width: 100%;
+
+            span {
+                display: inline;
+                padding-left: 2%;
+                text-transform: none;
+            }
+        }
+
+        label, input, select {
+            display: none !important;
+        }
+        .left {
+            float: none;
+            display: inline-block;
+        }
+    }
 }
 
-div.actions {
-    text-align: right;
-}
+div#confirmation {
+    display: none !important;
 
+    &.focused {
+        display: block !important;
+    }
 
-input.submit {
-    background-color: #A2BE1B;
-    color: #FFFFFF;
-    font-weight: bold;
-    font-size: 1.2em;
-    border-radius: 5px;
-    padding: 5px 20px 5px 20px;
-}
+    div#confirmationQuestion {
+        display: none;
 
-a.cancel, a.cancel:visited {
-    background-color: #FFFFFF;
-    color: #BF0024;
-    font-weight: bold;
-    font-size: 1.2em;
-    padding: 5px 20px 5px 20px;
+        &.focused {
+            display: block;
+        }
+    }
+
+    div#dataCanvas {
+        background-color: $lighterGrey;
+        border: 3px solid $pihPrimaryPurple !important;
+        margin-top: 30px !important;
+        padding: 20px;
+
+        ul {
+            display: table;
+
+            li {
+                display: table-row;
+                span {
+                    display: table-cell;
+                    padding: 1px 5px;
+                    &.label {
+                        text-align: right;
+                    }
+                }
+            }
+        }
+    }
 }

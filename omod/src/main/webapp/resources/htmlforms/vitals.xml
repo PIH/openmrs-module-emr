@@ -1,0 +1,132 @@
+<!-- TODO fix formEncounterType and encounterRole-->
+<htmlform formUuid="68728aa6-4985-11e2-8815-657001b58a90" formName="Vitals" formEncounterType="1373cf95-06e8-468b-a3da-360ac1cf026d" formVersion="1.0">
+
+    <ifMode mode="ENTER">
+        <script type="text/javascript">
+            $j(function() {
+                var setupDisplay = function(id) {
+                    getField(id + ".value").change(function() {
+                        $j(".display-value-" + id).html(getValue(id + ".value"));
+                    });
+                }
+                setupDisplay("temperature_c");
+                setupDisplay("bp_systolic");
+                setupDisplay("bp_diastolic");
+                setupDisplay("heart_rate");
+                setupDisplay("respiratory_rate");
+                setupDisplay("o2_sat");
+                setupDisplay("weight");
+
+                $j('#temperature-c-or-f').change(function() {
+                    checkNumber(this, 'temperature-error', true, 25, 110);
+                    if ($j(this).hasClass('legalValue')) {
+                        var temp = $j('#temperature-c-or-f').val();
+                        if (temp > 60) {
+                            // fahrenheit
+                            temp = (temp - 32) * 5 / 9;
+                            temp = temp.toFixed(1); // round to one digit after the decimal point
+                            $j("#temperature-units-chosen").html("F");
+                        } else {
+                            $j("#temperature-units-chosen").html("C");
+                        }
+                        setValue('temperature_c.value', temp);
+
+                        $j(".display-value-temperature_c").html(temp);
+
+                    } else {
+                        setValue('temperature_c.value', null);
+                    }
+                });
+            });
+        </script>
+    </ifMode>
+
+    <div class="hidden" id="encounter-details" sectionTag="section" headerStyle="title" headerLabel="Encounter Details">
+        <fieldset>
+            <legend>When?</legend>
+
+            <encounterDate default="now" showTime="true"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Who?</legend>
+
+            <encounterProviderAndRole default="currentUser" encounterRole="a0b03050-c99b-11e0-9572-0800200c9a66" required="true"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Where?</legend>
+
+            <encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/>
+        </fieldset>
+    </div>
+
+    <section id="vitals" sectionTag="section" headerStyle="title" headerLabel="Vitals">
+        <fieldset>
+            <legend>Temperature</legend>
+
+            <ifMode mode="ENTER">
+                <input type="text" size="3" id="temperature-c-or-f"/>
+                <span class="error" style="display: none" id="temperature-error"></span>
+                in C or F
+                <span id="temperature-units-chosen"></span>
+                <div class="hidden">
+                    <obs conceptId="PIH:TEMPERATURE (C)" showUnits="true" id="temperature_c"/>
+                </div>
+            </ifMode>
+            <ifMode mode="VIEW">
+                <obs conceptId="PIH:TEMPERATURE (C)" showUnits="true" id="temperature_c"/>
+            </ifMode>
+        </fieldset>
+
+        <fieldset>
+            <legend>Blood Pressure</legend>
+
+            <div class="left">
+                <obs conceptId="PIH:SYSTOLIC BLOOD PRESSURE" id="bp_systolic"/>
+            </div>
+            /
+            <div class="left">
+                <obs conceptId="PIH:DIASTOLIC BLOOD PRESSURE" id="bp_diastolic"/>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Heart Rate</legend>
+
+            <obs conceptId="PIH:PULSE" showUnits="true" id="heart_rate"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Respiratory Rate</legend>
+
+            <obs conceptId="PIH:RESPIRATORY RATE" showUnits="true" id="respiratory_rate"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>O2 Sat</legend>
+
+            <obs conceptId="PIH:BLOOD OXYGEN SATURATION" showUnits="true" id="o2_sat"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Weight</legend>
+
+            <obs conceptId="PIH:WEIGHT (KG)" showUnits="true" id="weight"/>
+        </fieldset>
+
+    </section>
+
+
+    <ifMode mode="ENTER">
+        <div id="confirmation">
+            <span class="title">Confirm</span>
+            <div id="confirmationQuestion">
+                Confirm submission? <input type="submit" value="Yes" /> or <input type="button" value="No" />
+            </div>
+        </div>
+    </ifMode>
+
+    <submit/>
+
+</htmlform>
