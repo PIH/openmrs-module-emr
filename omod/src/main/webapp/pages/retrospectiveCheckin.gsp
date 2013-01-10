@@ -80,6 +80,18 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                         formFieldName: "checkinDate_year",
                         left: true])}
             </fieldset>
+
+            <fieldset>
+                <legend>Check-in time</legend>
+                ${ ui.includeFragment("emr", "field/text", [
+                        label: ui.message("emr.retrospectiveCheckin.checkinDate.hour.label"),
+                        formFieldName: "checkinDate_hour",
+                        left: true])}
+                ${ ui.includeFragment("emr", "field/text", [
+                        label: ui.message("emr.retrospectiveCheckin.checkinDate.minutes.label"),
+                        formFieldName: "checkinDate_minutes",
+                        left: true])}
+            </fieldset>
         </section>
 
         <section id="paymentInformation">

@@ -42,23 +42,23 @@ public class RetrospectiveCheckinPageController {
                        @SpringBean("emrProperties")EmrProperties emrProperties,
                        @RequestParam("patientId") Patient patient,
                        @RequestParam("locationId") Location location,
+                       @RequestParam("providerId") Provider provider,
                        @RequestParam("checkinDate_day") Integer checkinDateDay,
                        @RequestParam("checkinDate_month") Integer checkinDateMonth,
                        @RequestParam("checkinDate_year") Integer checkinDateYear,
+                       @RequestParam(value = "checkinDate_hour", required = false, defaultValue = "0") Integer checkinDateHour,
+                       @RequestParam(value = "checkinDate_minutes", required = false, defaultValue = "0") Integer checkinDateMinutes,
                        @RequestParam("paymentReasonId") Integer paymentReasonId,
                        @RequestParam("paidAmountId") Double paidAmount,
                        @RequestParam("receiptNumber") String receiptNumber) {
-
-        Collection<Provider> providers = providerService.getProvidersByPerson(Context.getAuthenticatedUser().getPerson());
-        Provider checkInClerk = providers.iterator().next();
 
         Obs paymentReason = createPaymentReasonObservation(conceptService, emrProperties, paymentReasonId);
         Obs paymentAmount = createPaymentAmountObservation(emrProperties, paidAmount);
         Obs paymentReceipt = createPaymentReceiptObservation(emrProperties, receiptNumber);
 
         Calendar calendar = Calendar.getInstance();
-        calendar.set(checkinDateYear, checkinDateMonth-1, checkinDateDay);
-        adtService.createCheckinInRetrospective(patient, location, checkInClerk, paymentReason, paymentAmount, paymentReceipt, calendar.getTime());
+        calendar.set(checkinDateYear, checkinDateMonth-1, checkinDateDay, checkinDateHour, checkinDateMinutes);
+        adtService.createCheckinInRetrospective(patient, location, provider, paymentReason, paymentAmount, paymentReceipt, calendar.getTime());
         return "redirect:" + ui.pageLink("emr", "patient", SimpleObject.create("patientId", patient.getId()));
     }
 
