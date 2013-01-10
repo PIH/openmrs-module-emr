@@ -14,7 +14,7 @@
             ui.includeJavascript("emr", "navigator/navigatorHandlers.js", Integer.MAX_VALUE - 21)
             ui.includeJavascript("emr", "navigator/navigatorModels.js", Integer.MAX_VALUE - 21)
             ui.includeJavascript("emr", "custom/retrospectiveCheckin.js", Integer.MAX_VALUE - 25)
-            ui.includeCss("emr", "retrospectiveCheckin_alt1.css")
+            ui.includeCss("emr", "retrospectiveCheckin_alt1.css", Integer.MAX_VALUE)
             break
         case 2:
             ui.includeJavascript("emr", "navigator/navigator.js", Integer.MAX_VALUE - 20)
@@ -32,19 +32,11 @@
         KeyboardController();
     });
 </script>
-<script type="text/html" id="optionsList-template">
-    <label data-bind="text:label, attr: {for: widgetId}"></label>
-    <div class="optionsList" data-bind="foreach: options, attr: {id:widgetId}">
-        <span class="option"
-              data-bind="text: name, click:\$parent.selectOption, css:{selectedOption: selected}"></span>
-    </div>
-</script>
-
 
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
 <div id="content" class="container">
-    <h3 class="title">Retrospective Check-in</h3>
+    <h1>Retrospective Check-in</h1>
     <form method="POST">
         <input type="hidden" name="patientId" value="${patient.id}" />
 

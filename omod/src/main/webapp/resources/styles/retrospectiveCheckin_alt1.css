@@ -1,38 +1,167 @@
-/* line 4, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
-form div.formBreadcrumb {
-  display: inline-block;
-  width: 20%;
+/* line 5, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+ul#formBreadcrumb {
+  float: left;
   vertical-align: top;
+  background: #FFF;
+  width: 220px;
 }
-/* line 9, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
-form div.formBreadcrumb .title {
-  display: block;
-  color: #2bbed8;
+/* line 11, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+ul#formBreadcrumb li {
+  border: 1px solid #eeeeee;
+  border-bottom: none;
+  border-right: none;
+  padding: 10px;
 }
-/* line 13, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
-form div.formBreadcrumb .title.focused {
-  color: white;
-  background-color: #2bbed8;
+/* line 16, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+ul#formBreadcrumb li:first-child {
+  -moz-border-radius-topleft: 4px;
+  -webkit-border-top-left-radius: 4px;
+  -o-border-top-left-radius: 4px;
+  -ms-border-top-left-radius: 4px;
+  -khtml-border-top-left-radius: 4px;
+  border-top-left-radius: 4px;
 }
-/* line 20, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
-form div#spacer {
+/* line 19, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+ul#formBreadcrumb li:last-child {
+  border-bottom: 1px solid #eeeeee;
+  -moz-border-radius-bottomleft: 4px;
+  -webkit-border-bottom-left-radius: 4px;
+  -o-border-bottom-left-radius: 4px;
+  -ms-border-bottom-left-radius: 4px;
+  -khtml-border-bottom-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+/* line 23, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+ul#formBreadcrumb li.done {
+  color: #BBB;
+}
+/* line 26, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+ul#formBreadcrumb li.done .icon {
   display: none;
 }
-/* line 24, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
-form section {
+/* line 30, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+ul#formBreadcrumb li.doing {
+  background: #007fff;
+  color: #FFF;
+}
+/* line 34, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+ul#formBreadcrumb li.doing .icon-ok {
+  display: none;
+}
+/* line 39, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+ul#formBreadcrumb li.to-do .icon-ok {
+  display: none;
+}
+/* line 43, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+ul#formBreadcrumb li i {
   display: inline-block;
-  background-color: #eaebf0;
-  width: 78%;
+  font-size: 1em;
+  border: 3px solid;
+  margin: 0 10px 0 0;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -o-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -khtml-border-radius: 50%;
+  border-radius: 50%;
 }
-/* line 29, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
-form section fieldset {
-  border: none;
+/* line 49, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+ul#formBreadcrumb li i span {
+  font-style: normal;
+  font-weight: 700;
+  padding: 0px 5px;
+  margin-top: -3px;
 }
-/* line 32, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
-form section fieldset legend {
+/* line 56, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+ul#formBreadcrumb li span {
+  display: inline-block;
+  vertical-align: middle;
+}
+/* line 59, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+ul#formBreadcrumb li span em {
+  display: block;
+  font-size: .7em;
+}
+
+/* line 67, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+#spacer {
   display: none;
 }
-/* line 37, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
-form section fieldset input:focus, form section fieldset select:focus {
-  border: 2px solid #2bbed8;
+
+/* line 71, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+section, #confirmation {
+  display: none !important;
+  border-left: 3px solid #eeeeee;
+  width: 730px;
+  text-align: left;
+  padding: 10px;
+  background: #F9F9F9;
 }
+/* line 74, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+section.focused, #confirmation.focused {
+  display: inline-block !important;
+}
+/* line 85, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+section p label, #confirmation p label {
+  font-size: 1.2em;
+}
+/* line 90, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+section fieldset, #confirmation fieldset {
+  border: none !important;
+  padding: 0;
+}
+/* line 94, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+section fieldset legend, #confirmation fieldset legend {
+  display: none;
+}
+/* line 97, ../../../compass/sass/retrospectiveCheckin_alt1.scss */
+section fieldset select:focus, section fieldset input:focus, #confirmation fieldset select:focus, #confirmation fieldset input:focus {
+  border: 2px solid #007fff;
+}
+
+/*------------------------------------------
+
+form {
+    ul#formBreadcrumb {
+        display: inline-block;
+        width: 20%;
+        vertical-align: top;
+
+        li {
+            border: 1px solid #EEE;
+            border-bottom: none;
+            border-right: none;
+            display: block;
+            padding: 10px;
+
+            &:first-child {
+              @include border-top-left-radius(3px);
+            }
+            &:last-child {
+              @include border-bottom-left-radius(3px);
+              border-bottom: 1px solid #EEE;
+            }
+        }
+
+
+    }
+
+    div#spacer {
+        display: none;
+    }
+
+    section {
+        background-color: $lighterGrey;
+        display: inline-block;
+        width: 75%;
+
+        fieldset {
+            border: none !important;
+
+            legend {
+                display: none;
+            }
+        }
+    }
+}
+*/

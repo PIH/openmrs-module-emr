@@ -95,7 +95,6 @@ var QuestionModel = function(section, elem) {
 var SectionModel = function(elem) {
     var element = $(elem);
     var title = element.find("span.title").first();
-    element.hide();
 
     var model = {};
     model.isSelected = false;
@@ -111,20 +110,22 @@ var SectionModel = function(elem) {
     };
     model.select = function() {
         model.isSelected = true;
-        element.show();
-        title.addClass("focused");
+        element.addClass("focused");
+        title.addClass("doing");
     };
     model.unselect = function() {
         model.isSelected = false;
-        element.hide();
-        title.removeClass("focused");
+        element.removeClass("focused");
+        title.removeClass("doing");
         _.each(model.questions, function(q) {
             q.unselect();
         });
     };
     model.moveTitleTo = function(el) {
-        title.detach();
-        title.appendTo(el);
+        var newTitle = $("<li>" + title.text() + "</li>");
+        title.remove();
+        el.append(newTitle);
+        title = newTitle;
     };
     model.title = function() {
         return title;
@@ -140,7 +141,6 @@ var ConfirmationSectionModel = function(elem, regularSections) {
 
     element.append("<div id='dataCanvas'></div>");
     var dataCanvas = element.find('#dataCanvas').first();
-    element.hide();
 
     var showDataForConfirmation = function() {
         dataCanvas.append("<ul></ul>");
@@ -167,18 +167,20 @@ var ConfirmationSectionModel = function(elem, regularSections) {
     model.select = function() {
         model.isSelected = true;
         showDataForConfirmation();
-        element.show();
-        title.addClass("focused");
+        element.addClass("focused");
+        title.addClass("doing");
     };
     model.unselect = function() {
         model.isSelected = false;
         dataCanvas.empty();
-        element.hide();
-        title.removeClass("focused");
+        element.removeClass("focused");
+        title.removeClass("doing");
     };
     model.moveTitleTo = function(el) {
-        title.detach();
-        title.appendTo(el);
+        var newTitle = $("<li>" + title.text() + "</li>");
+        title.remove();
+        el.append(newTitle);
+        title = newTitle;
     };
     model.title = function() {
         return title;

@@ -4,9 +4,9 @@ function initFormModels(formEl) {
         formElement = $('div#content > form').first();
     }
     formElement.prepend('<div id="spacer"></div>');
-    formElement.prepend('<div class="formBreadcrumb"></div>');
+    formElement.prepend('<ul id="formBreadcrumb" class="options"></ul>');
     var spacer = formElement.find('div#spacer').first();
-    var breadcrumb = formElement.find('div.formBreadcrumb').first();
+    var breadcrumb = formElement.find('#formBreadcrumb').first();
 
     var sections = _.map(formElement.find('section'), function(s) {
         var section = SectionModel(s);

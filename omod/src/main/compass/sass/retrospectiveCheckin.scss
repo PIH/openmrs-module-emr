@@ -1,14 +1,17 @@
 @import "colors";
 
 form {
-    div.formBreadcrumb span.title {
-        display: inline-block;
-        padding: 2px 5px;
-        margin: 2px 5px;
-        border: 2px solid $pihPrimaryPurple;
+    ul#formBreadcrumb {
 
-        &.focused {
-            background-color: $lighterGrey;
+        li {
+            display: inline-block;
+            padding: 2px 5px;
+            margin: 2px 5px;
+            border: 2px solid $pihPrimaryPurple;
+
+            &.doing {
+                background-color: $lighterGrey;
+            }
         }
     }
 
@@ -20,60 +23,73 @@ form {
         }
     }
 }
-
-fieldset {
-    border: none !important;
-    boder-top: 1px !important;
-    position: relative;
-    margin: 10px 0 10px 0;
-    padding: 0px !important;
-    height: 30px;
+section {
+    display: none !important;
 
     &.focused {
-        background-color: $lighterGrey;
-        border: 3px solid $pihPrimaryPurple !important;
-        margin-top: 30px !important;
-        padding: 20px !important;
-        height: auto;
+        display: block !important;
+    }
+
+    fieldset {
+        border: none !important;
+        boder-top: 1px !important;
+        position: relative;
+        margin: 10px 0 10px 0;
+        padding: 0px !important;
+        height: 30px;
+
+        &.focused {
+            background-color: $lighterGrey;
+            border: 3px solid $pihPrimaryPurple !important;
+            margin-top: 30px !important;
+            padding: 20px !important;
+            height: auto;
+
+            legend {
+                color: $pihPrimaryPurple;
+                font-weight: 900;
+                top: -1.5em;
+            }
+
+            label {
+                display: block !important;
+            }
+
+            input, select {
+                display: block !important;
+            }
+        }
 
         legend {
-            color: $pihPrimaryPurple;
-            font-weight: 900;
-            top: -1.5em;
+            position: absolute;
+            top: 1em;
+            color: $darkerGrey;
+            width: 100%;
+
+            span {
+                display: inline;
+                padding-left: 2%;
+                text-transform: none;
+            }
         }
 
-        label {
-            display: block !important;
+        label, input, select {
+            display: none !important;
         }
-
-        input, select {
-            display: block !important;
+        .left {
+            float: none;
+            display: inline-block;
         }
-    }
-
-    legend {
-        position: absolute;
-        top: 1em;
-        color: $darkerGrey;
-        width: 100%;
-
-        span {
-            display: inline;
-            padding-left: 2%;
-            text-transform: none;
-        }
-    }
-
-    label, input, select {
-        display: none !important;
-    }
-    .left {
-        float: none;
-        display: inline-block;
     }
 }
 
 div#confirmation {
+    display: none !important;
+
+    &.focused {
+        display: block !important;
+    }
+
     div#confirmationQuestion {
         display: none;
 
