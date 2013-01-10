@@ -12,7 +12,12 @@ ul#formBreadcrumb {
         border: 1px solid #EEE;
         border-bottom: none;
         border-right: none;
-        padding: 10px;
+        span {
+            padding: 10px;
+            font-weight: bold;
+        }
+
+
         &:first-child {
             @include border-top-left-radius(4px);
         }
@@ -28,11 +33,29 @@ ul#formBreadcrumb {
             }
         }
         &.doing {
-            background: $link;
-            color: #FFF;
+            border-left: 5px solid $link;
 
             .icon-ok {
                 display: none;
+            }
+
+            ul {
+                display: block;
+                li {
+                    span {
+                        padding-left: 30px;
+                        font-weight: normal;
+                    }
+
+                    text-transform: lowercase;
+                    border: none;
+                    @include border-radius(0);
+
+                    &.focused {
+                        color: #FFF;
+                        background-color: $link;
+                    }
+                }
             }
         }
         &.to-do {
@@ -61,6 +84,9 @@ ul#formBreadcrumb {
                 font-size: .7em;
             }
         }
+        ul {
+            display: none;
+        }
     }
 }
 
@@ -88,8 +114,13 @@ section, #confirmation {
     }
 
     fieldset {
+        display: none !important;
         border: none !important;
         padding: 0;
+
+        &.focused {
+            display: block !important;
+        }
 
         legend { display: none }
 

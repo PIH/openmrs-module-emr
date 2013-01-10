@@ -44,7 +44,8 @@ var QuestionModel = function(section, elem) {
     var valueElement = questionLegend.find('span').first();
     var computedValue = function() {
         return _.reduce(model.fields, function(memo, f) { return memo + " " + f.value();}, "");
-    }
+    };
+    var questionLi;
 
     var model = {};
     model.parentSection = section;
@@ -63,6 +64,9 @@ var QuestionModel = function(section, elem) {
         model.isSelected = true;
         element.addClass("focused");
         valueElement.text("");
+        if(questionLi) {
+            questionLi.addClass("focused");
+        }
     };
     model.unselect = function() {
         model.isSelected = false;
@@ -72,6 +76,9 @@ var QuestionModel = function(section, elem) {
         _.each(model.fields, function(f) {
             f.unselect();
         });
+        if(questionLi) {
+            questionLi.removeClass("focused");
+        }
     };
     model.questionLegend = function() {
         return questionLegend;
@@ -87,6 +94,10 @@ var QuestionModel = function(section, elem) {
     };
     model.show = function() {
         element.show();
+    };
+    model.moveTitleTo = function(elem) {
+      questionLi = $('<li><span>' + questionTitle + '</span></li>');
+      elem.append(questionLi);
     };
 
     return model;
@@ -122,7 +133,12 @@ var SectionModel = function(elem) {
         });
     };
     model.moveTitleTo = function(el) {
-        var newTitle = $("<li>" + title.text() + "</li>");
+        var newTitle = $("<li><span>" + title.text() + "</span></li>");
+        var list = $("<ul></ul>");
+        _.each(model.questions, function(q) {
+            q.moveTitleTo(list);
+        });
+        newTitle.append(list);
         title.remove();
         el.append(newTitle);
         title = newTitle;
@@ -177,7 +193,7 @@ var ConfirmationSectionModel = function(elem, regularSections) {
         title.removeClass("doing");
     };
     model.moveTitleTo = function(el) {
-        var newTitle = $("<li>" + title.text() + "</li>");
+        var newTitle = $("<li><span>" + title.text() + "</span></li>");
         title.remove();
         el.append(newTitle);
         title = newTitle;

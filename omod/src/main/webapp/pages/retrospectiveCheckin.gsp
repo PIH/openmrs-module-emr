@@ -110,32 +110,6 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                         formFieldName: "receiptNumber"
                 ])}
             </fieldset>
-
-            <fieldset>
-                <legend>Payment Reason</legend>
-                ${ ui.includeFragment("emr", "field/dropDown", [
-                        label: ui.message("emr.retrospectiveCheckin.paymentReason.label"),
-                        formFieldName:"paymentReasonId",
-                        options:paymentReasons,
-                        showEmptyLabel: false,
-                        maximumSize: 10])}
-            </fieldset>
-            <fieldset>
-                <legend>Payment Amount</legend>
-                ${ ui.includeFragment("emr", "field/dropDown", [
-                        label: ui.message("emr.retrospectiveCheckin.paymentAmount.label"),
-                        formFieldName:"paidAmountId",
-                        options:paymentAmounts,
-                        showEmptyLabel: false,
-                        maximumSize: 10])}
-            </fieldset>
-            <fieldset>
-                <legend>Receipt Number</legend>
-                ${ ui.includeFragment("emr", "field/text", [
-                        label: ui.message("emr.retrospectiveCheckin.receiptNumber.label"),
-                        formFieldName: "receiptNumber"
-                ])}
-            </fieldset>
         </section>
 
         <div id="confirmation">
