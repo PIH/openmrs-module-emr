@@ -49,6 +49,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                         label: ui.message("emr.retrospectiveCheckin.location.label"),
                         formFieldName:"locationId",
                         options:locations,
+                        mandatory: true,
                         hideEmptyLabel: true,
                         maximumSize: 5
                 ])}
@@ -60,6 +61,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                         label: "Provider",
                         formFieldName:"providerId",
                         options:providers,
+                        mandatory: true,
                         hideEmptyLabel: true,
                         maximumSize: 5
                 ])}
@@ -70,14 +72,17 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 ${ ui.includeFragment("emr", "field/text", [
                         label: ui.message("emr.retrospectiveCheckin.checkinDate.day.label"),
                         formFieldName: "checkinDate_day",
+                        mandatory: true,
                         left: true])}
                 ${ ui.includeFragment("emr", "field/text", [
                         label: ui.message("emr.retrospectiveCheckin.checkinDate.month.label"),
                         formFieldName: "checkinDate_month",
+                        mandatory: true,
                         left: true])}
                 ${ ui.includeFragment("emr", "field/text", [
                         label: ui.message("emr.retrospectiveCheckin.checkinDate.year.label"),
                         formFieldName: "checkinDate_year",
+                        mandatory: true,
                         left: true])}
             </fieldset>
 
@@ -104,6 +109,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                         formFieldName:"paymentReasonId",
                         options:paymentReasons,
                         hideEmptyLabel: true,
+                        mandatory: true,
                         maximumSize: 5])}
             </fieldset>
             <fieldset>
@@ -112,6 +118,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                         label: ui.message("emr.retrospectiveCheckin.paymentAmount.label"),
                         formFieldName:"paidAmountId",
                         options:paymentAmounts,
+                        mandatory: true,
                         hideEmptyLabel: true,
                         maximumSize: 5])}
             </fieldset>
@@ -119,7 +126,8 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 <legend>Receipt Number</legend>
                 ${ ui.includeFragment("emr", "field/text", [
                         label: ui.message("emr.retrospectiveCheckin.receiptNumber.label"),
-                        formFieldName: "receiptNumber"
+                        formFieldName: "receiptNumber",
+                        mandatory: true
                 ])}
             </fieldset>
         </section>
@@ -131,4 +139,5 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             </div>
         </div>
     </form>
+    <div id="mandatoryLegend">* Required field</div>
 </div>

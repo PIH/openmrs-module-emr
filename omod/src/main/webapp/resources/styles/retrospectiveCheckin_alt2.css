@@ -155,3 +155,9 @@ section fieldset legend, #confirmation fieldset legend {
 section fieldset select:focus, section fieldset input:focus, #confirmation fieldset select:focus, #confirmation fieldset input:focus {
   border: 2px solid #007fff;
 }
+
+/* line 136, ../../../compass/sass/retrospectiveCheckin_alt2.scss */
+#mandatoryLegend {
+  color: #eb6e1f;
+  text-align: right;
+}
