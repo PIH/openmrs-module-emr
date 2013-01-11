@@ -67,42 +67,6 @@ public class RetrospectiveCheckinComponentTest extends BaseModuleContextSensitiv
         assertThat(visit.getStartDatetime(), is(checkinDate));
     }
 
-    @Test
-    public void createRetrospectiveCheckinWithinVisitAfter() {
-        Visit visitAfter = new Visit();
-        visitAfter.setPatient(patient);
-        visitAfter.setStartDatetime(generateDateFor(2011, 07, 25, 14, 25));
-        visitAfter.setStopDatetime(generateDateFor(2011, 07, 25, 18, 00));
-        visitAfter.setVisitType(emrProperties.getAtFacilityVisitType());
-        visitService.saveVisit(visitAfter);
-
-        checkinDate = generateDateFor(2011, 07, 25, 10, 00);
-
-        Encounter checkinEncounter = adtService.createCheckinInRetrospective(patient, location, clerk, paymentReason, paymentAmount, paymentReceipt, checkinDate);
-        Visit visit = checkinEncounter.getVisit();
-
-        assertCheckinEncounter(checkinEncounter);
-        assertThat(visit, is(visitAfter));
-    }
-
-    @Test
-    public void createRetrospectiveCheckinWithinVisitBefore() {
-        Visit visitBefore = new Visit();
-        visitBefore.setPatient(patient);
-        visitBefore.setStartDatetime(generateDateFor(2011, 07, 25, 8, 00));
-        visitBefore.setStopDatetime(generateDateFor(2011, 07, 25, 10, 00));
-        visitBefore.setVisitType(emrProperties.getAtFacilityVisitType());
-        visitService.saveVisit(visitBefore);
-
-        checkinDate = generateDateFor(2011, 07, 25, 14, 00);
-
-        Encounter checkinEncounter = adtService.createCheckinInRetrospective(patient, location, clerk, paymentReason, paymentAmount, paymentReceipt, checkinDate);
-        Visit visit = checkinEncounter.getVisit();
-
-        assertCheckinEncounter(checkinEncounter);
-        assertThat(visit, is(visitBefore));
-    }
-
     private Obs createPaymentAmountObservation(double amount) {
         Obs paymentAmount = new Obs();
         paymentAmount.setConcept(emrProperties.getPaymentAmountConcept());
