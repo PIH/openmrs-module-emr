@@ -6,17 +6,30 @@
     display: inline-block;
     vertical-align: top;
     background: white;
-    width: 23%;
+    width: 220px;
     text-align: left;
     ul {
       li {
-        border: 1px solid #EEE;
+        border: 1px solid #DEDEDE;
         border-bottom: none;
         border-right: none;
-
         a {
           display: block;
           padding: 10px;
+          color: $text;
+          &:hover {
+            text-decoration: none;
+          }
+        }
+        &.selected {
+          font-family: "OpenSansBold";
+          background: #EEE;
+          &:hover {
+            background: #EEE;
+          }
+        }
+        &:hover {
+          background: #F9F9F9;
         }
         &:first-child {
           @include border-top-left-radius(3px);
@@ -40,7 +53,7 @@
   .dashboard {
     display: inline-block;
     border-left: 3px solid #EEE;
-    width: 74.75%;
+    width: 737px;
     text-align: left;
     padding: 10px 10px 40px 10px;
     margin-left: -5px;

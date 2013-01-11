@@ -14,7 +14,8 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
 <div class="dashboard-container">
     <aside class="menu">
         <ul class="options">
-            <li> <a href="/${ contextPath }/emr/patient.page?patientId=${ patient.patient.patientId }">${ui.message("emr.patientDashBoard.visits")}</a> </li>
+            <li class="selected"> <a href="/${ contextPath }/emr/patient.page?patientId=${ patient.patient.patientId }">${ui.message("emr.patientDashBoard.visits")}</a> </li>
+            <li> <a href="/${ contextPath }/emr/patient.page?patientId=${ patient.patient.patientId }">Contact information</a> </li>
         </ul>
         <div class="actions">
             <strong>Actions</strong>
