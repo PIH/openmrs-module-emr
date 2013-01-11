@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class PatientPageController {
 
 	public void controller(@RequestParam("patientId") Patient patient,
+                           @RequestParam(value = "tab", defaultValue = "visits") String selectedTab,
                            EmrContext emrContext,
 	                       PageModel model,
                            @InjectBeans PatientDomainWrapper patientDomainWrapper,
@@ -40,6 +41,7 @@ public class PatientPageController {
         model.addAttribute("patient", patientDomainWrapper);
         model.addAttribute("orders", orderService.getOrdersByPatient(patient));
         model.addAttribute("availableTasks", taskService.getAvailableTasks(emrContext));
+        model.addAttribute("selectedTab", selectedTab);
     }
 
 }
