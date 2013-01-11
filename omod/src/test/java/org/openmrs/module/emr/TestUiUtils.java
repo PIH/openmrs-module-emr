@@ -18,12 +18,13 @@ import org.openmrs.ui.framework.BasicUiUtils;
 import org.openmrs.ui.framework.FormatterImpl;
 
 /**
- * Implementation of UiUtils suitable for use in non-context-sensitive unit tests
+ * Implementation of UiUtils suitable for use in non-context-sensitive unit tests.
+ * This doesn't have a MessageSource configured, so it won't do localization
  */
 public class TestUiUtils extends BasicUiUtils {
 
     public TestUiUtils() {
-        this.formatter = new FormatterImpl();
+        this.formatter = new FormatterImpl(null);
     }
 
     @Override
