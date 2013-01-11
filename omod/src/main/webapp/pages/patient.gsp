@@ -6,6 +6,7 @@
     def timeFormat = new java.text.SimpleDateFormat("HH:mm")
 
     ui.includeCss("emr", "patientDashboard.css")
+    ui.includeJavascript("emr", "patientDashboard.js")
 
 %>
 
@@ -14,8 +15,8 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
 <div class="dashboard-container">
     <aside class="menu">
         <ul class="options">
-            <li class="selected"> <a href="/${ contextPath }/emr/patient.page?patientId=${ patient.patient.patientId }">${ui.message("emr.patientDashBoard.visits")}</a> </li>
-            <li> <a href="/${ contextPath }/emr/patient.page?patientId=${ patient.patient.patientId }">Contact information</a> </li>
+            <li class="selected"> <a id="visitsDivLink" href="#visitsDiv" onclick="jq.setupVisitsDiv();">${ui.message("emr.patientDashBoard.visits")}</a> </li>
+            <li> <a id="contactInfoDivLink" href="#contactInfoDiv" onclick="jq.setupContactInfoDiv();">${ui.message("emr.patientDashBoard.contactinfo")}</a> </li>
         </ul>
         <div class="actions">
             <strong>Actions</strong>
@@ -27,26 +28,45 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
 
 
     <div class="dashboard">
-    <h3>${ui.message("emr.patientDashBoard.visits")}</h3>
+        <div id="visitsDiv">
+            <h3>${ui.message("emr.patientDashBoard.visits")}</h3>
 
-        <table>
-            <thead>
+            <table>
+                <thead>
+                    <tr>
+                        <th>${ui.message("emr.patientDashBoard.date")}</th>
+                        <th>${ui.message("emr.patientDashBoard.startTime")}</th>
+                        <th>${ui.message("emr.patientDashBoard.location")}</th>
+                    </tr>
+                </thead>
+                <% patient.allVisitsUsingWrappers.each { wrapper -> %>
+                    <tr>
+                        <td>${dateFormat.format(wrapper.visit.startDatetime)} <br>(${wrapper.differenceInDaysBetweenCurrentDateAndStartDate} days ago) </td>
+                        <td>${timeFormat.format(wrapper.visit.startDatetime)}</td>
+                        <td>${ ui.format(wrapper.visit.location) }</td>
+                    </tr>
+                <% } %>
+            </table>
+
+        </div>
+
+        <div id="contactInfoDiv">
+            <h3>${ui.message("emr.patientDashBoard.contactinfo")}</h3>
+
+            <table>
                 <tr>
-                    <th>${ui.message("emr.patientDashBoard.date")}</th>
-                    <th>${ui.message("emr.patientDashBoard.startTime")}</th>
-                    <th>${ui.message("emr.patientDashBoard.location")}</th>
+                   <td>Address</td>
+                   <td>Buenos Aires street 580<br/>
+                       apt 201
+                   </td>
                 </tr>
-            </thead>
-            <% patient.allVisitsUsingWrappers.each { wrapper -> %>
                 <tr>
-                    <td>${dateFormat.format(wrapper.visit.startDatetime)} <br>(${wrapper.differenceInDaysBetweenCurrentDateAndStartDate} days ago) </td>
-                    <td>${timeFormat.format(wrapper.visit.startDatetime)}</td>
-                    <td>${ ui.format(wrapper.visit.location) }</td>
+                    <td>Telephone</td>
+                    <td>(21)</td>
                 </tr>
-            <% } %>
-        </table>
+            </table>
 
-
+        </div>
 
     </div>
 </div>
