@@ -32,9 +32,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
 
 
     <div class="dashboard">
-
         ${ ui.includeFragment("emr", "patientdashboard/" + selectedTab) }
-
     </div>
 </div>
 
