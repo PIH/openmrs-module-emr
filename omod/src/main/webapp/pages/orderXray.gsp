@@ -84,7 +84,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             ${ ui.message("emr.cancel") }
         </button>
         <button type="submit" class="confirm" id="next" data-bind="css: { disabled: !isValid() }, enable: isValid()">
-            ${ ui.message("emr.next") }
+            ${ ui.message("emr.save") }
         </button>
     </div>
 </form>

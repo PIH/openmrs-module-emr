@@ -28,7 +28,7 @@
 
     <div>
         <input type="button" class="cancel" value="${ ui.message("emr.cancel") }" onclick="javascript:window.location='${ ui.pageLink("emr", "printer/managePrinters") }'" />
-        <input type="submit" class="confirm value="${ ui.message("emr.save") }" />
+        <input type="submit" class="confirm" value="${ ui.message("emr.save") }" />
     </div>
 
     <input type="hidden" name="printerId" value="${ printer.id ?: ''}" />
