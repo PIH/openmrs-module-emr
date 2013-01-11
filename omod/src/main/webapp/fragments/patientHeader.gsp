@@ -26,15 +26,11 @@
 
     <div class="identifiers">
         <em>ID number</em>
-        <% patient.primaryIdentifiers.each{ %>
-            <span>${it.identifier}</span>
-        <% } %>
-        <% if (patient.paperRecordIdentifiers) { %>
+        <span>${patient.primaryIdentifier.identifier}</span>
+        <% if (patient.paperRecordIdentifier) { %>
             <br />
             <em>${ ui.format(emrProperties.paperRecordIdentifierType) }</em>
-            <% patient.paperRecordIdentifiers.each{ %>
-                <span>${it.identifier }</span>
-            <% } %>
+            <span>${patient.paperRecordIdentifier.identifier }</span>
         <% } %>
     </div>
 

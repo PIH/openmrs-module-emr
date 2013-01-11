@@ -100,6 +100,15 @@ public class PatientDomainWrapper {
         return patient.getPatientIdentifiers(emrProperties.getPrimaryIdentifierType());
     }
 
+    public PatientIdentifier getPaperRecordIdentifier() {
+        List<PatientIdentifier> paperRecordIdentifiers = getPaperRecordIdentifiers();
+        if (paperRecordIdentifiers.size() == 0) {
+            return null;
+        } else {
+            return paperRecordIdentifiers.get(0);
+        }
+    }
+
     public List<PatientIdentifier> getPaperRecordIdentifiers() {
         PatientIdentifierType paperRecordIdentifierType = emrProperties.getPaperRecordIdentifierType();
         if (paperRecordIdentifierType == null) {
