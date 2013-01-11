@@ -3,10 +3,7 @@ package org.openmrs.module.emr.patient;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.Patient;
-import org.openmrs.PersonAttribute;
-import org.openmrs.PersonAttributeType;
-import org.openmrs.Visit;
+import org.openmrs.*;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.emr.EmrConstants;
@@ -14,13 +11,13 @@ import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.adt.AdtService;
 import org.openmrs.module.emr.visit.VisitDomainWrapper;
 
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -73,12 +70,79 @@ public class PatientDomainWrapperTest {
         patientDomainWrapper =  new PatientDomainWrapper(patient, emrProperties, mock(AdtService.class),
                 visitService, mock(EncounterService.class) );
 
-        when(patient.getGivenName()).thenReturn("John");
-        when(patient.getFamilyName()).thenReturn("Dover");
+        Set<PersonName> personNames = new HashSet<PersonName>();
+
+        PersonName personNamePreferred = createPreferredPersonName("John", "Dover");
+        personNames.add(personNamePreferred);
+
+        when(patient.getNames()).thenReturn(personNames);
 
         String formattedName = patientDomainWrapper.getFormattedName();
 
         assertThat(formattedName, is("Dover, John"));
+    }
+
+
+    @Test
+    public void shouldReturnPersonNameWhenThereAreTwoNamesAndOneOfThemIsPreferred(){
+        patient = mock(Patient.class);
+
+        patientDomainWrapper =  new PatientDomainWrapper(patient, emrProperties, mock(AdtService.class),
+                visitService, mock(EncounterService.class) );
+
+        Set<PersonName> personNames = new HashSet<PersonName>();
+
+        PersonName personNamePreferred = createPreferredPersonName("mario", "neissi");
+        personNames.add(personNamePreferred);
+
+        PersonName personNameNonPreferred = createNonPreferredPersonName("Ana", "emerson");
+        personNames.add(personNameNonPreferred);
+
+        when(patient.getNames()).thenReturn(personNames);
+        PersonName returnedName = patientDomainWrapper.getPersonName();
+
+        assertSame(personNamePreferred, returnedName);
+
+    }
+
+    @Test
+    public void shouldReturnPersonNameWhenThereAreTwoNamesAndNoneOfThemIsPreferred(){
+        patient = mock(Patient.class);
+
+        patientDomainWrapper =  new PatientDomainWrapper(patient, emrProperties, mock(AdtService.class),
+                visitService, mock(EncounterService.class) );
+
+        Set<PersonName> personNames = new HashSet<PersonName>();
+
+        PersonName personNamePreferred = createNonPreferredPersonName("mario", "neissi");
+        personNames.add(personNamePreferred);
+
+        PersonName personNameNonPreferred = createNonPreferredPersonName("Ana", "emerson");
+        personNames.add(personNameNonPreferred);
+
+        when(patient.getNames()).thenReturn(personNames);
+        PersonName returnedName = patientDomainWrapper.getPersonName();
+
+        assertNotNull(returnedName);
+
+    }
+
+    private PersonName createPreferredPersonName(String givenName, String familyName) {
+        PersonName personNamePreferred = createPersonName(givenName, familyName, true);
+        return personNamePreferred;
+    }
+
+    private PersonName createNonPreferredPersonName(String givenName, String familyName) {
+        PersonName personNameNonPreferred = createPersonName(givenName, familyName, false);
+        return personNameNonPreferred;
+    }
+
+    private PersonName createPersonName(String givenName, String familyName, boolean preferred) {
+        PersonName personNameNonPreferred = new PersonName();
+        personNameNonPreferred.setGivenName(givenName);
+        personNameNonPreferred.setFamilyName(familyName);
+        personNameNonPreferred.setPreferred(preferred);
+        return personNameNonPreferred;
     }
 
 

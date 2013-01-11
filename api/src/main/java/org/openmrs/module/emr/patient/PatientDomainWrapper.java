@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A rich-domain-model class that wraps a Patient, and lets you perform common queries.
@@ -169,6 +170,21 @@ public class PatientDomainWrapper {
     }
 
     public String getFormattedName() {
-        return patient.getFamilyName() + ", " + patient.getGivenName();
+        return getPersonName().getFamilyName() + ", " + getPersonName().getGivenName();
+    }
+
+    public PersonName getPersonName() {
+        Set<PersonName> names = patient.getNames();
+        if (names != null && names.size() > 0) {
+            for (PersonName name : names) {
+                if (name.isPreferred() )
+                    return name;
+            }
+            for (PersonName name : names) {
+                return name;
+            }
+
+        }
+        return null;
     }
 }

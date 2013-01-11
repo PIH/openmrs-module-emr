@@ -154,6 +154,19 @@ jq(document).ready( function() {
             });
     })
 
+    jq(document).on('click','[name=mergeId]', function(){
+        var mergeId = jq(this).val();
+        jQuery.ajax({
+            url: emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "markPaperRecordsAsMerged"),
+            data: { mergeId: mergeId },
+            dataType: 'json',
+            type: 'POST'
+        })
+            .success(function(data) {
+                mergeRequestsViewModel.load();
+            });
+    })
+
     // if an alphanumeric character is pressed, send focus to the appropriate mark-as-pulled-identifier input box
     // or the mark-as-returned input box (since only one input box will ever be visible, we can simply call the focus
     // for both of them types and only one will be picked up)

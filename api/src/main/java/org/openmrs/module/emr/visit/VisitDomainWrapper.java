@@ -18,7 +18,7 @@ public class VisitDomainWrapper {
     }
 
     public int getDifferenceInDaysBetweenCurrentDateAndStartDate() {
-        Date today = new Date();
+        Date today = Calendar.getInstance().getTime();
 
         Calendar startDateVisit = getStartDateVisit();
 

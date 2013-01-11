@@ -231,7 +231,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
                 request.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_CREATE);
 
                 // TODO: do we want to make printing a label configurable via a global property?
-                printPaperRecordLabel(request, location);
+              //  printPaperRecordLabel(request, location);
             }
             else {
                 request.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_PULL);

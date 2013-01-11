@@ -135,6 +135,16 @@ public class ArchivesRoomFragmentController {
 
     }
 
+
+    public FragmentActionResult markPaperRecordsAsMerged(@RequestParam("mergeId") PaperRecordMergeRequest request,
+                                                        @SpringBean("paperRecordService") PaperRecordService paperRecordService){
+
+        paperRecordService.markPaperRecordsAsMerged(request);
+
+        return new SuccessResult("aaa");
+    }
+
+
     public FragmentActionResult markPaperRecordRequestAsSent(@RequestParam(value = "identifier", required = true) String identifier,
                                                              @SpringBean("paperRecordService") PaperRecordService paperRecordService,
                                                              UiUtils ui) {
