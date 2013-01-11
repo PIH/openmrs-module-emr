@@ -1,7 +1,7 @@
 @import "colors";
 @import "compass";
 
-.date h4{
+.date h6{
   border-bottom: 1px solid #ccc;
   color: $text;
   margin: 0px;
@@ -22,16 +22,17 @@
     border: 1px solid #ccc;
     display: inline-block;
     margin: 10px;
-    padding: 5px;
+    padding: 5px 10px 5px 5px;
     background: white;
     @include border-radius(5px);
 
     .content {
       display: inline-block;
+      width: 200px;
+      text-align: left;
 
-      i: {
-        padding: 0;
-        line-height: 1em;
+      i {
+        float: left;
       }
     }
   }

@@ -235,6 +235,14 @@ function MergeRequestsViewModel(requestsToMerge){
 
     };
 
+    api.remove = function(id){
+        for( var i=0; i < api.requestsToMerge().length; i++) {
+            if(api.requestsToMerge()[i].mergeRequestId==id){
+                api.requestsToMerge().splice(i,1);
+            }
+        }
+    }
+
     return api;
 
 }

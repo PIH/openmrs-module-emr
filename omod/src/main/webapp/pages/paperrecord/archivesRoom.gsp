@@ -153,23 +153,23 @@
         </div>
         <div id="tab-merge">
             <div id="mergeRequests">
-                <h2> Physical records missing merge: </h2>
-                <ul>
+                <h2>${ ui.message("emr.archivesRoom.physicalRecordsMissing.label") }</h2>
+                <ul data-bind="foreach: requestsToMerge">
                     <li class="date">
-                       <h4>12/01</h4>
+                       <h6><span data-bind="text: dateCreated"></span></h6>
                     </li>
                     <li class="row">
                         <div class="patient">
-                           <div class="content"> <i class="icon-folder-open medium"></i></div><div class="content"> #A001231 <br/> Smith, John </div>
+                            <div class="content"><i class="icon-folder-open medium"></i><span data-bind="text: notPreferredIdentifier"></span> <br/> <span data-bind="text: notPreferredName"></span> </div>
                         </div>
                         <div class="arrow">
                             <i class="icon-chevron-right medium"></i>
                         </div>
                         <div class="patient">
-                            <div class="content"> <i class="icon-folder-open medium"></i></div><div class="content"> #A001231 <br/> Smith, John </div>
+                            <div class="content"><i class="icon-folder-open medium"></i><span data-bind="text: preferredIdentifier"></span> <br/> <span data-bind="text: preferredName"></span> </div>
                         </div>
                         <div class="checkbox-done">
-                            <input type="checkbox" />
+                            <input type="checkbox" name="mergeId" data-bind="value: mergeRequestId"/>
                             <label>Done</label>
                         </div>
                     </li>
