@@ -210,9 +210,11 @@ var SectionMouseHandler = function(sectionModels) {
 var QuestionsMouseHandler = function(questionModels) {
     var questions = questionModels;
     _.each(questions, function(q) {
-        q.questionLegend().click(function() {
-            clickedQuestion(q);
-        });
+        if(q.questionLi()) {
+            q.questionLi().click(function() {
+                clickedQuestion(q);
+            });
+        }
     });
 
     var clickedQuestion = function(question) {
