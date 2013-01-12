@@ -185,7 +185,7 @@ public class EnterHtmlFormTask extends BasePatientSpecificTaskDescriptor {
         params.put("patientId", context.getCurrentPatient().getId());
         params.put("timing", timing);
         params.put("htmlFormId", htmlForm.getId());
-        return uiUtils.pageLink("emr", "htmlform/enterHtmlForm", params);
+        return uiUtils.pageLinkWithoutContextPath("emr", "htmlform/enterHtmlForm", params);
     }
 
     @Override
