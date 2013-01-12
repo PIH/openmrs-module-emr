@@ -2,7 +2,7 @@
     ui.decorateWith("emr", "standardEmrPage")
 %>
 
-<h3>${  ui.message("emr.manageAccounts") }</h3>
+<h3>${  ui.message("emr.task.accountManagement.label") }</h3>
 
 <a href="${ ui.pageLink("emr", "account/account") }">
     <button id="create-account-button">${ ui.message("emr.createAccount") }</button>
