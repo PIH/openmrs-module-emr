@@ -1,13 +1,5 @@
 package org.openmrs.module.emr.account;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Person;
 import org.openmrs.PersonName;
@@ -22,6 +14,14 @@ import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.utils.GeneralUtils;
 import org.openmrs.util.OpenmrsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 public class AccountDomainWrapper {
 

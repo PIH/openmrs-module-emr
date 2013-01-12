@@ -15,8 +15,22 @@
 package org.openmrs.module.emr.utils;
 
 import org.apache.commons.lang.StringUtils;
-import org.openmrs.*;
-import org.openmrs.api.*;
+import org.openmrs.Concept;
+import org.openmrs.EncounterRole;
+import org.openmrs.EncounterType;
+import org.openmrs.Location;
+import org.openmrs.OrderType;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.VisitType;
+import org.openmrs.api.AdministrationService;
+import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
+import org.openmrs.api.LocationService;
+import org.openmrs.api.OrderService;
+import org.openmrs.api.PatientService;
+import org.openmrs.api.PersonService;
+import org.openmrs.api.UserService;
+import org.openmrs.api.VisitService;
 import org.openmrs.module.emr.api.EmrService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -7,7 +7,6 @@ import org.mockito.Mockito;
 import org.openmrs.Person;
 import org.openmrs.PersonName;
 import org.openmrs.Role;
-import org.openmrs.User;
 import org.openmrs.api.PasswordException;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;

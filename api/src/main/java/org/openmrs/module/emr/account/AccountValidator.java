@@ -9,12 +9,10 @@ import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.util.OpenmrsUtil;
-import org.openmrs.validator.ProviderValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import sun.org.mozilla.javascript.tools.shell.QuitAction;
 
 @Handler(supports = { AccountDomainWrapper.class }, order = 50)
 public class AccountValidator implements Validator {

@@ -14,8 +14,6 @@
 
 package org.openmrs.module.emr.fragment.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
@@ -26,6 +24,8 @@ import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 import org.openmrs.ui.framework.fragment.action.SuccessResult;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class RadiologyRequisitionFragmentController {
 

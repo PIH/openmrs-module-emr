@@ -35,7 +35,6 @@ import org.openmrs.web.WebUtil;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class GeneralUtils {
 

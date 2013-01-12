@@ -14,10 +14,6 @@
 
 package org.openmrs.module.emr.account;
 
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
-
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +21,6 @@ import org.openmrs.Person;
 import org.openmrs.Provider;
 import org.openmrs.Role;
 import org.openmrs.User;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
@@ -33,6 +28,10 @@ import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.util.OpenmrsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 public class AccountComponentTest extends BaseModuleContextSensitiveTest{
 
