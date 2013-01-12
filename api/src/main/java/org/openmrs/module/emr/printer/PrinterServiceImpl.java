@@ -120,6 +120,12 @@ public class PrinterServiceImpl extends BaseOpenmrsService implements PrinterSer
     @Override
     @Transactional(readOnly = true)
     public boolean isIpAddressAllocatedToAnotherPrinter(Printer printer) {
+
+        // for testing purposes, we allow two printers to both be assigned the localhost ip
+        if (printer.getIpAddress().equals("127.0.0.1")) {
+            return false;
+        }
+
         return printerDAO.isIpAddressAllocatedToAnotherPrinter(printer);
     }
 

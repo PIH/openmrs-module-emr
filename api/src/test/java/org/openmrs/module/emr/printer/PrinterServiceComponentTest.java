@@ -77,6 +77,24 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
     }
 
     @Test
+    public void testAllowDuplicateIpAddressesIfAddressIsLocalHost() {
+
+        Printer localPrinter = new Printer();
+        localPrinter.setName("Local printer");
+        localPrinter.setIpAddress("127.0.0.1");
+        localPrinter.setType(Printer.Type.LABEL);
+        printerService.savePrinter(localPrinter);
+
+        Printer anotherPrinter = new Printer();
+        anotherPrinter.setName("Another printer");
+        anotherPrinter.setIpAddress("127.0.0.1");
+        anotherPrinter.setType(Printer.Type.ID_CARD);
+
+        Assert.assertFalse(printerService.isIpAddressAllocatedToAnotherPrinter(anotherPrinter));
+
+    }
+
+    @Test
     public void testShouldReturnFalseIfAnotherPrinterDoesNotHaveIpAddressAssigned() {
 
         Printer differentPrinter = new Printer();
@@ -85,7 +103,6 @@ public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest 
         differentPrinter.setType(Printer.Type.LABEL);
 
         Assert.assertFalse(printerService.isIpAddressAllocatedToAnotherPrinter(differentPrinter));
-
     }
 
     @Test
