@@ -1,21 +1,39 @@
 <!-- TODO fix formEncounterType and encounterRole-->
 <htmlform formUuid="68728aa6-4985-11e2-8815-657001b58a90" formName="Vitals" formEncounterType="1373cf95-06e8-468b-a3da-360ac1cf026d" formVersion="1.0">
 
+    <!--
+    Remaining Issues:
+    * Summary shows temperature twice (once for hidden input)
+    * Summary needs to show BP as 120 / 80
+    *
+    -->
+
+    <style>
+        #calculated-bmi {
+            font-weight: bold;
+            font-size: 1.4em;
+        }
+    </style>
+
     <ifMode mode="ENTER">
         <script type="text/javascript">
-            $j(function() {
-                var setupDisplay = function(id) {
-                    getField(id + ".value").change(function() {
-                        $j(".display-value-" + id).html(getValue(id + ".value"));
-                    });
+            var calculateBmi = function() {
+                var wt = getLegalValue('weight.value');
+                var ht = getLegalValue('height.value');
+                var bmi = wt / (ht * ht);
+                if (!wt || !ht || isNaN(bmi)) {
+                    $j('#no-calculated-bmi').show();
+                    $j('#calculated-bmi-wrapper').hide();
+                } else {
+                    $j('#no-calculated-bmi').hide();
+                    $j('#calculated-bmi-wrapper').show();
+                    $j('#calculated-bmi').html(bmi.toFixed(1));
+                    $j('#hidden-calculated-bmi').val(bmi.toFixed(1));
                 }
-                setupDisplay("temperature_c");
-                setupDisplay("bp_systolic");
-                setupDisplay("bp_diastolic");
-                setupDisplay("heart_rate");
-                setupDisplay("respiratory_rate");
-                setupDisplay("o2_sat");
-                setupDisplay("weight");
+            };
+
+            $j(function() {
+                $j('#calculated-bmi-wrapper').hide();
 
                 $j('#temperature-c-or-f').change(function() {
                     checkNumber(this, 'temperature-error', true, 25, 110);
@@ -24,19 +42,21 @@
                         if (temp > 60) {
                             // fahrenheit
                             temp = (temp - 32) * 5 / 9;
-                            temp = temp.toFixed(1); // round to one digit after the decimal point
+                            temp = parseFloat(temp.toFixed(2)); // round to one digit after the decimal point
                             $j("#temperature-units-chosen").html("F");
                         } else {
                             $j("#temperature-units-chosen").html("C");
                         }
                         setValue('temperature_c.value', temp);
-
-                        $j(".display-value-temperature_c").html(temp);
-
                     } else {
                         setValue('temperature_c.value', null);
                     }
                 });
+
+                getField('weight.value').change(calculateBmi);
+
+                getField('height.value').change(calculateBmi);
+
             });
         </script>
     </ifMode>
@@ -110,11 +130,33 @@
         </fieldset>
 
         <fieldset>
+            <legend>Height</legend>
+
+            <obs conceptId="PIH:HEIGHT (M)" showUnits="true" id="height"/>
+        </fieldset>
+
+        <fieldset>
             <legend>Weight</legend>
 
             <obs conceptId="PIH:WEIGHT (KG)" showUnits="true" id="weight"/>
         </fieldset>
 
+        <fieldset>
+            <legend>BMI</legend>
+
+            <input type="hidden" name="focus-in-bmi-question" id="hidden-calculated-bmi" />
+
+            <span id="no-calculated-bmi">
+                Record a weight and height, so we can calculate the BMI
+            </span>
+            <span id="calculated-bmi-wrapper">
+                Patient's BMI is <span id="calculated-bmi"></span>
+            </span>
+
+            <br/><br/>
+
+            Tab or Enter to continue
+        </fieldset>
     </section>
 
 

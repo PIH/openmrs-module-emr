@@ -17,10 +17,28 @@
 <input id="cancel-form" type="button" value="${ ui.message("htmlformentry.discard") }"/>
 
 <script type="text/javascript">
+    var getLegalValue = function(idAndProperty) {
+        var jqField = getField(idAndProperty);
+        if (jqField) { // can't do an and since this is inside a form
+            if (jqField.hasClass('illegalValue')) {
+                return null;
+            }
+        }
+        return getValue(idAndProperty);
+    }
+
     jq(function() {
         jq('#cancel-form').click(function() {
             location.href = '${ returnUrl }';
         }).insertAfter(jq('input.submitButton'));
+
+        var originalCheckNumberFunction = checkNumber;
+        checkNumber = function(el, errorDivId, floatOkay, absoluteMin, absoluteMax) {
+            originalCheckNumberFunction(el, errorDivId, floatOkay, absoluteMin, absoluteMax);
+            if (el.className == 'illegalValue') {
+                // figure out how to cancel the blur() event
+            }
+        }
     });
 </script>
 
