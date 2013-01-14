@@ -12,8 +12,6 @@ function initFormModels(formEl) {
         return section;
     });
 
-    sections[0].toggleSelection();
-
     var confirmationSection = ConfirmationSectionModel($('#confirmation'), _.clone(sections));
     confirmationSection.moveTitleTo(breadcrumb);
     sections.push(confirmationSection);
@@ -23,11 +21,8 @@ function initFormModels(formEl) {
     return [sections, questions, fields];
 }
 
-function initKeyboardHandlersChain(sections, questions, fields) {
-    var sectionsHandler = SectionsKeyboardHandler();
-    _.each(sections, function(s) { sectionsHandler.addSection(s); });
-
-    var questionsHandler = QuestionsKeyboardHandler(sectionsHandler);
+function initKeyboardHandlersChain(questions, fields) {
+    var questionsHandler = QuestionsKeyboardHandler();
     _.each(questions, function(q) { questionsHandler.addQuestion(q); });
 
     var fieldsHandler = FieldsKeyboardHandler(questionsHandler);
@@ -46,18 +41,12 @@ function KeyboardController(formElement) {
     var modelsList = initFormModels(formElement);
     var sections=modelsList[0], questions=modelsList[1], fields=modelsList[2];
     initMouseHandlers(sections, questions, fields);
-    var handlerChainRoot = initKeyboardHandlersChain(sections, questions, fields);
+    var handlerChainRoot = initKeyboardHandlersChain(questions, fields);
 
     handlerChainRoot.handleTabKey();
 
     $('body').keydown(function(key) {
         switch(key.which) {
-            case 39:
-                handlerChainRoot.handleRightKey() && key.preventDefault();
-                break;
-            case 37:
-                handlerChainRoot.handleLeftKey() && key.preventDefault();
-                break;
             case 38:
                 handlerChainRoot.handleUpKey() && key.preventDefault();
                 break;

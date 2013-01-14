@@ -47,12 +47,6 @@ function FieldsKeyboardHandler(questionsHandler) {
     api.addField = function(field) {
         fields.push(field);
     };
-    api.handleLeftKey = function() {
-        return delegateIfNoSelectedFieldTo(questionsHandler.handleLeftKey);
-    };
-    api.handleRightKey = function() {
-        return delegateIfNoSelectedFieldTo(questionsHandler.handleRightKey);
-    };
     api.handleUpKey = function() {
         return delegateIfNoSelectedFieldTo(questionsHandler.handleUpKey);
     };
@@ -70,35 +64,24 @@ function FieldsKeyboardHandler(questionsHandler) {
         if(field) {
             field.toggleSelection();
             return true;
-        } else {
-            return questionsHandler.handleEscKey();
         }
+        return false;
     };
     return api;
 }
 
-function QuestionsKeyboardHandler(sectionsHandler) {
+function QuestionsKeyboardHandler() {
     var questions = [];
-    var sectionsHandler = sectionsHandler;
 
     var api = {};
+    api.selectedQuestion = function() {
+        return _.find(questions, function(q) { return q.isSelected; });
+    };
     api.addQuestion = function(question) {
         questions.push(question);
     };
     api.selectedQuestion = function() {
         return _.find(questions, function(q) { return q.isSelected; });
-    };
-    api.handleLeftKey = function() {
-        if(!api.selectedQuestion()) {
-            return sectionsHandler.handleLeftKey();
-        }
-        return false;
-    };
-    api.handleRightKey = function() {
-        if(!api.selectedQuestion()) {
-            return sectionsHandler.handleRightKey();
-        }
-        return false;
     };
     api.handleUpKey = function() {
         var question = api.selectedQuestion();
@@ -118,73 +101,24 @@ function QuestionsKeyboardHandler(sectionsHandler) {
     };
     api.handleDownKey = function() {
         var question = api.selectedQuestion();
-        if(question) {
-            var idx = _.indexOf(questions, question);
-            if(idx < questions.length-1) {
-                question.toggleSelection();
-                questions[idx+1].toggleSelection();
-                if(question.parentSection != questions[idx+1].parentSection) {
-                    question.parentSection.toggleSelection();
-                    questions[idx+1].parentSection.toggleSelection();
-                }
-                return true;
-            }
-        } else {
-            var section = sectionsHandler.selectedSection();
-            section.questions[0].toggleSelection();
+        if(!question) {
+            questions[0].toggleSelection();
+            questions[0].parentSection.toggleSelection();
             return true;
         }
-        return false;
-    };
-    api.handleEscKey = function() {
-        var question = api.selectedQuestion();
-        if(question) {
+
+        var idx = _.indexOf(questions, question);
+        if(idx < questions.length-1) {
             question.toggleSelection();
+            questions[idx+1].toggleSelection();
+            if(question.parentSection != questions[idx+1].parentSection) {
+                question.parentSection.toggleSelection();
+                questions[idx+1].parentSection.toggleSelection();
+            }
             return true;
         }
         return false;
     };
-    return api;
-}
-
-function SectionsKeyboardHandler() {
-    var sections = [];
-
-    var api = {};
-    api.addSection = function(section) {
-        sections.push(section);
-    };
-    api.selectedSection = function() {
-        return _.find(sections, function(s) { return s.isSelected; });
-    };
-    api.currentSection = function() {
-        return api.selectedSection();
-    }
-    api.handleLeftKey = function() {
-        var section = api.selectedSection();
-        if(section) {
-            var idx = _.indexOf(sections, section);
-            if(idx > 0) {
-                section.toggleSelection();
-                sections[idx-1].toggleSelection();
-                return true;
-            }
-        };
-        return false;
-    };
-    api.handleRightKey = function() {
-        var section = api.selectedSection();
-        if(section) {
-            var idx = _.indexOf(sections, section);
-            if(idx < sections.length-1) {
-                section.toggleSelection();
-                sections[idx+1].toggleSelection();
-                return true;
-            }
-        };
-        return false;
-    };
-
     return api;
 }
 
