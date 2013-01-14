@@ -36,6 +36,7 @@ jq(document).ready( function() {
         createRequestsViewModel.load()
         assignedCreateRequestsViewModel.load();
         assignedPullRequestsViewModel.load();
+        mergeRequestsViewModel.load();
     }, 120000)
 
     // handle entering identifiers to mark records as pulled

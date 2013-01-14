@@ -39,8 +39,8 @@ public class ArchivesRoomFragmentController {
 
     // TODO: can we use something in the UiUtils method to do this
 
-    DateFormat timeFormat = new SimpleDateFormat("HH:mm dd/MM");
-    private DateFormat dateFormat;
+    private DateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM");
+
 
     public List<SimpleObject> getOpenRecordsToPull(@SpringBean("paperRecordService") PaperRecordService paperRecordService,
                                                    @SpringBean("emrProperties") EmrProperties emrProperties,
@@ -141,6 +141,7 @@ public class ArchivesRoomFragmentController {
 
         paperRecordService.markPaperRecordsAsMerged(request);
 
+        // TODO: we will need to localize this if we decide we actually want to display an alert or growl here
         return new SuccessResult("Ok");
     }
 
@@ -160,7 +161,7 @@ public class ArchivesRoomFragmentController {
                     return new FailureResult(ui.message("emr.archivesRoom.error.paperRecordNotRequested", ui.format(identifier)));
                 }
                 else {
-                    return new FailureResult(ui.message("emr.archivesRooms.error.paperRecordAlreadySent", ui.format(identifier),
+                    return new FailureResult(ui.message("emr.archivesRoom.error.paperRecordAlreadySent", ui.format(identifier),
                             ui.format(paperRecordRequest.getRequestLocation()), ui.format(paperRecordRequest.getDateStatusChanged())));
                 }
             }
@@ -170,7 +171,7 @@ public class ArchivesRoomFragmentController {
                 return new SuccessResult(ui.message("emr.archivesRoom.recordFound.message") + "<br/><br/>"
                         + ui.message("emr.archivesRoom.recordNumber.label") + ": " + ui.format(identifier) + "<br/><br/>"
                         + ui.message("emr.archivesRoom.requestedBy.label") + ": " + ui.format(paperRecordRequest.getRequestLocation() + "<br/><br/>"
-                        + ui.message("emr.archivesRoom.requestedAt.label") + ": " + timeFormat.format(paperRecordRequest.getDateCreated())));
+                        + ui.message("emr.archivesRoom.requestedAt.label") + ": " + dateFormat.format(paperRecordRequest.getDateCreated())));
             }
         }
         catch (Exception e) {
@@ -231,7 +232,7 @@ public class ArchivesRoomFragmentController {
             SimpleObject result = SimpleObject.fromObject(request, ui, "requestId", "patient", "identifier", "requestLocation");
 
             // manually add the date and patient identifier
-            result.put("dateCreated", timeFormat.format(request.getDateCreated()));
+            result.put("dateCreated", dateFormat.format(request.getDateCreated()));
             result.put("dateCreatedSortable", request.getDateCreated()) ;
             result.put("patientIdentifier", ui.format(request.getPatient().getPatientIdentifier(emrProperties.getPrimaryIdentifierType()).getIdentifier()));
 
@@ -244,10 +245,9 @@ public class ArchivesRoomFragmentController {
 
     private List<SimpleObject> convertPaperRecordMergeRequestsToSimpleObjects(List<PaperRecordMergeRequest> requests, EmrProperties emrProperties, UiUtils ui) {
         List<SimpleObject> results = new ArrayList<SimpleObject>();
-        dateFormat = new SimpleDateFormat("dd/MM HH:mm");
 
         for (PaperRecordMergeRequest request : requests) {
-            SimpleObject result = createASingleResult(ui, request);
+            SimpleObject result = createASingleMergeRequestResult(ui, request);
 
             results.add(result);
         }
@@ -255,7 +255,7 @@ public class ArchivesRoomFragmentController {
         return results;
     }
 
-    private SimpleObject createASingleResult(UiUtils ui, PaperRecordMergeRequest request) {
+    private SimpleObject createASingleMergeRequestResult(UiUtils ui, PaperRecordMergeRequest request) {
         SimpleObject result = SimpleObject.fromObject(request, ui, "mergeRequestId", "preferredIdentifier", "notPreferredIdentifier");
 
         result.put("dateCreated", dateFormat.format(request.getDateCreated()));

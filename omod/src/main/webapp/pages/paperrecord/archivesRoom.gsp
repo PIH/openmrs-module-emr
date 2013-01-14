@@ -14,8 +14,8 @@
         <ul>
             <li><a id="tab-selector-create" href="#tab-create">${ ui.message("emr.archivesRoom.newRecords.label") }</a></li>
             <li><a id="tab-selector-pull" href="#tab-pull">${ ui.message("emr.archivesRoom.existingRecords.label") }</a></li>
-            <li><a id="tab-selector-merge" href="#tab-merge">${ ui.message("emr.archivesRoom.mergingRecords.label") }</a></li>
             <li><a id="tab-selector-return" href="#tab-return">${ ui.message("emr.archivesRoom.returnRecords.label") }</a></li>
+            <li><a id="tab-selector-merge" href="#tab-merge">${ ui.message("emr.archivesRoom.mergingRecords.label") }</a></li>
         </ul>
 
         <div id="tab-create">
@@ -153,7 +153,7 @@
         </div>
         <div id="tab-merge">
             <div id="mergeRequests">
-                <h2>${ ui.message("emr.archivesRoom.physicalRecordsMissing.label") }</h2>
+                <h2>${ ui.message("emr.archivesRoom.recordsToMerge.label") }</h2>
                 <ul data-bind="foreach: requestsToMerge">
                     <li class="date">
                        <h6><span data-bind="text: dateCreated"></span></h6>
@@ -170,7 +170,7 @@
                         </div>
                         <div class="checkbox-done">
                             <input type="checkbox" name="mergeId" data-bind="value: mergeRequestId"/>
-                            <label>Done</label>
+                            <label>${ ui.message("emr.archivesRoom.recordsToMerge.done.label") }</label>
                         </div>
                     </li>
                 </ul>
