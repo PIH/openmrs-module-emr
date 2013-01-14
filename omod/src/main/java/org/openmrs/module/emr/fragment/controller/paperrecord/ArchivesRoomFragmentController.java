@@ -39,8 +39,9 @@ public class ArchivesRoomFragmentController {
 
     // TODO: can we use something in the UiUtils method to do this
 
-    private DateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM");
+    private DateFormat timeAndDateFormat = new SimpleDateFormat("HH:mm dd/MM");
 
+    private DateFormat dateAndTimeFormat = new SimpleDateFormat("dd/MM HH:mm");
 
     public List<SimpleObject> getOpenRecordsToPull(@SpringBean("paperRecordService") PaperRecordService paperRecordService,
                                                    @SpringBean("emrProperties") EmrProperties emrProperties,
@@ -171,7 +172,7 @@ public class ArchivesRoomFragmentController {
                 return new SuccessResult(ui.message("emr.archivesRoom.recordFound.message") + "<br/><br/>"
                         + ui.message("emr.archivesRoom.recordNumber.label") + ": " + ui.format(identifier) + "<br/><br/>"
                         + ui.message("emr.archivesRoom.requestedBy.label") + ": " + ui.format(paperRecordRequest.getRequestLocation() + "<br/><br/>"
-                        + ui.message("emr.archivesRoom.requestedAt.label") + ": " + dateFormat.format(paperRecordRequest.getDateCreated())));
+                        + ui.message("emr.archivesRoom.requestedAt.label") + ": " + timeAndDateFormat.format(paperRecordRequest.getDateCreated())));
             }
         }
         catch (Exception e) {
@@ -232,7 +233,7 @@ public class ArchivesRoomFragmentController {
             SimpleObject result = SimpleObject.fromObject(request, ui, "requestId", "patient", "identifier", "requestLocation");
 
             // manually add the date and patient identifier
-            result.put("dateCreated", dateFormat.format(request.getDateCreated()));
+            result.put("dateCreated", timeAndDateFormat.format(request.getDateCreated()));
             result.put("dateCreatedSortable", request.getDateCreated()) ;
             result.put("patientIdentifier", ui.format(request.getPatient().getPatientIdentifier(emrProperties.getPrimaryIdentifierType()).getIdentifier()));
 
@@ -258,7 +259,7 @@ public class ArchivesRoomFragmentController {
     private SimpleObject createASingleMergeRequestResult(UiUtils ui, PaperRecordMergeRequest request) {
         SimpleObject result = SimpleObject.fromObject(request, ui, "mergeRequestId", "preferredIdentifier", "notPreferredIdentifier");
 
-        result.put("dateCreated", dateFormat.format(request.getDateCreated()));
+        result.put("dateCreated", dateAndTimeFormat.format(request.getDateCreated()));
         result.put("dateCreatedSortable", request.getDateCreated());
 
         putDataFromPreferredPatient(request, result);
