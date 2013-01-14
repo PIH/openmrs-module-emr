@@ -52,20 +52,10 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
 
         <div id="contactInfoDiv">
             <h3>${ui.message("emr.patientDashBoard.contactinfo")}</h3>
-
-            <table>
-                <tr>
-                   <td>Address</td>
-                   <td>Buenos Aires street 580<br/>
-                       apt 201
-                   </td>
-                </tr>
-                <tr>
-                    <td>Telephone</td>
-                    <td>(21)</td>
-                </tr>
-            </table>
-
+           <ul>
+               <li><strong>Address:</strong> Buenos Aires street 580 apt 201</li>
+               <li><strong>Telephone:</strong> (11)40583103</li>
+           </ul>
         </div>
 
     </div>
