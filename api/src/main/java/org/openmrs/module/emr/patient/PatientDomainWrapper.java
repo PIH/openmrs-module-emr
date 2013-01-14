@@ -87,6 +87,22 @@ public class PatientDomainWrapper {
         return patient.getBirthdate();
     }
 
+    public String getTelephoneNumber(){
+        String telephoneNumber= null;
+        PersonAttributeType type = emrProperties.getTelephoneAttributeType();
+        if(type!=null){
+            PersonAttribute attr = patient.getAttribute(type);
+            if (attr != null && attr.getValue() != null) {
+                telephoneNumber = attr.getValue();
+            }
+        }
+        return telephoneNumber;
+    }
+
+    public PersonAddress getPersonAddress(){
+        return patient.getPersonAddress();
+    }
+
     public PatientIdentifier getPrimaryIdentifier() {
         List<PatientIdentifier> primaryIdentifiers = getPrimaryIdentifiers();
         if (primaryIdentifiers.size() == 0) {

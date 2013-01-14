@@ -7,6 +7,7 @@
         [ id: "visits", label: ui.message("emr.patientDashBoard.visits") ],
         [ id: "contactInfo", label: ui.message("emr.patientDashBoard.contactinfo") ]
     ]
+
 %>
 
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }

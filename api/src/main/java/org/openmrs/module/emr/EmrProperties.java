@@ -30,8 +30,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.openmrs.module.emr.EmrConstants.LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD;
-import static org.openmrs.module.emr.EmrConstants.UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME;
+import static org.openmrs.module.emr.EmrConstants.*;
 
 @Component("emrProperties")
 public class EmrProperties extends ModuleProperties {
@@ -117,6 +116,15 @@ public class EmrProperties extends ModuleProperties {
         type = personService.getPersonAttributeTypeByName(UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME);
         if (type == null) {
             throw new IllegalStateException("Configuration required: " + UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME);
+        }
+        return type;
+    }
+
+    public PersonAttributeType getTelephoneAttributeType(){
+        PersonAttributeType type = null;
+        type = personService.getPersonAttributeTypeByName(TELEPHONE_ATTRIBUTE_TYPE_NAME);
+        if (type == null) {
+            throw new IllegalStateException("Configuration required: " + TELEPHONE_ATTRIBUTE_TYPE_NAME);
         }
         return type;
     }

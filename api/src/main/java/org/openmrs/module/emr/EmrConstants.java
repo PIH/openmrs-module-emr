@@ -87,6 +87,8 @@ public class EmrConstants {
 
     public static final String UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME="Unknown patient";
 
+    public static final String TELEPHONE_ATTRIBUTE_TYPE_NAME="Telephone Number";
+
     public static final String LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD = "a5fb5770-409a-11e2-a25f-0800200c9a66";
 
     // remember if we add more types here to also create them in the module activator

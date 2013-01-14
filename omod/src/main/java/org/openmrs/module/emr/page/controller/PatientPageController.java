@@ -18,6 +18,7 @@ import org.openmrs.api.OrderService;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.patient.PatientDomainWrapper;
 import org.openmrs.module.emr.task.TaskService;
+import org.openmrs.module.emr.utils.GeneralUtils;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
@@ -42,6 +43,7 @@ public class PatientPageController {
         model.addAttribute("orders", orderService.getOrdersByPatient(patient));
         model.addAttribute("availableTasks", taskService.getAvailableTasks(emrContext));
         model.addAttribute("selectedTab", selectedTab);
+        model.addAttribute("addressHierarchyLevels", GeneralUtils.getAddressHierarchyLevels());
     }
 
 }

@@ -33,6 +33,8 @@ import org.openmrs.util.OpenmrsConstants;
 import org.openmrs.web.WebUtil;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -586,6 +588,30 @@ public class GeneralUtils {
         }
     }
 
+    public static List<String> getAddressHierarchyLevels() {
+        List<String> l = new ArrayList<String>();
+
+        try {
+            Class<?> svcClass = Context.loadClass("org.openmrs.module.addresshierarchy.service.AddressHierarchyService");
+            Object svc = Context.getService(svcClass);
+            List<Object> levels = (List<Object>)svcClass.getMethod("getOrderedAddressHierarchyLevels", Boolean.class, Boolean.class).invoke(svc, true, true);
+            Class<?> levelClass = Context.loadClass("org.openmrs.module.addresshierarchy.AddressHierarchyLevel");
+            Class<?> fieldClass = Context.loadClass("org.openmrs.module.addresshierarchy.AddressField");
+            for (Object o : levels) {
+                Object addressField = levelClass.getMethod("getAddressField").invoke(o);
+                String fieldName = (String)fieldClass.getMethod("getName").invoke(addressField);
+                l.add(fieldName);
+            }
+            if(l.size()>1){
+                Collections.reverse(l);
+            }
+        }
+        catch (Exception e) {
+            throw new APIException("Error obtaining address hierarchy levels", e);
+        }
+
+        return l;
+    }
     /**
      * Given a user, returns the default locale (if any) for that user
      * Returns null if no default locate
