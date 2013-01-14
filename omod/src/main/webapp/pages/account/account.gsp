@@ -16,7 +16,7 @@
 
     def allowedLocalesOptions = []
     allowedLocales.each {
-        allowedLocalesOptions.push([ label: it.displayName, value: it ])
+        allowedLocalesOptions.push([ label: it.getDisplayName(emrContext.userContext.locale), value: it ])
     }
 %>
 
