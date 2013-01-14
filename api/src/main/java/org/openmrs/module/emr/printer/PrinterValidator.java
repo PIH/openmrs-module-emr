@@ -17,7 +17,6 @@ package org.openmrs.module.emr.printer;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.annotation.Handler;
 import org.openmrs.messagesource.MessageSourceService;
-import org.openmrs.module.emr.account.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.Errors;
@@ -25,7 +24,7 @@ import org.springframework.validation.Validator;
 
 import java.util.regex.Pattern;
 
-@Handler(supports = { Account.class }, order = 50)
+@Handler(supports = { Printer.class }, order = 50)
 public class PrinterValidator implements Validator {
 
     private static final String IPV4_PATTERN= "(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])";

@@ -95,6 +95,7 @@ public interface PrinterService extends OpenmrsService {
      * by *another* printer
      *
      * @return
+     * @should always return false for localhost ip (127.0.0.1)
      */
     @Authorized(EmrConstants.PRIVILEGE_PRINTERS_MANAGE_PRINTERS)
     boolean isIpAddressAllocatedToAnotherPrinter(Printer printer);

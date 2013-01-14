@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<dataset>
+
+    <role role="Privilege Level: Full" description="Privilege Level: Full" uuid="3666cb6d-c291-46c8-8d3a-96dc33d199fb"/>
+    <role role="Application Role: Archives" description="App: Archives" uuid="3480cb6d-c777-46c8-8d3a-96dc33d199fb"/>
+    <role role="Application Role: Registration" description="App: Registration" uuid="3480c888-c291-46c8-8d3a-96dc33d199fb"/>
+
+
+    <!-- add some roles and user properties to existing person/user in the test dataset -->
+    <user_role user_id="501" role="Privilege Level: Full"/>
+    <user_role user_id="501" role="Application Role: Archives"/>
+    <user_role user_id="501" role="Application Role: Registration"/>
+    <user_property user_id="501" property="defaultLocale" property_value="fr"/>
+
+    <!-- add a provider to this person -->
+    <provider provider_id="1001" person_id="501" identifier="123" creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="c2299800-cca9-11e0-9572-0800200c9776" />
+
+    <!-- add a provider to another person for testing retiring providers -->
+    <provider provider_id="1002" person_id="2" identifier="456" creator="1" date_created="2005-01-01 00:00:00.0" retired="true" retired_by="1" date_retired="2005-01-01 00:00:00.0" retire_reason="test" uuid="c2299867-cca9-11e0-9572-0800200c9776" />
+
+
+</dataset>

@@ -8,7 +8,6 @@ import org.openmrs.Visit;
 import java.util.Calendar;
 
 import static java.util.Calendar.DAY_OF_MONTH;
-import static java.util.Calendar.HOUR_OF_DAY;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;

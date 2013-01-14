@@ -2,6 +2,7 @@
     ui.decorateWith("emr", "standardEmrPage")
 
     ui.includeCss("emr", "account.css")
+    ui.includeJavascript("emr", "account/account.js")
 
     def createAccount = (account.person.personId == null ? true : false);
 
@@ -19,44 +20,6 @@
     }
 %>
 
-<script type="text/javascript" xmlns="http://www.w3.org/1999/html">
-function emr_cancel(){
-	window.location='/${contextPath}/emr/manageAccounts.page';
-}
-
-function sendData(){
-    if (jQuery('.emr_userDetails').css('display') != 'none' && jQuery('input[name="capabilities"]').is(':checked') == false){
-        alert("${ ui.message("emr.user.Capabilities.required") }");
-    } else {
-        jQuery("#accountForm").submit();
-    }
-}
-
-function emr_createProviderAccount(){
-	jQuery('.emr_providerDetails').toggle();
-	jQuery('#createProviderAccount').val('true');
-	jQuery('#interactsWithPatients').attr('checked','checked');
-    jQuery("#providerIdentifier").focus();
-}
-function emr_createUserAccount(){
-	jQuery('.emr_userDetails').toggle();
-	jQuery('#createUserAccount').val('true');
-	jQuery('#enabled').attr('checked','checked');
-    jQuery("#username").focus();
-}
-
-jq(function() {
-   jq('#unlock-button').click(function() {
-       jq.post('${ ui.actionLink("emr", "account/account", "unlock", [ personId: account.person.id ]) }', function(data) {
-           emr.successMessage(data.message);
-           jq('#locked-warning').hide();
-       }, 'json').error(function() {
-           emr.errorMessage('${ ui.message("emr.account.unlock.failedMessage") }');
-       });
-   });
-});
-</script>
-
 <style type="text/css">
     #unlock-button {
         margin-top: 1em;
@@ -70,7 +33,7 @@ jq(function() {
             <p><strong>${ ui.message("emr.account.locked.title") }</strong></p>
             <p><em>${ ui.message("emr.account.locked.description") }</em></p>
 
-            <button id="unlock-button">${ ui.message("emr.account.locked.button") }</button>
+            <button id="unlock-button" value="${ account.person.personId }">${ ui.message("emr.account.locked.button") }</button>
 
         </div>
     </div>
@@ -91,24 +54,23 @@ jq(function() {
 		<legend>${ ui.message("emr.user.account.details") }</legend>
 		<div class="emr_userDetails" <% if (!account.user) { %> style="display: none" <% } %>>
 
-            ${ ui.includeFragment("emr", "field/checkbox", [ label: ui.message("emr.user.enabled"), formFieldName: "enabled", value: "true", checked: account.enabled ])}
+            ${ ui.includeFragment("emr", "field/checkbox", [ label: ui.message("emr.user.enabled"), id: "userEnabled", formFieldName: "userEnabled", value: "true", checked: account.userEnabled ])}
             ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.user.username"), formFieldName: "username", initialValue: (account.username ?: '') ])}
 
-            <% if (!showPasswordFields) { %>
-                <input class="emr_passwordDetails emr_userDetails" type="button" value="${ ui.message("emr.user.changeUserPassword") }"
-                    onclick="javascript:jQuery('.emr_passwordDetails').toggle()" />
+            <% if (!account.password && !account.confirmPassword) { %>
+                <button class="emr_passwordDetails emr_userDetails" type="button" onclick="javascript:jQuery('.emr_passwordDetails').toggle()">${ ui.message("emr.user.changeUserPassword") }</button>
                 <p></p>
             <% } %>
 
-            <p class="emr_passwordDetails" <% if(!showPasswordFields && account.user) { %>style="display: none"<% } %>>
+            <p class="emr_passwordDetails" <% if(!account.password && !account.confirmPassword) { %>style="display: none"<% } %>>
                 <label for="password">${ ui.message("emr.user.password") }</label>
-                <input type="password" id="password" name="password" value="" autocomplete="off" />
+                <input type="password" id="password" name="password" value="${ account.password ?: ''}" autocomplete="off" />
                 ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "password" ])}
             </p>
 
-            <p class="emr_passwordDetails" <% if(!showPasswordFields && account.user) { %>style="display: none"<% } %>>
+            <p class="emr_passwordDetails" <% if(!account.password && !account.confirmPassword) { %>style="display: none"<% } %>>
                 <label for="confirmPassword">${ ui.message("emr.user.confirmPassword") }</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" value="" autocomplete="off" />
+                <input type="password" id="confirmPassword" name="confirmPassword" value="${ account.confirmPassword ?: '' }" autocomplete="off" />
                 ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "confirmPassword" ])}
             </p>
 
@@ -131,13 +93,12 @@ jq(function() {
             </p>
 
 			<% capabilities.each{ %>
-                ${ ui.includeFragment("emr", "field/checkbox", [ label: ui.message("emr.app." + (it.name - rolePrefix) + ".label"), formFieldName: "capabilities", value: it.name, checked: account.capabilities.contains(it) ])}
+                ${ ui.includeFragment("emr", "field/checkbox", [ label: ui.message("emr.app." + (it.name - rolePrefix) + ".label"), formFieldName: "capabilities", value: it.name, checked: account.capabilities?.contains(it) ])}
             <% } %>
 		</div>
 		<div class="emr_userDetails">
 			<% if(!account.user) { %>
-				<input type="button" id="createUserAccountButton" value="${ ui.message("emr.user.createUserAccount") }"
-					onclick="javascript:emr_createUserAccount()" />
+				<button id="createUserAccountButton" type="button" onclick="javascript:emr_createUserAccount()"> ${ ui.message("emr.user.createUserAccount") }</button>
 			<% } %>
 		</div>
 	</fieldset>
@@ -145,24 +106,20 @@ jq(function() {
 	<fieldset>
 		<legend>${ ui.message("emr.provider.details") }</legend>
 		<div class="emr_providerDetails" ${ (!account.provider) ? "style='display: none'" : "" }>
-            ${ ui.includeFragment("emr", "field/checkbox", [ label: ui.message("emr.provider.interactsWithPatients"), formFieldName: "interactsWithPatients", value: "true", checked: account.interactsWithPatients ])}
+            ${ ui.includeFragment("emr", "field/checkbox", [ label: ui.message("emr.provider.interactsWithPatients"), id: "providerEnabled", formFieldName: "providerEnabled", value: "true", checked: account.providerEnabled ])}
 
             ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.provider.identifier"), formFieldName: "providerIdentifier", initialValue: (account.providerIdentifier ?: '') ])}
 		</div>
 		<div class="emr_providerDetails">
 		<% if(!account.provider) { %>
-			<input type="button" id="createProviderAccountButton" value="${ ui.message("emr.provider.createProviderAccount") }"
-				onclick="javascript:emr_createProviderAccount()" />
+			<button id="createProviderAccountButton" type="button" onclick="javascript:emr_createProviderAccount()">${ ui.message("emr.provider.createProviderAccount") }</button>
 		<% } %>
 		</div>
 	</fieldset>
-	
-	<input id="createUserAccount" type="hidden" name="createUserAccount" value="${account.user != null && account.user.userId == null}" />
-	<input id="createProviderAccount" type="hidden" name="createProviderAccount" value="${account.provider != null && account.provider.providerId == null}" />
 
     <div>
         <input type="button" class="cancel" value="${ ui.message("emr.cancel") }" onclick="javascript:window.location='/${ contextPath }/emr/systemAdministration.page'" />
-        <input type="button" class="confirm" id="save-button" value="${ ui.message("emr.save") }" onclick="javascript:sendData()" />
+        <input type="submit" class="confirm" id="save-button" value="${ ui.message("emr.save") }"  />
     </div>
 
 </form>

@@ -83,6 +83,9 @@ var QuestionModel = function(section, elem) {
     model.questionLegend = function() {
         return questionLegend;
     }
+    model.questionLi = function() {
+        return questionLi;
+    }
     model.title = function() {
         return questionTitle;
     };
@@ -155,8 +158,8 @@ var ConfirmationSectionModel = function(elem, regularSections) {
     var sections = regularSections;
     var title = element.find("span.title").first();
 
-    element.append("<div id='dataCanvas'></div>");
-    var dataCanvas = element.find('#dataCanvas').first();
+    var dataCanvas = $("<div id='dataCanvas'></div>");
+    element.append(dataCanvas);
 
     var showDataForConfirmation = function() {
         dataCanvas.append("<ul></ul>");

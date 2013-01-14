@@ -1,4 +1,4 @@
-package org.openmrs.module.emr.page.controller;
+package org.openmrs.module.emr.page.controller.account;
 
 import org.openmrs.module.emr.account.AccountService;
 import org.openmrs.ui.framework.annotation.SpringBean;

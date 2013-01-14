@@ -57,19 +57,7 @@
     <bean id="emrRetrospectiveCheckin" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
         <property name="id" value="emr.retrospectiveCheckin"/>
         <property name="labelCode" value="emr.task.retrospectiveCheckin.label"/>
-        <property name="url" value="emr/retrospectiveCheckin.page?uiOption=0"/>
-        <property name="priority" value="20.3"/>
-    </bean>
-    <bean id="emrRetrospectiveCheckin1" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
-        <property name="id" value="emr.retrospectiveCheckin"/>
-        <property name="labelCode" value="emr.task.retrospectiveCheckin.label"/>
-        <property name="url" value="emr/retrospectiveCheckin.page?uiOption=1"/>
-        <property name="priority" value="20.3"/>
-    </bean>
-    <bean id="emrRetrospectiveCheckin2" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
-        <property name="id" value="emr.retrospectiveCheckin"/>
-        <property name="labelCode" value="emr.task.retrospectiveCheckin.label"/>
-        <property name="url" value="emr/retrospectiveCheckin.page?uiOption=2"/>
+        <property name="url" value="emr/retrospectiveCheckin.page"/>
         <property name="priority" value="20.3"/>
     </bean>
     <bean id="emrVitalsTask" class="org.openmrs.module.emr.htmlform.EnterHtmlFormTask">

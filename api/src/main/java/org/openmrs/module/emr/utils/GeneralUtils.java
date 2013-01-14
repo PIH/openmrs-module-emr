@@ -35,7 +35,6 @@ import org.openmrs.web.WebUtil;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class GeneralUtils {
 
@@ -593,7 +592,7 @@ public class GeneralUtils {
      */
     public static Locale getDefaultLocale(User user) {
 
-        if (user.getUserProperties() != null
+        if (user != null && user.getUserProperties() != null
                 && user.getUserProperties().containsKey(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCALE)) {
             String localeString = user.getUserProperty(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCALE);
             Locale locale = WebUtil.normalizeLocale(localeString);

@@ -1,11 +1,14 @@
 package org.openmrs.module.emr.page.controller;
 
-import org.openmrs.*;
+import org.openmrs.Concept;
+import org.openmrs.ConceptAnswer;
+import org.openmrs.Location;
+import org.openmrs.Obs;
+import org.openmrs.Patient;
+import org.openmrs.Provider;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ProviderService;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.adt.AdtService;
 import org.openmrs.ui.framework.SimpleObject;
@@ -14,7 +17,10 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.List;
 
 public class RetrospectiveCheckinPageController {
 
@@ -22,7 +28,6 @@ public class RetrospectiveCheckinPageController {
                     @SpringBean("providerService") ProviderService providerService,
                     @SpringBean("conceptService") ConceptService conceptService,
                     @RequestParam("patientId") Patient patient,
-                    @RequestParam("uiOption") Integer uiOption,
                     UiUtils ui,
                     PageModel model) {
 
@@ -32,7 +37,6 @@ public class RetrospectiveCheckinPageController {
         model.addAttribute("providers", getClerkProviders(providerService));
         model.addAttribute("paymentReasons", getPaymentReasons(conceptService));
         model.addAttribute("paymentAmounts", getPossiblePaymentAmounts());
-        model.addAttribute("uiOption", uiOption);
     }
 
     public String post(UiUtils ui,

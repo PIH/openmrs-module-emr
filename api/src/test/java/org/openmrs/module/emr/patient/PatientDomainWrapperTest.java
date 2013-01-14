@@ -1,6 +1,5 @@
 package org.openmrs.module.emr.patient;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Patient;
@@ -14,7 +13,6 @@ import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.adt.AdtService;
 import org.openmrs.module.emr.visit.VisitDomainWrapper;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Arrays.asList;

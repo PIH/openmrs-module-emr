@@ -1,128 +1,131 @@
 @import "colors";
+@import "compass";
 
-form {
-  ul#formBreadcrumb {
 
-    li {
-      display: inline-block;
-      padding: 2px 5px;
-      margin: 2px 5px;
-      border: 2px solid $pihPrimaryPurple;
+ul#formBreadcrumb {
+  float: left;
+  vertical-align: top;
+  background: #FFF;
+  width: 220px;
 
-      ul {
+  li {
+    border: 1px solid #EEE;
+    border-bottom: none;
+    border-right: none;
+    span {
+      padding: 10px;
+      font-weight: bold;
+    }
+
+
+    &:first-child {
+      @include border-top-left-radius(4px);
+    }
+    &:last-child {
+      border-bottom: 1px solid #EEE;
+      @include border-bottom-left-radius(4px);
+    }
+    &.done {
+      color: #BBB;
+
+      .icon {
+        display: none;
+      }
+    }
+    &.doing {
+      border-left: 5px solid $link;
+
+      .icon-ok {
         display: none;
       }
 
-      &.doing {
-        background-color: $lighterGrey;
-      }
-    }
-  }
+      ul {
+        display: block;
+        li {
+          span {
+            padding-left: 30px;
+            font-weight: normal;
+          }
 
-  input, select {
-    border: 3px solid white !important;
+          text-transform: lowercase;
+          border: none;
+          @include border-radius(0);
 
-    &:focus {
-      border: 3px solid $pihSecondaryBlue !important;
-    }
-  }
-}
-
-section {
-  display: none !important;
-
-  &.focused {
-    display: block !important;
-  }
-
-  fieldset {
-    border: none !important;
-    boder-top: 1px !important;
-    position: relative;
-    margin: 10px 0 10px 0;
-    padding: 0px !important;
-    height: 30px;
-
-    &.focused {
-      background-color: $lighterGrey;
-      border: 3px solid $pihPrimaryPurple !important;
-      margin-top: 30px !important;
-      padding: 20px !important;
-      height: auto;
-
-      legend {
-        color: $pihPrimaryPurple;
-        font-weight: 900;
-        top: -1.5em;
-      }
-
-      label {
-        display: block !important;
-      }
-
-      input, select {
-        display: block !important;
-      }
-    }
-
-    legend {
-      position: absolute;
-      top: 1em;
-      color: $darkerGrey;
-      width: 100%;
-
-      span {
-        display: inline;
-        padding-left: 2%;
-        text-transform: none;
-      }
-    }
-
-    label, input, select {
-      display: none !important;
-    }
-    .left {
-      float: none;
-      display: inline-block;
-    }
-  }
-}
-
-div#confirmation {
-  display: none !important;
-
-  &.focused {
-    display: block !important;
-  }
-
-  div#confirmationQuestion {
-    display: none;
-
-    &.focused {
-      display: block;
-    }
-  }
-
-  div#dataCanvas {
-    background-color: $lighterGrey;
-    border: 3px solid $pihPrimaryPurple !important;
-    margin-top: 30px !important;
-    padding: 20px;
-
-    ul {
-      display: table;
-
-      li {
-        display: table-row;
-        span {
-          display: table-cell;
-          padding: 1px 5px;
-          &.label {
-            text-align: right;
+          &.focused {
+            color: #FFF;
+            background-color: $link;
           }
         }
       }
     }
+    &.to-do {
+      .icon-ok {
+        display: none;
+      }
+    }
+    i {
+      display: inline-block;
+      font-size: 1em;
+      border: 3px solid;
+      margin: 0 10px 0 0;
+      @include border-radius(50%);
+      span {
+        font-style: normal;
+        font-weight: 700;
+        padding: 0px 5px;
+        margin-top: -3px;
+      }
+    }
+    span {
+      display: inline-block;
+      vertical-align: middle;
+      em {
+        display: block;
+        font-size: .7em;
+      }
+    }
+    ul {
+      display: none;
+    }
+  }
+}
+
+section, #confirmation {
+  display: none !important;
+
+  &.focused {
+    display: inline-block !important;
+  }
+
+  border-left: 3px solid #EEE;
+  width: 730px;
+  text-align: left;
+  padding: 10px;
+  background: #F9F9F9;
+
+  p {
+    label {
+      font-size: 1.2em;
+    }
+  }
+
+  fieldset {
+    display: none !important;
+    border: none !important;
+    padding: 0;
+
+    &.focused {
+      display: block !important;
+    }
+
+    legend { display: none }
+
+    select, input {
+      &:focus {
+        border: 2px solid $link;
+      }
+    }
+
   }
 }
 

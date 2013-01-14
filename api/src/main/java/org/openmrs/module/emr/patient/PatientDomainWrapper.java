@@ -14,8 +14,14 @@
 
 package org.openmrs.module.emr.patient;
 
-import org.apache.commons.lang.StringUtils;
-import org.openmrs.*;
+import org.openmrs.Encounter;
+import org.openmrs.Location;
+import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.PersonAttribute;
+import org.openmrs.PersonAttributeType;
+import org.openmrs.Visit;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.emr.EmrProperties;

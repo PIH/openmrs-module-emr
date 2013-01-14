@@ -7,8 +7,9 @@ import org.mockito.Mockito;
 import org.openmrs.Person;
 import org.openmrs.PersonName;
 import org.openmrs.Role;
-import org.openmrs.User;
 import org.openmrs.api.PasswordException;
+import org.openmrs.api.PersonService;
+import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrConstants;
@@ -20,32 +21,57 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(OpenmrsUtil.class)
 public class AccountValidatorTest {
 	
 	private AccountValidator validator;
-    private Account account;
+    private AccountDomainWrapper account;
+    private AccountService accountService;
     private UserService userService;
+    private ProviderService providerService;
+    private PersonService personService;
+
+    private Role fullPrivileges;
+    private Role someCapability;
+    private Set<Role> someCapabilitySet;
 
     @Before
 	public void setValidator() {
-		validator = new AccountValidator();
-		validator.setMessageSourceService(Mockito.mock(MessageSourceService.class));
 
+        accountService = Mockito.mock(AccountService.class);
         userService = Mockito.mock(UserService.class);
+        providerService = Mockito.mock(ProviderService.class);
+        personService = Mockito.mock(PersonService.class);
+
+        validator = new AccountValidator();
+        validator.setMessageSourceService(Mockito.mock(MessageSourceService.class));
+        validator.setUserService(userService);
+        validator.setProviderService(providerService);
+
+        fullPrivileges = new Role(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
+        when(accountService.getAllPrivilegeLevels()).thenReturn(Collections.singletonList(fullPrivileges));
+
+        someCapability = new Role(EmrConstants.ROLE_PREFIX_CAPABILITY + "Some Capability");
+        someCapabilitySet = new HashSet<Role>();
+        someCapabilitySet.add(someCapability);
+        when(accountService.getAllCapabilities()).thenReturn(Collections.singletonList(someCapability));
 
         Person person = new Person();
         person.addName(new PersonName());
-        account = new Account(person, userService);
+        account = new AccountDomainWrapper(person, accountService, userService, providerService, personService);
 	}
 	
 	/**
@@ -71,7 +97,17 @@ public class AccountValidatorTest {
 		validator.validate(account, errors);
 		assertTrue(errors.hasFieldErrors("familyName"));
 	}
-	
+
+    @Test
+    public void validate_shouldRejectAnEmptyGender() throws Exception {
+        account.setGivenName("givenName");
+        account.setFamilyName("familyName");
+
+        Errors errors = new BindException(account, "account");
+        validator.validate(account, errors);
+        assertTrue(errors.hasFieldErrors("gender"));
+    }
+
 	/**
 	 * @see AccountValidator#validate(Object,Errors)
 	 * @verifies reject an empty privilegeLevel if user is not null
@@ -80,14 +116,31 @@ public class AccountValidatorTest {
 	public void validate_shouldRejectAnEmptyPrivilegeLevelIfUserIsNotNull() throws Exception {
 		account.setGivenName("give name");
 		account.setFamilyName("family name");
-		account.setUser(new User());
+        account.setGender("M");
 		account.setUsername("username");
 		
 		Errors errors = new BindException(account, "account");
 		validator.validate(account, errors);
 		assertTrue(errors.hasFieldErrors("privilegeLevel"));
 	}
-	
+
+    /**
+     * @see AccountValidator#validate(Object,Errors)
+     * @verifies reject an empty privilegeLevel if user is not null
+     */
+    @Test
+    public void validate_shouldRejectAnEmptyPrivilegeLevelIfUserIsPersisted() throws Exception {
+        account.setGivenName("give name");
+        account.setFamilyName("family name");
+        account.setGender("M");
+        account.setUsername("username");
+        account.getUser().setUserId(1);    // mimick persistence
+
+        Errors errors = new BindException(account, "account");
+        validator.validate(account, errors);
+        assertTrue(errors.hasFieldErrors("privilegeLevel"));
+    }
+
 	/**
 	 * @see AccountValidator#validate(Object,Errors)
 	 * @verifies reject an empty username if user is not null
@@ -96,8 +149,8 @@ public class AccountValidatorTest {
 	public void validate_shouldRejectAnEmptyUsernameIfUserIsNotNull() throws Exception {
 		account.setGivenName("give name");
 		account.setFamilyName("family name");
-		account.setUser(new User());
-		account.setPrivilegeLevel(new Role(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE));
+        account.setGender("M");
+		account.setPrivilegeLevel(fullPrivileges);
 		
 		Errors errors = new BindException(account, "account");
 		validator.validate(account, errors);
@@ -112,7 +165,7 @@ public class AccountValidatorTest {
 	public void validate_shouldRejectPasswordAndConfirmPasswordIfTheyDontMatch() throws Exception {
 		account.setGivenName("give name");
 		account.setFamilyName("family name");
-		account.setUser(new User());
+        account.setGender("M");
 		account.setUsername("username");
 		account.setPassword("password");
 		account.setConfirmPassword("confirm password");
@@ -130,7 +183,7 @@ public class AccountValidatorTest {
 	public void shouldCreateErrorWhenConfirmPasswordIsNotProvided() throws Exception {
 		account.setGivenName("give name");
 		account.setFamilyName("family name");
-		account.setUser(new User());
+        account.setGender("M");
 		account.setUsername("username");
 		account.setPassword("password");
 		
@@ -148,7 +201,7 @@ public class AccountValidatorTest {
     public void shouldCreateErrorWhenPasswordIsNotProvided() throws Exception {
         account.setGivenName("give name");
         account.setFamilyName("family name");
-        account.setUser(new User());
+        account.setGender("M");
         account.setUsername("username");
         account.setConfirmPassword("password");
 
@@ -165,13 +218,14 @@ public class AccountValidatorTest {
 	 */
 	@Test
 	public void validate_shouldPassForAValidAccount() throws Exception {
-		account.setUser(new User());
 		account.setUsername("username");
 		account.setGivenName("give name");
 		account.setFamilyName("family name");
+        account.setGender("M");
 		account.setPassword("Password123");
 		account.setConfirmPassword("Password123");
-		account.setPrivilegeLevel(new Role(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE));
+		account.setPrivilegeLevel(fullPrivileges);
+        account.setCapabilities(someCapabilitySet);
 		
 		Errors errors = new BindException(account, "account");
 		validator.validate(account, errors);
@@ -183,18 +237,39 @@ public class AccountValidatorTest {
 	 * @verifies require passwords for a new a user account
 	 */
 	@Test
-	public void validate_shouldRequirePasswordsForANewAUserAccount() throws Exception {
+	public void validate_shouldRequirePasswordsForNewAUserAccount() throws Exception {
+        account.setUsername("username");
 		account.setGivenName("give name");
 		account.setFamilyName("family name");
-		account.setUser(new User());
+        account.setGender("M");
 		account.setUsername("username");
-		account.setPrivilegeLevel(new Role(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE));
+		account.setPrivilegeLevel(fullPrivileges);
 		
 		Errors errors = new BindException(account, "account");
 		validator.validate(account, errors);
 		assertTrue(errors.hasFieldErrors("password"));
 		assertTrue(errors.hasFieldErrors("confirmPassword"));
 	}
+
+    /**
+     * @see AccountValidator#validate(Object,Errors)
+     * @verifies don't require a password for an existing user account
+     */
+    @Test
+    public void validate_shouldNotRequirePasswordsForExistingUserAccount() throws Exception {
+        account.setUsername("username");
+        account.setGivenName("give name");
+        account.setFamilyName("family name");
+        account.setGender("M");
+        account.setUsername("username");
+        account.setPrivilegeLevel(fullPrivileges);
+        account.getUser().setUserId(1);  // mock making this user persistent
+
+        Errors errors = new BindException(account, "account");
+        validator.validate(account, errors);
+        assertFalse(errors.hasFieldErrors("password"));
+        assertFalse(errors.hasFieldErrors("confirmPassword"));
+    }
 
     @Test
     public void shouldVerifyIfPasswordIsBeingValidated() {
@@ -282,7 +357,7 @@ public class AccountValidatorTest {
         mockStatic(OpenmrsUtil.class);
 
         account.setFamilyName("family name");
-        account.setGivenName("Given Name");
+        account.setGivenName("given Name");
 
         Errors errors = new BindException(account, "account");
         validator.validate(account, errors);
@@ -292,20 +367,85 @@ public class AccountValidatorTest {
         assertThat(errorList.size(), is(1));
     }
 
+    @Test
+    public void shouldCreateErrorMessageIfUserWithNoCapabilities() {
+        mockStatic(OpenmrsUtil.class);
+
+        createAccountWithUsernameAs("username");
+        account.setCapabilities(new HashSet<Role>());
+        Errors errors = new BindException(account, "account");
+        validator.validate(account, errors);
+
+        assertTrue(errors.hasErrors());
+        List<FieldError> errorList = errors.getFieldErrors("capabilities");
+        assertThat(errorList.size(), is(1));
+    }
+
+    @Test
+    public void shouldCreateErrorMessageIfDuplicateUsername() {
+        mockStatic(OpenmrsUtil.class);
+
+        createAccountWithUsernameAs("username");
+        when(userService.hasDuplicateUsername(account.getUser())).thenReturn(true);
+        Errors errors = new BindException(account, "account");
+        validator.validate(account, errors);
+
+        assertTrue(errors.hasErrors());
+        List<FieldError> errorList = errors.getFieldErrors("username");
+        assertThat(errorList.size(), is(1));
+    }
+
+    @Test
+    public void shouldCreateErrorMessageIfDuplicateProviderIdentifier() {
+        mockStatic(OpenmrsUtil.class);
+
+        createAccountWithUsernameAs("username");
+        account.setProviderEnabled(true);
+        when(providerService.isProviderIdentifierUnique(account.getProvider())).thenReturn(false);
+        Errors errors = new BindException(account, "account");
+        validator.validate(account, errors);
+
+        assertTrue(errors.hasErrors());
+        List<FieldError> errorList = errors.getFieldErrors("providerIdentifier");
+        assertThat(errorList.size(), is(1));
+    }
+
+
+    @Test
+    public void shouldCreateErrorMessageIfSecretQuestionWithoutAnswer() {
+
+        createAccountWithUsernameAs("username");
+        account.setSecretQuestion("What is your favorite color?");
+        Errors errors = new BindException(account, "account");
+        validator.validate(account, errors);
+
+        assertTrue(errors.hasErrors());
+        List<FieldError> errorList = errors.getFieldErrors("secretAnswer");
+        assertThat(errorList.size(), is(1));
+    }
+
+    @Test
+    public void shouldCreateErrorMessageIfSecretAnswerWithoutQuestion() {
+
+        createAccountWithUsernameAs("username");
+        account.setSecretAnswer("Red");
+        Errors errors = new BindException(account, "account");
+        validator.validate(account, errors);
+
+        assertTrue(errors.hasErrors());
+        List<FieldError> errorList = errors.getFieldErrors("secretQuestion");
+        assertThat(errorList.size(), is(1));
+    }
+
     private void createAccountWithUsernameAs(String username) {
         account.setUsername(username);
         account.setPassword("password");
         account.setConfirmPassword("password");
         account.setFamilyName("family name");
         account.setGivenName("Given Name");
-        account.setPrivilegeLevel(new Role());
-        User user = createUser();
-        account.setUser(user);
-    }
-
-    private User createUser() {
-        User user = new User();
-        user.setSystemId("systemId");
-        return user;
+        account.setGender("M");
+        account.setPrivilegeLevel(fullPrivileges);
+        account.getUser().setSystemId("systemId");
+        account.setCapabilities(someCapabilitySet);
     }
 }

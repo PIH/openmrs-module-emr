@@ -196,6 +196,7 @@
                     </preloadSources>
                     <sourceExcludes>
                         <exclude>*/archivesRoom.js</exclude>  <!-- don't know how to integrate jquery and jasmine yet -->
+                        <exclude>*/account.js</exclude>  <!-- don't know how to integrate jquery and jasmine yet -->
                     </sourceExcludes>
                     <serverPort>7234</serverPort>
                     <skipTests>false</skipTests>
