@@ -141,7 +141,7 @@ public class ArchivesRoomFragmentController {
 
         paperRecordService.markPaperRecordsAsMerged(request);
 
-        return new SuccessResult("aaa");
+        return new SuccessResult("Ok");
     }
 
 
