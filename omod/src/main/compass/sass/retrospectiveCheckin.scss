@@ -1,11 +1,12 @@
 @import "colors";
 @import "compass";
 
-
+form#retrospectiveCheckin {
+  background: #F9F9F9 url(../images/aside-bg.png) repeat-y -20px;
+}
 ul#formBreadcrumb {
   float: left;
   vertical-align: top;
-  background: #FFF;
   width: 220px;
 
   li {
@@ -13,8 +14,8 @@ ul#formBreadcrumb {
     border-bottom: none;
     border-right: none;
     span {
-      padding: 10px;
-      font-weight: bold;
+      padding: 5px;
+      font-family: "OpenSansBold";
     }
 
 
@@ -43,8 +44,9 @@ ul#formBreadcrumb {
         display: block;
         li {
           span {
-            padding-left: 30px;
+            padding-left: 20px;
             font-weight: normal;
+            font-family: "OpenSans";
           }
 
           text-transform: lowercase;
@@ -104,6 +106,7 @@ section, #confirmation {
   background: #F9F9F9;
 
   p {
+    margin: 0 5px;
     label {
       font-size: 1.2em;
     }
@@ -121,6 +124,7 @@ section, #confirmation {
     legend { display: none }
 
     select, input {
+      border: 2px solid transparent;
       &:focus {
         border: 2px solid $link;
       }
