@@ -199,7 +199,10 @@ var SectionMouseHandler = function(sectionModels) {
     var clickedSection = function(section) {
         _.each(sections, function(s) {
             if(section == s) {
-                s.select();
+                if(!s.isSelected) {
+                    s.select();
+                    s.questions[0].select();
+                }
             } else {
                 s.unselect();
             }
@@ -211,8 +214,9 @@ var QuestionsMouseHandler = function(questionModels) {
     var questions = questionModels;
     _.each(questions, function(q) {
         if(q.questionLi()) {
-            q.questionLi().click(function() {
+            q.questionLi().click(function(event) {
                 clickedQuestion(q);
+                event.stopPropagation();
             });
         }
     });
