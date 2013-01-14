@@ -3,7 +3,6 @@
     ui.includeJavascript("emr", "navigator/navigator.js", Integer.MAX_VALUE - 20)
     ui.includeJavascript("emr", "navigator/navigatorHandlers.js", Integer.MAX_VALUE - 21)
     ui.includeJavascript("emr", "navigator/navigatorModels.js", Integer.MAX_VALUE - 21)
-    ui.includeJavascript("emr", "custom/retrospectiveCheckin.js", Integer.MAX_VALUE - 25)
     ui.includeCss("emr", "retrospectiveCheckin.css")
 
 %>
