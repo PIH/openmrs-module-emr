@@ -11,7 +11,7 @@
 
     def privilegeLevelOptions = []
     privilegeLevels.each {
-        privilegeLevelOptions.push([ label: it.name, value: it.name ])
+        privilegeLevelOptions.push([ label: ui.format(it), value: it.name ])
     }
 
     def allowedLocalesOptions = []
@@ -108,7 +108,10 @@
 		<div class="emr_providerDetails" ${ (!account.provider) ? "style='display: none'" : "" }>
             ${ ui.includeFragment("emr", "field/checkbox", [ label: ui.message("emr.provider.interactsWithPatients"), id: "providerEnabled", formFieldName: "providerEnabled", value: "true", checked: account.providerEnabled ])}
 
-            ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.provider.identifier"), formFieldName: "providerIdentifier", initialValue: (account.providerIdentifier ?: '') ])}
+            <!-- currently not supporting provider identifiers
+             ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.provider.identifier"), formFieldName: "providerIdentifier", initialValue: (account.providerIdentifier ?: '') ])}
+		    -->
+
 		</div>
 		<div class="emr_providerDetails">
 		<% if(!account.provider) { %>
