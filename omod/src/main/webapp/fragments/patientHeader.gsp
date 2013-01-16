@@ -21,6 +21,13 @@
             <span>${ ui.message("emr.unknownAge") }</span>
             <% } %>
         </div>
+        <% if (emrContext.activeVisitSummary) { %>
+        <div class="visit-status">
+            <% def visit = emrContext.activeVisitSummary.visit %>
+            <span class="status active"></span>
+            ${ ui.message("emr.activeVisit", ui.format(visit.startDatetime), ui.format(visit.location)) }
+        </div>
+        <% } %>
     </div>
 
 
@@ -42,13 +49,6 @@
             <input type="submit" id="merge-button" value="${ ui.message("emr.mergePatients.mergeIntoAnotherPatientRecord.button") }" />
         </form>
     </div>
-
-    <% if (emrContext.activeVisitSummary) { %>
-        <div class="active-visit">
-            <% def visit = emrContext.activeVisitSummary.visit %>
-            ${ ui.message("emr.activeVisit", ui.format(visit.startDatetime), ui.format(visit.location)) }
-        </div>
-    <% } %>
 
     <div class="close"></div>
 </div>

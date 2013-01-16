@@ -17,7 +17,6 @@
     float: left;
     vertical-align: top;
     h1 {
-      display: inline-block;
       margin: 0;
       span {
          display: inline-block;
@@ -30,7 +29,7 @@
        }
     }
     .gender-age {
-      display: block;
+      display: inline-block;
       vertical-align: text-bottom;
       font-size: 0.9em;
       span {
@@ -68,13 +67,27 @@
     }
 
   }
-}
 
-.active-visit, .unknown-patient {
-  display: inline-block;
-  margin-right: 2em;
-  padding-top: 1em;
-  vertical-align: top;
+  .visit-status, .unknown-patient {
+    font-size: 0.9em;
+    display: inline-block;
+    border: 1px solid #EAEAEA;
+    background: white;
+    padding: 5px;
+    margin: 5px 0;
+    @include box-shadow(1px 1px 1px white);
+    .status {
+      display: inline-block;
+      height: 5px;
+      width: 5px;
+      margin: 2px;
+      @include border-radius(20px);
+      &.active {
+        background: $success;
+        border: 1px solid white;
+      }
+    }
+  }
 }
 
 .unknown-patient{
