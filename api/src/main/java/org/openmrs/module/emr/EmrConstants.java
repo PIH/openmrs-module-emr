@@ -101,4 +101,6 @@ public class EmrConstants {
     public static final String PAYMENT_REASON_CONCEPT = "emr.paymentReasonConcept";
     public static final String PAYMENT_RECEIPT_NUMBER_CONCEPT = "emr.paymentReceiptNumberConcept";
     public static final String PAYMENT_CONSTRUCT_CONCEPT = "emr.paymentConstructConcept";
+
+    public static final String HTMLFORMENTRY_UI_MESSAGE_TAG_NAME = "uimessage";
 }

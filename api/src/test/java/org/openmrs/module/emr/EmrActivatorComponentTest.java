@@ -20,12 +20,14 @@ import org.openmrs.Role;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.UserService;
 import org.openmrs.module.emr.printer.Printer;
+import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.scheduler.SchedulerService;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -48,6 +50,10 @@ public class EmrActivatorComponentTest extends BaseModuleContextSensitiveTest {
     @Qualifier("locationService")
     private LocationService locationService;
 
+    @Autowired
+    @Qualifier("htmlFormEntryService")
+    private HtmlFormEntryService htmlFormEntryService;
+
     @Test
     public void testContextRefreshed() throws Exception {
         new EmrActivator().contextRefreshed();
@@ -62,6 +68,17 @@ public class EmrActivatorComponentTest extends BaseModuleContextSensitiveTest {
         assertThat(closeStaleVisitsTask.getStarted(), is(true));
         assertThat(closeStaleVisitsTask.getStartOnStartup(), is(true));
         assertTrue(closeStaleVisitsTask.getSecondsUntilNextExecutionTime() <= 300);
+    }
+
+    @Test
+    public void testAddingAndRemovingHtmlFormEntryTag() throws Exception {
+        EmrActivator activator = new EmrActivator();
+
+        activator.started();
+        assertThat(htmlFormEntryService.getHandlerByTagName(EmrConstants.HTMLFORMENTRY_UI_MESSAGE_TAG_NAME), is(notNullValue()));
+
+        activator.stopped();
+        assertThat(htmlFormEntryService.getHandlerByTagName(EmrConstants.HTMLFORMENTRY_UI_MESSAGE_TAG_NAME), is(nullValue()));
     }
 
     @Test

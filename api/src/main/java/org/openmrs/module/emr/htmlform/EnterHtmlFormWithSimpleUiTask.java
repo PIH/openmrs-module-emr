@@ -36,7 +36,7 @@ import java.util.Map;
  * You may point to an existing HTML Form (by setting the formUuid property) or else have one be dynamically created
  * on the fly whenever this is task is selected (by setting formDefinitionFromUiResource)
  */
-public class EnterHtmlFormTask extends BasePatientSpecificTaskDescriptor {
+public class EnterHtmlFormWithSimpleUiTask extends BasePatientSpecificTaskDescriptor {
 
     @Autowired
     @Qualifier("messageSourceService")
@@ -185,7 +185,7 @@ public class EnterHtmlFormTask extends BasePatientSpecificTaskDescriptor {
         params.put("patientId", context.getCurrentPatient().getId());
         params.put("timing", timing);
         params.put("htmlFormId", htmlForm.getId());
-        return uiUtils.pageLinkWithoutContextPath("emr", "htmlform/enterHtmlForm", params);
+        return uiUtils.pageLinkWithoutContextPath("emr", "htmlform/enterHtmlFormWithSimpleUi", params);
     }
 
     @Override

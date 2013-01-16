@@ -20,6 +20,7 @@ import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
+import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
@@ -39,6 +40,22 @@ public class ViewEncounterWithHtmlFormFragmentController {
                            HttpSession httpSession,
                            FragmentModel model) throws Exception {
 
+        model.addAttribute("html", getFormHtml(htmlFormEntryService, encounter, hf, httpSession));
+    }
+
+    public SimpleObject getAsHtml(@SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
+                                  @FragmentParam("encounterId") Encounter encounter,
+                                  @FragmentParam(value = "htmlFormId", required = false) HtmlForm hf,
+                                  HttpSession httpSession) throws Exception {
+        SimpleObject simpleObject = new SimpleObject();
+        simpleObject.put("html", getFormHtml(htmlFormEntryService, encounter, hf, httpSession));
+        return simpleObject;
+    }
+
+    private String getFormHtml(HtmlFormEntryService htmlFormEntryService,
+                              Encounter encounter,
+                              HtmlForm hf,
+                              HttpSession httpSession) throws Exception {
         if (hf == null) {
             Form form = encounter.getForm();
             if (form == null) {
@@ -51,7 +68,7 @@ public class ViewEncounterWithHtmlFormFragmentController {
         }
 
         FormEntrySession fes = new FormEntrySession(encounter.getPatient(), encounter, FormEntryContext.Mode.VIEW, hf, httpSession);
-        model.addAttribute("html", fes.getHtmlToDisplay());
+        return fes.getHtmlToDisplay();
     }
 
 }

@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  *
  */
-public class EnterHtmlFormPageController {
+public class EnterHtmlFormWithSimpleUiPageController {
 
     public void get(EmrContext emrContext,
                     @RequestParam("timing") EntryTiming timing,

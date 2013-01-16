@@ -4,7 +4,6 @@
     ui.includeJavascript("emr", "navigator/navigator.js", Integer.MAX_VALUE - 20)
     ui.includeJavascript("emr", "navigator/navigatorHandlers.js", Integer.MAX_VALUE - 21)
     ui.includeJavascript("emr", "navigator/navigatorModels.js", Integer.MAX_VALUE - 21)
-    ui.includeJavascript("emr", "custom/retrospectiveCheckin.js", Integer.MAX_VALUE - 25)
     ui.includeCss("emr", "retrospectiveCheckin.css")
 %>
 
@@ -14,23 +13,17 @@
     });
 </script>
 
-<input id="cancel-form" type="button" value="${ ui.message("htmlformentry.discard") }"/>
-
 <script type="text/javascript">
-    var getLegalValue = function(idAndProperty) {
+    var getValueIfLegal = function(idAndProperty) {
         var jqField = getField(idAndProperty);
-        if (jqField) { // can't do an and since this is inside a form
-            if (jqField.hasClass('illegalValue')) {
-                return null;
-            }
+        if (jqField && jqField.hasClass('illegalValue')) {
+            return null;
         }
         return getValue(idAndProperty);
     }
 
     jq(function() {
-        jq('#cancel-form').click(function() {
-            location.href = '${ returnUrl }';
-        }).insertAfter(jq('input.submitButton'));
+        jq('input.submitButton').hide();
 
         var originalCheckNumberFunction = checkNumber;
         checkNumber = function(el, errorDivId, floatOkay, absoluteMin, absoluteMax) {
@@ -39,6 +32,9 @@
                 // figure out how to cancel the blur() event
             }
         }
+
+        jq('form#htmlform').append(jq('#confirmation-template').html());
+
     });
 </script>
 
@@ -49,3 +45,13 @@ ${ ui.includeFragment("emr", "htmlform/enterHtmlForm", [
         visit: visit,
         returnUrl: returnUrl
 ]) }
+
+<script type="text/template" id="confirmation-template">
+    <div id="confirmation">
+        <span class="title"><uimessage code="mirebalais.vitals.confirm.title"/></span>
+        <div id="confirmationQuestion">
+            (TODO translate this)
+            Confirm submission? <input type="submit" value="Yes" /> or <input type="button" value="No" />
+        </div>
+    </div>
+</script>

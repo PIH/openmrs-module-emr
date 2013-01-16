@@ -47,6 +47,16 @@ var emr = (function($) {
             return ret += toQueryString(options);
         },
 
+        getFragmentActionWithCallback: function(providerName, fragmentName, actionName, options, callback, errorCallback) {
+            if (!errorCallback) {
+                errorCallback = function(err) {
+                    this.errorMessage(err);
+                };
+            }
+            var url = this.fragmentActionLink(providerName, fragmentName, actionName, options);
+            jqObject.getJSON(url).success(callback).error(errorCallback);
+        },
+
         /*
          * opts should contain:
          *   provider (defaults to 'emr')
@@ -110,6 +120,13 @@ var emr = (function($) {
             else {
                 emr.errorAlert(jq.parseJSON(xhr.responseText).globalErrors[0]);
             }
+        },
+
+        // opts requires 'encounterId' and 'targetSelector'
+        showEncounterWithHtmlForm: function(opts) {
+            getFragmentActionWithCallback('emr', 'htmlform/viewEncounterWithHtmlForm', 'getAsHtml', { encounterId: opts.encounterId }, function(data) {
+                jq(opts.targetSelector).html(data.html);
+            });
         }
 
     };

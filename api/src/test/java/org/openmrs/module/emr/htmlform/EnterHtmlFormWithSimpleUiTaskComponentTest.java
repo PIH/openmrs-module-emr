@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 /**
  *
  */
-public class EnterHtmlFormTaskComponentTest extends BaseModuleContextSensitiveTest {
+public class EnterHtmlFormWithSimpleUiTaskComponentTest extends BaseModuleContextSensitiveTest {
 
     @Autowired
     FormService formService;
@@ -59,7 +59,7 @@ public class EnterHtmlFormTaskComponentTest extends BaseModuleContextSensitiveTe
         String xmlContent = "<htmlform formUuid=\"" + formUuid + "\" formName=\"" + formName + "\" formVersion=\"" + formVersion + "\">Weight: <obs conceptId=\"5089\"/></htmlform>";
         when(resourceFactory.getResourceAsString("emr", "htmlforms/vitals.xml")).thenReturn(xmlContent);
 
-        EnterHtmlFormTask task = new EnterHtmlFormTask();
+        EnterHtmlFormWithSimpleUiTask task = new EnterHtmlFormWithSimpleUiTask();
         task.setResourceFactory(resourceFactory);
         task.setFormService(formService);
         task.setHtmlFormEntryService(htmlFormEntryService);

@@ -33,7 +33,7 @@ import static org.mockito.MockitoAnnotations.Mock;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class EnterHtmlFormTaskTest {
+public class EnterHtmlFormWithSimpleUiTaskTest {
 
     @Mock
     FormService formService;
@@ -45,7 +45,7 @@ public class EnterHtmlFormTaskTest {
     ResourceFactory resourceFactory;
 
     @InjectMocks
-    EnterHtmlFormTask task = new EnterHtmlFormTask();
+    EnterHtmlFormWithSimpleUiTask task = new EnterHtmlFormWithSimpleUiTask();
 
     @Test
     public void testGettingHtmlFormByFormUuid() throws Exception {

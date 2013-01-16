@@ -31,9 +31,11 @@ import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.emr.account.AccountService;
 import org.openmrs.module.emr.adt.EmrVisitAssignmentHandler;
+import org.openmrs.module.emr.htmlformentry.UiMessageTagHandler;
 import org.openmrs.module.emr.printer.PrinterDatatype;
 import org.openmrs.module.emr.task.TaskDescriptor;
 import org.openmrs.module.emr.task.TaskService;
+import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.scheduler.SchedulerException;
 import org.openmrs.scheduler.SchedulerService;
 import org.openmrs.scheduler.TaskDefinition;
@@ -166,9 +168,12 @@ public class EmrActivator implements ModuleActivator {
         try {
             LocationService locationService = Context.getLocationService();
             AdministrationService administrationService = Context.getAdministrationService();
+            HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
 
             createGlobalProperties(administrationService);
             createLocationAttributeTypes(locationService);
+
+            htmlFormEntryService.addHandler(EmrConstants.HTMLFORMENTRY_UI_MESSAGE_TAG_NAME, new UiMessageTagHandler());
         }
         catch (Exception e) {
             Module mod = ModuleFactory.getModuleById(EMR_MODULE_ID);
@@ -251,7 +256,13 @@ public class EmrActivator implements ModuleActivator {
 	 * @see ModuleActivator#stopped()
 	 */
 	public void stopped() {
-		log.info("EMR Module stopped");
+        HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
+        try {
+            htmlFormEntryService.getHandlers().remove(EmrConstants.HTMLFORMENTRY_UI_MESSAGE_TAG_NAME);
+        } catch (Exception ex) {
+            // pass
+        }
+        log.info("EMR Module stopped");
 	}
 		
 }
