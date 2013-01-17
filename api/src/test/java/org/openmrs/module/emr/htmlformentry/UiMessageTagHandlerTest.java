@@ -16,9 +16,14 @@ package org.openmrs.module.emr.htmlformentry;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -34,32 +39,51 @@ import static org.mockito.Mockito.when;
 /**
  *
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(Context.class)
 public class UiMessageTagHandlerTest {
 
-    Locale locale;
+    Locale currentLocale;
     MessageSourceService messageSourceService;
-    private String messageCodeWithNoArg;
-    private String messageCodeWithArg;
-    private String translatedMessageWithNoArg;
-    private String translatedMessageWithArg;
+    private String messageCodeWithNoArg = "message.code.noarg";
+    private String messageCodeWithArg = "message.code.arg";
+    private String englishMessageWithNoArg = "Translated Message";
+    private String englishMessageWithArg = "Translated Message {0}";
+    private String frenchMessageWithNoArg = "Message traduit";
+    private String frenchMessageWithArg = "Message traduit {0}";
+
+    UiMessageTagHandler tagHandler;
 
     @Before
     public void setUp() throws Exception {
-        locale = Locale.FRENCH;
-        messageCodeWithNoArg = "message.code.noarg";
-        messageCodeWithArg = "message.code.arg";
-        translatedMessageWithNoArg = "Translated Message";
-        translatedMessageWithArg = "Translated Message {0}";
+        currentLocale = Locale.ENGLISH;
+
+        PowerMockito.mockStatic(Context.class, new Answer<Locale>() {
+            @Override
+            public Locale answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return currentLocale;
+            }
+        });
 
         messageSourceService = mock(MessageSourceService.class);
-        when(messageSourceService.getMessage(messageCodeWithNoArg, null, locale)).thenReturn(translatedMessageWithNoArg);
-        when(messageSourceService.getMessage(eq(messageCodeWithArg), any(Object[].class), eq(locale))).thenAnswer(new Answer<String>() {
+        when(messageSourceService.getMessage(messageCodeWithNoArg, null, Locale.ENGLISH)).thenReturn(englishMessageWithNoArg);
+        when(messageSourceService.getMessage(eq(messageCodeWithArg), any(Object[].class), eq(Locale.ENGLISH))).thenAnswer(new Answer<String>() {
             @Override
             public String answer(InvocationOnMock invocationOnMock) {
                 Object[] messageArgs = (Object[]) invocationOnMock.getArguments()[1];
-                return translatedMessageWithArg.replace("{0}", messageArgs[0].toString());
+                return englishMessageWithArg.replace("{0}", messageArgs[0].toString());
             }
         });
+        when(messageSourceService.getMessage(messageCodeWithNoArg, null, Locale.FRENCH)).thenReturn(frenchMessageWithNoArg);
+        when(messageSourceService.getMessage(eq(messageCodeWithArg), any(Object[].class), eq(Locale.FRENCH))).thenAnswer(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocationOnMock) {
+                Object[] messageArgs = (Object[]) invocationOnMock.getArguments()[1];
+                return frenchMessageWithArg.replace("{0}", messageArgs[0].toString());
+            }
+        });
+
+        tagHandler = new UiMessageTagHandler(messageSourceService);
     }
 
     @Test
@@ -67,10 +91,9 @@ public class UiMessageTagHandlerTest {
         Map<String, String> args = new HashMap<String, String>();
         args.put("code", messageCodeWithNoArg);
 
-        UiMessageTagHandler tagHandler = new UiMessageTagHandler(messageSourceService, locale);
         String substitution = tagHandler.getSubstitution(null, null, args);
 
-        assertThat(substitution, is(translatedMessageWithNoArg));
+        assertThat(substitution, is(englishMessageWithNoArg));
     }
 
     @Test
@@ -81,11 +104,22 @@ public class UiMessageTagHandlerTest {
         args.put("code", messageCodeWithArg);
         args.put("arg0", argValue);
 
-        UiMessageTagHandler tagHandler = new UiMessageTagHandler(messageSourceService, locale);
         String substitution = tagHandler.getSubstitution(null, null, args);
 
-        String expected = translatedMessageWithArg.replace("{0}", argValue);
+        String expected = englishMessageWithArg.replace("{0}", argValue);
         assertThat(substitution, is(expected));
+    }
+
+    @Test
+    public void testGetSubstitutionInDifferentLocaleThanTagHandlerWasInstantiatedIn()throws Exception {
+        currentLocale = Locale.FRENCH;
+
+        Map<String, String> args = new HashMap<String, String>();
+        args.put("code", messageCodeWithNoArg);
+
+        String substitution = tagHandler.getSubstitution(null, null, args);
+
+        assertThat(substitution, is(frenchMessageWithNoArg));
     }
 
 }

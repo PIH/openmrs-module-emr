@@ -32,16 +32,13 @@ import java.util.Map;
 public class UiMessageTagHandler extends SubstitutionTagHandler {
 
     MessageSourceService messageSourceService;
-    Locale locale;
 
     public UiMessageTagHandler() {
         messageSourceService = Context.getMessageSourceService();
-        locale = Context.getLocale();
     }
 
-    public UiMessageTagHandler(MessageSourceService messageSourceService, Locale locale) {
+    public UiMessageTagHandler(MessageSourceService messageSourceService) {
         this.messageSourceService = messageSourceService;
-        this.locale = locale;
     }
 
     @Override
@@ -62,6 +59,8 @@ public class UiMessageTagHandler extends SubstitutionTagHandler {
             ++index;
         }
         Object[] args = argList.isEmpty() ? null : argList.toArray();
+
+        Locale locale = Context.getLocale();
         return messageSourceService.getMessage(codeParam, args, locale);
     }
 }
