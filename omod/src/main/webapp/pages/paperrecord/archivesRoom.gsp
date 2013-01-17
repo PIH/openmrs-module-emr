@@ -155,24 +155,26 @@
             <div id="mergeRequests">
                 <h2>${ ui.message("emr.archivesRoom.recordsToMerge.label") }</h2>
                 <ul data-bind="foreach: requestsToMerge">
-                    <li class="date">
-                       <h6><span data-bind="text: dateCreated"></span></h6>
-                    </li>
-                    <li class="row">
-                        <div class="patient">
-                            <div class="content"><i class="icon-folder-open medium"></i><span data-bind="text: notPreferredIdentifier"></span> <br/> <span data-bind="text: notPreferredName"></span> </div>
-                        </div>
-                        <div class="arrow">
-                            <i class="icon-chevron-right medium"></i>
-                        </div>
-                        <div class="patient">
-                            <div class="content"><i class="icon-folder-open medium"></i><span data-bind="text: preferredIdentifier"></span> <br/> <span data-bind="text: preferredName"></span> </div>
-                        </div>
-                        <div class="checkbox-done">
-                            <input type="checkbox" name="mergeId" data-bind="value: mergeRequestId"/>
-                            <label>${ ui.message("emr.archivesRoom.recordsToMerge.done.label") }</label>
-                        </div>
-                    </li>
+                    <span>
+                        <li class="date">
+                           <h6><span data-bind="text: dateCreated"></span></h6>
+                        </li>
+                        <li class="row">
+                            <div class="patient">
+                                <div class="content"><i class="icon-folder-open medium"></i><span data-bind="text: notPreferredIdentifier"></span> <br/> <span data-bind="text: notPreferredName"></span> </div>
+                            </div>
+                            <div class="arrow">
+                                <i class="icon-chevron-right medium"></i>
+                            </div>
+                            <div class="patient">
+                                <div class="content"><i class="icon-folder-open medium"></i><span data-bind="text: preferredIdentifier"></span> <br/> <span data-bind="text: preferredName"></span> </div>
+                            </div>
+                            <div class="checkbox-done">
+                                <input type="checkbox" name="mergeId" data-bind="value: mergeRequestId"/>
+                                <label>${ ui.message("emr.archivesRoom.recordsToMerge.done.label") }</label>
+                            </div>
+                        </li>
+                    </span>
                 </ul>
             </div>
         </div>

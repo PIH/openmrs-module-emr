@@ -157,6 +157,8 @@ jq(document).ready( function() {
 
     jq(document).on('click','[name=mergeId]', function(){
         var mergeId = jq(this).val();
+        var row = jq(this).closest('.row');
+        var date = row.siblings();
         jQuery.ajax({
             url: emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "markPaperRecordsAsMerged"),
             data: { mergeId: mergeId },
@@ -164,7 +166,9 @@ jq(document).ready( function() {
             type: 'POST'
         })
             .success(function(data) {
-                mergeRequestsViewModel.load();
+                row.hide("slide", {direction: "down"}, 1000);
+                date.hide("slide", {direction: "down"}, 1000);
+           //   mergeRequestsViewModel.load();
             });
     })
 

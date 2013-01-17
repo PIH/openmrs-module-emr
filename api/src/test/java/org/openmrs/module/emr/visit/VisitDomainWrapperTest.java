@@ -54,7 +54,7 @@ public class VisitDomainWrapperTest {
 
         Calendar startDate = Calendar.getInstance();
         startDate.add(DAY_OF_MONTH, -5);
-        startDate.add(HOUR, 1);
+        startDate.set(HOUR, 9);
 
         mockStatic(Calendar.class);
         when(Calendar.getInstance()).thenReturn(today);
