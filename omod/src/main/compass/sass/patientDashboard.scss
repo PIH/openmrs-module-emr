@@ -8,44 +8,55 @@
     background: white;
     width: 220px;
     text-align: left;
+
     ul {
       li {
         border: 1px solid #DEDEDE;
         border-bottom: none;
         border-right: none;
+        
         a {
           display: block;
           padding: 10px;
           color: $text;
+          
           &:hover {
             text-decoration: none;
           }
         }
+
         &.selected {
           font-family: "OpenSansBold";
           background: #EEE;
+          
           &:hover {
             background: #EEE;
           }
         }
+
         &:hover {
           background: #F9F9F9;
         }
+
         &:first-child {
           @include border-top-left-radius(3px);
         }
+
         &:last-child {
           @include border-bottom-left-radius(3px);
           border-bottom: 1px solid #EEE;
         }
       }
     }
+
     .actions {
+      margin: 0 8px;
       margin-top: 20px;
-      .button {
+
+      strong {
         display: block;
-        text-align: center;
-        margin: 10px 30px 0 0;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 5px;
       }
     }
   }
@@ -63,6 +74,7 @@
       ul li {
         padding: 10px 5px;
         border-bottom: 1px solid #EEE;
+
         strong {
           display: inline-block;
           width: 120px;

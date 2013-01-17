@@ -26,7 +26,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
         <div class="actions">
             <strong>Actions</strong>
             <% availableTasks.each { %>
-            <div><a class="button" href="/${ contextPath }/${ it.getUrl(emrContext) }">${ it.getLabel(emrContext) }</a></div>
+            <div><a href="/${ contextPath }/${ it.getUrl(emrContext) }">${ it.getLabel(emrContext) }</a></div>
             <% } %>
         </div>
     </aside>
