@@ -166,8 +166,8 @@ jq(document).ready( function() {
             type: 'POST'
         })
             .success(function(data) {
-                row.hide("slide", {direction: "down"}, 1000);
-                date.hide("slide", {direction: "down"}, 1000);
+                row.hide("slide", {direction: "up"}, 1000);
+                date.hide("slide", {direction: "up"}, 1000);
            //   mergeRequestsViewModel.load();
             });
     })
