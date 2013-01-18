@@ -61,8 +61,9 @@ function QuestionModel(section, elem) {
     var questionTitle = questionLegend.text();
     questionLegend.append("<span></span>");
     var valueElement = questionLegend.find('span').first();
+    var fieldSeparator = element.attr('field-separator') ? element.attr('field-separator') : ' ';
     var computedValue = function() {
-        return _.reduce(model.fields, function(memo, f) { return memo + " " + f.value();}, "");
+        return _.map(model.fields, function(f) { return f.value() }).join(fieldSeparator);
     };
     var questionLi;
 
@@ -191,7 +192,7 @@ function ConfirmationSectionModel(elem, regularSections) {
         var listElement = dataCanvas.find("ul").first();
         _.each(sections, function(s) {
             _.each(s.questions, function(q) {
-                listElement.append("<li><span class='label'>" + q.title() + "</span><span>" + q.value() + "</span></li>");
+                listElement.append("<li><span class='label'>" + q.title() + "</span> <span>" + q.value() + "</span></li>");
             })
         });
     };
