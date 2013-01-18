@@ -62,10 +62,11 @@ function KeyboardController(formElement) {
                 } else {
                     handlerChainRoot.handleTabKey();
                 }
-                key.preventDefault()
+                key.preventDefault();
                 break;
             case 13:
                 handlerChainRoot.handleTabKey();
+                key.preventDefault();
             default:
                 break;
         }
