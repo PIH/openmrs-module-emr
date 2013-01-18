@@ -168,18 +168,19 @@ var QuestionsMouseHandler = function(questionModels) {
 var FieldsMouseHandler = function(fieldsModels) {
     var fields = fieldsModels;
     _.each(fields, function(f) {
-        f.element().click(function() {
+        f.element().mousedown(function(event) {
             clickedField(f);
+            event.preventDefault();
         });
     });
+    var selectedField = function() {
+        return _.find(fields, function(f) { return f.isSelected; });
+    };
 
     var clickedField = function(field) {
-        _.each(fields, function(f) {
-            if( field == f ) {
-                f.select();
-            } else {
-                f.unselect();
-            }
-        })
+        var currentField = selectedField();
+        if(field != currentField && currentField.toggleSelection()) {
+            field.toggleSelection();
+        }
     };
 };
