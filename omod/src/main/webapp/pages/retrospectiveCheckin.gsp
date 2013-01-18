@@ -1,5 +1,6 @@
 <%
     ui.decorateWith("emr", "standardEmrPage")
+    ui.includeJavascript("emr", "navigator/validators.js", Integer.MAX_VALUE - 19)
     ui.includeJavascript("emr", "navigator/navigator.js", Integer.MAX_VALUE - 20)
     ui.includeJavascript("emr", "navigator/navigatorHandlers.js", Integer.MAX_VALUE - 21)
     ui.includeJavascript("emr", "navigator/navigatorModels.js", Integer.MAX_VALUE - 21)
@@ -21,6 +22,12 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 <div id="content" class="container">
     <h2>Retrospective Check-in</h2>
     <form id="retrospectiveCheckin" method="POST">
+        <div id="error-message" class="note error">
+            <div class="icon"><i class="icon-remove medium"></i></div>
+            <div class="text">
+                <p></p>
+            </div>
+        </div>
         <input type="hidden" name="patientId" value="${patient.id}" />
 
         <section id="checkinInformation">
@@ -32,7 +39,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                         label: ui.message("emr.retrospectiveCheckin.location.label"),
                         formFieldName:"locationId",
                         options:locations,
-                        mandatory: true,
+                        classes: ['required'],
                         hideEmptyLabel: true,
                         maximumSize: 5
                 ])}
@@ -44,7 +51,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                         label: "Provider",
                         formFieldName:"providerId",
                         options:providers,
-                        mandatory: true,
+                        classes: ['required'],
                         hideEmptyLabel: true,
                         maximumSize: 5
                 ])}
@@ -55,17 +62,17 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 ${ ui.includeFragment("emr", "field/text", [
                         label: ui.message("emr.retrospectiveCheckin.checkinDate.day.label"),
                         formFieldName: "checkinDate_day",
-                        mandatory: true,
+                        classes: ['required'],
                         left: true])}
                 ${ ui.includeFragment("emr", "field/text", [
                         label: ui.message("emr.retrospectiveCheckin.checkinDate.month.label"),
                         formFieldName: "checkinDate_month",
-                        mandatory: true,
+                        classes: ['required'],
                         left: true])}
                 ${ ui.includeFragment("emr", "field/text", [
                         label: ui.message("emr.retrospectiveCheckin.checkinDate.year.label"),
                         formFieldName: "checkinDate_year",
-                        mandatory: true,
+                        classes: ['required'],
                         left: true])}
             </fieldset>
 
@@ -92,7 +99,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                         formFieldName:"paymentReasonId",
                         options:paymentReasons,
                         hideEmptyLabel: true,
-                        mandatory: true,
+                        classes: ['required'],
                         maximumSize: 5])}
             </fieldset>
             <fieldset>
@@ -101,7 +108,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                         label: ui.message("emr.retrospectiveCheckin.paymentAmount.label"),
                         formFieldName:"paidAmountId",
                         options:paymentAmounts,
-                        mandatory: true,
+                        classes: ['required'],
                         hideEmptyLabel: true,
                         maximumSize: 5])}
             </fieldset>
@@ -110,7 +117,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 ${ ui.includeFragment("emr", "field/text", [
                         label: ui.message("emr.retrospectiveCheckin.receiptNumber.label"),
                         formFieldName: "receiptNumber",
-                        mandatory: true
+                        classes: ['required']
                 ])}
             </fieldset>
         </section>

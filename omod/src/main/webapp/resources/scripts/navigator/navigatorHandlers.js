@@ -26,8 +26,7 @@ function FieldsKeyboardHandler(questionsHandler) {
         if(field) {
             var idx = _.indexOf(fields, field);
             var newField = fields[fieldIndexUpdater(idx)];
-            if(newField) {
-                field.toggleSelection();
+            if(newField && field.toggleSelection()) {
                 switchActiveQuestions(field.parentQuestion, newField.parentQuestion);
                 newField.toggleSelection();
                 return true;

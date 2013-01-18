@@ -30,8 +30,12 @@ function FieldModel(question, elem) {
     };
 
     model.unselect = function() {
-        model.parentUnselect();
-        element.blur();
+        if(fieldIsValid(element)) {
+            model.parentUnselect();
+            element.blur();
+            return true;
+        }
+        return false;
     };
 
     model.value = function() {
