@@ -6,7 +6,7 @@
     display: inline-block;
     vertical-align: top;
     background: white;
-    width: 220px;
+    width: 23%;
     text-align: left;
 
     ul {
@@ -64,11 +64,12 @@
   .dashboard {
     display: inline-block;
     border-left: 3px solid #EEE;
-    width: 737px;
+    width: 77%;
     text-align: left;
     padding: 10px 10px 40px 10px;
     margin-left: -5px;
     background: #F9F9F9;
+    box-sizing: border-box;
 
     .contact-info {
       ul li {
