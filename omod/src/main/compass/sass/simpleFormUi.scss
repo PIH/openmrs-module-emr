@@ -111,7 +111,7 @@ section, #confirmation {
     }
   }
 
-  fieldset {
+  fieldset, #confirmationQuestion {
     display: none !important;
     border: none !important;
     padding: 0;
