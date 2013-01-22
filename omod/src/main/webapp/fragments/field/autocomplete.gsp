@@ -12,9 +12,12 @@
         var xhr=null;
 
         function setSearchValue(objectItem){
-            objectItem.textValue = jq('#${ config.id }-search').val();
+
             jq('#${ config.id }-value').val(objectItem.${ config.itemValueProperty });
-            jq('#${ config.id }-search').val(${ config.itemLabelFunction }(objectItem));
+            if (${ config.itemLabelFunction }(objectItem)) {
+                jq('#${ config.id }-search').val(${ config.itemLabelFunction }(objectItem));
+            }
+
         };
 
         jq('#${ config.id }-search').autocomplete({
@@ -52,6 +55,7 @@
                 return false;
             }
         });
+
         jq('#${ config.id }-search').data('autocomplete')._renderItem = function(ul, item) {
             return jq('<li>')
                     .data('item.autocomplete', item)
@@ -62,21 +66,21 @@
         jq('#${ config.id }-search').data('autocomplete')._renderMenu = function(ul, items){
             var self= this;
             var fieldId =  '${ config.id }';
-            <%=  config.function %>
-            if(items.length ==1 && (items[0].patientId !==0 )){
+
+            if (items.length == 1 && (items[0].patientId !== 0)) {
                 setSearchValue(items[0]);
-                <%=  config.function %>
-                if(${ config.onExactMatchFunction } !==null ){
+
+                if (${ config.onExactMatchFunction } !== null) {
                      ${ config.onExactMatchFunction }(items[0]);
                 }
-            }else if(items.length ==1 && (items[0].patientId ==0 )){
+            } else if (items.length == 1 && (items[0].patientId == 0)) {
                 setSearchValue(items[0]);
-                <%=  config.function %>
-                jq.each( items , function(i, item){
+
+                jq.each( items , function(i, item) {
                     self._renderItem(ul, item);
                 });
-            }else{
-                jq.each( items , function(i, item){
+            } else {
+                jq.each( items , function(i, item) {
                     self._renderItem(ul, item);
                 });
             }
