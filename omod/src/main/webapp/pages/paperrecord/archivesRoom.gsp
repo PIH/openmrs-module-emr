@@ -22,15 +22,15 @@
             <span id="createrequest">
                 <div class="instructions">
                     <span class="instruction">
-                        <strong>1</strong>
+                        <strong>1.</strong>
                         <span class="instruction-text">Select records to be printed</span>
                     </span>
                     <span class="instruction">
-                        <strong>2</strong>
+                        <strong>2.</strong>
                         <span class="instruction-text">Click to print records</span>
                     </span>
                     <span class="instruction">
-                        <strong>3</strong>
+                        <strong>3.</strong>
                         <span class="instruction-text">Scan to send records</span>
                     </span>
                 </div>
@@ -97,15 +97,15 @@
             <span id="pullrequest">
                 <div class="instructions">
                     <span class="instruction">
-                        <strong>1</strong>
+                        <strong>1.</strong>
                         <span class="instruction-text">Select records to be pulled</span>
                     </span>
                     <span class="instruction">
-                        <strong>2</strong>
+                        <strong>2.</strong>
                         <span class="instruction-text">Click to pull records</span>
                     </span>
                     <span class="instruction">
-                        <strong>3</strong>
+                        <strong>3.</strong>
                         <span class="instruction-text">Scan to send records</span>
                     </span>
                 </div>
