@@ -1,12 +1,13 @@
+var selectedModel = function(items) {
+    return _.find(items, function(i) { return i.isSelected; });
+}
+
 function FieldsKeyboardHandler(questionsHandler) {
     var fields = [];
     var questionsHandler = questionsHandler;
-    var selectedField = function() {
-        return _.find(fields, function(f) { return f.isSelected; });
-    };
 
     var delegateIfNoSelectedFieldTo = function(delegatedFunction) {
-        if(!selectedField()) {
+        if(!selectedModel(fields)) {
             return delegatedFunction();
         }
         return false;
@@ -22,11 +23,13 @@ function FieldsKeyboardHandler(questionsHandler) {
         }
     };
     var switchActiveField = function(fieldIndexUpdater, showFirstFieldIfNoneIsActive) {
-        var field = selectedField();
+        var field = selectedModel(fields);
         if(field) {
-            var idx = _.indexOf(fields, field);
-            var newField = fields[fieldIndexUpdater(idx)];
-            if(newField && field.toggleSelection()) {
+            var currentIndex = _.indexOf(fields, field);
+            var nextIndex = fieldIndexUpdater(currentIndex);
+            var newField = fields[nextIndex];
+            if(newField) {
+                field.toggleSelection();
                 switchActiveQuestions(field.parentQuestion, newField.parentQuestion);
                 newField.toggleSelection();
                 return true;
@@ -53,13 +56,23 @@ function FieldsKeyboardHandler(questionsHandler) {
         return delegateIfNoSelectedFieldTo(questionsHandler.handleDownKey);
     };
     api.handleTabKey = function() {
-        return switchActiveField(function(i) { return i+1; }, true);
+        var currentField = selectedModel(fields);
+        var isValid = (currentField ? currentField.isValid() : true);
+        if(isValid) {
+            $("#error-message").css("display", "none");
+            return switchActiveField(function(i) { return i+1; }, true);
+        } else {
+            $("#error-message").css("display", "inline-block");
+            return true;
+        }
+
     };
     api.handleShiftTabKey = function() {
+        $("#error-message").css("display", "none");
         return switchActiveField(function(i) { return i-1; }, false);
     };
     api.handleEscKey = function() {
-        var field = selectedField();
+        var field = selectedModel(fields);
         if(field) {
             field.toggleSelection();
             return true;
@@ -74,16 +87,13 @@ function QuestionsKeyboardHandler() {
 
     var api = {};
     api.selectedQuestion = function() {
-        return _.find(questions, function(q) { return q.isSelected; });
+        return selectedModel(questions);
     };
     api.addQuestion = function(question) {
         questions.push(question);
     };
-    api.selectedQuestion = function() {
-        return _.find(questions, function(q) { return q.isSelected; });
-    };
     api.handleUpKey = function() {
-        var question = api.selectedQuestion();
+        var question = selectedModel(questions);
         if(question) {
             var idx = _.indexOf(questions, question);
             if(idx > 0) {
@@ -99,7 +109,7 @@ function QuestionsKeyboardHandler() {
         return false;
     };
     api.handleDownKey = function() {
-        var question = api.selectedQuestion();
+        var question = selectedModel(questions);
         if(!question) {
             questions[0].toggleSelection();
             questions[0].parentSection.toggleSelection();
@@ -124,7 +134,7 @@ function QuestionsKeyboardHandler() {
 var SectionMouseHandler = function(sectionModels) {
     var sections = sectionModels;
     _.each(sections, function(s) {
-        s.title().click( function() {
+        s.title.click( function() {
             clickedSection(s);
         });
     });
@@ -146,8 +156,8 @@ var SectionMouseHandler = function(sectionModels) {
 var QuestionsMouseHandler = function(questionModels) {
     var questions = questionModels;
     _.each(questions, function(q) {
-        if(q.questionLi()) {
-            q.questionLi().click(function(event) {
+        if(q.questionLi) {
+            q.questionLi.click(function(event) {
                 clickedQuestion(q);
                 event.stopPropagation();
             });
@@ -168,7 +178,7 @@ var QuestionsMouseHandler = function(questionModels) {
 var FieldsMouseHandler = function(fieldsModels) {
     var fields = fieldsModels;
     _.each(fields, function(f) {
-        f.element().mousedown(function(event) {
+        f.element.mousedown(function(event) {
             clickedField(f);
             event.preventDefault();
         });

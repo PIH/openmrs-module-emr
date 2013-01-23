@@ -9,23 +9,3 @@ var Validators = {
         return isValid;
     }
 };
-
-function fieldIsValid(field) {
-    var classes = field.attr('class');
-    var isValid = true;
-    if(classes) {
-        isValid = _.reduce(classes.split(' '), function(memo, className) {
-            var isValid = true;
-            if(Validators[className]) {
-                isValid = Validators[className](field.val());
-            }
-            return memo && isValid;
-        }, true);
-    }
-    if(isValid) {
-        $("#error-message").css("display", "none");
-    } else {
-        $("#error-message").css("display", "inline-block");
-    }
-    return isValid;
-}
