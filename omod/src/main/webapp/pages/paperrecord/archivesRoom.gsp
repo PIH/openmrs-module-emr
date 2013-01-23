@@ -23,15 +23,15 @@
                 <div class="instructions">
                     <span class="instruction">
                         <strong>1.</strong>
-                        <span class="instruction-text">Select records to be printed</span>
+                        <span class="instruction-text">${ ui.message("emr.archivesRoom.selectRecords.label") }</span>
                     </span>
                     <span class="instruction">
                         <strong>2.</strong>
-                        <span class="instruction-text">Click to print records</span>
+                        <span class="instruction-text">${ ui.message("emr.archivesRoom.printRecords.label") }</span>
                     </span>
                     <span class="instruction">
                         <strong>3.</strong>
-                        <span class="instruction-text">Scan to send records</span>
+                        <span class="instruction-text">${ ui.message("emr.archivesRoom.sendRecords.label") }</span>
                     </span>
                 </div>
                 <div class="box-align">
@@ -98,15 +98,15 @@
                 <div class="instructions">
                     <span class="instruction">
                         <strong>1.</strong>
-                        <span class="instruction-text">Select records to be pulled</span>
+                        <span class="instruction-text">${ ui.message("emr.archivesRoom.selectRecordsPull.label") }</span>
                     </span>
                     <span class="instruction">
                         <strong>2.</strong>
-                        <span class="instruction-text">Click to pull records</span>
+                        <span class="instruction-text">${ ui.message("emr.archivesRoom.clickRecordsPull.label") }</span>
                     </span>
                     <span class="instruction">
                         <strong>3.</strong>
-                        <span class="instruction-text">Scan to send records</span>
+                        <span class="instruction-text">${ ui.message("emr.archivesRoom.sendRecords.label") }</span>
                     </span>
                 </div>
                 <div class="box-align">
