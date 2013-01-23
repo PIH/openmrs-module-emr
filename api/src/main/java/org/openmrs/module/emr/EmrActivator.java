@@ -142,6 +142,7 @@ public class EmrActivator implements ModuleActivator {
 			fullPrivilegeLevel = new Role();
 			fullPrivilegeLevel.setRole(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
 			fullPrivilegeLevel.setDescription(EmrConstants.PRIVILEGE_LEVEL_FULL_DESCRIPTION);
+            fullPrivilegeLevel.setUuid(EmrConstants.PRIVILEGE_LEVEL_FULL_UUID);
 			userService.saveRole(fullPrivilegeLevel);
 		}
 

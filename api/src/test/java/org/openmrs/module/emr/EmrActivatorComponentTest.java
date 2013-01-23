@@ -61,6 +61,7 @@ public class EmrActivatorComponentTest extends BaseModuleContextSensitiveTest {
         // ensure Privilege Level: Full role
         Role fullPrivsRole = userService.getRole(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
         assertThat(fullPrivsRole, is(notNullValue()));
+        assertThat(fullPrivsRole.getUuid(), is(EmrConstants.PRIVILEGE_LEVEL_FULL_UUID));
 
         // verify scheduled task is started
         TaskDefinition closeStaleVisitsTask = schedulerService.getTaskByName(EmrConstants.TASK_CLOSE_STALE_VISITS_NAME);
