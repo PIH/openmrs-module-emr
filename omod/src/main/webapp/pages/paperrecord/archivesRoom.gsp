@@ -20,9 +20,21 @@
 
         <div id="tab-create">
             <span id="createrequest">
+                <div class="instructions">
+                    <span class="instruction">
+                        <strong>1.</strong>
+                        <span class="instruction-text">Select records to be printed</span>
+                    </span>
+                    <span class="instruction">
+                        <strong>2.</strong>
+                        <span class="instruction-text">Click to print records</span>
+                    </span>
+                    <span class="instruction">
+                        <strong>3.</strong>
+                        <span class="instruction-text">Scan to send records</span>
+                    </span>
+                </div>
                 <div class="box-align">
-                    <h2 id="create_requests">${ ui.message("emr.archivesRoom.newRequests.label") }</h2>
-
                     <table id="create_requests_table">
                         <thead>
                         <tr>
@@ -44,13 +56,20 @@
                 </div>
                 <div class="box-align btn">
                     <button id="assign-to-create-button" data-bind="css: { disabled: !isValid() }, enable: isValid()">
-                        <i class="icon-chevron-right"></i> <span>${ ui.message("emr.archivesRoom.createSelected") }</span>
+                        <i class="icon-print"></i> <span>${ ui.message("emr.archivesRoom.printSelected") }</span>
+                        <span id="arrow-border-button"></span>
+                        <span id="arrow-button"></span>
                     </button>
                 </div>
             </span>
-
             <div id="assignedcreaterequest" class="box-align">
-                <h2 id="under_creation">${ ui.message("emr.archivesRoom.underCreation") }</h2>
+                <div class="sending-records">
+                    <div id="scan-create-records" class="container">
+                        <form class="mark-as-pulled">
+                            <input type="text" size="40" name="mark-as-pulled-identifier" class="mark-as-pulled-identifier" placeholder="${ ui.message("emr.archivesRoom.typeOrIdentifyBarCode.label") }"/>
+                        </form>
+                    </div>
+                </div>
                 <table id="assigned_create_requests_table">
                     <thead>
                     <tr>
@@ -71,24 +90,26 @@
                     </tr>
                     </tbody>
                 </table>
-                <div class="sending-records">
-                    <h2>${ ui.message("emr.archivesRoom.sendingRecords.label") }</h2>
-
-                    <div id="scan-create-records" class="container">
-                        ${ ui.message("emr.archivesRoom.typeOrIdentifyBarCode.label") }
-                        <br/>
-                        <form class="mark-as-pulled">
-                            <input type="text" size="40" name="mark-as-pulled-identifier" class="mark-as-pulled-identifier"/>
-                        </form>
-                    </div>
-                </div>
             </div>
         </div>
 
         <div id="tab-pull">
             <span id="pullrequest">
+                <div class="instructions">
+                    <span class="instruction">
+                        <strong>1.</strong>
+                        <span class="instruction-text">Select records to be pulled</span>
+                    </span>
+                    <span class="instruction">
+                        <strong>2.</strong>
+                        <span class="instruction-text">Click to pull records</span>
+                    </span>
+                    <span class="instruction">
+                        <strong>3.</strong>
+                        <span class="instruction-text">Scan to send records</span>
+                    </span>
+                </div>
                 <div class="box-align">
-                    <h2 id="pull_requests">${ ui.message("emr.archivesRoom.pullRequests.label") }</h2>
                     <table id="pull_requests_table">
                         <thead>
                         <tr>
@@ -110,14 +131,20 @@
                 </div>
                 <div class="box-align btn">
                     <button id="assign-to-pull-button" class="print" data-bind="css: { disabled: !isValid() }, enable: isValid()">
-                        <i class="icon-chevron-right"></i> <span>${ ui.message("emr.archivesRoom.pullSelected") }</span>
+                        <i class="icon-folder-open"></i> <span>${ ui.message("emr.archivesRoom.pullSelected") }</span>
+                        <span id="arrow-border-button"></span>
+                        <span id="arrow-button"></span>
                     </button>
                 </div>
             </span>
                 <div id="assignedpullrequest" class="box-align">
-                    <h2 id="assigned_pull_requests">${ ui.message("emr.archivesRoom.assignedPullRequests.label") }</h2>
-
-
+                    <div class="sending-records">
+                        <div id="scan-pull-records" class="container">
+                            <form class="mark-as-pulled">
+                                <input type="text" size="40" name="mark-as-pulled-identifier" class="mark-as-pulled-identifier" placeholder="${ ui.message("emr.archivesRoom.typeOrIdentifyBarCode.label") }"/>
+                            </form>
+                        </div>
+                    </div>
                     <table id="assigned_pull_requests_table" >
                         <thead>
                         <tr>
@@ -138,17 +165,6 @@
                         </tr>
                         </tbody>
                     </table>
-                    <div class="sending-records">
-                        <h2>${ ui.message("emr.archivesRoom.sendingRecords.label") }</h2>
-
-                        <div id="scan-pull-records" class="container">
-                            ${ ui.message("emr.archivesRoom.typeOrIdentifyBarCode.label") }
-                            <br/>
-                            <form class="mark-as-pulled">
-                                <input type="text" size="40" name="mark-as-pulled-identifier" class="mark-as-pulled-identifier"/>
-                            </form>
-                        </div>
-                    </div>
                 </div>
         </div>
         <div id="tab-merge">

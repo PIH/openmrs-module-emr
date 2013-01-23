@@ -10,6 +10,9 @@
 <script type="text/javascript">
     jQuery(function() {
         KeyboardController();
+        jQuery("#cancelSubmission").click(function() {
+            window.location.href = emr.pageLink("emr", "patient", {patientId:${patient.id}});
+        });
     });
 </script>
 
@@ -115,7 +118,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
         <div id="confirmation">
             <span class="title">Confirm</span>
             <div id="confirmationQuestion">
-                Confirm submission? <input type="submit" value="Yes" /> or <input type="button" value="No" />
+                Confirm submission? <input type="submit" value="Yes" /> or <input id="cancelSubmission" type="button" value="No" />
             </div>
         </div>
     </form>
