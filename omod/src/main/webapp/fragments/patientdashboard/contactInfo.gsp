@@ -2,16 +2,15 @@
 
 <div class="contact-info">
     <ul>
-        <li><strong>${ ui.message("emr.person.address")}: </strong> ${patient.personAddress['address2']},
+        <li><strong>${ ui.message("emr.person.address")}: </strong>
         <% addressHierarchyLevels.each { addressLevel -> %>
-            <% if (addressLevel != 'address2'){ %>
-                ${patient.personAddress[addressLevel]}
+           <% if(patient.personAddress!=null) { %>
+                 ${patient.personAddress[addressLevel]}
                 <% if(addressLevel != addressHierarchyLevels.last()){%>,
                 <% }%>
-
             <% }%>
         <% } %>
         </li>
-        <li><strong>${ ui.message("emr.person.telephoneNumber")}:</strong> ${patient.telephoneNumber}</li>
+        <li><strong>${ ui.message("emr.person.telephoneNumber")}:</strong> ${patient.telephoneNumber ?: ''}</li>
     </ul>
 </div>
