@@ -1,17 +1,22 @@
 @import "colors";
 @import "compass";
 
-.date h6{
-  border-bottom: 1px solid #ccc;
-  color: $text;
-  margin: 0px;
-}
 
 #mergeRequests ul {
   margin: 0 60px;
+
+  h6 {
+    border-bottom: 1px solid #ccc;
+    font-family: "OpenSans";
+    font-weight: normal;
+    color: #777;
+    margin: 10px 0 0 0;
+    font-size: 1em;
+  }
+
 }
 
-.row {
+.patients-to-merge {
   border-bottom: 1px solid #ccc;
   text-align:center;
   background: #EEE;
