@@ -98,7 +98,7 @@ public class AccountPageController {
 				request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
                         messageSourceService.getMessage("emr.account.saved"));
 				
-				return "redirect:/emr/account/account.page?personId=" + account.getPerson().getPersonId();
+				return "redirect:/emr/account/manageAccounts.page";
 			}
 			catch (Exception e) {
 				log.warn("Some error occurred while saving account details:", e);
