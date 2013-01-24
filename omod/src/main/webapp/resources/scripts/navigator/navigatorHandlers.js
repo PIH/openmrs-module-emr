@@ -132,23 +132,29 @@ function QuestionsKeyboardHandler() {
 
 var SectionMouseHandler = function(sectionModels) {
     var sections = sectionModels;
-    _.each(sections, function(s) {
-        s.title.click( function() {
-            clickedSection(s);
+    _.each(sections, function(section) {
+        section.title.click( function(event) {
+            event.stopPropagation();
+            clickedSection(section);
         });
     });
 
     var clickedSection = function(section) {
-        _.each(sections, function(s) {
-            if(section == s) {
-                if(!s.isSelected) {
-                    s.select();
-                    s.questions[0].select();
-                }
-            } else {
-                s.unselect();
-            }
-        });
+        var currentSection = selectedModel(sections);
+        if(currentSection == section) {
+            return;
+        }
+
+        var currentSectionIndex = _.indexOf(sections, currentSection);
+        var clickedSectionIndex = _.indexOf(sections, section);
+        if(clickedSectionIndex > currentSectionIndex && !currentSection.isValid()) {
+            var selectedQuestion = selectedModel(currentSection.questions);
+            var selectedField = selectedModel(selectedQuestion.fields);
+            selectedField && selectedField.select();
+            return
+        }
+        currentSection.toggleSelection();
+        section.toggleSelection();
     }
 };
 
@@ -179,7 +185,6 @@ var QuestionsMouseHandler = function(questionModels) {
 
         currentQuestion.toggleSelection();
         question.toggleSelection();
-        return;
     };
 };
 

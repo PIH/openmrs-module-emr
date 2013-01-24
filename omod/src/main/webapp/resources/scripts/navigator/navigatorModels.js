@@ -98,6 +98,7 @@ QuestionModel.prototype.select = function() {
     SelectableModel.prototype.select.apply(this);
     this.valueElement.text("");
     this.questionLi.addClass("focused");
+    _.each(this.fields, function(field) { field.messagesContainer.empty(); field.element.removeClass("error"); });
 }
 QuestionModel.prototype.unselect = function() {
     SelectableModel.prototype.unselect.apply(this);
@@ -138,11 +139,17 @@ SectionModel.prototype.constructor = SectionModel;
 SectionModel.prototype.select = function() {
     SelectableModel.prototype.select.apply(this);
     this.title.addClass("doing");
+    this.questions[0].select();
 }
 SectionModel.prototype.unselect = function() {
     SelectableModel.prototype.unselect.apply(this);
     this.title.removeClass("doing");
     _.each(this.questions, function(question) { question.unselect() });
+}
+SectionModel.prototype.isValid = function() {
+    return _.reduce(this.questions, function(memo, question) {
+        return question.isValid() && memo;
+    }, true);
 }
 
 
@@ -174,4 +181,7 @@ ConfirmationSectionModel.prototype.select = function() {
             listElement.append("<li><span class='label'>" + question.title() + "</span> <span>" + question.value() + "</span></li>");
         })
     });
+}
+ConfirmationSectionModel.prototype.isValid = function() {
+    return true;
 }
