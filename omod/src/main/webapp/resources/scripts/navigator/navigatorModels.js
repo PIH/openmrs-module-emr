@@ -23,9 +23,10 @@ SelectableModel.prototype = {
 /*
  * Prototype for fields
  */
-function FieldModel(elem, parentQuestion) {
+function FieldModel(elem, parentQuestion, messagesContainer) {
     SelectableModel.apply(this, [elem]);
     this.parentQuestion = parentQuestion;
+    this.messagesContainer = messagesContainer;
     this.validators = [];
 
     var classes = this.element.attr("class");
@@ -43,13 +44,28 @@ FieldModel.prototype.select = function() {
 }
 FieldModel.prototype.unselect = function() {
     SelectableModel.prototype.unselect.apply(this);
+    this.element.removeClass("error");
     this.element.blur();
 }
 FieldModel.prototype.isValid = function() {
-    var isValid = _.reduce(this.validators, function(memo, validator) {
-        return memo && validator(this.element.val());
-    }, true, this);
-    return isValid;
+    var validationMessages = _.reduce(this.validators, function(memo, validator) {
+        var validationMessage = validator.validate(this);
+        if (validationMessage) {
+            memo.push(validationMessage);
+        }
+        return memo;
+    }, [], this);
+
+    this.messagesContainer.empty();
+    if(validationMessages.length > 0) {
+        _.each(validationMessages, function(message) {
+           this.messagesContainer.append("<li>" + message + "</li>");
+        }, this);
+        this.element.addClass("error");
+        this.messagesContainer.css("display", "inline");
+        return false;
+    }
+    return true;
 }
 FieldModel.prototype.value = function() {
     var selectedOption = this.element.find('option:selected');
@@ -65,8 +81,9 @@ FieldModel.prototype.value = function() {
 function QuestionModel(elem, section, titleListElem) {
     SelectableModel.apply(this, [elem]);
     this.parentSection = section;
-    this.fields = _.map(this.element.find("input, select"), function(fieldElement) {
-        return new FieldModel(fieldElement, this);
+    var fieldContainers = this.element.find("p");
+    this.fields = _.map(fieldContainers, function(container) {
+        return new FieldModel($(container).find("input, select").first(), this, $(container).find("span.field-error").first());
     }, this);
     this.valueElement = $("<span></span>");
     var questionLegend = this.element.find('legend').first();
@@ -91,7 +108,7 @@ QuestionModel.prototype.unselect = function() {
 }
 QuestionModel.prototype.isValid = function() {
     return _.reduce(this.fields, function(memo, field) {
-        return memo && field.isValid();
+        return field.isValid() && memo;
     }, true);
 }
 QuestionModel.prototype.title = function() {

@@ -56,19 +56,16 @@ function FieldsKeyboardHandler(questionsHandler) {
         return delegateIfNoSelectedFieldTo(questionsHandler.handleDownKey);
     };
     api.handleTabKey = function() {
+
         var currentField = selectedModel(fields);
         var isValid = (currentField ? currentField.isValid() : true);
         if(isValid) {
-            $("#error-message").css("display", "none");
             return switchActiveField(function(i) { return i+1; }, true);
-        } else {
-            $("#error-message").css("display", "inline-block");
-            return true;
         }
+        return true;
 
     };
     api.handleShiftTabKey = function() {
-        $("#error-message").css("display", "none");
         return switchActiveField(function(i) { return i-1; }, false);
     };
     api.handleEscKey = function() {
@@ -116,6 +113,9 @@ function QuestionsKeyboardHandler() {
             return true;
         }
 
+        if(!question.isValid()) {
+            return true;
+        }
         var idx = _.indexOf(questions, question);
         if(idx < questions.length-1) {
             question.toggleSelection();

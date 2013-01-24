@@ -22,12 +22,6 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 <div id="content" class="container">
     <h2>Retrospective Check-in</h2>
     <form id="retrospectiveCheckin" method="POST">
-        <div id="error-message" class="note error">
-            <div class="icon"><i class="icon-remove medium"></i></div>
-            <div class="text">
-                <p></p>
-            </div>
-        </div>
         <input type="hidden" name="patientId" value="${patient.id}" />
 
         <section id="checkinInformation">

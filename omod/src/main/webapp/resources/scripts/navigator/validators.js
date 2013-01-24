@@ -1,11 +1,26 @@
-var Validators = {
-    required: function(fieldValue) {
-        var isValid = fieldValue != null && (fieldValue.length > 0);
-        if(isValid) {
-            $("#error-message p").text("");
-        } else {
-            $("#error-message p").text("This field can't be blank!");
+/*
+ * Base prototype for validators
+ */
+function FieldValidator() {};
+FieldValidator.prototype = {
+    constructor: FieldValidator,
+    validate: function(field) {
+        if(!this.isValid(field.value())) {
+            return this.errorMessage;
         }
-        return isValid;
+        return null;
     }
-};
+}
+
+function RequiredFieldValidator() {
+    this.errorMessage = "This field can't be blank!";
+}
+RequiredFieldValidator.prototype = new FieldValidator();
+RequiredFieldValidator.prototype.constructor = RequiredFieldValidator;
+RequiredFieldValidator.prototype.isValid = function(fieldValue) {
+    return fieldValue != null && fieldValue.length > 0;
+}
+
+var Validators = {
+    required: new RequiredFieldValidator()
+}
