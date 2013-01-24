@@ -1,236 +1,177 @@
+/*
+ * Base prototype for selectable models
+ */
 function SelectableModel(elem) {
-    var element = $(elem);
+    this.element = $(elem);
     this.isSelected = false;
-
-    this.parentSelect = function() {
+    this.toggleSelection = this.select;
+}
+SelectableModel.prototype = {
+    constructor: SelectableModel,
+    select: function() {
         this.isSelected = true;
-        element.addClass("focused");
+        this.element.addClass("focused");
         this.toggleSelection = this.unselect;
-    };
-
-    this.parentUnselect = function() {
+    },
+    unselect: function() {
         this.isSelected = false;
-        element.removeClass("focused");
+        this.element.removeClass("focused");
         this.toggleSelection = this.select;
-    };
-
-    return this;
-}
-
-function FieldModel(question, elem) {
-    var element = $(elem);
-
-    var model = {};
-    $.extend(model, SelectableModel(elem));
-
-    model.parentQuestion = question;
-    model.select = function() {
-        model.parentSelect();
-        element.focus();
-    };
-
-    model.unselect = function() {
-        model.parentUnselect();
-        element.blur();
-    };
-
-    model.value = function() {
-        var selectedOption = element.find('option:selected');
-        if(selectedOption.length > 0) {
-            return selectedOption.text();
-        }
-        if(element.val()) {
-            return element.val();
-        }
-        return "";
-    };
-
-    model.element = function() {
-        return element;
     }
-
-    model.toggleSelection = model.select;
-
-    return model;
 }
 
-function QuestionModel(section, elem) {
-    var element = $(elem);
+/*
+ * Prototype for fields
+ */
+function FieldModel(elem, parentQuestion, messagesContainer) {
+    SelectableModel.apply(this, [elem]);
+    this.parentQuestion = parentQuestion;
+    this.messagesContainer = messagesContainer;
+    this.validators = [];
 
-    var questionLegend = element.find('legend').first();
-    var questionTitle = questionLegend.text();
-    questionLegend.append("<span></span>");
-    var valueElement = questionLegend.find('span').first();
-    var fieldSeparator = element.attr('field-separator') ? element.attr('field-separator') : ' ';
-    var computedValue = function() {
-        return _.map(model.fields, function(f) { return f.value() }).join(fieldSeparator);
-    };
-    var questionLi;
+    var classes = this.element.attr("class");
+    if(classes) {
+        _.each(classes.split(' '), function(klass) {
+            Validators[klass] && this.validators.push(Validators[klass]);
+        }, this);
+    }
+}
+FieldModel.prototype = new SelectableModel();
+FieldModel.prototype.constructor = FieldModel;
+FieldModel.prototype.select = function() {
+    SelectableModel.prototype.select.apply(this);
+    this.element.focus();
+}
+FieldModel.prototype.unselect = function() {
+    SelectableModel.prototype.unselect.apply(this);
+    this.element.removeClass("error");
+    this.element.blur();
+}
+FieldModel.prototype.isValid = function() {
+    var validationMessages = _.reduce(this.validators, function(memo, validator) {
+        var validationMessage = validator.validate(this);
+        if (validationMessage) {
+            memo.push(validationMessage);
+        }
+        return memo;
+    }, [], this);
 
-    var model = {};
+    this.messagesContainer.empty();
+    if(validationMessages.length > 0) {
+        _.each(validationMessages, function(message) {
+           this.messagesContainer.append("<li>" + message + "</li>");
+        }, this);
+        this.element.addClass("error");
+        this.messagesContainer.css("display", "inline");
+        return false;
+    }
+    return true;
+}
+FieldModel.prototype.value = function() {
+    var selectedOption = this.element.find('option:selected');
+    if(selectedOption.length > 0) {
+        return selectedOption.text();
+    }
+    return this.element.val() ? this.element.val() : "";
+}
 
-    $.extend(model, SelectableModel(elem));
+/*
+ * Prototype for questions
+ */
+function QuestionModel(elem, section, titleListElem) {
+    SelectableModel.apply(this, [elem]);
+    this.parentSection = section;
+    var fieldContainers = this.element.find("p");
+    this.fields = _.map(fieldContainers, function(container) {
+        return new FieldModel($(container).find("input, select").first(), this, $(container).find("span.field-error").first());
+    }, this);
+    this.valueElement = $("<span></span>");
+    var questionLegend = this.element.find('legend').first();
+    this.valueElement.appendTo(questionLegend);
+    this.questionLi = $('<li><span>' + questionLegend.text() + '</span></li>');
+    this.questionLi.appendTo(titleListElem);
+    this.fieldSeparator = this.element.attr('field-separator') ? this.element.attr('field-separator') : ' ';
+}
+QuestionModel.prototype = new SelectableModel();
+QuestionModel.prototype.constructor = QuestionModel;
+QuestionModel.prototype.select = function() {
+    SelectableModel.prototype.select.apply(this);
+    this.valueElement.text("");
+    this.questionLi.addClass("focused");
+}
+QuestionModel.prototype.unselect = function() {
+    SelectableModel.prototype.unselect.apply(this);
+    this.valueElement.text( _.map(this.fields, function(field) { return field.value() }, this).join(this.fieldSeparator) );
+    this.valueElement.show();
+    _.each(this.fields, function(field) { field.unselect(); });
+    this.questionLi.removeClass("focused");
+}
+QuestionModel.prototype.isValid = function() {
+    return _.reduce(this.fields, function(memo, field) {
+        return field.isValid() && memo;
+    }, true);
+}
+QuestionModel.prototype.title = function() {
+    return this.valueElement;
+}
 
-    model.parentSection = section;
-    model.fields = _.map(element.find("input, select"), function(i) {
-        return FieldModel(model, i);
+/*
+ * Prototype for sections
+ */
+function SectionModel(elem, formMenuElem) {
+    SelectableModel.apply(this, [elem]);
+
+    var title = this.element.find("span.title").first();
+    var newTitle = $("<li><span>" + title.text() + "</span></li>");
+    var questionsTitlesList = $("<ul></ul>");
+    newTitle.append(questionsTitlesList);
+    formMenuElem.append(newTitle);
+    title.remove();
+
+    this.title = newTitle;
+    this.questions = _.map(this.element.find("fieldset"), function(questionElement) {
+        return new QuestionModel(questionElement, this, questionsTitlesList);
+    }, this);
+}
+SectionModel.prototype = new SelectableModel();
+SectionModel.prototype.constructor = SectionModel;
+SectionModel.prototype.select = function() {
+    SelectableModel.prototype.select.apply(this);
+    this.title.addClass("doing");
+}
+SectionModel.prototype.unselect = function() {
+    SelectableModel.prototype.unselect.apply(this);
+    this.title.removeClass("doing");
+    _.each(this.questions, function(question) { question.unselect() });
+}
+
+
+function ConfirmationSectionModel(elem, formMenuElem, regularSections) {
+    SelectableModel.apply(this, [elem]);
+    this.sections = regularSections;
+
+    var title = this.element.find("span.title").first();
+    this.title = $("<li><span>" + title.text() + "</span></li>");
+    formMenuElem.append(this.title);
+    title.remove();
+    this.dataCanvas = $("<div id='dataCanvas'></div>");
+    this.element.append(this.dataCanvas);
+
+    this.questions = _.map(this.element.find("#confirmationQuestion"), function(questionElement) {
+        return new QuestionModel(questionElement, this);
+    }, this);
+}
+ConfirmationSectionModel.prototype = new SelectableModel();
+ConfirmationSectionModel.prototype.constructor = ConfirmationSectionModel;
+ConfirmationSectionModel.prototype.select = function() {
+    SelectableModel.prototype.select.apply(this);
+    this.title.addClass("doing");
+
+    var listElement = $("<ul></ul>");
+    this.dataCanvas.append(listElement);
+    _.each(this.sections, function(section) {
+        _.each(section.questions, function(question) {
+            listElement.append("<li><span class='label'>" + question.title() + "</span> <span>" + question.value() + "</span></li>");
+        })
     });
-
-    model.select = function() {
-        model.parentSelect();
-        valueElement.text("");
-        if(questionLi) {
-            questionLi.addClass("focused");
-        }
-    };
-    model.unselect = function() {
-        model.parentUnselect();
-        valueElement.text(computedValue())
-        valueElement.show();
-        _.each(model.fields, function(f) {
-            f.unselect();
-        });
-        if(questionLi) {
-            questionLi.removeClass("focused");
-        }
-    };
-
-    model.questionLegend = function() {
-        return questionLegend;
-    }
-    model.questionLi = function() {
-        return questionLi;
-    }
-    model.title = function() {
-        return questionTitle;
-    };
-    model.value = function() {
-        return computedValue();
-    };
-    model.hide = function() {
-        element.hide();
-    };
-    model.show = function() {
-        element.show();
-    };
-    model.moveTitleTo = function(elem) {
-      questionLi = $('<li><span>' + questionTitle + '</span></li>');
-      elem.append(questionLi);
-    };
-
-    model.toggleSelection = model.select;
-
-    return model;
-}
-
-function SectionMixin(elem) {
-    $.extend(this, SelectableModel(elem));
-
-    var element = $(elem);
-    this.select = function() {
-        this.parentSelect();
-        this
-    }
-    return this;
-}
-
-function SectionModel(elem) {
-    var element = $(elem);
-    var title = element.find("span.title").first();
-
-    var model = {};
-
-    $.extend(model, SelectableModel(elem));
-
-    model.questions = _.map(element.find("fieldset"), function(q) {
-        return QuestionModel(model, q);
-    });
-
-    model.select = function() {
-        model.parentSelect();
-        title.addClass("doing");
-    };
-
-    model.unselect = function() {
-        model.parentUnselect();
-        title.removeClass("doing");
-        _.each(model.questions, function(q) {
-            q.unselect();
-        });
-    };
-
-    model.moveTitleTo = function(el) {
-        var newTitle = $("<li><span>" + title.text() + "</span></li>");
-        var list = $("<ul></ul>");
-        _.each(model.questions, function(q) {
-            q.moveTitleTo(list);
-        });
-        newTitle.append(list);
-        title.remove();
-        el.append(newTitle);
-        title = newTitle;
-    };
-    model.title = function() {
-        return title;
-    };
-
-    model.toggleSelection = model.select;
-
-    return model;
-}
-
-function ConfirmationSectionModel(elem, regularSections) {
-    var element = $(elem);
-    var sections = regularSections;
-    var title = element.find("span.title").first();
-
-    var dataCanvas = $("<div id='dataCanvas'></div>");
-    element.append(dataCanvas);
-
-    var showDataForConfirmation = function() {
-        dataCanvas.append("<ul></ul>");
-        var listElement = dataCanvas.find("ul").first();
-        _.each(sections, function(s) {
-            _.each(s.questions, function(q) {
-                listElement.append("<li><span class='label'>" + q.title() + "</span> <span>" + q.value() + "</span></li>");
-            })
-        });
-    };
-
-    var model = {};
-    $.extend(model, SelectableModel(elem));
-
-    model.questions = _.map(element.find("#confirmationQuestion"), function(q) {
-        return QuestionModel(model, q);
-    });
-
-    model.select = function() {
-        model.parentSelect();
-        title.addClass("doing");
-        showDataForConfirmation();
-    };
-
-    model.unselect = function() {
-        model.parentUnselect();
-        title.removeClass("doing");
-        _.each(model.questions, function(q) {
-            q.unselect();
-        });
-        dataCanvas.empty();
-    };
-
-    model.moveTitleTo = function(el) {
-        var newTitle = $("<li><span>" + title.text() + "</span></li>");
-        title.remove();
-        el.append(newTitle);
-        title = newTitle;
-    };
-
-    model.title = function() {
-        return title;
-    };
-
-    model.toggleSelection = model.select;
-
-    return model;
 }

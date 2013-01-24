@@ -3,6 +3,11 @@
 
 form#retrospectiveCheckin {
   background: #F9F9F9 url(../images/aside-bg.png) repeat-y -20px;
+
+  div#error-message {
+    display: none;
+    margin-left: 40px;
+  }
 }
 ul#formBreadcrumb {
   float: left;
@@ -125,6 +130,10 @@ section, #confirmation {
     select, input {
       &:focus {
         border: 2px solid $link;
+
+      }
+      &.error {
+        border-color: $error;
       }
     }
 

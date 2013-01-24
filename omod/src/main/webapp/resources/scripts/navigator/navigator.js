@@ -7,13 +7,10 @@ function initFormModels(formEl) {
     var breadcrumb = formElement.find('#formBreadcrumb').first();
 
     var sections = _.map(formElement.find('section'), function(s) {
-        var section = SectionModel(s);
-        section.moveTitleTo(breadcrumb);
-        return section;
+        return new SectionModel(s, breadcrumb);
     });
 
-    var confirmationSection = ConfirmationSectionModel($('#confirmation'), _.clone(sections));
-    confirmationSection.moveTitleTo(breadcrumb);
+    var confirmationSection = new ConfirmationSectionModel($('#confirmation'), breadcrumb, _.clone(sections));
     sections.push(confirmationSection);
 
     var questions = _.flatten( _.map(sections, function(s) { return s.questions; }), true);
