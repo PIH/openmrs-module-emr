@@ -49,7 +49,7 @@
             })
         }
 
-        jq('.viewVisitDetails').click(function() {
+        jq('a.viewVisitDetails').click(function() {
             jq.getJSON(emr.fragmentActionLink("emr", "visit/visitDetails", "getVisitDetails", {visitId:jq(this).attr('visitId')}) )
                     .success(function(data) {
                         visitDetailsSection.html(visitDetailsTemplate(data));
@@ -59,6 +59,7 @@
                     .error(function(err) {
                         emr.errorMessage(err);
                     });
+            return false;
         });
     });
 </script>
@@ -80,7 +81,7 @@
             <td>${dateFormat.format(wrapper.visit.startDatetime)} <br>(${wrapper.differenceInDaysBetweenCurrentDateAndStartDate} days ago) </td>
             <td>${timeFormat.format(wrapper.visit.startDatetime)}</td>
             <td>${ ui.format(wrapper.visit.location) }</td>
-            <td><input class="viewVisitDetails" type="button" value="View details" visitId="${wrapper.visit.visitId}"/></td>
+            <td><a href="#" class="viewVisitDetails" visitId="${wrapper.visit.visitId}">View this visit details <i class="icon-chevron-right link"></i></a></td>
         </tr>
         <% } %>
     </table>
