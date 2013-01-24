@@ -139,7 +139,6 @@ SectionModel.prototype.constructor = SectionModel;
 SectionModel.prototype.select = function() {
     SelectableModel.prototype.select.apply(this);
     this.title.addClass("doing");
-    this.questions[0].select();
 }
 SectionModel.prototype.unselect = function() {
     SelectableModel.prototype.unselect.apply(this);
@@ -173,7 +172,6 @@ ConfirmationSectionModel.prototype.constructor = ConfirmationSectionModel;
 ConfirmationSectionModel.prototype.select = function() {
     SelectableModel.prototype.select.apply(this);
     this.title.addClass("doing");
-    this.questions[0].select();
 
     var listElement = $("<ul></ul>");
     this.dataCanvas.append(listElement);

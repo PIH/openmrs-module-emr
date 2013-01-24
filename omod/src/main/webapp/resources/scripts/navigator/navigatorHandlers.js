@@ -18,9 +18,8 @@ function FieldsKeyboardHandler(questionsHandler) {
             if(previousFieldParentQuestion.parentSection != currentFieldParentQuestion.parentSection) {
                 previousFieldParentQuestion.parentSection.toggleSelection();
                 currentFieldParentQuestion.parentSection.toggleSelection();
-            } else {
-                currentFieldParentQuestion.toggleSelection();
             }
+            currentFieldParentQuestion.toggleSelection();
         }
     };
     var switchActiveField = function(fieldIndexUpdater, showFirstFieldIfNoneIsActive) {
@@ -165,6 +164,8 @@ var SectionMouseHandler = function(sectionModels) {
         }
         currentSection.toggleSelection();
         section.toggleSelection();
+        section.questions[0].toggleSelection();
+        section.questions[0].fields[0].toggleSelection();
     }
 };
 
@@ -195,6 +196,7 @@ var QuestionsMouseHandler = function(questionModels) {
 
         currentQuestion.toggleSelection();
         question.toggleSelection();
+        question.fields[0].toggleSelection();
     };
 };
 
