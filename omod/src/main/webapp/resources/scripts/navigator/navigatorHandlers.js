@@ -56,7 +56,6 @@ function FieldsKeyboardHandler(questionsHandler) {
         return delegateIfNoSelectedFieldTo(questionsHandler.handleDownKey);
     };
     api.handleTabKey = function() {
-
         var currentField = selectedModel(fields);
         var isValid = (currentField ? currentField.isValid() : true);
         if(isValid) {
@@ -155,23 +154,32 @@ var SectionMouseHandler = function(sectionModels) {
 
 var QuestionsMouseHandler = function(questionModels) {
     var questions = questionModels;
-    _.each(questions, function(q) {
-        if(q.questionLi) {
-            q.questionLi.click(function(event) {
-                clickedQuestion(q);
+    _.each(questions, function(question) {
+        if(question.questionLi) {
+            question.questionLi.click(function(event) {
                 event.stopPropagation();
+                clickedQuestion(question);
             });
         }
     });
 
     var clickedQuestion = function(question) {
-        _.each(questions, function(q) {
-            if(question == q) {
-                q.select();
-            } else {
-                q.unselect();
-            }
-        });
+        var currentQuestion = selectedModel(questions);
+        if(currentQuestion == question) {
+            return;
+        }
+
+        var currentQuestionIndex = _.indexOf(questions, currentQuestion);
+        var clickedQuestionIndex = _.indexOf(questions, question);
+        if(clickedQuestionIndex > currentQuestionIndex && !currentQuestion.isValid()) {
+            var selectedField = selectedModel(currentQuestion.fields);
+            selectedField && selectedField.select();
+            return;
+        }
+
+        currentQuestion.toggleSelection();
+        question.toggleSelection();
+        return;
     };
 };
 
@@ -189,8 +197,16 @@ var FieldsMouseHandler = function(fieldsModels) {
 
     var clickedField = function(field) {
         var currentField = selectedField();
-        if(field != currentField && currentField.toggleSelection()) {
-            field.toggleSelection();
+        if(currentField == field) {
+            return;
         }
+
+        var currentFieldIndex = _.indexOf(fields, currentField);
+        var clickedFieldIndex = _.indexOf(fields, field);
+        if(clickedFieldIndex > currentFieldIndex && !currentField.isValid()) {
+            return;
+        }
+        currentField.toggleSelection();
+        field.toggleSelection();
     };
 };
