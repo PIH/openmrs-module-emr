@@ -119,7 +119,9 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
         <div id="confirmation">
             <span class="title">Confirm</span>
             <div id="confirmationQuestion">
-                Confirm submission? <input type="submit" value="Yes" /> or <input id="cancelSubmission" type="button" value="No" />
+                <p>
+                    Confirm submission? <input type="submit" value="Yes" /> or <input id="cancelSubmission" type="button" value="No" />
+                </p>
             </div>
         </div>
     </form>

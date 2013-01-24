@@ -18,8 +18,9 @@ function FieldsKeyboardHandler(questionsHandler) {
             if(previousFieldParentQuestion.parentSection != currentFieldParentQuestion.parentSection) {
                 previousFieldParentQuestion.parentSection.toggleSelection();
                 currentFieldParentQuestion.parentSection.toggleSelection();
+            } else {
+                currentFieldParentQuestion.toggleSelection();
             }
-            currentFieldParentQuestion.toggleSelection();
         }
     };
     var switchActiveField = function(fieldIndexUpdater, showFirstFieldIfNoneIsActive) {
@@ -66,6 +67,15 @@ function FieldsKeyboardHandler(questionsHandler) {
     };
     api.handleShiftTabKey = function() {
         return switchActiveField(function(i) { return i-1; }, false);
+    };
+    api.handleEnterKey = function() {
+        var currentField = selectedModel(fields);
+        var fieldType = currentField.element.attr("type");
+        if(fieldType && fieldType.match(/submit|button/)) {
+            currentField.element.click();
+        } else {
+            api.handleTabKey();
+        }
     };
     api.handleEscKey = function() {
         var field = selectedModel(fields);

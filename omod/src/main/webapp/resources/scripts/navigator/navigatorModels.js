@@ -173,14 +173,21 @@ ConfirmationSectionModel.prototype.constructor = ConfirmationSectionModel;
 ConfirmationSectionModel.prototype.select = function() {
     SelectableModel.prototype.select.apply(this);
     this.title.addClass("doing");
+    this.questions[0].select();
 
     var listElement = $("<ul></ul>");
     this.dataCanvas.append(listElement);
     _.each(this.sections, function(section) {
         _.each(section.questions, function(question) {
-            listElement.append("<li><span class='label'>" + question.title() + "</span> <span>" + question.value() + "</span></li>");
+            listElement.append("<li><span class='label'>" + question.title().text() + "</span> " + question.valueElement.text() + "</li>");
         })
     });
+}
+ConfirmationSectionModel.prototype.unselect = function() {
+    SelectableModel.prototype.unselect.apply(this);
+    this.title.removeClass("doing");
+    this.dataCanvas.empty();
+    _.each(this.questions, function(question) { question.unselect() });
 }
 ConfirmationSectionModel.prototype.isValid = function() {
     return true;
