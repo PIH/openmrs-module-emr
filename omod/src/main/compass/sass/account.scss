@@ -5,3 +5,16 @@ form fieldset {
     margin-top: 0;
   }
 }
+
+.emr_userDetails {
+	.password-format {
+		color: #777;
+		font-size: 0.8em;
+		text-align: left;
+		text-style: italic;
+	}
+
+	.field-error {
+		float: right;
+	}
+}
