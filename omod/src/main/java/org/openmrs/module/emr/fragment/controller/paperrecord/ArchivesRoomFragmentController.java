@@ -14,6 +14,8 @@
 
 package org.openmrs.module.emr.fragment.controller.paperrecord;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Person;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
@@ -33,6 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ArchivesRoomFragmentController {
+
+    private final Log log = LogFactory.getLog(getClass());
 
     // TODO: should we make sure that all these calls are wrapped in try/catch so that we can return
     // TODO: some kind of error message in the case of unexpected error?
@@ -128,9 +132,11 @@ public class ArchivesRoomFragmentController {
             return new SuccessResult(ui.message("emr.archivesRoom.assignRecords.message"));
         }
         catch (UnableToPrintPaperRecordLabelException ex) {
+            log.error(ex);
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToPrintLabel"));
         }
         catch (IllegalStateException ex) {
+            log.error(ex);
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToAssignRecords"));
         }
 
@@ -177,6 +183,7 @@ public class ArchivesRoomFragmentController {
         }
         catch (Exception e) {
             // generic catch-all
+            log.error(e);
             return new FailureResult(ui.message("emr.error.systemError"));
         }
 
@@ -199,11 +206,13 @@ public class ArchivesRoomFragmentController {
                         + ui.message("emr.archivesRoom.recordNumber.label") + ": " + ui.format(identifier));
             }
             else {
+                log.warn(e);
                 return new FailureResult(ui.message("emr.archivesRoom.error.noPaperRecordExists", ui.format(identifier)));
             }
         }
         catch (Exception e) {
             // generic catch-all
+            log.error(e);
             return new FailureResult(ui.message("emr.error.systemError"));
         }
 
@@ -219,6 +228,7 @@ public class ArchivesRoomFragmentController {
             return new SuccessResult(ui.message("emr.archivesRoom.printedLabel.message", request.getIdentifier()));
         }
         catch (Exception e) {
+            log.error(e);
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToPrintLabel"));
 
         }
