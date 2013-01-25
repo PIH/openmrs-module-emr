@@ -6,15 +6,14 @@ FieldValidator.prototype = {
     constructor: FieldValidator,
     validate: function(field) {
         if(!this.isValid(field.value())) {
-            var message = _.template($('#'+this.messageTemplateId).html());
-            return message();
+            return emrMessages[this.messageIdentifier];
         }
         return null;
     }
 }
 
 function RequiredFieldValidator() {
-    this.messageTemplateId = "requiredFieldMessage";
+    this.messageIdentifier = "requiredField";
 }
 RequiredFieldValidator.prototype = new FieldValidator();
 RequiredFieldValidator.prototype.constructor = RequiredFieldValidator;
@@ -24,7 +23,7 @@ RequiredFieldValidator.prototype.isValid = function(fieldValue) {
 
 
 function DateFieldValidator() {
-    this.messageTemplateId = "dateFieldMessage";
+    this.messageIdentifier = "dateField";
 }
 DateFieldValidator.prototype = new FieldValidator();
 DateFieldValidator.prototype.constructor = DateFieldValidator;
