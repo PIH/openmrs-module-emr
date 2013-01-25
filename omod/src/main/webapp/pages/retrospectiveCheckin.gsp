@@ -8,6 +8,8 @@
 
 %>
 
+${ ui.includeFragment("emr", "decorator/validationMessages")}
+
 <script type="text/javascript">
     jQuery(function() {
         KeyboardController();
