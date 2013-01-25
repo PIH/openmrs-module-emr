@@ -14,6 +14,10 @@
 
 package org.openmrs.module.emr.paperrecord;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,10 +39,6 @@ import org.openmrs.module.emr.printer.PrinterService;
 import org.openmrs.module.emr.utils.GeneralUtils;
 import org.openmrs.module.idgen.service.IdentifierSourceService;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 
 import static org.openmrs.module.emr.paperrecord.PaperRecordRequest.PENDING_STATUSES;
 import static org.openmrs.module.emr.paperrecord.PaperRecordRequest.Status;
@@ -304,6 +304,13 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     public void markPaperRecordRequestAsSent(PaperRecordRequest request) {
         // I don't think we really need to do any verification here
         request.updateStatus(Status.SENT);
+        savePaperRecordRequest(request);
+    }
+
+    @Override
+    @Transactional
+    public void markPaperRecordRequestAsCancelled(PaperRecordRequest request) {
+        request.updateStatus(Status.CANCELLED);
         savePaperRecordRequest(request);
     }
 

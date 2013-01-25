@@ -2,8 +2,14 @@
 <dataset>
     <location_tag location_tag_id="1" name="Visit Location" description="Visits are only allowed to happen at locations tagged with this location tag or at locations that descend from a location tagged with this tag."
                   creator="1" date_created="2012-10-23 16:13:45 " retired="0" uuid="0967d73d-f3c9-492b-abed-356478610a94" />
+    <location_tag location_tag_id="1001" name="Medical Record Location" description="Medical Record Location"
+                  creator="1" date_created="2012-10-23 16:13:45 " retired="0" uuid="0967d73d-f3c9-492b-abed-356478610a66" />
 
+    <location_tag_map location_id="1" location_tag_id="1001" />
+    <location_tag_map location_id="2" location_tag_id="1001" />
     <location_tag_map location_id="2" location_tag_id="1" />
+
+    <location location_id="1001" parent_location="1" name="Child location" description="Child location" address1="" address2="" city_village="" state_province="" postal_code="" country="" latitude="" longitude="" creator="1" date_created="2008-08-15 15:28:54.0" retired="true" retired_by="1" date_retired="2008-08-15 00:00:00.0" retire_reason="test" uuid="1676660c-4785-4285-9119-d197268f7f4a"/>
 
     <global_property property="emr.atFacilityVisitType" property_value="f01c54cb-2225-471a-9cd5-d348552c337c" uuid="a0ee79e5-1d6c-46bf-903f-55437441329f" />
     <visit_type visit_type_id="1" name="Clinic or Hospital Visit" creator="1" date_created="2012-10-23 18:04:14" changed_by="1" date_changed="2012-10-23 18:04:14"
@@ -39,4 +45,12 @@
     <global_property property="emr.paymentReceiptNumberConcept" property_value="20438dc7-c5b4-4d9c-8480-e888f4795123" />
     <global_property property="emr.paymentConstructConcept" property_value="8af62975-330e-4de7-ab85-1cc5ae5da9a8" />
     <global_property property="visits.assignmentHandler" property_value="org.openmrs.module.emr.adt.EmrVisitAssignmentHandler" uuid="2561da10-2229-11e2-9b1a-423440a3714c"/>
+
+    <!-- this sets the identifier type with id=2 in the standard test dataset to the "paper record identifier type" -->
+    <global_property property="emr.paperRecordIdentifierType" property_value="2f470aa8-1d73-43b7-81b5-01f0c0dfa53c" uuid="696cb3c3-9e66-42c6-8f03-2a0c1e9ca2a8"/>
+
+    <!-- this sets the identifier type with id=1 in the standard test dataset to the "primary identifier type" -->
+    <global_property property="emr.primaryIdentifierType" property_value="1a339fe9-38bc-4ab3-b180-320988c0b968" uuid="776cb3c3-9e66-42c6-8f03-2a0c1e9ca2a8"/>
+
+    <person_attribute_type person_attribute_type_id="10" name="Unknown patient" description="Unknown patient" format="java.lang.String" searchable="false" creator="1" date_created="2008-08-15 15:53:36.0" retired="false" uuid="a0f5521c-dbbd-4c10-81b2-1b7ab18330dz" sort_weight="2"/>
 </dataset>

@@ -14,6 +14,16 @@
 
 package org.openmrs.module.emr.adt;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,16 +57,6 @@ import org.openmrs.module.emr.patient.PatientDomainWrapper;
 import org.openmrs.serialization.SerializationException;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 
 public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
@@ -502,12 +502,7 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
             }
         }
 
-        // copy over any existing paper record requests to the preferred patient
-        List<PaperRecordRequest> moveToPreferred = paperRecordService.getPaperRecordRequestsByPatient(notPreferred);
-        for(PaperRecordRequest paperRecordRequest : moveToPreferred){
-            paperRecordRequest.setPatient(preferred);
-            paperRecordService.savePaperRecordRequest(paperRecordRequest);
-        }
+        fixPaperRecordRequestsForMerge(preferred, notPreferred);
 
         try {
             patientService.mergePatients(preferred, notPreferred);
@@ -518,6 +513,33 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
         } catch (SerializationException e) {
             throw new APIException("Unable to merge patients due to serialization error", e);
         }
+    }
+
+    private void fixPaperRecordRequestsForMerge(Patient preferred, Patient notPreferred) {
+        List<PaperRecordRequest> preferredRecordRequests = paperRecordService.getPaperRecordRequestsByPatient(preferred);
+        List<PaperRecordRequest> notPreferredRecordRequests = paperRecordService.getPaperRecordRequestsByPatient(notPreferred);
+
+        if (preferredRecordRequests.size() > 0 && notPreferredRecordRequests.size() > 0) {
+            if (!cancelOpenCreateRequest(notPreferredRecordRequests)) {
+               cancelOpenCreateRequest(preferredRecordRequests);
+            }
+        }
+
+        // copy over any existing paper record requests to the preferred patient
+        for(PaperRecordRequest paperRecordRequest : notPreferredRecordRequests){
+            paperRecordRequest.setPatient(preferred);
+            paperRecordService.savePaperRecordRequest(paperRecordRequest);
+        }
+    }
+
+    private boolean cancelOpenCreateRequest(List<PaperRecordRequest> requests) {
+        for (PaperRecordRequest request : requests) {
+            if (request.getStatus() == PaperRecordRequest.Status.OPEN && request.getIdentifier() == null) {
+                paperRecordService.markPaperRecordRequestAsCancelled(request);
+                return true;
+            }
+        }
+        return false;
     }
 
     private PatientDomainWrapper wrap(Patient notPreferred) {
