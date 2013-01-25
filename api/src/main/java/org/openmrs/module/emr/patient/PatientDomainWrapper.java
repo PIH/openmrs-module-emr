@@ -14,7 +14,16 @@
 
 package org.openmrs.module.emr.patient;
 
-import org.openmrs.*;
+import org.openmrs.Encounter;
+import org.openmrs.Location;
+import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.PersonAddress;
+import org.openmrs.PersonAttribute;
+import org.openmrs.PersonAttributeType;
+import org.openmrs.PersonName;
+import org.openmrs.Visit;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.emr.EmrProperties;
@@ -69,6 +78,10 @@ public class PatientDomainWrapper {
 
     public Patient getPatient() {
         return patient;
+    }
+
+    public Integer getId() {
+        return patient.getPatientId();
     }
 
     public String getGender() {

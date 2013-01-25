@@ -41,6 +41,8 @@ public class SimpleTaskDescriptor extends BaseTaskDescriptor implements TaskDesc
 
     private double priority = 0d;
 
+    private boolean includePatientId = true;
+
     @Override
     public String getId() {
         return id;
@@ -57,7 +59,7 @@ public class SimpleTaskDescriptor extends BaseTaskDescriptor implements TaskDesc
 
     @Override
     public String getUrl(EmrContext context) {
-        if (context.getCurrentPatient() != null) {
+        if (includePatientId && context.getCurrentPatient() != null) {
             return url + (url.indexOf("?") >= 0 ? "&" : "?") + "patientId=" + context.getCurrentPatient().getId();
         } else {
             return url;
@@ -102,4 +104,20 @@ public class SimpleTaskDescriptor extends BaseTaskDescriptor implements TaskDesc
         this.priority = priority;
     }
 
+    /**
+     * Defaults to true. Controls whether the url has ?patientId=... appended to it, if there's a patient in EmrContext
+     * @param includePatientId
+     */
+    public void setIncludePatientId(boolean includePatientId) {
+        this.includePatientId = includePatientId;
+    }
+
+    /**
+     * Actually sets the url
+     * @param javascript
+     */
+    public void setJavascript(String javascript) {
+        includePatientId = false;
+        url = "javascript:" + javascript + " ; return false;";
+    }
 }

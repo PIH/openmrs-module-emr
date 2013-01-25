@@ -61,4 +61,11 @@
         <property name="priority" value="20.3"/>
     </bean>
 
+    <bean id="emrRequestChartOnPatientDashboard" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
+        <property name="id" value="emr.requestPaperRecord"/>
+        <property name="labelCode" value="emr.task.requestPaperRecord.label"/>
+        <property name="javascript" value="showRequestChartDialog()"/>
+        <property name="priority" value="-10.0"/>
+    </bean>
+
 </beans>

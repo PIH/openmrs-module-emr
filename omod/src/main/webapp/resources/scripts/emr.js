@@ -10,6 +10,15 @@ var emr = (function($) {
         return ret;
     };
 
+    var requireOptions = function() {
+        var opts = arguments[0];
+        for (var i = 1; i < arguments.length; ++i) {
+            if (!opts[arguments[i]]) {
+                throw "Missing option: " + arguments[i];
+            }
+        }
+    };
+
     var jqObject = $();
 
     return {
@@ -50,11 +59,11 @@ var emr = (function($) {
         getFragmentActionWithCallback: function(providerName, fragmentName, actionName, options, callback, errorCallback) {
             if (!errorCallback) {
                 errorCallback = function(err) {
-                    this.errorMessage(err);
+                    emr.errorMessage(err);
                 };
             }
             var url = this.fragmentActionLink(providerName, fragmentName, actionName, options);
-            jqObject.getJSON(url).success(callback).error(errorCallback);
+            $.getJSON(url).success(callback).error(errorCallback);
         },
 
         /*
@@ -127,6 +136,27 @@ var emr = (function($) {
             getFragmentActionWithCallback('emr', 'htmlform/viewEncounterWithHtmlForm', 'getAsHtml', { encounterId: opts.encounterId }, function(data) {
                 jq(opts.targetSelector).html(data.html);
             });
+        },
+
+        createConfirmationDialog: function(opts) {
+            requireOptions(opts, 'selector', 'confirmAction', 'cancelAction');
+            $(opts.selector).dialog({
+                autoOpen: false,
+                resizable: false,
+                buttons: [
+                    { text: "Cancel", 'class': 'cancel', click: opts.cancelAction },
+                    { text: "Confirm", 'class': 'confirm right', click: opts.confirmAction }
+                ]
+            });
+
+            var dialogApi = {};
+            dialogApi.show = function() {
+                $(opts.selector).dialog('open');
+            };
+            dialogApi.hide = function() {
+                $(opts.selector).dialog('close');
+            };
+            return dialogApi;
         }
 
     };

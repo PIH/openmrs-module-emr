@@ -9,6 +9,27 @@
     ]
 
 %>
+<script type="text/javascript">
+    var requestPaperRecordDialog = null;
+    jq(function() {
+        requestPaperRecordDialog = emr.createConfirmationDialog({
+            selector: '#request-paper-record-dialog',
+            confirmAction: function() {
+                emr.getFragmentActionWithCallback('emr', 'paperrecord/requestPaperRecord', 'requestPaperRecord', { patientId: ${ patient.id }, locationId: ${ emrContext.sessionLocation.id } }, function(data) {
+                    emr.successMessage(data.message);
+                    requestPaperRecordDialog.hide();
+                })
+            },
+            cancelAction: function() {
+                requestPaperRecordDialog.hide();
+            }
+        });
+    });
+
+    var showRequestChartDialog = function() {
+        requestPaperRecordDialog.show();
+    }
+</script>
 
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
 
@@ -17,16 +38,21 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
         <ul class="options">
             <% tabs.each { %>
                 <li <% if (it.id == selectedTab) { %> class="selected" <% } %> >
-                    <a href="${ ui.pageLink("emr", "patient", [ patientId: patient.patient.id, tab: it.id ]) }">
+                    <a href="${ ui.pageLink("emr", "patient", [ patientId: patient.id, tab: it.id ]) }">
                         ${ it.label }
                     </a>
                 </li>
             <% } %>
         </ul>
         <div class="actions">
-            <strong>Actions</strong>
-            <% availableTasks.each { %>
-            <div><a href="/${ contextPath }/${ it.getUrl(emrContext) }">${ it.getLabel(emrContext) }</a></div>
+            <strong>${ ui.message("emr.patientDashBoard.actions") }</strong>
+            <% availableTasks.each {
+                def url = it.getUrl(emrContext)
+                if (!url.startsWith("javascript:")) {
+                    url = "/" + contextPath + "/" + url
+                }
+            %>
+                <div><a href="${ url }">${ it.getLabel(emrContext) }</a></div>
             <% } %>
         </div>
     </aside>
@@ -37,5 +63,21 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
         ${ ui.includeFragment("emr", "patientdashboard/" + selectedTab) }
 
     </div>
+</div>
+
+<div id="request-paper-record-dialog" title="${ ui.message("emr.patientDashBoard.requestPaperRecord.title") }" style="display: none">
+    <p>
+        <em>${ ui.message("emr.patientDashBoard.requestPaperRecord.confirmTitle") }</em>
+    </p>
+    <ul>
+        <li class="info">
+            <span>${ ui.message("emr.patient") }</span>
+            <h5>${ ui.format(patient.patient) }</h5>
+        </li>
+        <li class="info">
+            <span>${ ui.message("emr.location") }</span>
+            <h5>${ ui.format(emrContext.sessionLocation) }</h5>
+        </li>
+    </ul>
 </div>
 
