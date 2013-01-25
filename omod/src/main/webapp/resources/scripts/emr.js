@@ -108,16 +108,14 @@ var emr = (function($) {
 
         successAlert: function(message, options) {
             jqObject.toastmessage( 'showToast', { type: 'success',
-                position: 'middle-center',
-                sticky: true,
+                position: 'top-right',
                 text:  message,
                 close: options && options.close ? options.close : null } );
         },
 
         errorAlert: function(message, options) {
             jqObject.toastmessage( 'showToast', { type: 'error',
-                position: 'middle-center',
-                sticky: true,
+                position: 'top-right',
                 text:  message,
                 close: options && options.close ? options.close : null } )
         },
