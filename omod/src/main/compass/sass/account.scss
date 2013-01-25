@@ -1,9 +1,17 @@
+@import "colors";
+
 form fieldset {
   margin-bottom: 20px;
 
   input[type=button] {
     margin-top: 0;
   }
+}
+
+#accountForm {
+	.field-error {
+		color: $error;
+	}
 }
 
 .emr_userDetails {
