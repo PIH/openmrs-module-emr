@@ -125,5 +125,4 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             </div>
         </div>
     </form>
-    <div id="mandatoryLegend">* Required field</div>
 </div>
