@@ -8,7 +8,10 @@
     ui.includeCss("emr", "cupertino/jquery-ui-1.9.2.custom.min.css", Integer.MAX_VALUE - 10)
 
     // toastmessage plugin: https://github.com/akquinet/jquery-toastmessage-plugin/wiki
-    ui.includeJavascript("emr", "jquery.toastmessage.js")
-    ui.includeCss("emr", "jquery.toastmessage.css")
+    ui.includeJavascript("emr", "jquery.toastmessage.js", Integer.MAX_VALUE - 20)
+    ui.includeCss("emr", "jquery.toastmessage.css", Integer.MAX_VALUE - 20)
+
+    // simplemodal plugin: http://www.ericmmartin.com/projects/simplemodal/
+    ui.includeJavascript("emr", "jquery.simplemodal.1.4.4.min.js", Integer.MAX_VALUE - 20)
 
 %>

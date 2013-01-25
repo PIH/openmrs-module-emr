@@ -12,16 +12,18 @@
 <script type="text/javascript">
     var requestPaperRecordDialog = null;
     jq(function() {
-        requestPaperRecordDialog = emr.createConfirmationDialog({
+        requestPaperRecordDialog = emr.setupConfirmationDialog({
             selector: '#request-paper-record-dialog',
-            confirmAction: function() {
-                emr.getFragmentActionWithCallback('emr', 'paperrecord/requestPaperRecord', 'requestPaperRecord', { patientId: ${ patient.id }, locationId: ${ emrContext.sessionLocation.id } }, function(data) {
-                    emr.successMessage(data.message);
-                    requestPaperRecordDialog.hide();
-                })
-            },
-            cancelAction: function() {
-                requestPaperRecordDialog.hide();
+            actions: {
+                confirm: function() {
+                    emr.getFragmentActionWithCallback('emr', 'paperrecord/requestPaperRecord', 'requestPaperRecord', { patientId: ${ patient.id }, locationId: ${ emrContext.sessionLocation.id } }, function(data) {
+                        emr.successMessage(data.message);
+                        requestPaperRecordDialog.close();
+                    });
+                },
+                cancel: function() {
+                    requestPaperRecordDialog.close();
+                }
             }
         });
     });
@@ -65,19 +67,26 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
     </div>
 </div>
 
-<div id="request-paper-record-dialog" title="${ ui.message("emr.patientDashBoard.requestPaperRecord.title") }" style="display: none">
-    <p>
-        <em>${ ui.message("emr.patientDashBoard.requestPaperRecord.confirmTitle") }</em>
-    </p>
-    <ul>
-        <li class="info">
-            <span>${ ui.message("emr.patient") }</span>
-            <h5>${ ui.format(patient.patient) }</h5>
-        </li>
-        <li class="info">
-            <span>${ ui.message("emr.location") }</span>
-            <h5>${ ui.format(emrContext.sessionLocation) }</h5>
-        </li>
-    </ul>
+<div id="request-paper-record-dialog" class="dialog" style="display: none">
+    <div class="dialog-header">
+        <i class="icon-folder-open"></i>
+        <h3>${ ui.message("emr.patientDashBoard.requestPaperRecord.title") }</h3>
+    </div>
+    <div class="dialog-content">
+        <p class="dialog-instructions">${ ui.message("emr.patientDashBoard.requestPaperRecord.confirmTitle") }</p>
+        <ul>
+            <li class="info">
+                <span>${ ui.message("emr.patient") }</span>
+                <h5>${ ui.format(patient.patient) }</h5>
+            </li>
+            <li class="info">
+                <span>${ ui.message("emr.location") }</span>
+                <h5>${ ui.format(emrContext.sessionLocation) }</h5>
+            </li>
+        </ul>
+
+        <button class="confirm right">${ ui.message("emr.confirm") }</button>
+        <button class="cancel">${ ui.message("emr.cancel") }</button>
+    </div>
 </div>
 

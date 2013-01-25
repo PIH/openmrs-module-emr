@@ -138,23 +138,30 @@ var emr = (function($) {
             });
         },
 
-        createConfirmationDialog: function(opts) {
-            requireOptions(opts, 'selector', 'confirmAction', 'cancelAction');
-            $(opts.selector).dialog({
-                autoOpen: false,
-                resizable: false,
-                buttons: [
-                    { text: "Cancel", 'class': 'cancel', click: opts.cancelAction },
-                    { text: "Confirm", 'class': 'confirm right', click: opts.confirmAction }
-                ]
-            });
+        setupConfirmationDialog: function(opts) {
+            requireOptions(opts, 'selector');
+            var element = $(opts.selector);
+            element.hide();
+            if (opts.actions) {
+                if (opts.actions.confirm) {
+                    element.find(".confirm").click(opts.actions.confirm);
+                }
+                if (opts.actions.cancel) {
+                    element.find(".cancel").click(opts.actions.cancel);
+                }
+            }
 
             var dialogApi = {};
             dialogApi.show = function() {
-                $(opts.selector).dialog('open');
+                $(opts.selector).modal({
+                    overlayClose: true,
+                    overlayId: "modal-overlay",
+                    opacity: 80,
+                    closeClass: "cancel"
+                });
             };
-            dialogApi.hide = function() {
-                $(opts.selector).dialog('close');
+            dialogApi.close = function() {
+                $.modal.close();
             };
             return dialogApi;
         }
