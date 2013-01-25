@@ -12,6 +12,10 @@ form fieldset {
 	.field-error {
 		color: $error;
 	}
+
+	strong, .form-header {
+		margin-top: 10px;
+	}
 }
 
 .emr_userDetails {

@@ -45,17 +45,43 @@
 	<fieldset>
 		<legend>${ ui.message("emr.person.details") }</legend>
 
-        ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.person.givenName"), formFieldName: "givenName", initialValue: (account.givenName ?: '') ])}
-        ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.person.familyName"), formFieldName: "familyName", initialValue: (account.familyName ?: '') ])}
-        ${ ui.includeFragment("emr", "field/radioButtons", [ label: ui.message("Person.gender"), formFieldName: "gender", initialValue: (account.gender ?: 'M'), options: genderOptions ])}
+        ${ ui.includeFragment("emr", "field/text", [ 
+            label: ui.message("emr.person.givenName"), 
+            formFieldName: "givenName", 
+            initialValue: (account.givenName ?: '') 
+        ])}
+
+        ${ ui.includeFragment("emr", "field/text", [ 
+            label: ui.message("emr.person.familyName"), 
+            formFieldName: "familyName", 
+            initialValue: (account.familyName ?: '') 
+        ])}
+
+        ${ ui.includeFragment("emr", "field/radioButtons", [ 
+            label: ui.message("Person.gender"), 
+            formFieldName: "gender", 
+            initialValue: (account.gender ?: 'M'), 
+            options: genderOptions 
+        ])}
 	</fieldset>
 	
 	<fieldset>
 		<legend>${ ui.message("emr.user.account.details") }</legend>
 		<div class="emr_userDetails" <% if (!account.user) { %> style="display: none" <% } %>>
 
-            ${ ui.includeFragment("emr", "field/checkbox", [ label: ui.message("emr.user.enabled"), id: "userEnabled", formFieldName: "userEnabled", value: "true", checked: account.userEnabled ])}
-            ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.user.username"), formFieldName: "username", initialValue: (account.username ?: '') ])}
+            ${ ui.includeFragment("emr", "field/checkbox", [ 
+                label: ui.message("emr.user.enabled"), 
+                id: "userEnabled", 
+                formFieldName: "userEnabled", 
+                value: "true", 
+                checked: account.userEnabled 
+            ])}
+
+            ${ ui.includeFragment("emr", "field/text", [ 
+                label: ui.message("emr.user.username"), 
+                formFieldName: "username", 
+                initialValue: (account.username ?: '') 
+            ])}
 
             <% if (!account.password && !account.confirmPassword) { %>
                 <button class="emr_passwordDetails emr_userDetails" type="button" onclick="javascript:jQuery('.emr_passwordDetails').toggle()">${ ui.message("emr.user.changeUserPassword") }</button>
@@ -63,20 +89,32 @@
             <% } %>
 
             <p class="emr_passwordDetails" <% if(!account.password && !account.confirmPassword) { %>style="display: none"<% } %>>
-                <label for="password">${ ui.message("emr.user.password") }</label>
+                <label class="form-header" for="password">${ ui.message("emr.user.password") }</label>
                 <input type="password" id="password" name="password" value="${ account.password ?: ''}" autocomplete="off" />
-                <div class="password-format">${ ui.message("emr.account.passwordFormat") }</div>
+                <label class="password-format">${ ui.message("emr.account.passwordFormat") }</label>
                 ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "password" ])}
             </p>
 
             <p class="emr_passwordDetails" <% if(!account.password && !account.confirmPassword) { %>style="display: none"<% } %>>
-                <label for="confirmPassword">${ ui.message("emr.user.confirmPassword") }</label>
+                <label class="form-header" for="confirmPassword">${ ui.message("emr.user.confirmPassword") }</label>
                 <input type="password" id="confirmPassword" name="confirmPassword" value="${ account.confirmPassword ?: '' }" autocomplete="off" />
                 ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "confirmPassword" ])}
             </p>
 
-            ${ ui.includeFragment("emr", "field/dropDown", [ label: ui.message("emr.user.privilegeLevel"), emptyOptionLabel: ui.message("emr.chooseOne"), formFieldName: "privilegeLevel", initialValue: (account.privilegeLevel ? account.privilegeLevel.getName() : ''), options: privilegeLevelOptions ])}
-            ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.user.secretQuestion"), formFieldName: "secretQuestion", initialValue: (account.secretQuestion ?: ''), optional: true ])}
+            ${ ui.includeFragment("emr", "field/dropDown", [ 
+                label: ui.message("emr.user.privilegeLevel"), 
+                emptyOptionLabel: ui.message("emr.chooseOne"), 
+                formFieldName: "privilegeLevel", 
+                initialValue: (account.privilegeLevel ? account.privilegeLevel.getName() : ''), 
+                options: privilegeLevelOptions
+            ])}
+
+            ${ ui.includeFragment("emr", "field/text", [ 
+                label: ui.message("emr.user.secretQuestion"), 
+                formFieldName: "secretQuestion", 
+                initialValue: (account.secretQuestion ?: ''), 
+                optional: true 
+            ])}
 
             <p>
                 <label for="secretAnswer">${ ui.message("emr.user.secretAnswer") }</label>
@@ -86,7 +124,13 @@
             </p>
 
             <p>
-                ${ ui.includeFragment("emr", "field/dropDown", [ label: ui.message("emr.user.defaultLocale"), emptyOptionLabel: ui.message("emr.chooseOne"), formFieldName: "defaultLocale", initialValue: (account.defaultLocale ?: ''), options: allowedLocalesOptions ])}
+                ${ ui.includeFragment("emr", "field/dropDown", [ 
+                    label: ui.message("emr.user.defaultLocale"), 
+                    emptyOptionLabel: ui.message("emr.chooseOne"), 
+                    formFieldName: "defaultLocale", 
+                    initialValue: (account.defaultLocale ?: ''), 
+                    options: allowedLocalesOptions 
+                ])}
             </p>
 
             <p>
@@ -94,7 +138,12 @@
             </p>
 
 			<% capabilities.each{ %>
-                ${ ui.includeFragment("emr", "field/checkbox", [ label: ui.message("emr.app." + (it.name - rolePrefix) + ".label"), formFieldName: "capabilities", value: it.name, checked: account.capabilities?.contains(it) ])}
+                ${ ui.includeFragment("emr", "field/checkbox", [ 
+                    label: ui.message("emr.app." + (it.name - rolePrefix) + ".label"), 
+                    formFieldName: "capabilities", 
+                    value: it.name, 
+                    checked: account.capabilities?.contains(it) 
+                ])}
             <% } %>
 		</div>
 		<div class="emr_userDetails">
@@ -107,7 +156,13 @@
 	<fieldset>
 		<legend>${ ui.message("emr.provider.details") }</legend>
 		<div class="emr_providerDetails" ${ (!account.provider) ? "style='display: none'" : "" }>
-            ${ ui.includeFragment("emr", "field/checkbox", [ label: ui.message("emr.provider.interactsWithPatients"), id: "providerEnabled", formFieldName: "providerEnabled", value: "true", checked: account.providerEnabled ])}
+            ${ ui.includeFragment("emr", "field/checkbox", [ 
+                label: ui.message("emr.provider.interactsWithPatients"), 
+                id: "providerEnabled", 
+                formFieldName: "providerEnabled", 
+                value: "true", 
+                checked: account.providerEnabled 
+            ])}
 
             <!-- currently not supporting provider identifiers
              ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.provider.identifier"), formFieldName: "providerIdentifier", initialValue: (account.providerIdentifier ?: '') ])}
