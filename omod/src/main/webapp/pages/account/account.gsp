@@ -90,8 +90,7 @@
 
             <p class="emr_passwordDetails" <% if(!account.password && !account.confirmPassword) { %>style="display: none"<% } %>>
                 <label class="form-header" for="password">${ ui.message("emr.user.password") }</label>
-                <input type="password" id="password" name="password" value="${ account.password ?: ''}" autocomplete="off" />
-                <label class="password-format">${ ui.message("emr.account.passwordFormat") }</label>
+                <input type="password" id="password" name="password" value="${ account.password ?: ''}" autocomplete="off" placeholder="${ ui.message("emr.account.passwordFormat") }"/>
                 ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "password" ])}
             </p>
 
@@ -118,7 +117,7 @@
 
             <p>
                 <label for="secretAnswer">${ ui.message("emr.user.secretAnswer") }</label>
-                <input type="password" id="secretAnswer" name="secretAnswer" value="" autocomplete="off" />
+                <input type="password" id="secretAnswer" name="secretAnswer" value="${ account.secretAnswer ?: '' }" autocomplete="off" />
                 ${ ui.message("emr.optional") }
                 ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "secretAnswer" ])}
             </p>
