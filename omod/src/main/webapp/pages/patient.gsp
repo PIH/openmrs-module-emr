@@ -17,7 +17,7 @@
             actions: {
                 confirm: function() {
                     emr.getFragmentActionWithCallback('emr', 'paperrecord/requestPaperRecord', 'requestPaperRecord', { patientId: ${ patient.id }, locationId: ${ emrContext.sessionLocation.id } }, function(data) {
-                        emr.successMessage(data.message);
+                        emr.showInfoMessage(data.message);
                         requestPaperRecordDialog.close();
                     });
                 },

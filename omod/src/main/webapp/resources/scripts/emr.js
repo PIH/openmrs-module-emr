@@ -94,6 +94,16 @@ var emr = (function($) {
                 });
         },
 
+        showInfoMessage: function(message) {
+            $('#info-message .text').append("<p>" + message + "</p>");
+            $('#info-message').show();
+        },
+
+        showErrorMessage: function(message) {
+            $('#error-message .text').append("<p>" + message + "</p>");
+            $('#error-message').show();
+        },
+
         successMessage: function(message) {
             jqObject.toastmessage( 'showToast', { type: 'success',
                                               position: 'top-right',
