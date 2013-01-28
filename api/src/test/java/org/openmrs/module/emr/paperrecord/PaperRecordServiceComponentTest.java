@@ -27,12 +27,15 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.printer.PrinterService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import static org.mockito.Mockito.mock;
 
 public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveTest {
 
@@ -54,6 +57,10 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     @Before
     public void beforeAllTests() throws Exception {
         executeDataSet("paperRecordServiceComponentTestDataset.xml");
+
+        // stub out the printer service
+        PrinterService printerService = mock(PrinterService.class);
+        paperRecordService.setPrinterService(printerService);
     }
 
     @Test
@@ -92,9 +99,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Assert.assertFalse(paperRecordService.paperRecordExists("112", medicalRecordLocation));
     }
 
-    // TODO: unignore once TRUNK-3867 is fixed
     @Test
-    @Ignore
     public void testPaperMedicalRecordExistsReturnsFalseIfIdentifierIsInUseButWrongLocation() {
 
         // from the standard test dataset
@@ -263,6 +268,10 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Location medicalRecordLocation = locationService.getLocation(1);
         Location requestLocation = locationService.getLocation(3);
 
+        // remove the address associated with this patient, so that we can avoid having to configure the Address template
+        // (which isn't what we are looking to test here anyhow)
+        patient.removeAddress(patient.getPersonAddress());
+
         // request a record
         paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
 
@@ -354,6 +363,10 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Patient patient = patientService.getPatient(2) ;
         Location medicalRecordLocation = locationService.getLocation(1);
         Location requestLocation = locationService.getLocation(3);
+
+        // remove the address associated with this patient, so that we can avoid having to configure the Address template
+        // (which isn't what we are looking to test here anyhow)
+        patient.removeAddress(patient.getPersonAddress());
 
         PaperRecordRequest paperRecordRequest = paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
 
@@ -461,6 +474,10 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Patient patient = patientService.getPatient(2) ;
         Location medicalRecordLocation = locationService.getLocation(1);
         Location requestLocation = locationService.getLocation(3);
+
+        // remove the address associated with this patient, so that we can avoid having to configure the Address template
+        // (which isn't what we are looking to test here anyhow)
+        patient.removeAddress(patient.getPersonAddress());
 
         // request a record
         paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
@@ -594,27 +611,6 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
         PaperRecordRequest retrievedRequest = paperRecordService.getPaperRecordRequestById(id);
         Assert.assertNotNull(retrievedRequest.getDateStatusChanged());
-    }
-
-    @Test(expected = UnableToPrintPaperRecordLabelException.class)
-    public void testPrintPaperRecordLabel() throws Exception {
-
-        executeDataSet("printerServiceComponentTestDataset.xml");
-
-        Patient patient = patientService.getPatient(2) ;
-
-        // remove the address associated with this patient, so that we can avoid having to configure the Address template
-        // (which isn't what we are looking to test here anyhow)
-        patient.removeAddress(patient.getPersonAddress());
-
-        PaperRecordRequest request = new PaperRecordRequest();
-        request.setIdentifier("123");
-        request.setPatient(patient);
-
-        Location location = Context.getLocationService().getLocation(3);
-
-        // try printing when no printer is configured
-        paperRecordService.printPaperRecordLabel(request, location);
     }
 
     @Test

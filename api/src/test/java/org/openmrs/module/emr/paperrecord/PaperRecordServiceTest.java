@@ -14,6 +14,7 @@
 
 package org.openmrs.module.emr.paperrecord;
 
+import org.dbunit.dataset.datatype.StringIgnoreCaseDataType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +33,10 @@ import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.paperrecord.PaperRecordRequest.Status;
 import org.openmrs.module.emr.paperrecord.db.PaperRecordMergeRequestDAO;
 import org.openmrs.module.emr.paperrecord.db.PaperRecordRequestDAO;
+import org.openmrs.module.emr.printer.Printer;
+import org.openmrs.module.emr.printer.PrinterService;
 import org.openmrs.module.idgen.service.IdentifierSourceService;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -73,11 +77,16 @@ public class PaperRecordServiceTest {
 
     private PatientService mockPatientService;
 
+    private PrinterService mockPrinterService;
+
     private EmrProperties mockEmrProperties;
+
+    private PaperRecordLabelTemplate mockPaperRecordLabelTemplate;
 
     private User authenticatedUser;
 
     private PatientIdentifierType paperRecordIdentifierType;
+
 
     @Before
     public void setup() {
@@ -90,7 +99,9 @@ public class PaperRecordServiceTest {
         mockPaperRecordMergeRequestDAO = mock(PaperRecordMergeRequestDAO.class);
         mockIdentifierSourceService = mock(IdentifierSourceService.class);
         mockPatientService = mock(PatientService.class);
+        mockPrinterService = mock(PrinterService.class);
         mockEmrProperties = mock(EmrProperties.class);
+        mockPaperRecordLabelTemplate = mock(PaperRecordLabelTemplate.class);
 
         paperRecordIdentifierType = new PatientIdentifierType();
         paperRecordIdentifierType.setId(2);
@@ -101,7 +112,9 @@ public class PaperRecordServiceTest {
         paperRecordService.setPaperRecordMergeRequestDAO(mockPaperRecordMergeRequestDAO);
         paperRecordService.setIdentifierSourceService(mockIdentifierSourceService);
         paperRecordService.setPatientService(mockPatientService);
+        paperRecordService.setPrinterService(mockPrinterService);
         paperRecordService.setEmrProperties(mockEmrProperties);
+        paperRecordService.setPaperRecordLabelTemplate(mockPaperRecordLabelTemplate);
     }
 
     @Test
@@ -808,6 +821,36 @@ public class PaperRecordServiceTest {
         verify(mockPaperRecordDAO).saveOrUpdate(argThat(expectedRequestMatcher));
     }
 
+    @Test
+    public void testPrintPaperRecordLabelShouldPrintSingleLabel() throws Exception {
+
+        when(mockPaperRecordLabelTemplate.generateLabel(any(PaperRecordRequest.class))).thenReturn("data\nlines\n");
+        when(mockPaperRecordLabelTemplate.getEncoding()).thenReturn("UTF-8");
+
+        Location location = new Location(1);
+
+        paperRecordService.printPaperRecordLabel(new PaperRecordRequest(), location);
+
+        verify(mockPrinterService).printViaSocket("data\nlines\n", Printer.Type.LABEL, location, "UTF-8");
+
+    }
+
+    @Test
+    public void testPrintPaperRecordLabelsShouldPrintThreeLabelIfCountSetToThree() throws Exception {
+
+        when(mockPaperRecordLabelTemplate.generateLabel(any(PaperRecordRequest.class))).thenReturn("data\nlines\n");
+        when(mockPaperRecordLabelTemplate.getEncoding()).thenReturn("UTF-8");
+
+        Location location = new Location(1);
+
+        paperRecordService.printPaperRecordLabels(new PaperRecordRequest(), location, 3);
+
+        verify(mockPrinterService).printViaSocket("data\nlines\ndata\n" +
+                "lines\ndata\nlines\n", Printer.Type.LABEL, location, "UTF-8");
+
+    }
+
+
     private PatientIdentifier createIdentifier(Location medicalRecordLocation, String identifier) {
         PatientIdentifier identifer = new PatientIdentifier();
         identifer.setIdentifier(identifier);
@@ -883,11 +926,6 @@ public class PaperRecordServiceTest {
 
         public PaperRecordServiceStub(PatientIdentifierType paperRecordIdentifierType) {
             this.paperRecordIdentifierType = paperRecordIdentifierType;
-        }
-
-        @Override
-        public void printPaperRecordLabel(PaperRecordRequest request, Location location) {
-
         }
 
         @Override

@@ -45,7 +45,7 @@ import static org.openmrs.module.emr.paperrecord.PaperRecordRequest.Status;
 
 public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperRecordService {
 
-    private final Log log = LogFactory.getLog(getClass());
+
 
     private PaperRecordRequestDAO paperRecordRequestDAO;
 
@@ -90,10 +90,6 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         this.patientService = patientService;
     }
 
-    public void setPrinterService(PrinterService printerService) {
-        this.printerService = printerService;
-    }
-
     public void setEmrProperties(EmrProperties emrProperties) {
         this.emrProperties = emrProperties;
     }
@@ -101,6 +97,12 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     public void setPaperRecordLabelTemplate(PaperRecordLabelTemplate paperRecordLabelTemplate) {
         this.paperRecordLabelTemplate = paperRecordLabelTemplate;
     }
+
+    @Override
+    public void setPrinterService(PrinterService printerService) {
+        this.printerService = printerService;
+    }
+
 
     @Override
     public boolean paperRecordExists(String identifier, Location location) {
@@ -230,10 +232,14 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
                 request.setIdentifier(identifier);
                 request.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_CREATE);
 
-                printPaperRecordLabel(request, location);
+                // we print two labels if we are creating a new record
+                printPaperRecordLabels(request, location, 2);
             }
             else {
                 request.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_PULL);
+
+                // we print one label if we are pulling a record
+                printPaperRecordLabel(request, location);
             }
 
             // set the assignee and save the record
@@ -330,17 +336,39 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
     @Override
     public void printPaperRecordLabel(PaperRecordRequest request, Location location) {
+       printPaperRecordLabels(request, location, 1);
+    }
+
+
+    @Override
+    public void printPaperRecordLabels(PaperRecordRequest request, Location location, Integer count) {
+
+        if (count == null || count == 0) {
+            return;  // just do nothing if we don't have a count
+        }
+
         String data = paperRecordLabelTemplate.generateLabel(request);
         String encoding = paperRecordLabelTemplate.getEncoding();
 
+        // just duplicate the data if we are printing multiple labels
+        StringBuffer dataBuffer = new StringBuffer();
+        dataBuffer.append(data);
+
+        while (count > 1) {
+            dataBuffer.append(data);
+            count--;
+        }
+
         try {
-            printerService.printViaSocket(data, Printer.Type.LABEL, location, encoding);
+            printerService.printViaSocket(dataBuffer.toString(), Printer.Type.LABEL, location, encoding);
         }
         catch (Exception e) {
             throw new UnableToPrintPaperRecordLabelException("Unable to print paper record label for request " + request, e);
         }
 
     }
+
+
 
     @Override
     @Transactional

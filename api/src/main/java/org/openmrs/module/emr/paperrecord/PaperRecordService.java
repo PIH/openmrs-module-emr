@@ -21,6 +21,7 @@ import org.openmrs.Person;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.emr.printer.PrinterService;
 
 import java.util.List;
 
@@ -183,11 +184,21 @@ public interface PaperRecordService extends OpenmrsService {
      *
      * @param request
      * @param location
-     * @return true/false whether or not the print job was successfully sent to the printer
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     void printPaperRecordLabel(PaperRecordRequest request, Location location);
 
+
+    /**
+     * Prints x numbers of label for the paper record associated wth the request
+     * at the default location
+     *
+     * @param request
+     * @param location
+     * @param count the number of labels to print
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
+    void printPaperRecordLabels(PaperRecordRequest request, Location location, Integer count);
 
     /**
      * Creates a request to merge two paper records
@@ -212,5 +223,11 @@ public interface PaperRecordService extends OpenmrsService {
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     List<PaperRecordMergeRequest> getOpenPaperRecordMergeRequests();
 
+    /**
+     * Hack to bring this up to the interface level to allow us to stub out the template when printing
+     */
+    void setPrinterService(PrinterService printerService);
+
 }
+
 
