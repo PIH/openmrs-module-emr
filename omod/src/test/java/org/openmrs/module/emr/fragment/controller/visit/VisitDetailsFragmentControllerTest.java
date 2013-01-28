@@ -2,8 +2,10 @@ package org.openmrs.module.emr.fragment.controller.visit;
 
 import org.junit.Test;
 import org.openmrs.*;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.module.emr.TestUiUtils;
 import org.openmrs.ui.framework.SimpleObject;
+import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.UiUtils;
 
 import java.text.ParseException;
@@ -14,11 +16,16 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class VisitDetailsFragmentControllerTest {
 
     @Test
     public void shouldReturnEncountersForVisit() throws ParseException {
+        AdministrationService administrationService = mock(AdministrationService.class);
+        when(administrationService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATETIME_FORMAT)).thenReturn("dd.MMM.yyyy, HH:mm:ss");
+
         Visit visit = new Visit();
         Location visitLocation = new Location();
         visitLocation.setName("Visit Location");
@@ -45,10 +52,10 @@ public class VisitDetailsFragmentControllerTest {
 
         visit.addEncounter(encounter);
 
-        UiUtils uiUtils = new TestUiUtils();
+        UiUtils uiUtils = new TestUiUtils(administrationService);
         VisitDetailsFragmentController controller = new VisitDetailsFragmentController();
 
-        SimpleObject response = controller.getVisitDetails(visit, uiUtils);
+        SimpleObject response = controller.getVisitDetails(administrationService, visit, uiUtils);
         List<SimpleObject> actualEncounters = (List<SimpleObject>) response.get("encounters");
         SimpleObject actualEncounter = actualEncounters.get(0);
 

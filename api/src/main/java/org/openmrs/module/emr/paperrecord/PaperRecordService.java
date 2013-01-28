@@ -172,6 +172,14 @@ public interface PaperRecordService extends OpenmrsService {
     void markPaperRecordRequestAsSent(PaperRecordRequest request);
 
     /**
+     * Marks the specified paper record request as "cancelled"
+     *
+     * @param request
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
+    void markPaperRecordRequestAsCancelled(PaperRecordRequest request);
+
+    /**
      * Marks all active requests with the specified identifier as returned
      */
     // TODO: once we have multiple medical record locations, we will need to add location as a criteria (see paperRecordExists)
@@ -229,5 +237,4 @@ public interface PaperRecordService extends OpenmrsService {
     void setPrinterService(PrinterService printerService);
 
 }
-
 

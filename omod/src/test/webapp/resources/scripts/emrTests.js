@@ -35,8 +35,7 @@ describe("Tests of emr functions", function() {
 
         emr.successAlert("some success message");
 
-        expect(jqueryWithSpy.toastmessage).toHaveBeenCalledWith('showToast', { type : 'success', position : 'top-right', position: 'middle-center',
-            sticky: true, text : 'some success message', close: null });
+        expect(jqueryWithSpy.toastmessage).toHaveBeenCalledWith('showToast', { type : 'success', position : 'top-right', text : 'some success message', stayTime: 8000, close: null });
 
     });
 
@@ -49,8 +48,7 @@ describe("Tests of emr functions", function() {
 
         emr.errorAlert("some error message");
 
-        expect(jqueryWithSpy.toastmessage).toHaveBeenCalledWith('showToast', { type : 'error', position : 'top-right', position: 'middle-center',
-            sticky: true, text : 'some error message', close: null });
+        expect(jqueryWithSpy.toastmessage).toHaveBeenCalledWith('showToast', { type : 'error', position : 'top-right', text : 'some error message', stayTime: 8000, close: null });
 
     });
 

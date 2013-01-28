@@ -113,7 +113,7 @@
                     <table id="pull_requests_table">
                         <thead>
                         <tr>
-                            <th>${ ui.message("emr.archivesRoom.surname.label") }</th>
+                            <th>${ ui.message("emr.person.name") }</th>
                             <th>${ ui.message("emr.patient.paperRecordIdentifier") }</th>
                             <th>${ ui.message("emr.archivesRoom.requestedBy.label") }</th>
                             <th>${ ui.message("emr.time") }</th>
@@ -148,7 +148,7 @@
                     <table id="assigned_pull_requests_table" >
                         <thead>
                         <tr>
-                            <th>${ ui.message("emr.archivesRoom.surname.label") }</th>
+                            <th>${ ui.message("emr.person.name") }</th>
                             <th>${ ui.message("emr.patient.paperRecordIdentifier") }</th>
                             <th>${ ui.message("emr.archivesRoom.requestedBy.label") }</th>
                             <th>${ ui.message("emr.time") }</th>

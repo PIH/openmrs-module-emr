@@ -14,7 +14,12 @@
 
 package org.openmrs.module.emr.paperrecord;
 
-import org.dbunit.dataset.datatype.StringIgnoreCaseDataType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,12 +44,6 @@ import org.openmrs.module.idgen.service.IdentifierSourceService;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
@@ -541,7 +540,26 @@ public class PaperRecordServiceTest {
         assertThat(request.getStatus(), is(PaperRecordRequest.Status.SENT));
         IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(request);
         verify(mockPaperRecordDAO).saveOrUpdate(argThat(expectedRequestMatcher));
+    }
 
+    @Test
+    public void shouldMarkRequestAsCancelled() throws Exception {
+        Patient patient = new Patient();
+        patient.setId(15);
+
+        Location medicalRecordLocation = createMedicalRecordLocation();
+
+        PatientIdentifier identifier = createIdentifier(medicalRecordLocation, "ABCZYX");
+        patient.addIdentifier(identifier);
+
+        PaperRecordRequest request = createPaperRecordRequest(patient, medicalRecordLocation, "ABCZYX");
+        request.setDateCreated(new Date());
+
+        paperRecordService.markPaperRecordRequestAsCancelled(request);
+
+        assertThat(request.getStatus(), is(Status.CANCELLED));
+        IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(request);
+        verify(mockPaperRecordDAO).saveOrUpdate(argThat(expectedRequestMatcher));
     }
 
     @Test

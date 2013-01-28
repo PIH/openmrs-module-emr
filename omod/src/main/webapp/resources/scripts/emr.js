@@ -94,6 +94,16 @@ var emr = (function($) {
                 });
         },
 
+        showInfoMessage: function(message) {
+            $('#info-message .text').append("<p>" + message + "</p>");
+            $('#info-message').show();
+        },
+
+        showErrorMessage: function(message) {
+            $('#error-message .text').append("<p>" + message + "</p>");
+            $('#error-message').show();
+        },
+
         successMessage: function(message) {
             jqObject.toastmessage( 'showToast', { type: 'success',
                                               position: 'top-right',
@@ -108,17 +118,17 @@ var emr = (function($) {
 
         successAlert: function(message, options) {
             jqObject.toastmessage( 'showToast', { type: 'success',
-                position: 'middle-center',
-                sticky: true,
+                position: 'top-right',
                 text:  message,
+                stayTime: 8000,
                 close: options && options.close ? options.close : null } );
         },
 
         errorAlert: function(message, options) {
             jqObject.toastmessage( 'showToast', { type: 'error',
-                position: 'middle-center',
-                sticky: true,
+                position: 'top-right',
                 text:  message,
+                stayTime: 8000,
                 close: options && options.close ? options.close : null } )
         },
 
@@ -138,23 +148,33 @@ var emr = (function($) {
             });
         },
 
-        createConfirmationDialog: function(opts) {
-            requireOptions(opts, 'selector', 'confirmAction', 'cancelAction');
-            $(opts.selector).dialog({
-                autoOpen: false,
-                resizable: false,
-                buttons: [
-                    { text: "Cancel", 'class': 'cancel', click: opts.cancelAction },
-                    { text: "Confirm", 'class': 'confirm right', click: opts.confirmAction }
-                ]
-            });
+        /*
+         * returns an object with show() and close() functions
+         */
+        setupConfirmationDialog: function(opts) {
+            requireOptions(opts, 'selector');
+            var element = $(opts.selector);
+            element.hide();
+            if (opts.actions) {
+                if (opts.actions.confirm) {
+                    element.find(".confirm").click(opts.actions.confirm);
+                }
+                if (opts.actions.cancel) {
+                    element.find(".cancel").click(opts.actions.cancel);
+                }
+            }
 
             var dialogApi = {};
             dialogApi.show = function() {
-                $(opts.selector).dialog('open');
+                $(opts.selector).modal({
+                    overlayClose: true,
+                    overlayId: "modal-overlay",
+                    opacity: 80,
+                    closeClass: "cancel"
+                });
             };
-            dialogApi.hide = function() {
-                $(opts.selector).dialog('close');
+            dialogApi.close = function() {
+                $.modal.close();
             };
             return dialogApi;
         }

@@ -16,18 +16,19 @@ form fieldset {
 	strong, .form-header {
 		margin-top: 10px;
 	}
+
+	p {
+		text-align: left;
+	}
 }
 
 .emr_userDetails {
-	.password-format {
+	#password {
 		color: #777;
-		font-size: 0.8em;
+		font-size: 0.9em;
 		text-align: left;
 		font-style: italic;
-	}
-
-	.field-error {
-		float: right;
+		line-height: 1em;
 	}
 }
 

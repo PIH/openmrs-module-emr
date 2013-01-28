@@ -14,9 +14,12 @@
 
 package org.openmrs.module.emr.paperrecord;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import junit.framework.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -31,9 +34,8 @@ import org.openmrs.module.emr.printer.PrinterService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 import static org.mockito.Mockito.mock;
 
@@ -690,5 +692,27 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Assert.assertEquals(preferredIdentifier.getPatient(), request.getPatient());
         Assert.assertEquals(anotherLocation, request.getRequestLocation());  // since the last requested location wins
 
+    }
+
+    @Test
+    public void shouldCancelOpenPaperRecordRequestsToCreate() {
+
+        assertThat(paperRecordService.getOpenPaperRecordRequestsToCreate().size(), is(0));
+
+        Patient patient = patientService.getPatient(2) ;
+        Location medicalRecordLocation = locationService.getLocation(2);
+        Location requestLocation = locationService.getLocation(3);
+
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        // make sure both records are now in the database
+        List<PaperRecordRequest> requests = paperRecordService.getOpenPaperRecordRequestsToCreate();
+        assertThat(requests.size(), is(1));
+
+        PaperRecordRequest request = requests.get(0);
+        paperRecordService.markPaperRecordRequestAsCancelled(request);
+
+        assertThat(request.getStatus(), is(PaperRecordRequest.Status.CANCELLED));
+        assertThat(paperRecordService.getOpenPaperRecordRequestsToCreate().size(), is(0));
     }
 }

@@ -14,9 +14,14 @@
 
 package org.openmrs.module.emr.adt;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
@@ -24,18 +29,19 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
+import org.openmrs.module.emr.paperrecord.PaperRecordService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.openmrs.module.emr.TestUtils.isJustNow;
@@ -49,6 +55,10 @@ public class AdtServiceComponentTest extends BaseModuleContextSensitiveTest {
     private EmrProperties emrProperties;
     @Autowired
     private ConceptService conceptService;
+    @Autowired
+    private PaperRecordService paperRecordService;
+    @Autowired
+    LocationService locationService;
 
     @Before
     public void before() throws Exception {
@@ -102,6 +112,57 @@ public class AdtServiceComponentTest extends BaseModuleContextSensitiveTest {
         assertThat(checkInEncounter.getAllObs(), containsInAnyOrder(firstGroup, secondGroup));
 
         // TODO once these are implemented, add Admission and Discharge to this test
+    }
+
+    @Test
+    public void shouldCancelOnlyOneOpenPaperRecordRequestsToCreateAfterMerge() {
+        PatientService patientService = Context.getPatientService();
+        Location paperRecordLocation = locationService.getLocation(1);
+        Location someLocation = locationService.getLocation(2);
+        Location anotherLocation = locationService.getLocation(3);
+
+        assertThat(paperRecordService.getOpenPaperRecordRequestsToCreate().size(), is(0));
+
+        Patient preferredPatient = patientService.getPatient(7);
+        Patient notPreferredPatient = patientService.getPatient(8);
+
+        // first, create a couple record requests
+        paperRecordService.requestPaperRecord(preferredPatient, paperRecordLocation, someLocation);
+        paperRecordService.requestPaperRecord(notPreferredPatient, paperRecordLocation, anotherLocation);
+
+        assertThat(paperRecordService.getOpenPaperRecordRequestsToCreate().size(), is(2));
+
+        service.mergePatients(preferredPatient, notPreferredPatient);
+
+        assertThat(paperRecordService.getOpenPaperRecordRequestsToCreate().size(), Matchers.is(1));
+
+        List<PaperRecordRequest> mergedPaperRecordRequests = paperRecordService.getPaperRecordRequestsByPatient(
+            preferredPatient);
+        assertThat(mergedPaperRecordRequests.size(), is(2));
+        assertThat(mergedPaperRecordRequests, hasItem(new IsExpectedPaperRecordRequest(PaperRecordRequest.Status.CANCELLED)));
+        assertThat(mergedPaperRecordRequests, hasItem(new IsExpectedPaperRecordRequest(PaperRecordRequest.Status.OPEN)));
+
+        assertThat(paperRecordService.getPaperRecordRequestsByPatient(notPreferredPatient).size(), is(0));
+    }
+
+    private class IsExpectedPaperRecordRequest extends ArgumentMatcher<PaperRecordRequest> {
+        private PaperRecordRequest.Status status;
+
+        public IsExpectedPaperRecordRequest(PaperRecordRequest.Status status) {
+            this.status = status;
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            PaperRecordRequest actual = (PaperRecordRequest) o;
+
+            try {
+                assertThat(actual.getStatus(), is(status));
+                return true;
+            } catch (AssertionError e) {
+                return false;
+            }
+        }
     }
 
     private Obs createPaymentGroup(Obs paymentReasonObservation, Obs paymentAmountObservation, Obs paymentReceiptObservation) {

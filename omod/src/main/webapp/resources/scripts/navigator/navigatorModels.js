@@ -59,7 +59,7 @@ FieldModel.prototype.isValid = function() {
     this.messagesContainer.empty();
     if(validationMessages.length > 0) {
         _.each(validationMessages, function(message) {
-           this.messagesContainer.append("<li>" + message + "</li>");
+           this.messagesContainer.append(message);
         }, this);
         this.element.addClass("error");
         this.messagesContainer.css("display", "inline");

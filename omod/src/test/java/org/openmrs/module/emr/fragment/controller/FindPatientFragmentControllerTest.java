@@ -62,7 +62,7 @@ public class FindPatientFragmentControllerTest {
         assertNull(PropertyUtils.getProperty(o, "preferredName.middleName"));
         assertEquals("Obama", PropertyUtils.getProperty(o, "preferredName.familyName"));
         assertEquals("Barack Obama", PropertyUtils.getProperty(o, "preferredName.fullName"));
-        assertEquals("04-Aug-1961", PropertyUtils.getProperty(o, "birthdate"));
+        assertEquals("04.Aug.1961", PropertyUtils.getProperty(o, "birthdate"));
         assertEquals(Boolean.FALSE, PropertyUtils.getProperty(o, "birthdateEstimated"));
         assertEquals("M", PropertyUtils.getProperty(o, "gender"));
 
