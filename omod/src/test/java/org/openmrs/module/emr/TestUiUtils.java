@@ -24,7 +24,7 @@ import org.openmrs.ui.framework.FormatterImpl;
 public class TestUiUtils extends BasicUiUtils {
 
     public TestUiUtils() {
-        this.formatter = new FormatterImpl(null);
+        this.formatter = new FormatterImpl(null, null);
     }
 
     @Override
