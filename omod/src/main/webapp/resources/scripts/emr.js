@@ -136,6 +136,9 @@ var emr = (function($) {
             });
         },
 
+        /*
+         * returns an object with show() and close() functions
+         */
         setupConfirmationDialog: function(opts) {
             requireOptions(opts, 'selector');
             var element = $(opts.selector);

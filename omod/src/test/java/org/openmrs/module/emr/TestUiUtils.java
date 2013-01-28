@@ -14,6 +14,7 @@
 
 package org.openmrs.module.emr;
 
+import org.openmrs.api.AdministrationService;
 import org.openmrs.ui.framework.BasicUiUtils;
 import org.openmrs.ui.framework.FormatterImpl;
 
@@ -23,8 +24,19 @@ import org.openmrs.ui.framework.FormatterImpl;
  */
 public class TestUiUtils extends BasicUiUtils {
 
+    /**
+     * If you use this constructor, the UiUtils will have no AdministrationService so it won't do date formatting
+     */
     public TestUiUtils() {
         this.formatter = new FormatterImpl(null, null);
+    }
+
+    /**
+     * Provides an AdministrationService that provides global properties for date formatting
+     * @param administrationService
+     */
+    public TestUiUtils(AdministrationService administrationService) {
+        this.formatter = new FormatterImpl(null, administrationService);
     }
 
     @Override
