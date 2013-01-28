@@ -111,8 +111,8 @@
             ${ ui.includeFragment("emr", "field/text", [ 
                 label: ui.message("emr.user.secretQuestion"), 
                 formFieldName: "secretQuestion", 
-                initialValue: account.user.secretQuestion ?: '', 
-                optional: true
+                initialValue: (account.secretQuestion ?: ''), 
+                optional: true 
             ])}
 
             <p>
