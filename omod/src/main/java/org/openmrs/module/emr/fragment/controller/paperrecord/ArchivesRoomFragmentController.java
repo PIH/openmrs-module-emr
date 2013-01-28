@@ -175,10 +175,10 @@ public class ArchivesRoomFragmentController {
            else {
                 // otherwise, mark the record as sent
                 paperRecordService.markPaperRecordRequestAsSent(paperRecordRequest);
-                return new SuccessResult(ui.message("emr.archivesRoom.recordFound.message") + "<br/><br/>"
+                return new SuccessResult("<span class=\"toast-record-found\">" + ui.message("emr.archivesRoom.recordFound.message") + " "
                         + ui.message("emr.archivesRoom.requestedBy.label") + ": " +"<span class=\"toast-record-location\">" +  ui.format(paperRecordRequest.getRequestLocation() + "</span>"
                         + ui.message("emr.archivesRoom.recordNumber.label") + ": " + "<span class=\"toast-record-id\">" + ui.format(identifier) + "</span>"
-                        + ui.message("emr.archivesRoom.requestedAt.label") + ": " + timeAndDateFormat.format(paperRecordRequest.getDateCreated())));
+                        + ui.message("emr.archivesRoom.requestedAt.label") + ": " + timeAndDateFormat.format(paperRecordRequest.getDateCreated())) + "</span>");
             }
         }
         catch (Exception e) {
