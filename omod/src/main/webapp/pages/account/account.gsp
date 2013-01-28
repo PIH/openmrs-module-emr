@@ -90,7 +90,8 @@
 
             <p class="emr_passwordDetails" <% if(!account.password && !account.confirmPassword) { %>style="display: none"<% } %>>
                 <label class="form-header" for="password">${ ui.message("emr.user.password") }</label>
-                <input type="password" id="password" name="password" value="${ account.password ?: ''}" autocomplete="off" placeholder="${ ui.message("emr.account.passwordFormat") }"/>
+                <input type="password" id="password" name="password" value="${ account.password ?: ''}" autocomplete="off"/>
+                <div id="format-password">${ ui.message("emr.account.passwordFormat") }</div>
                 ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "password" ])}
             </p>
 
@@ -107,20 +108,6 @@
                 initialValue: (account.privilegeLevel ? account.privilegeLevel.getName() : ''), 
                 options: privilegeLevelOptions
             ])}
-
-            ${ ui.includeFragment("emr", "field/text", [ 
-                label: ui.message("emr.user.secretQuestion"), 
-                formFieldName: "secretQuestion", 
-                initialValue: (account.secretQuestion ?: ''), 
-                optional: true 
-            ])}
-
-            <p>
-                <label for="secretAnswer">${ ui.message("emr.user.secretAnswer") }</label>
-                <input type="password" id="secretAnswer" name="secretAnswer" value="${ account.secretAnswer ?: '' }" autocomplete="off" />
-                ${ ui.message("emr.optional") }
-                ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "secretAnswer" ])}
-            </p>
 
             <p>
                 ${ ui.includeFragment("emr", "field/dropDown", [ 
