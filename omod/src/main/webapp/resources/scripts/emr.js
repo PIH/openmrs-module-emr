@@ -110,6 +110,7 @@ var emr = (function($) {
             jqObject.toastmessage( 'showToast', { type: 'success',
                 position: 'top-right',
                 text:  message,
+                stayTime: 8000,
                 close: options && options.close ? options.close : null } );
         },
 
@@ -117,6 +118,7 @@ var emr = (function($) {
             jqObject.toastmessage( 'showToast', { type: 'error',
                 position: 'top-right',
                 text:  message,
+                stayTime: 8000,
                 close: options && options.close ? options.close : null } )
         },
 
