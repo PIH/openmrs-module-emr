@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+// TODO: we are not currently using the secret question/answer functionality; if it is put back into use, we should confirm we've got proper test coverage for it
+
 public class AccountDomainWrapper {
 
     private Person person;
@@ -34,8 +36,6 @@ public class AccountDomainWrapper {
     private String password;
 
     private String confirmPassword;
-
-    private String secretQuestion;
 
     private String secretAnswer;
 
@@ -155,11 +155,14 @@ public class AccountDomainWrapper {
     }
 
     public String getSecretQuestion() {
-        return secretQuestion;
+        return user != null ? user.getSecretQuestion() : null;
     }
 
     public void setSecretQuestion(String secretQuestion) {
-        this.secretQuestion = secretQuestion;
+        if (StringUtils.isNotBlank(secretQuestion)) {
+            initializeUserIfNecessary();
+            user.setSecretQuestion(secretQuestion);
+        }
     }
 
     public String getSecretAnswer() {
@@ -379,8 +382,8 @@ public class AccountDomainWrapper {
                 userService.changePassword(user, password);
             }
 
-            if (StringUtils.isNotBlank(secretQuestion) && StringUtils.isNotBlank(secretAnswer)) {
-                userService.changeQuestionAnswer(user, secretQuestion, secretAnswer);
+            if (StringUtils.isNotBlank(user.getSecretQuestion()) && StringUtils.isNotBlank(secretAnswer)) {
+                userService.changeQuestionAnswer(user, user.getSecretQuestion(), secretAnswer);
             }
         }
 
