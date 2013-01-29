@@ -4,49 +4,18 @@ jq(function() {
     jq('#cancel-button').click(function() {
         window.history.back();
     });
-
-    jq('div input[type=text]').keyup(function(){
-        var firstSearch = jq("#choose-first-search").val();
-        var secondSearch = jq("#choose-second-search").val();
-
-        var firstValue = jq("#choose-first-value").val();
-        var secondValue = jq("#choose-second-value").val();
-
-        verifyIfButtonShouldBeEnabled(firstSearch, secondSearch, firstValue, secondValue);
-    });
-
-    jq(document).on('click','li a', function(){
-        var firstSearch = jq("#choose-first-search").val();
-        var secondSearch = jq("#choose-second-search").val();
-
-        var firstValue = jq("#choose-first-value").val();
-        var secondValue = jq("#choose-second-value").val();
-
-        verifyIfButtonShouldBeEnabled(firstSearch, secondSearch, firstValue, secondValue);
-    });
 });
 
-function verifyIfButtonShouldBeEnabled(firstSearch, secondSearch, firstValue, secondValue) {
+function checkConfirmButton(){
+    var patient1Id = jq("#patient1").val();
+    var patient2Id = jq("#patient2").val();
 
-    if (firstSearch.length <3 || secondSearch.length<3){
-        disableButton();
-        return ;
-    }
-
-    if (firstValue != "" && firstValue != "0" && secondValue != "" && secondValue != "0") {
+    if( patient1Id > 0 &&  patient2Id > 0 &&
+        (patient1Id != patient2Id)){
         enableButton();
+        jq("#confirm-button").focus();
     } else {
         disableButton();
-    }
-}
-
-function labelFunction(item) {
-    var id = item.patientId;
-    if (id != 0 && item.primaryIdentifiers && item.primaryIdentifiers[0]) {
-        id = item.primaryIdentifiers[0].identifier;
-        return id + ' - ' + item.preferredName.fullName;
-    }else{
-        return item.textValue;
     }
 }
 
@@ -58,39 +27,4 @@ function enableButton(){
 function disableButton(){
     jq("#confirm-button").attr("disabled","disabled");
     jq("#confirm-button").addClass('disabled');
-}
-
-function verifyPatientsToMerge(message, items, fieldId ){
-    var hiddenId = '';
-    var firstValue = jq("#choose-first-value").val();
-    var secondValue = jq("#choose-second-value").val();
-    var firstSearch = jq("#choose-first-search").val();
-    var secondSearch = jq("#choose-second-search").val();
-
-    if(fieldId=='choose-second'){
-        hiddenId = firstValue;
-    } else {
-        hiddenId = secondValue;
-    }
-
-    if(items.length==1 && (items[0].patientId == hiddenId || items[0].patientId==0)){
-        items[0].patientId = 0;
-        items[0].label = message;
-
-        disableButton();
-        return ;
-    } else {
-        for (var i = 0 ; i < items.length ; i++){
-            if (items[i].patientId == hiddenId){
-
-                //remove item from array
-                items.splice(i, 1);
-
-                return;
-            }
-        }
-    }
-
-    verifyIfButtonShouldBeEnabled(firstSearch, secondSearch, firstValue, secondValue);
-
 }

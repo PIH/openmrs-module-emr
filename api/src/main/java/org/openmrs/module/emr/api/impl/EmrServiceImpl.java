@@ -15,8 +15,11 @@ package org.openmrs.module.emr.api.impl;
 
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.api.APIException;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.adt.AdtService;
@@ -24,6 +27,7 @@ import org.openmrs.module.emr.api.EmrService;
 import org.openmrs.module.emr.api.db.EmrDAO;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
@@ -37,6 +41,8 @@ public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
     private AdtService adtService;
 
     private LocationService locationService;
+
+    private PatientService patientService;
 
     public void setDao(EmrDAO dao) {
         this.dao = dao;
@@ -53,9 +59,13 @@ public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
     public void setAdtService(AdtService adtService) {
         this.adtService = adtService;
     }
-    
+
     public void setLocationService(LocationService locationService) {
     	this.locationService = locationService;
+    }
+
+    public void setPatientService(PatientService patientService) {
+        this.patientService = patientService;
     }
 
 	@Override
@@ -76,4 +86,28 @@ public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
         return locations;
     }
 
+    @Override
+    public Patient findPatientByPrimaryId(String primaryId) {
+        if(primaryId==null){
+            throw new IllegalArgumentException("primary ID should not be null");
+        }
+
+        PatientIdentifierType primaryIdentifierType = emrProperties.getPrimaryIdentifierType();
+
+        if(primaryIdentifierType==null){
+            throw new RuntimeException("primary identifier is not configured");
+        }
+
+        List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<PatientIdentifierType>();
+        patientIdentifierTypes.add(primaryIdentifierType);
+
+        List<Patient> patients = patientService.getPatients(null, primaryId, patientIdentifierTypes, true);
+
+        if (patients.isEmpty()) {
+            throw new APIException("no such patient");
+        }
+
+        return patients.get(0);
+
+    }
 }

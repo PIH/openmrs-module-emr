@@ -29,6 +29,8 @@ import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import static java.util.Arrays.asList;
+
 /**
  * AJAX ssearch methods for patients
  */
@@ -50,6 +52,16 @@ public class FindPatientFragmentController {
         }
         List<Patient> results = service.findPatients(query, checkedInAt, 0, resultLimit);
         return simplify(ui, emrProperties, results);
+    }
+
+    public SimpleObject searchById(@RequestParam(value = "primaryId", required = false) String primaryId,
+                                     @SpringBean EmrService service,
+                                     @SpringBean EmrProperties emrProperties,
+                                     UiUtils ui) {
+
+        Patient patient = service.findPatientByPrimaryId(primaryId);
+        return simplify(ui, emrProperties, patient);
+
     }
 
     List<SimpleObject> simplify(UiUtils ui, EmrProperties emrProperties, List<Patient> results) {

@@ -20,6 +20,7 @@
                 <property name="encounterService" ref="encounterService" />
                 <property name="adtService" ref="adtService" />
                 <property name="locationService" ref="locationService" />
+                <property name="patientService" ref="patientService" />
             </bean>
         </property>
         <property name="preInterceptors">
