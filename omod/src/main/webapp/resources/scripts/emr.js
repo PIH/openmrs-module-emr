@@ -170,6 +170,7 @@ var emr = (function($) {
                     overlayClose: true,
                     overlayId: "modal-overlay",
                     opacity: 80,
+                    persist: true,
                     closeClass: "cancel"
                 });
             };

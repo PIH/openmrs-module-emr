@@ -16,7 +16,7 @@
             selector: '#request-paper-record-dialog',
             actions: {
                 confirm: function() {
-                    emr.getFragmentActionWithCallback('emr', 'paperrecord/requestPaperRecord', 'requestPaperRecord', { patientId: ${ patient.id }, locationId: ${ emrContext.sessionLocation.id } }, function(data) {
+                    emr.getFragmentActionWithCallback('emr', 'paperrecord/requestPaperRecord', 'requestPaperRecord', { patientId: ${ patient.id }, locationId: sessionLocationModel.id() }, function(data) {
                         emr.showInfoMessage(data.message);
                         requestPaperRecordDialog.close();
                     });
@@ -26,10 +26,13 @@
                 }
             }
         });
+
+        ko.applyBindings( sessionLocationModel, jq('#request-paper-record-dialog').get(0) );
     });
 
     var showRequestChartDialog = function() {
         requestPaperRecordDialog.show();
+        return false;
     }
 </script>
 
@@ -81,7 +84,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
             </li>
             <li class="info">
                 <span>${ ui.message("emr.location") }</span>
-                <h5>${ ui.format(emrContext.sessionLocation) }</h5>
+                <h5 data-bind="text: text"></h5>
             </li>
         </ul>
 
