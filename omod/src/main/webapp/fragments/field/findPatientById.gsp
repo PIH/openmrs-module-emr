@@ -5,13 +5,24 @@
 
 <script type="text/javascript">
 jq(function() {
-        jq("#${config.textFieldName}").blur(function(){
-            var primaryId = jq("#${config.textFieldName}").val();
-            if(primaryId.length > 0){
-                getPatientId(primaryId,"${ config.hiddenFieldName}", "${config.fullNameField}", ${config.callBack});
-            }
+    var KEYCODE_ENTER = 13;
 
-        })
+    function evaluatePrimaryId(){
+        var primaryId = jq("#${config.textFieldName}").val();
+        if(primaryId.length > 0){
+            getPatientId(primaryId,"${ config.hiddenFieldName}", "${config.fullNameField}", ${config.callBack});
+        }
+    };
+
+    jq("#${config.textFieldName}").blur(function(){
+        evaluatePrimaryId();
+    });
+
+    jq("#${config.textFieldName}").keypress(function(event){
+        if(event.keyCode == KEYCODE_ENTER){
+          evaluatePrimaryId();
+        }
+    });
 });
 </script>
 

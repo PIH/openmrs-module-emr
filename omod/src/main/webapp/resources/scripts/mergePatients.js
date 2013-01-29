@@ -6,6 +6,8 @@ jq(function() {
     });
 });
 
+
+
 function checkConfirmButton(){
     var patient1Id = jq("#patient1").val();
     var patient2Id = jq("#patient2").val();

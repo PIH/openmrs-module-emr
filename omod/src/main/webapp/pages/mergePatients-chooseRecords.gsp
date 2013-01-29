@@ -4,11 +4,13 @@
     ui.includeJavascript("emr", "mergePatients.js")
 
     def id = ""
+    def primaryId = ""
     def fullName = ""
 
     if (patient1 != null){
          id = patient1.patient.id
-         fullName = patient1.primaryIdentifiers.collect{ it.identifier }.join(',') + "-" + ui.format(patient1.patient)
+         primaryId = patient1.primaryIdentifiers.collect{ it.identifier }.join(',')
+         fullName =  ui.format(patient1.patient)
     }
 
 %>
@@ -16,18 +18,18 @@
 <script type="text/javascript">
     jq(function(){
 
-        unknownPatient(${id}, "${fullName}", ${isUnknownPatient});
+        unknownPatient("${id}", "${primaryId}",  "${fullName}", ${isUnknownPatient});
 
-        function unknownPatient(id, fullName, isUnknownPatient){
+        function unknownPatient(id, primaryId, fullName, isUnknownPatient){
             if(id>0 && isUnknownPatient){
                 jq("#patient1").val(id);
-                jq("#patient1-text").val(fullName);
+                jq("#patient1-text").val(primaryId);
+                jq("#full-name-field").text(fullName);
                 jq("#patient1-text").attr("disabled","disabled");
                 jq("#patient1-text").addClass('disabled');
                 jq("#patient2-text").focus();
             }
         }
-
     });
 
 </script>
@@ -35,11 +37,11 @@
 <h3>${ ui.message("emr.mergePatients.selectTwo") }</h3>
 <input type= "hidden" name= "isUnknownPatient" value= "${isUnknownPatient}"/>
 <div id="merge-patient-container">
-    <h4>Please enter the ZL EMR IDs of the two record to merge</h4>
+    <h4>${ ui.message("emr.mergePatients.enterIds") }</h4>
     <form>
         <p>
             ${ ui.includeFragment("emr", "field/findPatientById",[
-                    label: "First Patient ID",
+                    label: ui.message("emr.mergePatients.chooseFirstLabel"),
                     hiddenFieldName: "patient1",
                     textFieldName: "patient1-text",
                     callBack: "checkConfirmButton",
@@ -48,7 +50,7 @@
         </p>
         <p>
             ${ ui.includeFragment("emr", "field/findPatientById",[
-                    label: "Second Patient ID",
+                    label: ui.message("emr.mergePatients.chooseSecondLabel"),
                     hiddenFieldName: "patient2",
                     textFieldName: "patient2-text",
                     callBack: "checkConfirmButton"
