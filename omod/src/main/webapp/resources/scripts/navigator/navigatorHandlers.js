@@ -2,8 +2,8 @@ var selectedModel = function(items) {
     return _.find(items, function(i) { return i.isSelected; });
 }
 
-function FieldsKeyboardHandler(questionsHandler) {
-    var fields = [];
+function FieldsKeyboardHandler(fieldModels, questionsHandler) {
+    var fields = fieldModels;
     var questionsHandler = questionsHandler;
 
     var delegateIfNoSelectedFieldTo = function(delegatedFunction) {
@@ -46,9 +46,6 @@ function FieldsKeyboardHandler(questionsHandler) {
 
 
     var api = {};
-    api.addField = function(field) {
-        fields.push(field);
-    };
     api.handleUpKey = function() {
         return delegateIfNoSelectedFieldTo(questionsHandler.handleUpKey);
     };
@@ -87,15 +84,12 @@ function FieldsKeyboardHandler(questionsHandler) {
     return api;
 }
 
-function QuestionsKeyboardHandler() {
-    var questions = [];
+function QuestionsKeyboardHandler(questionModels) {
+    var questions = questionModels;
 
     var api = {};
     api.selectedQuestion = function() {
         return selectedModel(questions);
-    };
-    api.addQuestion = function(question) {
-        questions.push(question);
     };
     api.handleUpKey = function() {
         var question = selectedModel(questions);

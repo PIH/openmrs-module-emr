@@ -74,6 +74,10 @@ FieldModel.prototype.value = function() {
     }
     return this.element.val() ? this.element.val() : "";
 }
+FieldModel.prototype.resetErrorMessages = function() {
+    this.messagesContainer.empty();
+    this.element.removeClass("error");
+}
 
 /*
  * Prototype for questions
@@ -98,7 +102,7 @@ QuestionModel.prototype.select = function() {
     SelectableModel.prototype.select.apply(this);
     this.valueElement.text("");
     this.questionLi.addClass("focused");
-    _.each(this.fields, function(field) { field.messagesContainer.empty(); field.element.removeClass("error"); });
+    _.each(this.fields, function(field) { field.resetErrorMessages(); });
 }
 QuestionModel.prototype.unselect = function() {
     SelectableModel.prototype.unselect.apply(this);

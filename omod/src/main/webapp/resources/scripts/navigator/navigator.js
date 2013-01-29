@@ -19,12 +19,8 @@ function initFormModels(formEl) {
 }
 
 function initKeyboardHandlersChain(questions, fields) {
-    var questionsHandler = QuestionsKeyboardHandler();
-    _.each(questions, function(q) { questionsHandler.addQuestion(q); });
-
-    var fieldsHandler = FieldsKeyboardHandler(questionsHandler);
-    _.each(fields, function(f) { fieldsHandler.addField(f); });
-
+    var questionsHandler = QuestionsKeyboardHandler(questions);
+    var fieldsHandler = FieldsKeyboardHandler(fields, questionsHandler);
     return fieldsHandler;
 }
 
