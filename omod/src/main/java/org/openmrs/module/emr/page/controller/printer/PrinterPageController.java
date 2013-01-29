@@ -58,6 +58,7 @@ public class PrinterPageController {
         if (!errors.hasErrors()) {
             try {
                 printerService.savePrinter(printer);
+                request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
                 request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, "emr.printer.saved");
 
                 return "redirect:/emr/printer/managePrinters.page";

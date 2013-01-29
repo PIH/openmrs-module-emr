@@ -9,6 +9,7 @@ import org.openmrs.Provider;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ProviderService;
+import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.adt.AdtService;
 import org.openmrs.ui.framework.SimpleObject;
@@ -17,6 +18,7 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -40,6 +42,7 @@ public class RetrospectiveCheckinPageController {
     }
 
     public String post(UiUtils ui,
+                       HttpServletRequest request,
                        @SpringBean("adtService") AdtService adtService,
                        @SpringBean("conceptService") ConceptService conceptService,
                        @SpringBean("providerService")ProviderService providerService,
@@ -63,6 +66,9 @@ public class RetrospectiveCheckinPageController {
         Calendar calendar = Calendar.getInstance();
         calendar.set(checkinDateYear, checkinDateMonth-1, checkinDateDay, checkinDateHour, checkinDateMinutes);
         adtService.createCheckinInRetrospective(patient, location, provider, paymentReason, paymentAmount, paymentReceipt, calendar.getTime());
+
+        request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, "emr.retrospectiveCheckin.success");
+        request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
         return "redirect:" + ui.pageLink("emr", "patient", SimpleObject.create("patientId", patient.getId()));
     }
 

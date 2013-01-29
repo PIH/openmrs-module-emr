@@ -97,6 +97,7 @@ public class AccountPageController {
 				accountService.saveAccount(account);
 				request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
                         messageSourceService.getMessage("emr.account.saved"));
+                request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 				
 				return "redirect:/emr/account/manageAccounts.page";
 			}
