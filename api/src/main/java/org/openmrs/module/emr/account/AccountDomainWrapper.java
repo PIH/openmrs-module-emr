@@ -37,8 +37,6 @@ public class AccountDomainWrapper {
 
     private String confirmPassword;
 
-    private String secretAnswer;
-
     @Autowired
     private AccountService accountService;
 
@@ -153,26 +151,7 @@ public class AccountDomainWrapper {
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
     }
-
-    public String getSecretQuestion() {
-        return user != null ? user.getSecretQuestion() : null;
-    }
-
-    public void setSecretQuestion(String secretQuestion) {
-        if (StringUtils.isNotBlank(secretQuestion)) {
-            initializeUserIfNecessary();
-            user.setSecretQuestion(secretQuestion);
-        }
-    }
-
-    public String getSecretAnswer() {
-        return secretAnswer;
-    }
-
-    public void setSecretAnswer(String secretAnswer) {
-        this.secretAnswer = secretAnswer;
-    }
-
+    
     public void setDefaultLocale(Locale locale) {
         if (locale != null) {
             initializeUserIfNecessary();
@@ -380,10 +359,6 @@ public class AccountDomainWrapper {
             // the saveUser(user, password) method will *only* set a password for a new user, it won't change an existing one
             if (existingUser && StringUtils.isNotBlank(password) && StringUtils.isNotBlank(confirmPassword)) {
                 userService.changePassword(user, password);
-            }
-
-            if (StringUtils.isNotBlank(user.getSecretQuestion()) && StringUtils.isNotBlank(secretAnswer)) {
-                userService.changeQuestionAnswer(user, user.getSecretQuestion(), secretAnswer);
             }
         }
 

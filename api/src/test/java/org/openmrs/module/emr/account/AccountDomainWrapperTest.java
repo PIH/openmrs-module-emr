@@ -584,24 +584,6 @@ public class AccountDomainWrapperTest {
 
         verify(userService, never()).changeQuestionAnswer(eq(account.getUser()), anyString(), anyString());
     }
-
-    @Test
-    public void testSaveAccountWithSettingQuestionAndAnswer() throws Exception {
-
-        Person person = new Person();
-
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
-        account.setUserEnabled(true);
-        account.setPassword("abc");
-        account.setConfirmPassword("abc");
-        account.setSecretQuestion("Who is my favorite person?");
-        account.setSecretAnswer("Evan Waters");
-        account.save();
-
-        verify(userService).saveUser(account.getUser(), "abc");
-        verify(userService).changeQuestionAnswer(account.getUser(), "Who is my favorite person?", "Evan Waters");
-    }
-
     private AccountDomainWrapper initializeNewAccountDomainWrapper(Person person) {
         return new AccountDomainWrapper(person, accountService, userService, providerService, personService);
     }

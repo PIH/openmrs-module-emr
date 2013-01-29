@@ -86,7 +86,6 @@ public class AccountValidator implements Validator {
             checkIfDuplicateUsername(errors, account.getUser());
             checkIfPrivilegeLevelIsCorrect(errors, account);
             checkIfNoCapabilities(errors, account);
-            checkSecretAnswerAndQuestion(errors, account);
         }
 
         if (checkIfUserWasCreated(user) || StringUtils.isNotBlank(account.getPassword()) || StringUtils.isNotBlank(account.getConfirmPassword())) {
@@ -170,17 +169,6 @@ public class AccountValidator implements Validator {
         if (userService.hasDuplicateUsername(user)) {
             errors.rejectValue("username", "emr.user.duplicateUsername",
                     new Object[] { messageSourceService.getMessage("emr.user.duplicateUsername") }, null);
-        }
-    }
-
-    private void checkSecretAnswerAndQuestion(Errors errors, AccountDomainWrapper account) {
-        if (StringUtils.isNotBlank(account.getSecretQuestion()) && StringUtils.isBlank(account.getSecretAnswer())) {
-            errors.rejectValue("secretAnswer", "error.required",
-                    new Object[] { messageSourceService.getMessage("emr.user.secretAnswer") }, null);
-        }
-        else if (StringUtils.isBlank(account.getSecretQuestion()) && StringUtils.isNotBlank(account.getSecretAnswer())) {
-            errors.rejectValue("secretQuestion", "error.required",
-                    new Object[] { messageSourceService.getMessage("emr.user.secretQuestion") }, null);
         }
     }
 

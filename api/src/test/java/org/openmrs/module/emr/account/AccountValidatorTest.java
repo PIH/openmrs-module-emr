@@ -410,33 +410,6 @@ public class AccountValidatorTest {
         assertThat(errorList.size(), is(1));
     }
 
-
-    @Test
-    public void shouldCreateErrorMessageIfSecretQuestionWithoutAnswer() {
-
-        createAccountWithUsernameAs("username");
-        account.setSecretQuestion("What is your favorite color?");
-        Errors errors = new BindException(account, "account");
-        validator.validate(account, errors);
-
-        assertTrue(errors.hasErrors());
-        List<FieldError> errorList = errors.getFieldErrors("secretAnswer");
-        assertThat(errorList.size(), is(1));
-    }
-
-    @Test
-    public void shouldCreateErrorMessageIfSecretAnswerWithoutQuestion() {
-
-        createAccountWithUsernameAs("username");
-        account.setSecretAnswer("Red");
-        Errors errors = new BindException(account, "account");
-        validator.validate(account, errors);
-
-        assertTrue(errors.hasErrors());
-        List<FieldError> errorList = errors.getFieldErrors("secretQuestion");
-        assertThat(errorList.size(), is(1));
-    }
-
     private void createAccountWithUsernameAs(String username) {
         account.setUsername(username);
         account.setPassword("password");
