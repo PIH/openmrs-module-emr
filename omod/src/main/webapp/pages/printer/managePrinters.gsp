@@ -3,7 +3,10 @@
 %>
 
 <h3>${  ui.message("emr.printer.managePrinters") }</h3>
-
+<div>
+    <a href="/${ contextPath }/emr/printer/printer.page" class="button">${ ui.message("emr.printer.add") }</a>
+</div>
+<br/>
 <table>
     <tr>
         <th>${ ui.message("emr.printer.type") }</th>
@@ -42,7 +45,3 @@
     </tr>
     <% } %>
 </table>
-<br/>
-<div>
-    <a href="/${ contextPath }/emr/printer/printer.page" class="button">${ ui.message("emr.printer.add") }</a>
-</div>

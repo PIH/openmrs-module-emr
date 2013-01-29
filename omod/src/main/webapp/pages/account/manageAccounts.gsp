@@ -14,21 +14,29 @@
 		<tr>
 			<th>Name</th>
 			<th>Login</th>
+			<th>Gender</th>
+			<th></th>
 		</tr>
 	</thead>
 	<tbody>
 		<% accounts.each{  %>
 	 	<tr>
 	 		<td>
-	 			<a href="/${ contextPath }/emr/account/account.page?personId=${ it.person.personId }">
-					${ ui.format(it.person.personName)}
-				</a>
+				${ ui.format(it.person.personName)}
 			</td>
 			<td>
 				<% if(it.username && it.username != '') {%>
 					${ ui.format(it.username) }
 				<% } %>
 			</td>
+			<td>
+				${ ui.format(it.person.gender)}
+			</td>
+			<td>
+	            <a href="/${ contextPath }/emr/account/account.page?personId=${ it.person.personId }">
+	                <button>${ ui.message("emr.edit") }</button>
+	            </a>
+        	</td>
 		</tr>
 		<% } %>
 	</tbody>
