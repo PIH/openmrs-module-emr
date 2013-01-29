@@ -81,6 +81,8 @@ public class EmrConstants {
 
     public static final String SESSION_ATTRIBUTE_INFO_MESSAGE = "emr.infoMessage";
 
+    public static final String SESSION_ATTRIBUTE_TOAST_MESSAGE = "emr.toastMessage";
+
     public static final String TASK_CLOSE_STALE_VISITS_NAME = "EMR module - Close Stale Visits";
 
     public static final String TASK_CLOSE_STALE_VISITS_DESCRIPTION = "Closes any open visits that are no longer active";

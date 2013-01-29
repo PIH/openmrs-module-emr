@@ -103,6 +103,7 @@ public class MergePatientsPageController {
         adtService.mergePatients(preferred, notPreferred);
 
         request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, "emr.mergePatients.success");
+        request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
         return "redirect:" + ui.pageLink("emr", "patient", SimpleObject.create("patientId", preferred.getId()));
     }
 

@@ -43,6 +43,8 @@ public class RadiologyRequisitionFragmentController {
         request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
             messageSourceService.getMessage("emr.task.orderXray.success"));
 
+        request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+
         return new SuccessResult();
     }
 

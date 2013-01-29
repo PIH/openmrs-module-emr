@@ -26,10 +26,12 @@ public class InfoAndErrorMessageFragmentController {
         HttpSession session = request.getSession();
         String errorMessage = (String) session.getAttribute(EmrConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE);
         String infoMessage = (String) session.getAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE);
+        String toastMessage = (String) session.getAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE);
         session.setAttribute(EmrConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE, null);
         session.setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, null);
+        session.setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, null);
         fragmentModel.addAttribute("errorMessage", errorMessage);
         fragmentModel.addAttribute("infoMessage", infoMessage);
+        fragmentModel.addAttribute("toastMessage", toastMessage);
     }
-
 }
