@@ -14,9 +14,11 @@
 
 package org.openmrs.module.emr.paperrecord;
 
+import org.openmrs.Patient;
+
 public interface PaperRecordLabelTemplate {
 
-    String generateLabel(PaperRecordRequest request);
+    String generateLabel(Patient patient, String paperRecordIdentifier);
 
     String getEncoding();
 }

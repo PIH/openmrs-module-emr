@@ -34,15 +34,13 @@ public class DefaultZplPaperRecordLabelTemplate implements PaperRecordLabelTempl
     }
 
     @Override
-    public String generateLabel(PaperRecordRequest request) {
-
-        Patient patient = request.getPatient();
+    public String generateLabel(Patient patient, String paperRecordIdentifier) {
 
         if (patient.getPersonName() == null) {
             throw new IllegalArgumentException("Patient needs to have at least one name");
         }
 
-        if (request.getIdentifier() == null) {
+        if (StringUtils.isBlank(paperRecordIdentifier)) {
             throw new IllegalArgumentException("No identifier for paper record");
         }
 
@@ -125,7 +123,7 @@ public class DefaultZplPaperRecordLabelTemplate implements PaperRecordLabelTempl
 
 
         /* Print the bar code, based on the primary identifier */
-        data.append("^FO790,250^ATN^BY4^BCN,150^FD" + request.getIdentifier() + "^FS");    // print barcode & identifier
+        data.append("^FO790,250^ATN^BY4^BCN,150^FD" + paperRecordIdentifier+ "^FS");    // print barcode & identifier
 
         /* Print command */
         data.append("^XZ");

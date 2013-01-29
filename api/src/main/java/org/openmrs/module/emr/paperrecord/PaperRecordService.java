@@ -188,25 +188,39 @@ public interface PaperRecordService extends OpenmrsService {
 
     /**
      * Prints a label for the paper record associated wth the request
-     * at the default location
+     * at the selected location
      *
      * @param request
      * @param location
      */
-    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS)
     void printPaperRecordLabel(PaperRecordRequest request, Location location);
 
 
     /**
-     * Prints x numbers of label for the paper record associated wth the request
+     * Prints x numbers of labels for the paper record associated with the request
      * at the default location
      *
      * @param request
      * @param location
      * @param count the number of labels to print
      */
-    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS)
     void printPaperRecordLabels(PaperRecordRequest request, Location location, Integer count);
+
+    /**
+     * Prints x numbers of labels for the paper record associated with the patient
+     *
+     * @param patient the patient we want to print the label for
+     * @param recordLocation recordLocation the location of the record (ie, "Mirebalais Hospital"); if the specified location is not
+     *                       a medical record location, will search up the location hierarchy for a valid medical
+     *                       record location
+     * @param location the location where the record should be printed
+     * @param count the of labels to print
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS)
+    void printPaperRecordLabels(Patient patient, Location recordLocation, Location location, Integer count);
+
 
     /**
      * Creates a request to merge two paper records

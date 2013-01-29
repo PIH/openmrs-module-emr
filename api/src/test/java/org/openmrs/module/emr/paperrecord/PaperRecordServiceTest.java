@@ -842,12 +842,17 @@ public class PaperRecordServiceTest {
     @Test
     public void testPrintPaperRecordLabelShouldPrintSingleLabel() throws Exception {
 
-        when(mockPaperRecordLabelTemplate.generateLabel(any(PaperRecordRequest.class))).thenReturn("data\nlines\n");
+        Location location = new Location(1);
+        Patient patient = new Patient(1);
+
+        when(mockPaperRecordLabelTemplate.generateLabel(patient, "ABC")).thenReturn("data\nlines\n");
         when(mockPaperRecordLabelTemplate.getEncoding()).thenReturn("UTF-8");
 
-        Location location = new Location(1);
+        PaperRecordRequest request = new PaperRecordRequest();
+        request.setPatient(patient);
+        request.setIdentifier("ABC");
 
-        paperRecordService.printPaperRecordLabel(new PaperRecordRequest(), location);
+        paperRecordService.printPaperRecordLabel(request, location);
 
         verify(mockPrinterService).printViaSocket("data\nlines\n", Printer.Type.LABEL, location, "UTF-8");
 
@@ -856,16 +861,43 @@ public class PaperRecordServiceTest {
     @Test
     public void testPrintPaperRecordLabelsShouldPrintThreeLabelIfCountSetToThree() throws Exception {
 
-        when(mockPaperRecordLabelTemplate.generateLabel(any(PaperRecordRequest.class))).thenReturn("data\nlines\n");
+        Location location = new Location(1);
+        Patient patient = new Patient(1);
+
+        when(mockPaperRecordLabelTemplate.generateLabel(patient, "ABC")).thenReturn("data\nlines\n");
         when(mockPaperRecordLabelTemplate.getEncoding()).thenReturn("UTF-8");
 
-        Location location = new Location(1);
+        PaperRecordRequest request = new PaperRecordRequest();
+        request.setPatient(patient);
+        request.setIdentifier("ABC");
 
-        paperRecordService.printPaperRecordLabels(new PaperRecordRequest(), location, 3);
+        paperRecordService.printPaperRecordLabels(request, location, 3);
 
         verify(mockPrinterService).printViaSocket("data\nlines\ndata\n" +
                 "lines\ndata\nlines\n", Printer.Type.LABEL, location, "UTF-8");
 
+    }
+
+    @Test
+    public void testPrintPaperRecordLabelByPatientShouldPrintSingleLabel() throws Exception {
+
+        Patient patient = new Patient(1);
+
+        Location recordLocation = new Location(1);
+        Location location = new Location(2);
+
+        PatientIdentifier paperRecordIdentifier = new PatientIdentifier();
+        paperRecordIdentifier.setIdentifierType(paperRecordIdentifierType);
+        paperRecordIdentifier.setIdentifier("ABC");
+        paperRecordIdentifier.setLocation(recordLocation);
+        patient.addIdentifier(paperRecordIdentifier);
+
+        when(mockPaperRecordLabelTemplate.generateLabel(patient, "ABC")).thenReturn("data\nlines\n");
+        when(mockPaperRecordLabelTemplate.getEncoding()).thenReturn("UTF-8");
+
+        paperRecordService.printPaperRecordLabels(patient, recordLocation, location, 1);
+
+        verify(mockPrinterService).printViaSocket("data\nlines\n", Printer.Type.LABEL, location, "UTF-8");
     }
 
 

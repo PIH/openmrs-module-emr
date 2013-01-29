@@ -349,12 +349,23 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
     @Override
     public void printPaperRecordLabels(PaperRecordRequest request, Location location, Integer count) {
+      printPaperRecordLabels(request.getPatient(), request.getIdentifier(), location, count);
 
+    }
+
+    @Override
+    public void printPaperRecordLabels(Patient patient, Location recordLocation, Location location, Integer count) {
+        PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient, emrProperties.getPaperRecordIdentifierType(), getMedicalRecordLocationAssociatedWith(recordLocation));
+        printPaperRecordLabels(patient, paperRecordIdentifier != null ? paperRecordIdentifier.getIdentifier() : null, location, count);
+    }
+
+
+    private void printPaperRecordLabels(Patient patient, String identifier, Location location, Integer count) {
         if (count == null || count == 0) {
             return;  // just do nothing if we don't have a count
         }
 
-        String data = paperRecordLabelTemplate.generateLabel(request);
+        String data = paperRecordLabelTemplate.generateLabel(patient, identifier);
         String encoding = paperRecordLabelTemplate.getEncoding();
 
         // just duplicate the data if we are printing multiple labels
@@ -370,12 +381,9 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
             printerService.printViaSocket(dataBuffer.toString(), Printer.Type.LABEL, location, encoding);
         }
         catch (Exception e) {
-            throw new UnableToPrintPaperRecordLabelException("Unable to print paper record label for request " + request, e);
+            throw new UnableToPrintPaperRecordLabelException("Unable to print paper record label for patient " + patient, e);
         }
-
     }
-
-
 
     @Override
     @Transactional

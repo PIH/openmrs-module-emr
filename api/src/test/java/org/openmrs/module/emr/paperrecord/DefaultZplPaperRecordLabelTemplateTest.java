@@ -65,11 +65,7 @@ public class DefaultZplPaperRecordLabelTemplateTest {
         primaryIdentifier.setIdentifier("ABC");
         patient.addIdentifier(primaryIdentifier);
 
-        PaperRecordRequest request = new PaperRecordRequest();
-        request.setIdentifier("123");
-        request.setPatient(patient);
-
-       template.generateLabel(request);
+       template.generateLabel(patient, "123");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -86,10 +82,7 @@ public class DefaultZplPaperRecordLabelTemplateTest {
         PersonName personName = new PersonName();
         patient.addName(personName);
 
-        PaperRecordRequest request = new PaperRecordRequest();
-        request.setPatient(patient);
-
-        template.generateLabel(request);
+        template.generateLabel(patient,"");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -101,11 +94,7 @@ public class DefaultZplPaperRecordLabelTemplateTest {
         PersonName personName = new PersonName();
         patient.addName(personName);
 
-        PaperRecordRequest request = new PaperRecordRequest();
-        request.setIdentifier("123");
-        request.setPatient(patient);
-
-        String result = template.generateLabel(request);
+        String result = template.generateLabel(patient, "123");
         Assert.assertTrue(result.contains("123"));
     }
 
@@ -123,11 +112,7 @@ public class DefaultZplPaperRecordLabelTemplateTest {
         PersonName personName = new PersonName();
         patient.addName(personName);
 
-        PaperRecordRequest request = new PaperRecordRequest();
-        request.setIdentifier("123");
-        request.setPatient(patient);
-
-        String result = template.generateLabel(request);
+        String result = template.generateLabel(patient, "123");
         Assert.assertTrue(result.contains("123"));
         Assert.assertTrue(result.contains("ABC"));
     }
@@ -155,11 +140,7 @@ public class DefaultZplPaperRecordLabelTemplateTest {
         name.setGivenName("Indiana");
         patient.addName(name);
 
-        PaperRecordRequest request = new PaperRecordRequest();
-        request.setIdentifier("123");
-        request.setPatient(patient);
-
-        String data = template.generateLabel(request);
+        String data = template.generateLabel(patient, "123");
         System.out.println(data);
         Assert.assertTrue(data.equals("^XA^CI28^FO140,40^AVN^FDIndiana Jones^FS^FO140,350^ATN^FD02/Dec/2010  ^FS^FO140,400^ATN^FDtest^FS^FO870,50^FB350,1,0,R,0^AVN^FDABC^FS^FO790,250^ATN^BY4^BCN,150^FD123^FS^XZ"));
 
@@ -189,11 +170,7 @@ public class DefaultZplPaperRecordLabelTemplateTest {
         name.setGivenName("Indiana");
         patient.addName(name);
 
-        PaperRecordRequest request = new PaperRecordRequest();
-        request.setIdentifier("123");
-        request.setPatient(patient);
-
-        String data = template.generateLabel(request);
+        String data = template.generateLabel(patient, "123");
 
         Printer printer = new Printer();
         printer.setIpAddress("10.3.18.114");
