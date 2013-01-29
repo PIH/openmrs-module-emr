@@ -91,7 +91,7 @@
             <p class="emr_passwordDetails" <% if(!account.password && !account.confirmPassword) { %>style="display: none"<% } %>>
                 <label class="form-header" for="password">${ ui.message("emr.user.password") }</label>
                 <input type="password" id="password" name="password" value="${ account.password ?: ''}" autocomplete="off"/>
-                <div id="format-password">${ ui.message("emr.account.passwordFormat") }</div>
+                <label id="format-password">${ ui.message("emr.account.passwordFormat") }</label>
                 ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "password" ])}
             </p>
 
