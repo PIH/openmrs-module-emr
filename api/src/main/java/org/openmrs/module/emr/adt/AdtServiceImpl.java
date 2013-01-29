@@ -525,10 +525,26 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
             }
         }
 
+        PatientIdentifier preferredPatientIdentifier = preferred.getPatientIdentifier(
+            emrProperties.getPaperRecordIdentifierType());
+        PatientIdentifier notPreferredPatientIdentifier = notPreferred.getPatientIdentifier(
+            emrProperties.getPaperRecordIdentifierType());
+
+        if (notPreferredPatientIdentifier != null && preferredPatientIdentifier == null) {
+            for (PaperRecordRequest request : preferredRecordRequests) {
+                request.setIdentifier(notPreferredPatientIdentifier.getIdentifier());
+                paperRecordService.savePaperRecordRequest(request);
+            }
+        }
+
+        boolean updateNotPreferredIdentifier = notPreferredPatientIdentifier == null && preferredPatientIdentifier != null;
         // copy over any existing paper record requests to the preferred patient
-        for(PaperRecordRequest paperRecordRequest : notPreferredRecordRequests){
-            paperRecordRequest.setPatient(preferred);
-            paperRecordService.savePaperRecordRequest(paperRecordRequest);
+        for(PaperRecordRequest request : notPreferredRecordRequests){
+            request.setPatient(preferred);
+            if (updateNotPreferredIdentifier) {
+                request.setIdentifier(preferredPatientIdentifier.getIdentifier());
+            }
+            paperRecordService.savePaperRecordRequest(request);
         }
     }
 

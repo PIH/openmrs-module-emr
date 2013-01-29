@@ -41,9 +41,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
-import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.openmrs.module.emr.TestUtils.isJustNow;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -101,14 +101,16 @@ public class AdtServiceComponentTest extends BaseModuleContextSensitiveTest {
         observations.add(secondGroup);
 
         // step 1: check in the patient (which should create a visit and an encounter)
-        Encounter checkInEncounter = service.checkInPatient(patient, outpatientDepartment, null, observations, null, false);
+        Encounter checkInEncounter = service.checkInPatient(patient, outpatientDepartment, null, observations, null,
+            false);
 
         assertThat(checkInEncounter.getVisit(), notNullValue());
         assertThat(checkInEncounter.getPatient(), is(patient));
         assertThat(checkInEncounter.getEncounterDatetime(), isJustNow());
         assertThat(checkInEncounter.getVisit().getPatient(), is(patient));
         assertThat(checkInEncounter.getVisit().getStartDatetime(), isJustNow());
-        assertThat(checkInEncounter.getObs(), containsInAnyOrder(firstReason, firstAmount, firstReceipt, secondReason, secondAmount, secondReceipt));
+        assertThat(checkInEncounter.getObs(),
+            containsInAnyOrder(firstReason, firstAmount, firstReceipt, secondReason, secondAmount, secondReceipt));
         assertThat(checkInEncounter.getAllObs(), containsInAnyOrder(firstGroup, secondGroup));
 
         // TODO once these are implemented, add Admission and Discharge to this test
@@ -136,13 +138,73 @@ public class AdtServiceComponentTest extends BaseModuleContextSensitiveTest {
 
         assertThat(paperRecordService.getOpenPaperRecordRequestsToCreate().size(), Matchers.is(1));
 
-        List<PaperRecordRequest> mergedPaperRecordRequests = paperRecordService.getPaperRecordRequestsByPatient(
+        List<PaperRecordRequest> requestList = paperRecordService.getPaperRecordRequestsByPatient(
             preferredPatient);
-        assertThat(mergedPaperRecordRequests.size(), is(2));
-        assertThat(mergedPaperRecordRequests, hasItem(new IsExpectedPaperRecordRequest(PaperRecordRequest.Status.CANCELLED)));
-        assertThat(mergedPaperRecordRequests, hasItem(new IsExpectedPaperRecordRequest(PaperRecordRequest.Status.OPEN)));
+        assertThat(requestList.size(), is(2));
+        assertThat(requestList,
+            hasItem(new IsExpectedPaperRecordRequest(PaperRecordRequest.Status.CANCELLED)));
+        assertThat(requestList,
+            hasItem(new IsExpectedPaperRecordRequest(PaperRecordRequest.Status.OPEN)));
 
         assertThat(paperRecordService.getPaperRecordRequestsByPatient(notPreferredPatient).size(), is(0));
+    }
+
+    @Test
+    public void shoulMoveOpenPaperRecordRequestsToCreateToOpenRequestToPullAfterMerge() {
+        PatientService patientService = Context.getPatientService();
+        Location paperRecordLocation = locationService.getLocation(1);
+        Location anotherLocation = locationService.getLocation(3);
+
+        assertThat(paperRecordService.getOpenPaperRecordRequestsToCreate().size(), is(0));
+
+        Patient preferredPatient = patientService.getPatient(2);
+        Patient notPreferredPatient = patientService.getPatient(8);
+
+        // first, create a record request
+        paperRecordService.requestPaperRecord(notPreferredPatient, paperRecordLocation, anotherLocation);
+
+        assertThat(paperRecordService.getOpenPaperRecordRequestsToCreate().size(), is(1));
+
+        service.mergePatients(preferredPatient, notPreferredPatient);
+
+        assertThat(paperRecordService.getOpenPaperRecordRequestsToPull().size(), is(1));
+
+        List<PaperRecordRequest> requestList = paperRecordService.getPaperRecordRequestsByPatient(
+            preferredPatient);
+        assertThat(requestList.size(), is(1));
+        assertThat(requestList,
+            hasItem(new IsExpectedPaperRecordRequest(PaperRecordRequest.Status.OPEN)));
+        assertThat(requestList.get(0).getIdentifier(),
+            is(preferredPatient.getPatientIdentifier(emrProperties.getPaperRecordIdentifierType()).getIdentifier()));
+    }
+
+    @Test
+    public void shoulMoveOpenPaperRecordRequestsToCreateToOpenRequestToPullAfterMergeOnNotPreferredWithPaperRecordIdentifier() {
+        PatientService patientService = Context.getPatientService();
+        Location paperRecordLocation = locationService.getLocation(1);
+        Location anotherLocation = locationService.getLocation(3);
+
+        assertThat(paperRecordService.getOpenPaperRecordRequestsToCreate().size(), is(0));
+
+        Patient preferredPatient = patientService.getPatient(8);
+        Patient notPreferredPatient = patientService.getPatient(2);
+
+        // first, create a record request
+        paperRecordService.requestPaperRecord(preferredPatient, paperRecordLocation, anotherLocation);
+
+        assertThat(paperRecordService.getOpenPaperRecordRequestsToCreate().size(), is(1));
+
+        service.mergePatients(preferredPatient, notPreferredPatient);
+
+        assertThat(paperRecordService.getOpenPaperRecordRequestsToPull().size(), is(1));
+
+        List<PaperRecordRequest> requestList = paperRecordService.getPaperRecordRequestsByPatient(
+            preferredPatient);
+        assertThat(requestList.size(), is(1));
+        assertThat(requestList,
+            hasItem(new IsExpectedPaperRecordRequest(PaperRecordRequest.Status.OPEN)));
+        assertThat(requestList.get(0).getIdentifier(),
+            is(preferredPatient.getPatientIdentifier(emrProperties.getPaperRecordIdentifierType()).getIdentifier()));
     }
 
     private class IsExpectedPaperRecordRequest extends ArgumentMatcher<PaperRecordRequest> {

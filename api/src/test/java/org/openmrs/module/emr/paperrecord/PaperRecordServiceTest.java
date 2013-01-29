@@ -42,7 +42,6 @@ import org.openmrs.module.emr.paperrecord.db.PaperRecordRequestDAO;
 import org.openmrs.module.emr.printer.Printer;
 import org.openmrs.module.emr.printer.PrinterService;
 import org.openmrs.module.idgen.service.IdentifierSourceService;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -995,7 +994,7 @@ public class PaperRecordServiceTest {
 
     }
 
-    private class IsExpectedRequest extends ArgumentMatcher<PaperRecordRequest> {
+    public class IsExpectedRequest extends ArgumentMatcher<PaperRecordRequest> {
 
         private PaperRecordRequest expectedRequest;
 

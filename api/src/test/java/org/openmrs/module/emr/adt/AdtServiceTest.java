@@ -683,9 +683,50 @@ public class AdtServiceTest {
 
         verify(mockPaperRecordService).markPaperRecordRequestAsCancelled(notPreferredCreatePaperRecordRequest);
         verify(mockPaperRecordService, never()).markPaperRecordRequestAsCancelled(preferredCreatePaperRecordRequest);
+    }
 
+    @Test
+    public void mergingAPatientWithOpenCreatePaperRecordRequestWithAPatientWithPaperRecordIdentifierWillMoveRequestToPull() {
 
+        Patient preferred = new Patient();
+        PatientIdentifier identifier = new PatientIdentifier();
+        identifier.setIdentifierType(paperRecordIdentifierType);
+        identifier.setIdentifier("ABC");
+        preferred.addIdentifier(identifier);
+        Patient notPreferred = new Patient();
 
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.<PaperRecordRequest>emptyList());
+
+        PaperRecordRequest notPreferredCreatePaperRecordRequest = new PaperRecordRequest();
+        notPreferredCreatePaperRecordRequest.setPatient(notPreferred);
+        notPreferredCreatePaperRecordRequest.updateStatus(PaperRecordRequest.Status.OPEN);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(notPreferredCreatePaperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService, times(1)).savePaperRecordRequest(notPreferredCreatePaperRecordRequest);
+    }
+
+    @Test
+    public void mergingAPatientWithOpenCreatePaperRecordRequestWithANotPreferredPatientWithPaperRecordIdentifierWillMoveRequestToPull() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+        PatientIdentifier identifier = new PatientIdentifier();
+        identifier.setIdentifierType(paperRecordIdentifierType);
+        identifier.setIdentifier("ABC");
+        notPreferred.addIdentifier(identifier);
+
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.<PaperRecordRequest>emptyList());
+
+        PaperRecordRequest preferredCreatePaperRecordRequest = new PaperRecordRequest();
+        preferredCreatePaperRecordRequest.setPatient(preferred);
+        preferredCreatePaperRecordRequest.updateStatus(PaperRecordRequest.Status.OPEN);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(preferredCreatePaperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService, times(1)).savePaperRecordRequest(preferredCreatePaperRecordRequest);
     }
 
     private Encounter buildEncounter(Patient patient, Date encounterDatetime) {
