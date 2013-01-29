@@ -16,7 +16,10 @@ package org.openmrs.module.emr.paperrecord;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -77,9 +80,9 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     public void setMessageSourceService(MessageSourceService messageSourceService) {
         this.messageSourceService = messageSourceService;
     }
-    
+
     public void setAdministrationService(AdministrationService administrationService) {
-    	this.administrationService = administrationService;
+        this.administrationService = administrationService;
     }
 
     public void setIdentifierSourceService(IdentifierSourceService identifierSourceService) {
@@ -107,8 +110,9 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     @Override
     public boolean paperRecordExists(String identifier, Location location) {
 
-        List<PatientIdentifier> identifiers = patientService.getPatientIdentifiers(identifier, Collections.singletonList(emrProperties.getPaperRecordIdentifierType()),
-                Collections.singletonList(getMedicalRecordLocationAssociatedWith(location)), null, null);
+        List<PatientIdentifier> identifiers = patientService.getPatientIdentifiers(identifier,
+            Collections.singletonList(emrProperties.getPaperRecordIdentifierType()),
+            Collections.singletonList(getMedicalRecordLocationAssociatedWith(location)), null, null);
 
         return identifiers != null && identifiers.size() > 0 ? true : false;
     }
@@ -121,7 +125,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
     @Override
     public PaperRecordMergeRequest getPaperRecordMergeRequestById(Integer id) {
-       return paperRecordMergeRequestDAO.getById(id);
+        return paperRecordMergeRequestDAO.getById(id);
     }
 
     @Override
@@ -148,7 +152,8 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         Location recordLocation = getMedicalRecordLocationAssociatedWith(location);
 
         // fetch any pending request for this patient at this location
-        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(PENDING_STATUSES, patient, recordLocation, null, null);
+        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(PENDING_STATUSES, patient,
+            recordLocation, null, null);
 
         // if pending records exists, simply update that request location, don't issue a new request
         // (there should rarely be more than one pending record for a single patient, but this *may* happen if two
@@ -161,7 +166,8 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
         // if no pending record exists, create a new request
         // fetch the appropriate identifier (if it exists)
-        PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient, emrProperties.getPaperRecordIdentifierType(), recordLocation);
+        PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient,
+            emrProperties.getPaperRecordIdentifierType(), recordLocation);
         String identifier = paperRecordIdentifier != null ? paperRecordIdentifier.getIdentifier() : null;
 
         PaperRecordRequest request = new PaperRecordRequest();
@@ -180,30 +186,32 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     @Override
     @Transactional
     public PaperRecordRequest savePaperRecordRequest(PaperRecordRequest paperRecordRequest) {
-	    PaperRecordRequest request =null;
-    	if(paperRecordRequest!=null){
-    		return paperRecordRequestDAO.saveOrUpdate(paperRecordRequest);
-    	}
-	    return request;
+        PaperRecordRequest request = null;
+        if (paperRecordRequest != null) {
+            return paperRecordRequestDAO.saveOrUpdate(paperRecordRequest);
+        }
+        return request;
     }
 
-	@Override
+    @Override
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getOpenPaperRecordRequestsToPull() {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
-        return paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(PaperRecordRequest.Status.OPEN), null, null, null, true);
+        return paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(PaperRecordRequest.Status.OPEN),
+            null, null, null, true);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getOpenPaperRecordRequestsToCreate() {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
-        return paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(PaperRecordRequest.Status.OPEN), null, null, null, false);
+        return paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(PaperRecordRequest.Status.OPEN),
+            null, null, null, false);
     }
 
     @Override
     @Transactional
-    public synchronized List<PaperRecordRequest> assignRequests(List<PaperRecordRequest> requests, Person assignee, Location location) {
+    public synchronized Map<String, List<String>> assignRequests(List<PaperRecordRequest> requests, Person assignee, Location location) {
 
         if (requests == null) {
             throw new IllegalStateException("Requests cannot be null");
@@ -213,76 +221,83 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
             throw new IllegalStateException("Assignee cannot be null");
         }
 
-        // first verify that all of these requests are open, or else we can't assign them
-        for (PaperRecordRequest request : requests) {
-            if (request.getStatus() != PaperRecordRequest.Status.OPEN) {
-                throw new IllegalStateException("Cannot assign a request that is not open");
-            }
-        }
+        Map<String, List<String>> response = new HashMap<String, List<String>>();
+        response.put("success", new LinkedList<String>());
+        response.put("error", new LinkedList<String>());
 
         for (PaperRecordRequest request : requests) {
-             // first do a sanity check, in case an identifier has been created since the request was placed
-            if (StringUtils.isBlank(request.getIdentifier())) {
-               request.setIdentifier(getPaperMedicalRecordNumberFor(request.getPatient(), request.getRecordLocation()));
-            }
-
-            // if there is still no identifier, assign an identifier and mark it as to create, otherwise mark to pull
-            if (StringUtils.isBlank(request.getIdentifier())) {
-                String identifier = createPaperMedicalRecordNumberFor(request.getPatient(), request.getRecordLocation());
-                request.setIdentifier(identifier);
-                request.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_CREATE);
-
-                // we print two labels if we are creating a new record
-                printPaperRecordLabels(request, location, 2);
+            // first do a sanity check, in case an identifier has been created since the request was placed
+            // and verify that this request is open, or else we can't assign it
+            if (patientHasPaperRecordIdentifier(request) || request.getStatus() != Status.OPEN) {
+                response.get("error").add(request.getPatient().getPatientIdentifier().getIdentifier());
             }
             else {
-                request.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_PULL);
+                String identifier = request.getIdentifier();
+                if (StringUtils.isBlank(identifier)) {
+                    identifier = createPaperMedicalRecordNumberFor(request.getPatient(),
+                        request.getRecordLocation());
+                    request.setIdentifier(identifier);
+                    request.updateStatus(Status.ASSIGNED_TO_CREATE);
 
-                // we print one label if we are pulling a record
-                printPaperRecordLabel(request, location);
+                    // we print two labels if we are creating a new record
+                    printPaperRecordLabels(request, location, 2);
+                }
+                else {
+                    request.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_PULL);
+
+                    // we print one label if we are pulling a record
+                    printPaperRecordLabel(request, location);
+                }
+
+                request.setAssignee(assignee);
+                paperRecordRequestDAO.saveOrUpdate(request);
+
+                response.get("success").add(identifier);
             }
-
-            // set the assignee and save the record
-            request.setAssignee(assignee);
-            paperRecordRequestDAO.saveOrUpdate(request);
         }
 
-        return requests;
+        return response;
+    }
+
+    private boolean patientHasPaperRecordIdentifier(PaperRecordRequest request) {
+        return StringUtils.isBlank(request.getIdentifier()) &&
+            getPaperMedicalRecordNumberFor(request.getPatient(), request.getRecordLocation()) != null;
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getAssignedPaperRecordRequestsToPull() {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
-        return paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(PaperRecordRequest.Status.ASSIGNED_TO_PULL), null, null, null, null);
+        return paperRecordRequestDAO.findPaperRecordRequests(
+            Collections.singletonList(PaperRecordRequest.Status.ASSIGNED_TO_PULL), null, null, null, null);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getAssignedPaperRecordRequestsToCreate() {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
-        return paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(PaperRecordRequest.Status.ASSIGNED_TO_CREATE), null, null, null, null);
+        return paperRecordRequestDAO.findPaperRecordRequests(
+            Collections.singletonList(PaperRecordRequest.Status.ASSIGNED_TO_CREATE), null, null, null, null);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PaperRecordRequest> getPaperRecordRequestsByPatient(Patient patient) {
-	    return paperRecordRequestDAO.findPaperRecordRequests(null, patient, null, null, null);
+        return paperRecordRequestDAO.findPaperRecordRequests(null, patient, null, null, null);
     }
 
     @Override
     @Transactional(readOnly = true)
     public PaperRecordRequest getPendingPaperRecordRequestByIdentifier(String identifier) {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
-        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(PENDING_STATUSES, null, null, identifier, null);
+        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(PENDING_STATUSES, null, null,
+            identifier, null);
 
         if (requests == null || requests.size() == 0) {
             return null;
-        }
-        else if (requests.size() > 1) {
+        } else if (requests.size() > 1) {
             throw new IllegalStateException("Duplicate pending record requests exist with identifier " + identifier);
-        }
-        else {
+        } else {
             return requests.get(0);
         }
 
@@ -292,15 +307,14 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     @Transactional(readOnly = true)
     public PaperRecordRequest getSentPaperRecordRequestByIdentifier(String identifier) {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
-        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(Status.SENT), null, null, identifier, null);
+        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(
+            Collections.singletonList(Status.SENT), null, null, identifier, null);
 
         if (requests == null || requests.size() == 0) {
             return null;
-        }
-        else if (requests.size() > 1) {
+        } else if (requests.size() > 1) {
             throw new IllegalStateException("Duplicate sent record requests exist with identifier " + identifier);
-        }
-        else {
+        } else {
             return requests.get(0);
         }
     }
@@ -326,8 +340,9 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         throws NoMatchingPaperMedicalRequestException {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
 
-        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(Status.SENT),
-                null, null, identifier, null);
+        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(
+            Collections.singletonList(Status.SENT),
+            null, null, identifier, null);
 
         if (requests.size() == 0) {
             throw new NoMatchingPaperMedicalRequestException();
@@ -390,14 +405,14 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     public void markPaperRecordsForMerge(PatientIdentifier preferredIdentifier, PatientIdentifier notPreferredIdentifier) {
 
         if (!preferredIdentifier.getIdentifierType().equals(emrProperties.getPaperRecordIdentifierType())
-                || !notPreferredIdentifier.getIdentifierType().equals(emrProperties.getPaperRecordIdentifierType())) {
+            || !notPreferredIdentifier.getIdentifierType().equals(emrProperties.getPaperRecordIdentifierType())) {
             throw new IllegalArgumentException("One of the passed identifiers is not a paper record identifier: "
-                    + preferredIdentifier + ", " + notPreferredIdentifier);
+                + preferredIdentifier + ", " + notPreferredIdentifier);
         }
 
         if (!preferredIdentifier.getLocation().equals(notPreferredIdentifier.getLocation())) {
             throw new IllegalArgumentException("Cannot merge two records from different locations: "
-                    + preferredIdentifier + ", " + notPreferredIdentifier);
+                + preferredIdentifier + ", " + notPreferredIdentifier);
         }
 
         // create the request
@@ -436,26 +451,23 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
     @Override
     public List<PaperRecordMergeRequest> getOpenPaperRecordMergeRequests() {
-        return paperRecordMergeRequestDAO.findPaperRecordMergeRequest(Collections.singletonList(PaperRecordMergeRequest.Status.OPEN));
+        return paperRecordMergeRequestDAO.findPaperRecordMergeRequest(
+            Collections.singletonList(PaperRecordMergeRequest.Status.OPEN));
     }
 
     // leaving this method as public so that it can be tested by integration test in mirebalais module
     public String createPaperMedicalRecordNumberFor(Patient patient, Location medicalRecordLocation) {
-        if (patient == null){
+        if (patient == null) {
             throw new IllegalArgumentException("Patient shouldn't be null");
-        }
-
-        if (StringUtils.isNotBlank(getPaperMedicalRecordNumberFor(patient, medicalRecordLocation))) {
-            // TODO: we probably want to actually throw an exception here, but we should wait until this method is removed from patient registration and made protected
-            //throw new IllegalStateException("Cannot create paper record number for patient.  Paper record number already exists for patient:" + patient);
-            return "";
         }
 
         PatientIdentifierType paperRecordIdentifierType = emrProperties.getPaperRecordIdentifierType();
         String paperRecordId = "";
 
-        paperRecordId = identifierSourceService.generateIdentifier(paperRecordIdentifierType, "generating a new dossier number");
-        PatientIdentifier paperRecordIdentifier = new PatientIdentifier(paperRecordId, paperRecordIdentifierType, medicalRecordLocation);
+        paperRecordId = identifierSourceService.generateIdentifier(paperRecordIdentifierType,
+            "generating a new dossier number");
+        PatientIdentifier paperRecordIdentifier = new PatientIdentifier(paperRecordId, paperRecordIdentifierType,
+            medicalRecordLocation);
         patient.addIdentifier(paperRecordIdentifier);
         patientService.savePatientIdentifier(paperRecordIdentifier);
 
@@ -473,38 +485,41 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
             }
         }
 
-        throw new IllegalStateException("There is no matching location with the tag: " + emrProperties.getMedicalRecordLocationLocationTag().toString());
+        throw new IllegalStateException(
+            "There is no matching location with the tag: " + emrProperties.getMedicalRecordLocationLocationTag().toString());
     }
 
 
-    protected String getPaperMedicalRecordNumberFor(Patient patient, Location medicalRecordLocation) {
+    private String getPaperMedicalRecordNumberFor(Patient patient, Location medicalRecordLocation) {
         PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient,
-                emrProperties.getPaperRecordIdentifierType(), medicalRecordLocation);
-        return paperRecordIdentifier != null ? paperRecordIdentifier.getIdentifier() : "";
+            emrProperties.getPaperRecordIdentifierType(), medicalRecordLocation);
+        return paperRecordIdentifier != null ? paperRecordIdentifier.getIdentifier() : null;
     }
 
     private void mergePendingPaperRecordRequests(PaperRecordMergeRequest mergeRequest) {
 
         // (note that we are not searching by patient here because the patient may have been changed during the merge)
         List<PaperRecordRequest> preferredRequests = paperRecordRequestDAO.findPaperRecordRequests(PENDING_STATUSES,
-                null, mergeRequest.getRecordLocation(), mergeRequest.getPreferredIdentifier(), null);
+            null, mergeRequest.getRecordLocation(), mergeRequest.getPreferredIdentifier(), null);
 
         if (preferredRequests.size() > 1) {
-            throw new IllegalStateException("Duplicate pending record requests exist with identifier " + mergeRequest.getPreferredIdentifier());
+            throw new IllegalStateException(
+                "Duplicate pending record requests exist with identifier " + mergeRequest.getPreferredIdentifier());
         }
 
         List<PaperRecordRequest> notPreferredRequests = paperRecordRequestDAO.findPaperRecordRequests(PENDING_STATUSES,
-                null, mergeRequest.getRecordLocation(), mergeRequest.getNotPreferredIdentifier(), null);
+            null, mergeRequest.getRecordLocation(), mergeRequest.getNotPreferredIdentifier(), null);
 
         if (notPreferredRequests.size() > 1) {
-            throw new IllegalStateException("Duplicate pending record requests exist with identifier " + mergeRequest.getNotPreferredIdentifier());
+            throw new IllegalStateException(
+                "Duplicate pending record requests exist with identifier " + mergeRequest.getNotPreferredIdentifier());
         }
 
         PaperRecordRequest preferredRequest = null;
         PaperRecordRequest notPreferredRequest = null;
 
         if (preferredRequests.size() == 1) {
-           preferredRequest = preferredRequests.get(0);
+            preferredRequest = preferredRequests.get(0);
         }
 
         if (notPreferredRequests.size() == 1) {
@@ -533,8 +548,9 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     }
 
     private void closeOutSentPaperRecordRequestsForNotPreferredRecord(PaperRecordMergeRequest mergeRequest) {
-        List<PaperRecordRequest> notPreferredRequests = paperRecordRequestDAO.findPaperRecordRequests(Collections.singletonList(Status.SENT), null,
-                mergeRequest.getRecordLocation(), mergeRequest.getNotPreferredIdentifier(), null);
+        List<PaperRecordRequest> notPreferredRequests = paperRecordRequestDAO.findPaperRecordRequests(
+            Collections.singletonList(Status.SENT), null,
+            mergeRequest.getRecordLocation(), mergeRequest.getNotPreferredIdentifier(), null);
 
         for (PaperRecordRequest notPreferredRequest : notPreferredRequests) {
             notPreferredRequest.updateStatus(Status.RETURNED);

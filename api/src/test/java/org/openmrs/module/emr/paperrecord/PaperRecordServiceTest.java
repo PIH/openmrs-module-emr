@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -56,6 +57,7 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -265,7 +267,7 @@ public class PaperRecordServiceTest {
     }
 
     @Test
-    public void testAssignRequestsWithIdentifiers() throws Exception {
+    public void testAssignRequestsWithIdentifiersShouldReturnErrors() throws Exception {
         Person assignTo = new Person(15);
 
         List<PaperRecordRequest> requests = new ArrayList<PaperRecordRequest>();
@@ -273,7 +275,9 @@ public class PaperRecordServiceTest {
         requests.add(buildPaperRecordRequestWithIdentifier());
         requests.add(buildPaperRecordRequestWithIdentifier());
 
-        paperRecordService.assignRequests(requests, assignTo, null);
+        Map<String,List<String>> response = paperRecordService.assignRequests(requests, assignTo, null);
+
+        assertThat(response.get("success").size(), is(3));
 
         verify(mockPaperRecordDAO, times(3)).saveOrUpdate(argThat(new IsAssignedTo(assignTo, PaperRecordRequest.Status.ASSIGNED_TO_PULL)));
     }
@@ -298,7 +302,7 @@ public class PaperRecordServiceTest {
     }
 
     @Test
-    public void testAssignRequestsShouldSetToPullIfPatientHasValidIdentifierEvenIfRequestDoesNot() throws Exception {
+    public void testAssignRequestsShouldReturnErrorIfPatientHasValidIdentifierEvenIfRequestDoesNot() throws Exception {
         Person assignTo = new Person(15);
 
         List<PaperRecordRequest> requests = new ArrayList<PaperRecordRequest>();
@@ -312,9 +316,11 @@ public class PaperRecordServiceTest {
         patientIdentifier.setLocation(requests.get(0).getRecordLocation());
         patient.addIdentifier(patientIdentifier);
 
-        paperRecordService.assignRequests(requests, assignTo, null);
+        Map<String, List<String>> response = paperRecordService.assignRequests(requests, assignTo, null);
 
-        verify(mockPaperRecordDAO, times(1)).saveOrUpdate(argThat(new IsAssignedTo(assignTo, PaperRecordRequest.Status.ASSIGNED_TO_PULL, "ABC")));
+        assertThat(response.get("error").size(), is(1));
+
+        verify(mockPaperRecordDAO, never()).saveOrUpdate(argThat(new IsAssignedTo(assignTo, PaperRecordRequest.Status.ASSIGNED_TO_PULL, "ABC")));
     }
 
     @Test
@@ -960,6 +966,10 @@ public class PaperRecordServiceTest {
 
     private PaperRecordRequest buildPaperRecordRequestWithIdentifier() {
         Patient patient = new Patient(1);
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setIdentifierType(paperRecordIdentifierType);
+        patientIdentifier.setIdentifier("ABC");
+        patient.addIdentifier(patientIdentifier);
         Location location = new Location(1);
         PaperRecordRequest request = new PaperRecordRequest();
         request.setPatient(patient);

@@ -14,6 +14,9 @@
 
 package org.openmrs.module.emr.paperrecord;
 
+import java.util.List;
+import java.util.Map;
+
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -22,8 +25,6 @@ import org.openmrs.annotation.Authorized;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.printer.PrinterService;
-
-import java.util.List;
 
 /**
  * Public API for functionality relating to paper medical records
@@ -112,6 +113,7 @@ public interface PaperRecordService extends OpenmrsService {
 
     /**
      * Sets the status to ASSIGNED_TO_PULL and the assignee to the given value, for the given requests.
+     *
      * @param requests
      * @param assignee
      * @param location the location to print any required registration labels at
@@ -119,7 +121,7 @@ public interface PaperRecordService extends OpenmrsService {
      * @throws IllegalStateException if any of the requests are not in the OPEN status
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
-    List<PaperRecordRequest> assignRequests(List<PaperRecordRequest> requests, Person assignee, Location location);
+    Map<String, List<String>> assignRequests(List<PaperRecordRequest> requests, Person assignee, Location location);
 
 
     /**

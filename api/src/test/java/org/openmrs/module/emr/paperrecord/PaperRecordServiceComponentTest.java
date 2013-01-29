@@ -285,12 +285,11 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Person person = personService.getPerson(7);
         paperRecordService.assignRequests(paperRecordRequests, person, null);
 
-        // verify
+        // should not move the record as the person already has an paper record identifier
         paperRecordRequests = paperRecordService.getAssignedPaperRecordRequestsToPull();
         Assert.assertEquals(1, paperRecordRequests.size());
         PaperRecordRequest request = paperRecordRequests.get(0);
         Assert.assertEquals(PaperRecordRequest.Status.ASSIGNED_TO_PULL, request.getStatus());
-        Assert.assertEquals(new Integer(7), request.getAssignee().getId());
         Assert.assertEquals("101", request.getIdentifier());
 
     }
