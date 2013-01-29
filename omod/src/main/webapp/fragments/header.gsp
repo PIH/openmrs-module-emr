@@ -21,7 +21,7 @@
         });
 
         ko.applyBindings( sessionLocationModel, jq('.change-location').get(0) );
-        sessionLocationModel.id(${ emrContext.sessionLocation.id });
+        sessionLocationModel.id(${ emrContext.sessionLocation?.id });
         sessionLocationModel.text("${ ui.format(emrContext.sessionLocation) }");
 
         jq("#session-location ul.select li").click(function(event) {
@@ -80,7 +80,7 @@
             <% emrProperties.allAvailableLocations.each {
                 def selected = (it==emrContext.sessionLocation) ? "selected" : ""
             %>
-            <li class="${selected}" locationId="${it.id}" locationName="${ui.escapeJs(ui.format(it))}">${ui.format(it)}</li>
+            <li class="${selected}" locationId="${it.id}" locationName="${ui.format(it)}">${ui.format(it)}</li>
             <% } %>
         </ul>
     </div>
