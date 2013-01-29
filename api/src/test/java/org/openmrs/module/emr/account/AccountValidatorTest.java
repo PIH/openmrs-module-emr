@@ -13,6 +13,7 @@ import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.providermanagement.api.ProviderManagementService;
 import org.openmrs.util.OpenmrsUtil;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -38,14 +39,23 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class AccountValidatorTest {
 	
 	private AccountValidator validator;
+
     private AccountDomainWrapper account;
+
     private AccountService accountService;
+
     private UserService userService;
+
     private ProviderService providerService;
+
+    private ProviderManagementService providerManagementService;
+
     private PersonService personService;
 
     private Role fullPrivileges;
+
     private Role someCapability;
+
     private Set<Role> someCapabilitySet;
 
     @Before
@@ -54,12 +64,13 @@ public class AccountValidatorTest {
         accountService = Mockito.mock(AccountService.class);
         userService = Mockito.mock(UserService.class);
         providerService = Mockito.mock(ProviderService.class);
+        providerManagementService = Mockito.mock(ProviderManagementService.class);
         personService = Mockito.mock(PersonService.class);
 
         validator = new AccountValidator();
         validator.setMessageSourceService(Mockito.mock(MessageSourceService.class));
         validator.setUserService(userService);
-        validator.setProviderService(providerService);
+        validator.setProviderManagementService(providerManagementService);
 
         fullPrivileges = new Role(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
         when(accountService.getAllPrivilegeLevels()).thenReturn(Collections.singletonList(fullPrivileges));
@@ -71,7 +82,8 @@ public class AccountValidatorTest {
 
         Person person = new Person();
         person.addName(new PersonName());
-        account = new AccountDomainWrapper(person, accountService, userService, providerService, personService);
+        account = new AccountDomainWrapper(person, accountService, userService, providerService,
+                providerManagementService, personService);
 	}
 	
 	/**
@@ -353,7 +365,7 @@ public class AccountValidatorTest {
     }
 
     @Test
-    public void shouldCreateAnErrorMessageWhenUserAndProviderAreNull() {
+    public void shouldCreateAnErrorMessageWhenUserIsNullAndNoProviderRole() {
         mockStatic(OpenmrsUtil.class);
 
         account.setFamilyName("family name");
@@ -363,8 +375,6 @@ public class AccountValidatorTest {
         validator.validate(account, errors);
 
         assertTrue(errors.hasErrors());
-        List<FieldError> errorList = errors.getFieldErrors("provider");
-        assertThat(errorList.size(), is(1));
     }
 
     @Test
@@ -392,21 +402,6 @@ public class AccountValidatorTest {
 
         assertTrue(errors.hasErrors());
         List<FieldError> errorList = errors.getFieldErrors("username");
-        assertThat(errorList.size(), is(1));
-    }
-
-    @Test
-    public void shouldCreateErrorMessageIfDuplicateProviderIdentifier() {
-        mockStatic(OpenmrsUtil.class);
-
-        createAccountWithUsernameAs("username");
-        account.setProviderEnabled(true);
-        when(providerService.isProviderIdentifierUnique(account.getProvider())).thenReturn(false);
-        Errors errors = new BindException(account, "account");
-        validator.validate(account, errors);
-
-        assertTrue(errors.hasErrors());
-        List<FieldError> errorList = errors.getFieldErrors("providerIdentifier");
         assertThat(errorList.size(), is(1));
     }
 

@@ -1,6 +1,7 @@
 package org.openmrs.module.emr.account;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -16,6 +17,7 @@ import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.TestUtils;
+import org.openmrs.module.providermanagement.api.ProviderManagementService;
 import org.openmrs.util.OpenmrsConstants;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -27,20 +29,35 @@ import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInA
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
 public class AccountServiceTest {
-	
-	@InjectMocks
+
 	private AccountServiceImpl accountService;
-	
-	@Mock
-	private UserService userService;
-	
-	@Mock
-	private ProviderService providerService;
-	
+
+    private UserService userService;
+
+    private PersonService personService;
+
+    private ProviderService providerService;
+
+    private ProviderManagementService providerManagementService;
+
+    @Before
+    public void setup() {
+        userService = mock(UserService.class);
+        personService = mock(PersonService.class);
+        providerService = mock(ProviderService.class);
+        providerManagementService = mock(ProviderManagementService.class);
+
+        accountService = new AccountServiceImpl();
+        accountService.setUserService(userService);
+        accountService.setPersonService(personService);
+        accountService.setProviderService(providerService);
+        accountService.setProviderManagementService(providerManagementService);
+    }
+
 	/**
 	 * @see AccountService#getAllAccounts()
 	 * @verifies get all unique accounts
@@ -83,9 +100,6 @@ public class AccountServiceTest {
 		Person person = new Person(personId);
 		person.setPersonId(1);
 		final String identifier = "123";
-		Provider provider = new Provider();
-		provider.setPerson(person);
-		provider.setIdentifier(identifier);
 		
 		final String username = "tester";
 		User user = new User();
@@ -100,15 +114,12 @@ public class AccountServiceTest {
 		PersonService personService = Mockito.mock(PersonService.class);
 		accountService.setPersonService(personService);
 		when(personService.getPerson((Integer) argThat(TestUtils.equalsMatcher(personId)))).thenReturn(person);
-		when(providerService.getProvidersByPerson(argThat(TestUtils.equalsMatcher(person)), any(Boolean.class))).thenReturn(
-		    Arrays.asList(provider));
 		when(userService.getUsersByPerson(argThat(TestUtils.equalsMatcher(person)), any(Boolean.class))).thenReturn(
 		    Arrays.asList(user));
 
 		AccountDomainWrapper account = accountService.getAccount(personId);
 		Assert.assertNotNull(account);
 		Assert.assertEquals(person, account.getPerson());
-		Assert.assertEquals(identifier, account.getProviderIdentifier());
 		Assert.assertEquals(username, account.getUsername());
         Assert.assertEquals("ht", account.getDefaultLocale().toString());
         Assert.assertEquals(fullPrivilegeLevel, account.getPrivilegeLevel());

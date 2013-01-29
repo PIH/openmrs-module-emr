@@ -38,6 +38,7 @@
         <appframeworkVersion>1.4-SNAPSHOT</appframeworkVersion>
         <idgenVersion>2.4-SNAPSHOT</idgenVersion>
         <htmlformentryVersion>2.0.4</htmlformentryVersion>
+        <providerManagementVersion>1.1.2</providerManagementVersion>
         <springVersion>3.0.5.RELEASE</springVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -114,6 +115,12 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>htmlformentry-api</artifactId>
             <version>${htmlformentryVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>providermanagement-api</artifactId>
+            <version>${providerManagementVersion}</version>
             <scope>provided</scope>
         </dependency>
         <!-- End OpenMRS modules -->

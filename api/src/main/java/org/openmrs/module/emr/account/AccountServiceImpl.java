@@ -9,8 +9,10 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
+import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.providermanagement.api.ProviderManagementService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -22,25 +24,34 @@ import java.util.Map;
 public class AccountServiceImpl extends BaseOpenmrsService implements AccountService {
 
     private UserService userService;
-	
-	private ProviderService providerService;
-	
+
 	private PersonService personService;
-	
-	/**
+
+    private ProviderService providerService;
+
+    private ProviderManagementService providerManagementService;
+
+    /**
 	 * @param userService the userService to set
 	 */
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
-	
-	/**
-	 * @param providerService the providerService to set
-	 */
-	public void setProviderService(ProviderService providerService) {
-		this.providerService = providerService;
+
+    /**
+     * @param providerService
+     */
+    public void setProviderService(ProviderService providerService) {
+        this.providerService = providerService;
+    }
+
+    /**
+     * @param providerManagementService
+     */
+	public void setProviderManagementService(ProviderManagementService providerManagementService) {
+		this.providerManagementService = providerManagementService;
 	}
-	
+
 	/**
 	 * @param personService the personService to set
 	 */
@@ -54,21 +65,26 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 	@Override
 	@Transactional(readOnly = true)
 	public List<AccountDomainWrapper> getAllAccounts() {
+
 		Map<Person, AccountDomainWrapper> byPerson = new LinkedHashMap<Person, AccountDomainWrapper>();
-		for (User user : userService.getAllUsers()) {
+
+        for (User user : userService.getAllUsers()) {
 			//exclude daemon user
 			if (EmrConstants.DAEMON_USER_UUID.equals(user.getUuid()))
 				continue;
 
-			byPerson.put(user.getPerson(), new AccountDomainWrapper(user.getPerson(), this, userService, providerService, personService) );
+			byPerson.put(user.getPerson(), new AccountDomainWrapper(user.getPerson(), this, userService,
+                    providerService, providerManagementService, personService) );
 		}
+
 		for (Provider provider : providerService.getAllProviders()) {
 			if (provider.getPerson() == null)
 				throw new APIException("Providers not associated to a person are not supported");
 			
 			AccountDomainWrapper account = byPerson.get(provider.getPerson());
 			if (account == null) {
-				byPerson.put(provider.getPerson(), new AccountDomainWrapper(provider.getPerson(), this, userService, providerService, personService) );
+				byPerson.put(provider.getPerson(), new AccountDomainWrapper(provider.getPerson(), this, userService,
+                        providerService, providerManagementService, personService) );
 			}
 		}
 		
@@ -104,7 +120,8 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 	@Override
 	@Transactional(readOnly = true)
 	public AccountDomainWrapper getAccountByPerson(Person person) {
-		return new AccountDomainWrapper(person, this, userService, providerService, personService);
+		return new AccountDomainWrapper(person, this, userService,
+                providerService, providerManagementService, personService);
 	}
 	
 	/**

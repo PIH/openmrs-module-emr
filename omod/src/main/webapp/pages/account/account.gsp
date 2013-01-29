@@ -18,6 +18,12 @@
     allowedLocales.each {
         allowedLocalesOptions.push([ label: it.getDisplayName(emrContext.userContext.locale), value: it ])
     }
+
+    def providerRolesOptions = []
+    providerRoles. each {
+        providerRolesOptions.push([ label: ui.format(it), value: it.id ])
+    }
+
 %>
 
 <style type="text/css">
@@ -141,22 +147,21 @@
 	
 	<fieldset>
 		<legend>${ ui.message("emr.provider.details") }</legend>
-		<div class="emr_providerDetails" ${ (!account.provider) ? "style='display: none'" : "" }>
-            ${ ui.includeFragment("emr", "field/checkbox", [ 
-                label: ui.message("emr.provider.interactsWithPatients"), 
-                id: "providerEnabled", 
-                formFieldName: "providerEnabled", 
-                value: "true", 
-                checked: account.providerEnabled 
-            ])}
+		<div class="emr_providerDetails" ${ (!account.providerRole) ? "style='display: none'" : "" }>
+            <p>
+                ${ ui.includeFragment("emr", "field/dropDown", [
+                        label: ui.message("emr.account.providerRole.label"),
+                        emptyOptionLabel: ui.message("emr.chooseOne"),
+                        formFieldName: "providerRole",
+                        initialValue: (account.providerRole?.id ?: ''),
+                        options: providerRolesOptions
+                ])}
+            </p>
 
-            <!-- currently not supporting provider identifiers
-             ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.provider.identifier"), formFieldName: "providerIdentifier", initialValue: (account.providerIdentifier ?: '') ])}
-		    -->
 
-		</div>
+        </div>
 		<div class="emr_providerDetails">
-		<% if(!account.provider) { %>
+		<% if(!account.providerRole) { %>
 			<button id="createProviderAccountButton" type="button" onclick="javascript:emr_createProviderAccount()">${ ui.message("emr.provider.createProviderAccount") }</button>
 		<% } %>
 		</div>

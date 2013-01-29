@@ -8,6 +8,7 @@ import org.openmrs.api.PasswordException;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
 import org.openmrs.messagesource.MessageSourceService;
+import org.openmrs.module.providermanagement.api.ProviderManagementService;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,8 +27,8 @@ public class AccountValidator implements Validator {
     private UserService userService;
 
     @Autowired
-    @Qualifier("providerService")
-    private ProviderService providerService;
+    @Qualifier("providerManagementService")
+    private ProviderManagementService providerManagementService;
 
     public static final String USERNAME_MIN_LENGTH = "2";
     public static final String USERNAME_MAX_LENGTH = "50";
@@ -43,8 +44,8 @@ public class AccountValidator implements Validator {
         this.userService = userService;
     }
 
-    public void setProviderService(ProviderService providerService) {
-        this.providerService = providerService;
+    public void setProviderManagementService(ProviderManagementService providerManagementService) {
+        this.providerManagementService = providerManagementService;
     }
 
     /**
@@ -80,6 +81,7 @@ public class AccountValidator implements Validator {
 
         checkIfGivenAndFamilyNameAreNotNull(errors, account);
         checkIfGenderIsNull(errors, account);
+        checkIfUserAndProviderRoleAreNull(errors, account);
 
         if (account.getUser() != null) {
             checkIfUserNameIsCorrect(errors, account.getUsername());
@@ -90,15 +92,6 @@ public class AccountValidator implements Validator {
 
         if (checkIfUserWasCreated(user) || StringUtils.isNotBlank(account.getPassword()) || StringUtils.isNotBlank(account.getConfirmPassword())) {
             checkIfPasswordIsCorrect(errors, account);
-        }
-
-        if (account.getProvider() != null) {
-            checkIfDuplicateProviderIdentifier(errors, account.getProvider());
-        }
-
-        if (account.getProvider() == null && user == null){
-            errors.rejectValue("provider", "emr.account.requiredFields",
-                    new Object[] { messageSourceService.getMessage("emr.account.requiredFields") }, null);
         }
     }
 
@@ -197,10 +190,9 @@ public class AccountValidator implements Validator {
         }
     }
 
-    private void checkIfDuplicateProviderIdentifier (Errors errors, Provider provider) {
-        if (!providerService.isProviderIdentifierUnique(provider)) {
-            errors.rejectValue("providerIdentifier", "emr.user.duplicateProviderIdentifier",
-                    new Object[] { messageSourceService.getMessage("emr.user.duplicateProviderIdentifier") }, null);
+    private void checkIfUserAndProviderRoleAreNull(Errors errors, AccountDomainWrapper accountDomainWrapper) {
+        if (accountDomainWrapper.getUser() == null && accountDomainWrapper.getProviderRole() == null) {
+            errors.reject("emr.account.requiredFields");
         }
     }
 }

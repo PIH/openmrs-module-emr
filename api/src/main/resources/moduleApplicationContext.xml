@@ -178,8 +178,9 @@
         <property name="target">
             <bean class="${project.parent.groupId}.${project.parent.artifactId}.account.AccountServiceImpl">
             	<property name="userService" ref="userService" />
-            	<property name="providerService" ref="providerService" />
             	<property name="personService" ref="personService" />
+                <property name="providerService" ref="providerService" />
+                <property name="providerManagementService" ref="providerManagementService" />
             </bean>
         </property>
         <property name="preInterceptors">

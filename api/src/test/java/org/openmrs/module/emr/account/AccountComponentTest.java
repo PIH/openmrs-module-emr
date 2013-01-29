@@ -18,22 +18,25 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Person;
-import org.openmrs.Provider;
+import org.openmrs.module.providermanagement.Provider;
 import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.providermanagement.ProviderRole;
+import org.openmrs.module.providermanagement.api.ProviderManagementService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.util.OpenmrsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-public class AccountComponentTest extends BaseModuleContextSensitiveTest{
+public class AccountComponentTest extends BaseModuleContextSensitiveTest {
 
     @Autowired
     private AccountService accountService;
@@ -42,10 +45,13 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest{
     private UserService userService;
 
     @Autowired
+    private PersonService personService;
+
+    @Autowired
     private ProviderService providerService;
 
     @Autowired
-    private PersonService personService;
+    private ProviderManagementService providerManagementService;
 
     @Before
     public void beforeAllTests() throws Exception {
@@ -78,16 +84,17 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest{
         Assert.assertNotNull(expectedPerson.getPersonDateCreated());
 
         Assert.assertNull(account.getUser());
-        Assert.assertNull(account.getProvider());
 
     }
 
     @Test
-    public void shouldSavePersonUserAndProvider() {
+    public void shouldSavePersonAndUserAndProvider() {
 
         Role fullPrivileges = userService.getRole("Privilege Level: Full");
         Role archives = userService.getRole("Application Role: Archives");
         Role registration = userService.getRole("Application Role: Registration");
+
+        ProviderRole nurse = providerManagementService.getProviderRole(1001);
 
         Person person = new Person();
 
@@ -107,8 +114,7 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest{
         capabilities.add(archives);
         account.setCapabilities(capabilities);
 
-        account.setProviderEnabled(true);
-        account.setProviderIdentifier("321");
+        account.setProviderRole(nurse);
 
         account.save();
 
@@ -117,9 +123,6 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest{
 
         Integer userId = account.getUser().getUserId();
         Assert.assertNotNull(userId);
-
-        Integer providerId = account.getProvider().getProviderId();
-        Assert.assertNotNull(providerId);
 
         Context.flushSession();
         Context.clearSession();
@@ -142,17 +145,21 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest{
         Assert.assertTrue(expectedUser.hasRole(archives.toString()));
         Assert.assertTrue(expectedUser.hasRole(registration.toString()));
 
-        Provider expectedProvider = providerService.getProvider(providerId);
-        Assert.assertFalse(expectedProvider.isRetired());
-        Assert.assertEquals("321", expectedProvider.getIdentifier());
+        // note that we don't expose the provider object outside of the account domain wrapper; saves confusion between the
+        // two Provider object types
+        List<Provider> providers = providerManagementService.getProvidersByPerson(expectedPerson, false);
+        Assert.assertEquals(1, providers.size());
+        Assert.assertEquals(nurse, providers.get(0).getProviderRole());
     }
 
     @Test
-    public void shouldLoadExistingPersonUserAndProvider() {
+    public void shouldLoadExistingPersonAndUserAndProvider() {
 
         Role fullPrivileges = userService.getRole("Privilege Level: Full");
         Role archives = userService.getRole("Application Role: Archives");
         Role registration = userService.getRole("Application Role: Registration");
+
+        ProviderRole nurse = providerManagementService.getProviderRole(1001);
 
         Person person = personService.getPerson(501);  // existing person with user account in test dataset
 
@@ -164,14 +171,14 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest{
 
         Assert.assertFalse(account.getUserEnabled());     // this user account happens to be retired in test dataset
         Assert.assertEquals("bruno", account.getUsername());
-        Assert.assertEquals("fr",account.getDefaultLocale().toString());
+        Assert.assertEquals("fr", account.getDefaultLocale().toString());
         Assert.assertTrue(account.getPrivilegeLevel().equals(fullPrivileges));
         Assert.assertEquals(2, account.getCapabilities().size()) ;
         Assert.assertTrue(account.getCapabilities().contains(archives));
         Assert.assertTrue(account.getCapabilities().contains(registration));
 
-        Assert.assertTrue(account.getProviderEnabled());
-        Assert.assertEquals("123", account.getProviderIdentifier());
+        Assert.assertEquals(nurse, account.getProviderRole());
+
     }
 
     @Test
@@ -215,58 +222,48 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest{
     @Test
     public void shouldRetireExistingProvider() {
 
-        Person person = personService.getPerson(501);
+        Person person = personService.getPerson(501);  // existing person with active provider account
 
         AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
-        account.setProviderEnabled(false);
+        account.setProviderRole(null);
         account.save();
 
         Context.flushSession();
         Context.clearSession();
 
-        Provider provider = providerService.getProvider(1001);
-        Assert.assertTrue(provider.isRetired());
-        Assert.assertNotNull(provider.getDateRetired());
-        Assert.assertEquals(Context.getAuthenticatedUser(), provider.getRetiredBy());
-        Assert.assertNotNull(provider.getRetireReason());
-
+        List<Provider> providers = providerManagementService.getProvidersByPerson(person, true);
+        Assert.assertEquals(1, providers.size());
+        Assert.assertTrue(providers.get(0).isRetired());
     }
 
     @Test
-    public void shouldUnretireExistingProvider() {
+    public void shouldRetireExistingProviderAndCreateNewProvider() {
 
-        Person person = personService.getPerson(2);
+        ProviderRole doctor = providerManagementService.getProviderRole(1002);
+
+        Person person = personService.getPerson(501);  // existing person with active provider account
 
         AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
-        account.setProviderEnabled(true);
+        account.setProviderRole(null);
+        account.save();
+
+        account.setProviderRole(doctor);
         account.save();
 
         Context.flushSession();
         Context.clearSession();
 
-        Provider provider = providerService.getProvider(1002);
-        Assert.assertFalse(provider.isRetired()) ;
-        Assert.assertNull(provider.getDateRetired());
-        Assert.assertNull(provider.getRetiredBy()) ;
-        Assert.assertNull(provider.getRetireReason());
+        List<Provider> providers = providerManagementService.getProvidersByPerson(person, true);
+        Assert.assertEquals(2, providers.size());
+
+        providers = providerManagementService.getProvidersByPerson(person, false);
+        Assert.assertEquals(1, providers.size());
+        Assert.assertEquals(doctor, providers.get(0).getProviderRole());
 
     }
 
     @Test
-    public void shouldHandlePersonAndUserAccountWithoutProvider() {
-
-        Person person = personService.getPerson(502);
-
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
-
-        Assert.assertNull(account.getProvider());
-        Assert.assertNull(account.getProviderIdentifier());
-        Assert.assertNull(account.getProviderEnabled());
-
-    }
-
-    @Test
-    public void shouldHandlePersonAndProviderAccountWithoutUser() {
+    public void shouldHandlePersonWithoutUser() {
 
         Person person = personService.getPerson(2);
 
@@ -282,7 +279,8 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest{
     }
 
     private AccountDomainWrapper initializeNewAccountDomainWrapper(Person person) {
-        return new AccountDomainWrapper(person, accountService, userService, providerService, personService);
+        return new AccountDomainWrapper(person, accountService, userService, providerService,
+                providerManagementService, personService);
     }
 
 }

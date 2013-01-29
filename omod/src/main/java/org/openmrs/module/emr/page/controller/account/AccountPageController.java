@@ -27,6 +27,7 @@ import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.account.AccountDomainWrapper;
 import org.openmrs.module.emr.account.AccountService;
 import org.openmrs.module.emr.account.AccountValidator;
+import org.openmrs.module.providermanagement.api.ProviderManagementService;
 import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.annotation.MethodParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -48,12 +49,14 @@ public class AccountPageController {
     public AccountDomainWrapper getAccount(@RequestParam(value = "personId", required = false) Person person,
                                 @SpringBean("accountService") AccountService accountService,
                                 @SpringBean("providerService") ProviderService providerService,
+                                @SpringBean("providerManagementService") ProviderManagementService providerManagementService,
                                 @SpringBean("userService") UserService userService,
                                 @SpringBean("personService") PersonService personService) {
 
         AccountDomainWrapper account;
         if (person == null) {
-            account = new AccountDomainWrapper((new Person()), accountService, userService, providerService, personService);
+            account = new AccountDomainWrapper((new Person()), accountService, userService, providerService,
+                    providerManagementService, personService);
         }
         else {
             account = accountService.getAccountByPerson(person);
@@ -66,27 +69,28 @@ public class AccountPageController {
 
 	public void get(PageModel model, @MethodParam("getAccount") AccountDomainWrapper account,
 	                @SpringBean("accountService") AccountService accountService,
-                    @SpringBean("adminService") AdministrationService administrationService) {
+                    @SpringBean("adminService") AdministrationService administrationService,
+                    @SpringBean("providerManagementService") ProviderManagementService providerManagementService) {
 
 		model.addAttribute("account", account);
 		model.addAttribute("capabilities", accountService.getAllCapabilities());
 		model.addAttribute("privilegeLevels", accountService.getAllPrivilegeLevels());
         model.addAttribute("rolePrefix", EmrConstants.ROLE_PREFIX_CAPABILITY);
         model.addAttribute("allowedLocales", administrationService.getAllowedLocales());
+        model.addAttribute("providerRoles", providerManagementService.getAllProviderRoles(false));
 	}
 	
 	public String post(@MethodParam("getAccount") @BindParams AccountDomainWrapper account, BindingResult errors,
-                       @RequestParam(value = "providerEnabled", defaultValue = "false") boolean providerEnabled,
                        @RequestParam(value = "userEnabled", defaultValue = "false") boolean userEnabled,
                        @SpringBean("messageSource") MessageSource messageSource,
                        @SpringBean("messageSourceService") MessageSourceService messageSourceService,
 	                   @SpringBean("accountService") AccountService accountService,
                        @SpringBean("adminService") AdministrationService administrationService,
+                       @SpringBean("providerManagementService") ProviderManagementService providerManagementService,
 	                   @SpringBean("accountValidator") AccountValidator accountValidator, PageModel model,
 	                   HttpServletRequest request) {
 
-        // manually bind providerEnabled and userEnabled (since checkboxes don't submit anything if unchecked)
-        account.setProviderEnabled(providerEnabled);
+        // manually bind userEnabled (since checkboxes don't submit anything if unchecked));
         account.setUserEnabled(userEnabled);
 
 		accountValidator.validate(account, errors);
@@ -119,6 +123,7 @@ public class AccountPageController {
         model.addAttribute("privilegeLevels", accountService.getAllPrivilegeLevels());
         model.addAttribute("rolePrefix", EmrConstants.ROLE_PREFIX_CAPABILITY);
         model.addAttribute("allowedLocales", administrationService.getAllowedLocales());
+        model.addAttribute("providerRoles", providerManagementService.getAllProviderRoles(false));
 
         return "account/account";
 

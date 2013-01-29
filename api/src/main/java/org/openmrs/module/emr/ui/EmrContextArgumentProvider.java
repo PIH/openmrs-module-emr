@@ -122,7 +122,7 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
         if (emrContext.getUserContext() != null) {
             User authenticatedUser = emrContext.getUserContext().getAuthenticatedUser();
             if (authenticatedUser != null && authenticatedUser.getPerson() != null) {
-                Collection<Provider> providers = providerService.getProvidersByPerson(authenticatedUser.getPerson());
+                Collection<Provider> providers = providerService.getProvidersByPerson(authenticatedUser.getPerson(), false);
                 if (providers.size() > 1) {
                     throw new IllegalStateException("Can't handle users with multiple provider accounts");
                 } else if (providers.size() == 1) {

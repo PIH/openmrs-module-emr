@@ -3,15 +3,18 @@ package org.openmrs.module.emr.account;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Person;
 import org.openmrs.PersonName;
-import org.openmrs.Provider;
+import org.openmrs.api.ProviderService;
+import org.openmrs.module.providermanagement.Provider;
 import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.api.PersonService;
-import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.utils.GeneralUtils;
+import org.openmrs.module.providermanagement.ProviderRole;
+import org.openmrs.module.providermanagement.api.ProviderManagementService;
 import org.openmrs.util.OpenmrsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,8 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
-// TODO: we are not currently using the secret question/answer functionality; if it is put back into use, we should confirm we've got proper test coverage for it
 
 public class AccountDomainWrapper {
 
@@ -44,10 +45,13 @@ public class AccountDomainWrapper {
     private UserService userService;
 
     @Autowired
+    private PersonService personService;
+
+    @Autowired
     private ProviderService providerService;
 
     @Autowired
-    private PersonService personService;
+    private ProviderManagementService providerManagementService;
 
     public AccountDomainWrapper() {
         this.person = new Person();
@@ -56,14 +60,15 @@ public class AccountDomainWrapper {
     public AccountDomainWrapper(Person person) {
         this.person = person;
         this.user = getUserByPerson(this.person);
-        this.provider = getProviderByPerson(this.person);
+        this.provider = getProviderByPerson(person);
     }
 
-    public AccountDomainWrapper(Person person, AccountService accountService, UserService userService,
-                                ProviderService providerService, PersonService personService) {
+    public AccountDomainWrapper(Person person, AccountService accountService, UserService userService, ProviderService providerService,
+                                ProviderManagementService providerManagementService, PersonService personService) {
         this.accountService = accountService;
         this.userService = userService;
         this.providerService = providerService;
+        this.providerManagementService = providerManagementService;
         this.personService = personService;
 
         this.person = person;
@@ -83,8 +88,8 @@ public class AccountDomainWrapper {
         this.userService = userService;
     }
 
-    public void setProviderService(ProviderService providerService) {
-        this.providerService = providerService;
+    public void setProviderManagementService(ProviderManagementService providerManagementService) {
+        this.providerManagementService = providerManagementService;
     }
 
     public Person getPerson() {
@@ -95,8 +100,22 @@ public class AccountDomainWrapper {
         return user;
     }
 
-    public Provider getProvider() {
-        return provider;
+    public void setProviderRole(ProviderRole providerRole) {
+
+        if (providerRole != null) {
+            initializeProviderIfNecessary();
+            this.provider.setProviderRole(providerRole);
+        }
+        else {
+            // this prevents us from creating a new provider if we are only setting the provider role to null
+            if (this.provider != null) {
+                provider.setProviderRole(null);
+            }
+        }
+    }
+
+    public ProviderRole getProviderRole() {
+        return this.provider != null ? this.provider.getProviderRole() : null;
     }
 
     public void setGivenName(String givenName) {
@@ -274,48 +293,6 @@ public class AccountDomainWrapper {
         }
     }
 
-    public void setProviderIdentifier(String providerIdentifier) {
-        if (StringUtils.isNotBlank(providerIdentifier)) {
-            initializeProviderIfNecessary();
-            provider.setIdentifier(providerIdentifier);
-        }
-        else if (provider != null) {
-            provider.setIdentifier(providerIdentifier);
-        }
-    }
-
-    public String getProviderIdentifier() {
-        return provider != null ? provider.getIdentifier() : null;
-    }
-
-    public void setProviderEnabled(Boolean providerEnabled) {
-        if (provider != null) {
-            if (providerEnabled && provider.isRetired()) {
-                provider.setRetired(false);
-                provider.setRetireReason(null);
-                provider.setRetiredBy(null);
-                provider.setDateRetired(null);
-            }
-            else if (!providerEnabled && !provider.isRetired()) {
-                provider.setRetired(true);
-                provider.setRetireReason("returned during account management");
-                provider.setDateRetired(new Date());
-                // TODO: figure out how to set retired by
-            }
-        }
-        else if (providerEnabled != null && providerEnabled) {
-            initializeProviderIfNecessary();
-        }
-    }
-
-    public Boolean getProviderEnabled() {
-        if (provider == null) {
-            return null;
-        }
-        else {
-            return !provider.isRetired();
-        }
-    }
 
     public boolean isLocked() {
         if (user == null) {
@@ -363,10 +340,16 @@ public class AccountDomainWrapper {
         }
 
         if (provider != null) {
-            providerService.saveProvider(provider);
+            // retire the provider if role == null and the provider is persistent (determined by having an id)
+            // otherwise, save the provider
+            if (provider.getProviderRole() == null && provider.getId() != null) {
+                providerService.retireProvider(provider, "Retired by Account Domain Wrapper");
+                provider = null;
+            }
+            else {
+                providerService.saveProvider(provider);
+            }
         }
-
-
     }
 
     private void initializePersonNameIfNecessary() {
@@ -413,25 +396,18 @@ public class AccountDomainWrapper {
     }
 
     private Provider getProviderByPerson(Person person) {
-        Provider provider = null;
-        Collection<Provider> providers = providerService.getProvidersByPerson(person, false);
-        for (Iterator<Provider> i = providers.iterator(); i.hasNext();) {
-            Provider candidate = i.next();
-            if (EmrConstants.DAEMON_USER_UUID.equals(candidate.getUuid())) {
-                i.remove();
-                break;
+        List<Provider> providers = providerManagementService.getProvidersByPerson(person, false);
+
+        if (providers != null && providers.size() > 0) {
+            if (providers.size() == 1) {
+                return providers.get(0);
+            }
+            else {
+                throw new APIException("Multiple provider/provider roles per person not supported");
             }
         }
-        //see if they have a retired account
-        if (providers.size() == 0)
-            providers = providerService.getProvidersByPerson(person, true);
 
-        if (providers.size() == 1)
-            provider = providers.iterator().next();
-        else if (providers.size() > 1)
-            throw new APIException("Found multiple providers associated to the person with id: " + person.getPersonId());
-
-        return provider;
+        return null;
     }
 
 }

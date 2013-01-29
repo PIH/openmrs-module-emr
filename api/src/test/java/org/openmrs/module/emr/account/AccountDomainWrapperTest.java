@@ -4,15 +4,18 @@ import junit.framework.Assert;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 import org.openmrs.Person;
 import org.openmrs.PersonName;
-import org.openmrs.Provider;
 import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
 import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.providermanagement.Provider;
+import org.openmrs.module.providermanagement.ProviderRole;
+import org.openmrs.module.providermanagement.api.ProviderManagementService;
 import org.openmrs.util.OpenmrsConstants;
 
 import java.util.Arrays;
@@ -28,11 +31,13 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.openmrs.util.OpenmrsConstants.PROVIDER_ROLE;
 import static org.openmrs.util.OpenmrsConstants.USER_PROPERTY_LOCKOUT_TIMESTAMP;
 import static org.openmrs.util.OpenmrsConstants.USER_PROPERTY_LOGIN_ATTEMPTS;
 
@@ -42,9 +47,11 @@ public class AccountDomainWrapperTest {
 
     private UserService userService;
 
+    private PersonService personService;
+
     private ProviderService providerService;
 
-    private PersonService personService;
+    private ProviderManagementService providerManagementService;
 
     private Role fullPrivileges;
 
@@ -59,9 +66,10 @@ public class AccountDomainWrapperTest {
     @Before
     public void setup() {
         accountService = mock(AccountService.class);
-        providerService = mock(ProviderService.class);
         userService = mock(UserService.class);
         personService = mock(PersonService.class);
+        providerService = mock(ProviderService.class);
+        providerManagementService = mock(ProviderManagementService.class);
 
         fullPrivileges  = new Role();
         fullPrivileges.setRole(EmrConstants.ROLE_PREFIX_PRIVILEGE_LEVEL + "Full");
@@ -155,35 +163,9 @@ public class AccountDomainWrapperTest {
         Assert.assertTrue(account.getCapabilities().contains(archiveApp));
     }
 
-    @Test
-    public void settingAccountDomainWrapperShouldSetProvider() {
-        Person person = new Person();
-
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
-        account.setProviderIdentifier("ABC123");
-
-        Provider provider = account.getProvider();
-        Assert.assertEquals(person, provider.getPerson());
-        Assert.assertEquals("ABC123", provider.getIdentifier());
-    }
 
     @Test
-    public void gettingAccountDomainWrapperShouldFetchFromProvider() {
-
-        Person person = new Person();
-        person.setId(1);
-        Provider provider = new Provider();
-        provider.setPerson(person);
-        provider.setIdentifier("ABC123");
-
-        when(providerService.getProvidersByPerson(eq(person), eq(false))).thenReturn(Collections.singletonList(provider));
-
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
-        Assert.assertEquals("ABC123", account.getProviderIdentifier());
-    }
-
-    @Test
-    public void testCreatingPersonWithoutCreatingProviderAndUser() {
+    public void testCreatingPersonWithoutCreatingUser() {
 
         Person person = new Person();
 
@@ -197,111 +179,10 @@ public class AccountDomainWrapperTest {
         account.setDefaultLocale(null);
         account.setPrivilegeLevel(null);
         account.setUsername("");
-        account.setProviderIdentifier("");
-        account.setProviderEnabled(false);
 
         // make sure the person has been created, but not the user or provider
         Assert.assertNotNull(account.getPerson());
         Assert.assertNull(account.getUser());
-        Assert.assertNull(account.getProvider());
-    }
-
-    @Test
-    public void shouldDisableExistingProviderAccount() {
-
-        Person person = new Person();
-        person.setId(1);
-        Provider provider = new Provider();
-        provider.setPerson(person);
-        provider.setIdentifier("ABC123");
-
-        when(providerService.getProvidersByPerson(eq(person), eq(false))).thenReturn(Collections.singletonList(provider));
-
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
-        account.setProviderEnabled(false);
-
-        Assert.assertTrue(provider.getRetired());
-        // TODO: figure out how to set retired by
-        //Assert.assertNotNull(provider.getRetiredBy());
-        Assert.assertNotNull(provider.getRetireReason());
-        Assert.assertNotNull(provider.getDateRetired());
-    }
-
-    @Test
-    public void shouldEnablePreviouslyRetiredProviderAccount() {
-
-        Person person = new Person();
-        person.setId(1);
-        Provider provider = new Provider();
-        provider.setPerson(person);
-        provider.setIdentifier("ABC123");
-        provider.setRetired(true);
-        // TODO: figure out how to handle retired by
-        //provider.setRetiredBy();
-        provider.setDateRetired(new Date());
-        provider.setRetireReason("test");
-
-        when(providerService.getProvidersByPerson(eq(person), eq(false))).thenReturn(Collections.singletonList(provider));
-
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
-        account.setProviderEnabled(true);
-
-        Assert.assertFalse(provider.getRetired());
-        Assert.assertNull(provider.getRetiredBy());
-        Assert.assertNull(provider.getRetireReason());
-        Assert.assertNull(provider.getDateRetired());
-    }
-
-    @Test
-    public void shouldEnableNewProviderAccount() {
-
-        Person person = new Person();
-
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
-        account.setProviderEnabled(true);
-
-        Assert.assertNotNull(account.getProvider());
-    }
-
-    @Test
-    public void shouldReturnFalseIfProviderRetired() {
-
-        Person person = new Person();
-        person.setId(1);
-        Provider provider = new Provider();
-        provider.setPerson(person);
-        provider.setRetired(true);
-
-        when(providerService.getProvidersByPerson(eq(person), eq(false))).thenReturn(Collections.singletonList(provider));
-
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
-        Assert.assertFalse(account.getProviderEnabled());
-
-    }
-
-    @Test
-    public void shouldReturnTrueIfProviderNotRetired() {
-
-        Person person = new Person();
-        person.setId(1);
-        Provider provider = new Provider();
-        provider.setPerson(person);
-
-        when(providerService.getProvidersByPerson(eq(person), eq(false))).thenReturn(Collections.singletonList(provider));
-
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
-        Assert.assertTrue(account.getProviderEnabled());
-
-    }
-
-    @Test
-    public void shouldReturnNullIfNoProvider() {
-
-        Person person = new Person();
-
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
-        Assert.assertNull(account.getProviderEnabled());
-
     }
 
     @Test
@@ -402,43 +283,6 @@ public class AccountDomainWrapperTest {
         Assert.assertNull(account.getUserEnabled());
 
     }
-
-    @Test
-    public void shouldChangeExistingProviderIdentifier() {
-
-        Person person = new Person();
-        person.setId(1);
-        Provider provider = new Provider();
-        provider.setPerson(person);
-        provider.setIdentifier("ABC123");
-
-        when(providerService.getProvidersByPerson(eq(person), eq(false))).thenReturn(Collections.singletonList(provider));
-
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
-        account.setProviderIdentifier("ZYX654");
-
-        Assert.assertEquals("ZYX654", provider.getIdentifier());
-
-    }
-
-    @Test
-    public void shouldSetExistingProviderIdentifierToNull() {
-
-        Person person = new Person();
-        person.setId(1);
-        Provider provider = new Provider();
-        provider.setPerson(person);
-        provider.setIdentifier("ABC123");
-
-        when(providerService.getProvidersByPerson(eq(person), eq(false))).thenReturn(Collections.singletonList(provider));
-
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
-        account.setProviderIdentifier(null);
-
-        Assert.assertNull(provider.getIdentifier());
-
-    }
-
     @Test
     public void shouldChangeExistingUserInformation() {
 
@@ -470,6 +314,41 @@ public class AccountDomainWrapperTest {
         Assert.assertFalse(user.getRoles().contains(receptionApp));
         Assert.assertFalse(user.getRoles().contains(fullPrivileges));
 
+    }
+
+    @Test
+    public void shouldChangeExistingProviderRole() {
+
+        Person person = new Person();
+        person.setId(1);
+        Provider provider = new Provider();
+        ProviderRole originalProviderRole = new ProviderRole();
+        provider.setProviderRole(originalProviderRole);
+
+        when(providerManagementService.getProvidersByPerson(eq(person), eq(false))).thenReturn(Collections.singletonList(provider));
+
+        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
+        ProviderRole newProviderRole = new ProviderRole();
+        account.setProviderRole(newProviderRole);
+
+        Assert.assertEquals(newProviderRole, account.getProviderRole());
+    }
+
+    @Test
+    public void shouldChangeExistingProviderRoleToNull() {
+
+        Person person = new Person();
+        person.setId(1);
+        Provider provider = new Provider();
+        ProviderRole originalProviderRole = new ProviderRole();
+        provider.setProviderRole(originalProviderRole);
+
+        when(providerManagementService.getProvidersByPerson(eq(person), eq(false))).thenReturn(Collections.singletonList(provider));
+
+        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
+        account.setProviderRole(null);
+
+        Assert.assertNull(account.getProviderRole());
     }
 
     @Test
@@ -543,28 +422,41 @@ public class AccountDomainWrapperTest {
         verify(personService).savePerson(person);
 
         verify(userService, never()).saveUser(any(User.class), anyString());
-        verify(userService, never()).changeQuestionAnswer(any(User.class), anyString(), anyString());
-        verify(providerService, never()).saveProvider(any(Provider.class));
     }
 
     @Test
-    public void testSaveAccountWithNewPersonUserAndProvider() throws Exception {
+    public void testSaveAccountWithNewPersonAndUser() throws Exception {
 
         Person person = new Person();
 
         AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
         account.setUserEnabled(true);
-        account.setProviderEnabled(true);
         account.setPassword("abc");
         account.setConfirmPassword("abc");
         account.save();
 
         verify(personService).savePerson(person);
         verify(userService).saveUser(account.getUser(), "abc");
-        verify(providerService).saveProvider(account.getProvider());
 
         verify(userService, never()).changePassword(account.getUser(), "abc");
-        verify(userService, never()).changeQuestionAnswer(eq(account.getUser()), anyString(), anyString());
+    }
+
+    @Test
+    public void testSaveAccountWithPersonAndProvider() throws Exception {
+
+        Person person = new Person();
+        ProviderRole providerRole = new ProviderRole();
+
+        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
+        account.setProviderRole(providerRole);
+        account.save();
+
+        Provider expectedProvider = new Provider();
+        expectedProvider.setProviderRole(providerRole);
+
+        verify(personService).savePerson(person);
+        verify(providerService).saveProvider(argThat(new IsExpectedProvider(expectedProvider)));
+        verify(userService, never()).saveUser(any(User.class), anyString());
     }
 
     @Test
@@ -581,11 +473,88 @@ public class AccountDomainWrapperTest {
 
         verify(userService).saveUser(account.getUser(), "abc");
         verify(userService).changePassword(account.getUser(), "abc");
-
-        verify(userService, never()).changeQuestionAnswer(eq(account.getUser()), anyString(), anyString());
     }
+
+    @Test
+    public void testSaveAccountShouldNotPersistProviderIfRoleSetToNull() throws Exception {
+
+        Person person = new Person();
+        person.setId(1);
+
+        when(providerManagementService.getProvidersByPerson(eq(person), eq(false))).thenReturn(null);
+
+        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
+        account.setProviderRole(null);
+        account.save();
+
+        verify(providerService, never()).saveProvider(any(Provider.class));
+
+    }
+
+    @Test
+    public void testSaveAccountShouldRetireProviderIfProviderSetToNull() throws Exception {
+
+        Person person = new Person();
+        person.setId(1);
+        Provider provider = new Provider();
+        provider.setId(1);  // to mimic persistence
+        ProviderRole originalProviderRole = new ProviderRole();
+        provider.setProviderRole(originalProviderRole);
+
+        when(providerManagementService.getProvidersByPerson(eq(person), eq(false))).thenReturn(Collections.singletonList(provider));
+
+        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
+        account.setProviderRole(null);
+        account.save();
+
+        verify(providerService).retireProvider(argThat(new IsExpectedProvider(provider)), anyString());
+    }
+
+    @Test
+    public void testSaveAccountShouldNotRetireProviderIfProviderNotPersisted() throws Exception {
+
+        Person person = new Person();
+        person.setId(1);
+        Provider provider = new Provider();
+        ProviderRole originalProviderRole = new ProviderRole();
+        provider.setProviderRole(originalProviderRole);
+
+        when(providerManagementService.getProvidersByPerson(eq(person), eq(false))).thenReturn(Collections.singletonList(provider));
+
+        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
+        account.setProviderRole(null);
+        account.save();
+
+        verify(providerService, never()).retireProvider(any(Provider.class), anyString());
+    }
+
     private AccountDomainWrapper initializeNewAccountDomainWrapper(Person person) {
-        return new AccountDomainWrapper(person, accountService, userService, providerService, personService);
+        return new AccountDomainWrapper(person, accountService, userService,
+                providerService, providerManagementService, personService);
     }
 
+    private class IsExpectedProvider extends ArgumentMatcher<Provider> {
+
+        private Provider expectedProvider;
+
+        public IsExpectedProvider(Provider provider) {
+            this.expectedProvider = provider;
+        }
+
+        @Override
+        public boolean matches(Object o) {
+
+            Provider provider = (Provider) o;
+
+            try {
+                assertThat(provider.getId(), is(expectedProvider.getId()));
+                assertThat(provider.getProviderRole(), is(expectedProvider.getProviderRole()));
+                assertThat(provider.getIdentifier(), is(expectedProvider.getIdentifier()));
+                return true;
+            }
+            catch (AssertionError e) {
+                return false;
+            }
+        }
+    }
 }
