@@ -84,37 +84,114 @@ describe("Test for simple form models", function() {
             expect(firstField.unselect).toHaveBeenCalled();
             expect(secondField.unselect).toHaveBeenCalled();
         });
+
+        it("should state the question is valid", function() {
+            var firstField = jasmine.createSpyObj('firstField', ['isValid']);
+            var secondField = jasmine.createSpyObj('firstField', ['isValid']);
+            firstField.isValid.andReturn(true);
+            secondField.isValid.andReturn(true);
+
+            var questionModel = new QuestionModel();
+            questionModel.fields = [firstField, secondField];
+
+            var isValid = questionModel.isValid();
+
+            expect(firstField.isValid).toHaveBeenCalled();
+            expect(secondField.isValid).toHaveBeenCalled();
+            expect(isValid).toBe(true);
+        });
+
+        it("should state the question is invalid", function() {
+            var firstField = jasmine.createSpyObj('firstField', ['isValid']);
+            var secondField = jasmine.createSpyObj('firstField', ['isValid']);
+            firstField.isValid.andReturn(false);
+            secondField.isValid.andReturn(true);
+
+            var questionModel = new QuestionModel();
+            questionModel.fields = [firstField, secondField];
+
+            var isValid = questionModel.isValid();
+
+            expect(firstField.isValid).toHaveBeenCalled();
+            expect(secondField.isValid).toHaveBeenCalled();
+            expect(isValid).toBe(false);
+        });
     });
 
-    it("should state the question is valid", function() {
-        var firstField = jasmine.createSpyObj('firstField', ['isValid']);
-        var secondField = jasmine.createSpyObj('firstField', ['isValid']);
-        firstField.isValid.andReturn(true);
-        secondField.isValid.andReturn(true);
+    describe("Unit tests for SectionModel", function() {
+       it("should select and unselect the section", function() {
+           var menuElement = jasmine.createSpyObj('menu', ['append']);
+           var firstQuestion = jasmine.createSpyObj('firstQuestion', ['unselect']);
+           var secondQuestion = jasmine.createSpyObj('secondQuestion', ['unselect']);
 
-        var questionModel = new QuestionModel();
-        questionModel.fields = [firstField, secondField];
+           var sectionModel = new SectionModel(null, menuElement);
+           sectionModel.title = jasmine.createSpyObj('title', ['addClass', 'removeClass']);
+           sectionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass']);
+           sectionModel.questions = [firstQuestion, secondQuestion];
 
-        var isValid = questionModel.isValid();
+           sectionModel.toggleSelection();
+           expect(sectionModel.title.addClass).toHaveBeenCalledWith('doing');
+           expect(sectionModel.element.addClass).toHaveBeenCalledWith('focused');
+           expect(sectionModel.isSelected).toBe(true);
 
-        expect(firstField.isValid).toHaveBeenCalled();
-        expect(secondField.isValid).toHaveBeenCalled();
-        expect(isValid).toBe(true);
+           sectionModel.toggleSelection();
+           expect(sectionModel.title.removeClass).toHaveBeenCalledWith('doing')
+           expect(sectionModel.element.removeClass).toHaveBeenCalledWith('focused');
+           expect(firstQuestion.unselect).toHaveBeenCalled();
+           expect(secondQuestion.unselect).toHaveBeenCalled();
+           expect(sectionModel.isSelected).toBe(false);
+       });
+
+        it("should state the section is valid", function() {
+            var menuElement = jasmine.createSpyObj('menu', ['append']);
+            var firstQuestion = jasmine.createSpyObj('firstQuestion', ['isValid']);
+            var secondQuestion = jasmine.createSpyObj('secondQuestion', ['isValid']);
+            firstQuestion.isValid.andReturn(true);
+            secondQuestion.isValid.andReturn(true);
+
+            var sectionModel = new SectionModel(null, menuElement);
+            sectionModel.questions = [firstQuestion, secondQuestion];
+
+            var isValid = sectionModel.isValid();
+
+            expect(firstQuestion.isValid).toHaveBeenCalled();
+            expect(secondQuestion.isValid).toHaveBeenCalled();
+            expect(isValid).toBe(true);
+
+        });
+
+        it("should state the section is not valid", function() {
+            var menuElement = jasmine.createSpyObj('menu', ['append']);
+            var firstQuestion = jasmine.createSpyObj('firstQuestion', ['isValid']);
+            var secondQuestion = jasmine.createSpyObj('secondQuestion', ['isValid']);
+            firstQuestion.isValid.andReturn(true);
+            secondQuestion.isValid.andReturn(false);
+
+            var sectionModel = new SectionModel(null, menuElement);
+            sectionModel.questions = [firstQuestion, secondQuestion];
+
+            var isValid = sectionModel.isValid();
+
+            expect(firstQuestion.isValid).toHaveBeenCalled();
+            expect(secondQuestion.isValid).toHaveBeenCalled();
+            expect(isValid).toBe(false);
+
+        });
     });
 
-    it("should state the question is invalid", function() {
-        var firstField = jasmine.createSpyObj('firstField', ['isValid']);
-        var secondField = jasmine.createSpyObj('firstField', ['isValid']);
-        firstField.isValid.andReturn(false);
-        secondField.isValid.andReturn(true);
+    describe("Unit tests for ConfirmationSectionModel", function() {
+       it("should select and unselect the confirmation section",function() {
+           var menuElement = jasmine.createSpyObj('menu', ['append']);
+           var confirmationSectionModel = new ConfirmationSectionModel(null, menuElement);
+           confirmationSectionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass']);
 
-        var questionModel = new QuestionModel();
-        questionModel.fields = [firstField, secondField];
+           confirmationSectionModel.toggleSelection();
+           expect(confirmationSectionModel.element.addClass).toHaveBeenCalledWith('focused');
+           expect(confirmationSectionModel.isSelected).toBe(true);
 
-        var isValid = questionModel.isValid();
-
-        expect(firstField.isValid).toHaveBeenCalled();
-        expect(secondField.isValid).toHaveBeenCalled();
-        expect(isValid).toBe(false);
+           confirmationSectionModel.toggleSelection();
+           expect(confirmationSectionModel.element.removeClass).toHaveBeenCalledWith('focused');
+           expect(confirmationSectionModel.isSelected).toBe(false);
+       });
     });
 })
