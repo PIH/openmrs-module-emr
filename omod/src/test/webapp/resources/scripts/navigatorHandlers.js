@@ -126,7 +126,6 @@ describe("Tests for simple form navigation handlers", function() {
         });
 
         describe("Questions Keyboard handler", function() {
-            var questionsKeyboardHandler;
             var firstQuestion, secondQuestion;
             beforeEach(function() {
                 firstQuestion = jasmine.createSpyObj('firstQuestion', ['toggleSelection']);
@@ -199,6 +198,63 @@ describe("Tests for simple form navigation handlers", function() {
                 expect(firstSection.toggleSelection).toHaveBeenCalled();
                 expect(secondSection.toggleSelection).toHaveBeenCalled();
                 expect(wasHandled).toBe(true);
+            });
+        });
+    });
+
+    describe("Mouse handlers", function() {
+
+        describe("Section mouse handlers", function() {
+            var sectionMouseHandler, firstSection, secondSection, question, field;
+            beforeEach(function() {
+                firstSection = {isSelected: false, toggleSelection: '', isValid: '', title: $('<li></li>')};
+                secondSection = {isSelected: false, toggleSelection: '', isValid: '', title: $('<li></li>')};
+
+                field = {isSelected: true, toggleSelection: '', select: ''};
+                question = {fields: [field], toggleSelection: '', isSelected: true};
+
+                sectionMouseHandler = new SectionMouseHandler([firstSection, secondSection]);
+            });
+
+            it("should switch selection to section ahead if current section is valid", function() {
+                spyOn(firstSection, 'isValid').andReturn(true); spyOn(firstSection, 'toggleSelection');
+                spyOn(secondSection, 'toggleSelection');
+                spyOn(question, 'toggleSelection');
+                spyOn(field, 'toggleSelection');
+                firstSection.isSelected = true;
+                secondSection.questions = [question];
+
+                secondSection.title.click();
+
+                expect(firstSection.toggleSelection).toHaveBeenCalled();
+                expect(secondSection.toggleSelection).toHaveBeenCalled();
+                expect(question.toggleSelection).toHaveBeenCalled();
+                expect(field.toggleSelection).toHaveBeenCalled();
+            });
+            it("should not switch selection to section ahead if current section is not valid", function() {
+                spyOn(firstSection, 'isValid').andReturn(false);
+                spyOn(field, 'select');
+                firstSection.isSelected = true;
+                firstSection.questions = [question];
+
+                secondSection.title.click();
+
+                expect(field.select).toHaveBeenCalled();
+            });
+            it("should switch selection to section behind", function() {
+                spyOn(firstSection, 'toggleSelection');
+                spyOn(secondSection, 'toggleSelection');
+                spyOn(question, 'toggleSelection');
+                spyOn(field, 'toggleSelection');
+                secondSection.isSelected = true;
+                firstSection.questions = [question];
+
+                firstSection.title.click();
+
+                expect(firstSection.toggleSelection).toHaveBeenCalled();
+                expect(secondSection.toggleSelection).toHaveBeenCalled();
+                expect(question.toggleSelection).toHaveBeenCalled();
+                expect(field.toggleSelection).toHaveBeenCalled();
             });
         });
     });
