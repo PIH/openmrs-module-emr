@@ -307,5 +307,42 @@ describe("Tests for simple form navigation handlers", function() {
                 expect(secondQuestion.toggleSelection).toHaveBeenCalled();
             });
         });
+
+        describe("Fields mouse handlers", function() {
+            var fieldsMouseHandler, firstField, secondField;
+            beforeEach(function() {
+                firstField = {isSelected: false, toggleSelection: '', isValid: '', element: $('<input />')};
+                secondField = {isSelected: false, toggleSelection: '', isValid: '', element: $('<input />')};
+                fieldsMouseHandler = new FieldsMouseHandler([firstField, secondField]);
+            });
+
+            it("should switch selection to field ahead if current field is valid", function() {
+                spyOn(firstField, 'isValid').andReturn(true);
+                spyOn(firstField, 'toggleSelection');
+                spyOn(secondField, 'toggleSelection');
+                firstField.isSelected=true;
+
+                secondField.element.mousedown();
+
+                expect(firstField.toggleSelection).toHaveBeenCalled();
+                expect(secondField.toggleSelection).toHaveBeenCalled();
+            });
+            it("should not switch selection to field ahead if current field is not valid", function() {
+                spyOn(firstField, 'isValid').andReturn(false);
+                firstField.isSelected=true;
+
+                secondField.element.mousedown();
+            });
+            it("should switch selection to field behind", function() {
+                spyOn(firstField, 'toggleSelection');
+                spyOn(secondField, 'toggleSelection');
+                secondField.isSelected=true;
+
+                firstField.element.mousedown();
+
+                expect(firstField.toggleSelection).toHaveBeenCalled();
+                expect(secondField.toggleSelection).toHaveBeenCalled();
+            });
+        });
     });
 })
