@@ -106,6 +106,12 @@ var emr = (function($) {
                                               text:  message } );
         },
 
+        alertMessage: function(message) {
+            jqObject.toastmessage( 'showToast', { type: 'alert',
+                                              position: 'top-right',
+                                              text:  message } );
+        },
+
         successAlert: function(message, options) {
             jqObject.toastmessage( 'showToast', { type: 'success',
                 position: 'top-right',
