@@ -124,5 +124,82 @@ describe("Tests for simple form navigation handlers", function() {
                 expect(wasHandled).toBe(true);
             });
         });
+
+        describe("Questions Keyboard handler", function() {
+            var questionsKeyboardHandler;
+            var firstQuestion, secondQuestion;
+            beforeEach(function() {
+                firstQuestion = jasmine.createSpyObj('firstQuestion', ['toggleSelection']);
+                secondQuestion = jasmine.createSpyObj('secondQuestion', ['toggleSelection']);
+                questionsKeyboardHandler = new QuestionsKeyboardHandler([firstQuestion, secondQuestion]);
+            });
+
+            it("should switch selection to next question within same section", function() {
+                firstQuestion.isSelected = true; secondQuestion.isSelected = false;
+                firstQuestion.isValid = ''; spyOn(firstQuestion, 'isValid').andReturn(true);
+
+                var wasHandled = questionsKeyboardHandler.handleDownKey();
+
+                expect(firstQuestion.toggleSelection).toHaveBeenCalled();
+                expect(secondQuestion.toggleSelection).toHaveBeenCalled();
+                expect(wasHandled).toBe(true);
+            });
+            it("should switch selection to next question within different section", function() {
+                firstQuestion.isSelected = true; secondQuestion.isSelected = false;
+                firstQuestion.isValid = ''; spyOn(firstQuestion, 'isValid').andReturn(true);
+
+                var firstSection = jasmine.createSpyObj('firstSection', ['toggleSelection']);
+                var secondSection = jasmine.createSpyObj('secondSection', ['toggleSelection'])
+                firstSection.questions = [firstQuestion]; secondSection.questions = [secondQuestion];
+                firstQuestion.parentSection = firstSection; secondQuestion.parentSection = secondSection;
+
+                questionsKeyboardHandler = new QuestionsKeyboardHandler([firstQuestion, secondQuestion]);
+                var wasHandled = questionsKeyboardHandler.handleDownKey();
+
+                expect(firstQuestion.toggleSelection).toHaveBeenCalled();
+                expect(secondQuestion.toggleSelection).toHaveBeenCalled();
+                expect(firstSection.toggleSelection).toHaveBeenCalled();
+                expect(secondSection.toggleSelection).toHaveBeenCalled();
+                expect(wasHandled).toBe(true);
+            });
+            it("should not switch selection to next question if question is not valid", function() {
+                var firstQuestion = jasmine.createSpyObj('firstQuestion', ['isValid']);
+                var secondQuestion = {isSelected: false};
+                firstQuestion.isSelected = true;
+                firstQuestion.isValid.andReturn(false);
+
+                questionsKeyboardHandler = new QuestionsKeyboardHandler([firstQuestion, secondQuestion]);
+                var wasHandled = questionsKeyboardHandler.handleDownKey();
+
+                expect(wasHandled).toBe(true);
+            });
+
+            it("should switch selection to previous question within same section", function() {
+                firstQuestion.isSelected = false; secondQuestion.isSelected = true;
+
+                var wasHandled = questionsKeyboardHandler.handleUpKey();
+
+                expect(secondQuestion.toggleSelection).toHaveBeenCalled();
+                expect(firstQuestion.toggleSelection).toHaveBeenCalled();
+                expect(wasHandled).toBe(true);
+            });
+            it("should switch selection to previous question within different section", function() {
+                firstQuestion.isSelected = false; secondQuestion.isSelected = true;
+
+                var firstSection = jasmine.createSpyObj('firstSection', ['toggleSelection']);
+                var secondSection = jasmine.createSpyObj('secondSection', ['toggleSelection'])
+                firstSection.questions = [firstQuestion]; secondSection.questions = [secondQuestion];
+                firstQuestion.parentSection = firstSection; secondQuestion.parentSection = secondSection;
+
+                questionsKeyboardHandler = new QuestionsKeyboardHandler([firstQuestion, secondQuestion]);
+                var wasHandled = questionsKeyboardHandler.handleUpKey();
+
+                expect(firstQuestion.toggleSelection).toHaveBeenCalled();
+                expect(secondQuestion.toggleSelection).toHaveBeenCalled();
+                expect(firstSection.toggleSelection).toHaveBeenCalled();
+                expect(secondSection.toggleSelection).toHaveBeenCalled();
+                expect(wasHandled).toBe(true);
+            });
+        });
     });
 })
