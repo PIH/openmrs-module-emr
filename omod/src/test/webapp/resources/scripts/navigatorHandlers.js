@@ -205,7 +205,7 @@ describe("Tests for simple form navigation handlers", function() {
     describe("Mouse handlers", function() {
 
         describe("Section mouse handlers", function() {
-            var sectionMouseHandler, firstSection, secondSection, question, field;
+            var sectionsMouseHandler, firstSection, secondSection, question, field;
             beforeEach(function() {
                 firstSection = {isSelected: false, toggleSelection: '', isValid: '', title: $('<li></li>')};
                 secondSection = {isSelected: false, toggleSelection: '', isValid: '', title: $('<li></li>')};
@@ -213,7 +213,7 @@ describe("Tests for simple form navigation handlers", function() {
                 field = {isSelected: true, toggleSelection: '', select: ''};
                 question = {fields: [field], toggleSelection: '', isSelected: true};
 
-                sectionMouseHandler = new SectionMouseHandler([firstSection, secondSection]);
+                sectionsMouseHandler = new SectionMouseHandler([firstSection, secondSection]);
             });
 
             it("should switch selection to section ahead if current section is valid", function() {
@@ -255,6 +255,56 @@ describe("Tests for simple form navigation handlers", function() {
                 expect(secondSection.toggleSelection).toHaveBeenCalled();
                 expect(question.toggleSelection).toHaveBeenCalled();
                 expect(field.toggleSelection).toHaveBeenCalled();
+            });
+        });
+
+        describe("Question mouse handlers", function() {
+           var questionsMouseHandler, firstQuestion, secondQuestion, field;
+            beforeEach(function() {
+                firstQuestion = {isSelected: false, toggleSelection: '', isValid: '', questionLi: $('<li></li>')};
+                secondQuestion = {isSelected: false, toggleSelection: '', isValid: '', questionLi: $('<li></li>')};
+
+                field = {isSelected: false, toggleSelection: '', select: ''};
+
+                questionsMouseHandler = new QuestionsMouseHandler([firstQuestion, secondQuestion]);
+            });
+
+            it("should switch selection to question ahead if current question is valid", function() {
+                spyOn(firstQuestion, 'isValid').andReturn(true);
+                spyOn(firstQuestion, 'toggleSelection');
+                spyOn(secondQuestion, 'toggleSelection');
+                spyOn(field, 'toggleSelection');
+                firstQuestion.isSelected = true;
+                secondQuestion.fields = [field];
+
+                secondQuestion.questionLi.click();
+
+                expect(firstQuestion.toggleSelection).toHaveBeenCalled();
+                expect(secondQuestion.toggleSelection).toHaveBeenCalled();
+            });
+            it("should not switch selection to question ahead if current question is not valid", function() {
+                spyOn(firstQuestion, 'isValid').andReturn(false);
+                spyOn(field, 'select');
+                firstQuestion.isSelected = true;
+                field.isSelected = true;
+                firstQuestion.fields = [field];
+
+                secondQuestion.questionLi.click();
+
+                expect(field.select).toHaveBeenCalled();
+            });
+            it("should switch selection to question behind", function() {
+                spyOn(secondQuestion, 'isValid').andReturn(true);
+                spyOn(firstQuestion, 'toggleSelection');
+                spyOn(secondQuestion, 'toggleSelection');
+                spyOn(field, 'toggleSelection');
+                secondQuestion.isSelected = true;
+                firstQuestion.fields = [field];
+
+                firstQuestion.questionLi.click();
+
+                expect(firstQuestion.toggleSelection).toHaveBeenCalled();
+                expect(secondQuestion.toggleSelection).toHaveBeenCalled();
             });
         });
     });
