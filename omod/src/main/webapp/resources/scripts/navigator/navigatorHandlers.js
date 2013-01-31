@@ -58,6 +58,7 @@ function FieldsKeyboardHandler(fieldModels, questionsHandler) {
         if(isValid) {
             return switchActiveField(function(i) { return i+1; }, true);
         }
+        currentField.select();
         return true;
 
     };
@@ -209,12 +210,14 @@ var FieldsMouseHandler = function(fieldsModels) {
     var clickedField = function(field) {
         var currentField = selectedField();
         if(currentField == field) {
+            currentField.select();
             return;
         }
 
         var currentFieldIndex = _.indexOf(fields, currentField);
         var clickedFieldIndex = _.indexOf(fields, field);
         if(clickedFieldIndex > currentFieldIndex && !currentField.isValid()) {
+            currentField.select();
             return;
         }
         currentField.toggleSelection();

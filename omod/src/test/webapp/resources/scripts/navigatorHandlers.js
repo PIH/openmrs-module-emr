@@ -6,16 +6,14 @@ describe("Tests for simple form navigation handlers", function() {
         describe("Fields Keyboard handler", function() {
             var firstField, secondField;
             beforeEach(function() {
-                firstField = jasmine.createSpyObj('firstField', ['isValid', 'toggleSelection']);
-                secondField = jasmine.createSpyObj('secondField', ['isValid', 'toggleSelection']);
+                firstField = {isSelected: false, isValid: false, toggleSelection: '', select: ''};
+                secondField = {isSelected: false, isValid: false, toggleSelection: ''};
                 questionsKeyboardHandler = jasmine.createSpyObj('questionsHandler',
-                        ['handleUpKey', 'handleDownKey',
-                         'selectedQuestion']);
+                        ['handleUpKey', 'handleDownKey', 'selectedQuestion']);
                 fieldsKeyboardHandler = new FieldsKeyboardHandler([firstField, secondField], questionsKeyboardHandler);
             });
 
             it("should delegate up key handling if no selected field", function() {
-                firstField.isSelected = false; secondField.isSelected = false;
                 questionsKeyboardHandler.handleUpKey.andReturn(true);
 
                 var wasHandled = fieldsKeyboardHandler.handleUpKey();
@@ -24,7 +22,7 @@ describe("Tests for simple form navigation handlers", function() {
                 expect(wasHandled).toBe(true);
             });
             it("should not handle up key if there is a selected field", function() {
-                firstField.isSelected = false; secondField.isSelected = true;
+                secondField.isSelected = true;
 
                 var wasHandled = fieldsKeyboardHandler.handleUpKey();
 
@@ -41,7 +39,7 @@ describe("Tests for simple form navigation handlers", function() {
                 expect(wasHandled).toBe(true);
             });
             it("should not handle down key if there is a selected field", function() {
-                firstField.isSelected = false; secondField.isSelected = true;
+                secondField.isSelected = true;
 
                 var wasHandled = fieldsKeyboardHandler.handleDownKey();
 
@@ -49,11 +47,11 @@ describe("Tests for simple form navigation handlers", function() {
             });
 
             it("should switch selection to next field within same question", function() {
-                firstField.isSelected = true; secondField.isSelected = false;
-                firstField.isValid.andReturn(true);
-                questionsKeyboardHandler.selectedQuestion.andReturn({
-                    fields: [firstField, secondField]
-                });
+                spyOn(firstField, 'isValid').andReturn(true);
+                spyOn(firstField, 'toggleSelection');
+                spyOn(secondField, 'toggleSelection');
+                firstField.isSelected = true;
+                questionsKeyboardHandler.selectedQuestion.andReturn({fields: [firstField, secondField]});
 
                 var wasHandled = fieldsKeyboardHandler.handleTabKey();
 
@@ -61,8 +59,10 @@ describe("Tests for simple form navigation handlers", function() {
                 expect(secondField.toggleSelection).toHaveBeenCalled();
             });
             it("should switch selection to next field within different question", function() {
-                firstField.isSelected = true; secondField.isSelected = false;
-                firstField.isValid.andReturn(true);
+                spyOn(firstField, 'isValid').andReturn(true);
+                spyOn(firstField, 'toggleSelection');
+                spyOn(secondField, 'toggleSelection');
+                firstField.isSelected = true;
 
                 var firstQuestion = jasmine.createSpyObj('firstQuestion', ['toggleSelection']);
                 firstQuestion.fields = [firstQuestion]; firstField.parentQuestion = firstQuestion;
@@ -78,20 +78,21 @@ describe("Tests for simple form navigation handlers", function() {
                 expect(secondQuestion.toggleSelection).toHaveBeenCalled();
             });
             it("should not switch selection to next field if current field is invalid", function() {
-                firstField.isSelected = true; secondField.isSelected = false;
-                firstField.isValid.andReturn(false);
+                firstField.isSelected = true;
+                spyOn(firstField, 'isValid').andReturn(false);
+                spyOn(firstField, 'select');
 
                 var wasHandled = fieldsKeyboardHandler.handleTabKey();
 
+                expect(firstField.select).toHaveBeenCalled();
                 expect(wasHandled).toBe(true);
             });
 
             it("should switch selection to previous field within same question", function() {
-                firstField.isSelected = false; secondField.isSelected = true;
-                secondField.isValid.andReturn(true);
-                questionsKeyboardHandler.selectedQuestion.andReturn({
-                    fields: [firstField, secondField]
-                });
+                spyOn(firstField, 'toggleSelection');
+                spyOn(secondField, 'toggleSelection');
+                secondField.isSelected = true;
+                questionsKeyboardHandler.selectedQuestion.andReturn({fields: [firstField, secondField]});
 
                 var wasHandled = fieldsKeyboardHandler.handleShiftTabKey();
 
@@ -99,8 +100,9 @@ describe("Tests for simple form navigation handlers", function() {
                 expect(firstField.toggleSelection).toHaveBeenCalled();
             });
             it("should switch selection to next field within different question", function() {
-                firstField.isSelected = false; secondField.isSelected = true;
-                secondField.isValid.andReturn(true);
+                spyOn(firstField, 'toggleSelection');
+                spyOn(secondField, 'toggleSelection');
+                secondField.isSelected = true;
 
                 var firstQuestion = jasmine.createSpyObj('firstQuestion', ['toggleSelection']);
                 firstQuestion.fields = [firstQuestion]; firstField.parentQuestion = firstQuestion;
@@ -114,14 +116,6 @@ describe("Tests for simple form navigation handlers", function() {
                 expect(firstField.toggleSelection).toHaveBeenCalled();
                 expect(secondQuestion.toggleSelection).toHaveBeenCalled();
                 expect(firstQuestion.toggleSelection).toHaveBeenCalled();
-            });
-            it("should not switch selection to previous field if current field is invalid", function() {
-                firstField.isSelected = false; secondField.isSelected = true;
-                secondField.isValid.andReturn(false);
-
-                var wasHandled = fieldsKeyboardHandler.handleShiftTabKey();
-
-                expect(wasHandled).toBe(true);
             });
         });
 
@@ -261,7 +255,7 @@ describe("Tests for simple form navigation handlers", function() {
         describe("Question mouse handlers", function() {
            var questionsMouseHandler, firstQuestion, secondQuestion, field;
             beforeEach(function() {
-                firstQuestion = {isSelected: false, toggleSelection: '', isValid: '', questionLi: $('<li></li>')};
+                firstQuestion = {isSelected: false, toggleSelection: '', isValid: '', questionLi: $('<li></li>'), select: ''};
                 secondQuestion = {isSelected: false, toggleSelection: '', isValid: '', questionLi: $('<li></li>')};
 
                 field = {isSelected: false, toggleSelection: '', select: ''};
@@ -311,7 +305,7 @@ describe("Tests for simple form navigation handlers", function() {
         describe("Fields mouse handlers", function() {
             var fieldsMouseHandler, firstField, secondField;
             beforeEach(function() {
-                firstField = {isSelected: false, toggleSelection: '', isValid: '', element: $('<input />')};
+                firstField = {isSelected: false, toggleSelection: '', isValid: '', element: $('<input />'), select:''};
                 secondField = {isSelected: false, toggleSelection: '', isValid: '', element: $('<input />')};
                 fieldsMouseHandler = new FieldsMouseHandler([firstField, secondField]);
             });
@@ -329,9 +323,12 @@ describe("Tests for simple form navigation handlers", function() {
             });
             it("should not switch selection to field ahead if current field is not valid", function() {
                 spyOn(firstField, 'isValid').andReturn(false);
+                spyOn(firstField, 'select');
                 firstField.isSelected=true;
 
                 secondField.element.mousedown();
+
+                expect(firstField.select).toHaveBeenCalled();
             });
             it("should switch selection to field behind", function() {
                 spyOn(firstField, 'toggleSelection');
