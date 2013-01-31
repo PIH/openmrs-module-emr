@@ -214,14 +214,11 @@ public interface PaperRecordService extends OpenmrsService {
      * Prints x numbers of labels for the paper record associated with the patient
      *
      * @param patient the patient we want to print the label for
-     * @param recordLocation recordLocation the location of the record (ie, "Mirebalais Hospital"); if the specified location is not
-     *                       a medical record location, will search up the location hierarchy for a valid medical
-     *                       record location
      * @param location the location where the record should be printed
      * @param count the of labels to print
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS)
-    void printPaperRecordLabels(Patient patient, Location recordLocation, Location location, Integer count);
+    void printPaperRecordLabels(Patient patient, Location location, Integer count);
 
 
     /**

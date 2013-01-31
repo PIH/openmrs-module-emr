@@ -369,8 +369,8 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     }
 
     @Override
-    public void printPaperRecordLabels(Patient patient, Location recordLocation, Location location, Integer count) {
-        PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient, emrProperties.getPaperRecordIdentifierType(), getMedicalRecordLocationAssociatedWith(recordLocation));
+    public void printPaperRecordLabels(Patient patient, Location location, Integer count) {
+        PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient, emrProperties.getPaperRecordIdentifierType(), getMedicalRecordLocationAssociatedWith(location));
         printPaperRecordLabels(patient, paperRecordIdentifier != null ? paperRecordIdentifier.getIdentifier() : null, location, count);
     }
 

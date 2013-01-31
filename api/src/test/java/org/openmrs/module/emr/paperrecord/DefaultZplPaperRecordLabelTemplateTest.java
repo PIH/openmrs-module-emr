@@ -5,10 +5,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openmrs.Patient;
-import org.openmrs.PatientIdentifier;
-import org.openmrs.PatientIdentifierType;
-import org.openmrs.PersonName;
+import org.openmrs.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrProperties;
@@ -162,18 +159,28 @@ public class DefaultZplPaperRecordLabelTemplateTest {
 
         PatientIdentifier primaryIdentifier = new PatientIdentifier();
         primaryIdentifier.setIdentifierType(primaryIdentifierType);
-        primaryIdentifier.setIdentifier("ABC");
+        primaryIdentifier.setIdentifier("2F1406");
         patient.addIdentifier(primaryIdentifier);
 
         PersonName name = new PersonName();
-        name.setFamilyName("Jones");
-        name.setGivenName("Indiana");
+        name.setFamilyName("Ellen");
+        name.setGivenName("Jazayeri");
         patient.addName(name);
 
-        String data = template.generateLabel(patient, "123");
+        PersonAddress personAddress = new PersonAddress();
+        personAddress.setAddress2("2eme rue");
+        personAddress.setAddress1("Cange");
+        personAddress.setAddress3("3ème La Hoye");
+        personAddress.setCityVillage("Lascahobas");
+        personAddress.setCountyDistrict("Centre");
+        personAddress.setCountry("Haiti");
+
+
+
+        String data = template.generateLabel(patient, "A000071");
 
         Printer printer = new Printer();
-        printer.setIpAddress("10.3.18.114");
+        printer.setIpAddress("10.3.18.113");
         printer.setPort("9100");
 
         new PrinterServiceImpl().printViaSocket(data, printer, "UTF-8");

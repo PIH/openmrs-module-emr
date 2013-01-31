@@ -25,12 +25,18 @@ public class DefaultZplPaperRecordLabelTemplate implements PaperRecordLabelTempl
 
     private EmrProperties emrProperties;
 
+    private PaperRecordService paperRecordService;
+
     public void setMessageSourceService(MessageSourceService messageSourceService) {
         this.messageSourceService = messageSourceService;
     }
 
     public void setEmrProperties(EmrProperties emrProperties) {
         this.emrProperties = emrProperties;
+    }
+
+    public void setPaperRecordService(PaperRecordService paperRecordService) {
+        this.paperRecordService = paperRecordService;
     }
 
     @Override
@@ -43,7 +49,7 @@ public class DefaultZplPaperRecordLabelTemplate implements PaperRecordLabelTempl
         if (StringUtils.isBlank(paperRecordIdentifier)) {
             throw new IllegalArgumentException("No identifier for paper record");
         }
-
+        emrProperties.getPaperRecordIdentifierType();
         PatientIdentifier primaryIdentifier = patient.getPatientIdentifier(emrProperties.getPrimaryIdentifierType());
 
         if (primaryIdentifier == null) {
@@ -67,7 +73,7 @@ public class DefaultZplPaperRecordLabelTemplate implements PaperRecordLabelTempl
         /* Address (using address template) */
         if (patient.getPersonAddress() != null) {
 
-            int verticalPosition = 140;
+            int verticalPosition = 250;
 
             // print out the address using the layout format
             // first iterate through all the lines in the format
@@ -110,20 +116,20 @@ public class DefaultZplPaperRecordLabelTemplate implements PaperRecordLabelTempl
 
         /* Birthdate */
         if (patient.getBirthdate() != null) {
-            data.append("^FO140,350^ATN^FD" + df.format(patient.getBirthdate()) + " " + (patient.getBirthdateEstimated() ? "(*)" : " ") + "^FS");
+            data.append("^FO140,140^ATN^FD" + df.format(patient.getBirthdate()) + " " + (patient.getBirthdateEstimated() ? "(*)" : " ") + "^FS");
         }
 
         /* Gender */
-        data.append("^FO140,400^ATN^FD" + messageSourceService.getMessage("emr.gender." + patient.getGender()) + "^FS");
+        data.append("^FO140,190^ATN^FD" + messageSourceService.getMessage("emr.gender." + patient.getGender()) + "^FS");
 
         /* RIGHT COLUMN */
 
         /* Print the patient's primary identifier */
-        data.append("^FO870,50^FB350,1,0,R,0^AVN^FD" + primaryIdentifier.getIdentifier() + "^FS");
+        data.append("^FO350,140^FB350,1,0,R,0^AVN^FD" + primaryIdentifier.getIdentifier() + "^FS");
 
 
         /* Print the bar code, based on the primary identifier */
-        data.append("^FO790,250^ATN^BY4^BCN,150^FD" + paperRecordIdentifier+ "^FS");    // print barcode & identifier
+        data.append("^FO780,40^ATN^BY4^BCN,150^FD" + paperRecordIdentifier+ "^FS");    // print barcode & identifier
 
         /* Print command */
         data.append("^XZ");
