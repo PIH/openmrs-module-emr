@@ -212,15 +212,14 @@ var FieldsMouseHandler = function(fieldsModels) {
     var fields = fieldsModels;
     _.each(fields, function(f) {
         f.element.mousedown(function(event) {
-            clickedField(f);
-            event.preventDefault();
+            clickedField(f, event);
         });
     });
     var selectedField = function() {
         return _.find(fields, function(f) { return f.isSelected; });
     };
 
-    var clickedField = function(field) {
+    var clickedField = function(field, event) {
         var currentField = selectedField();
         if(currentField == field) {
             currentField.select();
@@ -242,5 +241,6 @@ var FieldsMouseHandler = function(fieldsModels) {
             currentField.toggleSelection();
             field.toggleSelection();
         }
+        event.preventDefault();
     };
 };
