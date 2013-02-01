@@ -4,13 +4,14 @@ describe("Tests for simple form navigation handlers", function() {
         var fieldsKeyboardHandler, questionsKeyboardHandler;
 
         describe("Fields Keyboard handler", function() {
-            var firstField, secondField;
+            var firstField, secondField, thirdField;
             beforeEach(function() {
                 firstField = {isSelected: false, isValid: false, toggleSelection: '', select: ''};
                 secondField = {isSelected: false, isValid: false, toggleSelection: ''};
+                thirdField = {isSelected: false, isValid: false, toggleSelection: ''};
                 questionsKeyboardHandler = jasmine.createSpyObj('questionsHandler',
                         ['handleUpKey', 'handleDownKey', 'selectedQuestion']);
-                fieldsKeyboardHandler = new FieldsKeyboardHandler([firstField, secondField], questionsKeyboardHandler);
+                fieldsKeyboardHandler = new FieldsKeyboardHandler([firstField, secondField, thirdField], questionsKeyboardHandler);
             });
 
             it("should delegate up key handling if no selected field", function() {
@@ -100,20 +101,23 @@ describe("Tests for simple form navigation handlers", function() {
                 expect(firstField.toggleSelection).toHaveBeenCalled();
             });
             it("should switch selection to next field within different question", function() {
-                spyOn(firstField, 'toggleSelection');
                 spyOn(secondField, 'toggleSelection');
-                secondField.isSelected = true;
+                spyOn(thirdField, 'toggleSelection');
+                thirdField.isSelected = true;
 
                 var firstQuestion = jasmine.createSpyObj('firstQuestion', ['toggleSelection']);
-                firstQuestion.fields = [firstQuestion]; firstField.parentQuestion = firstQuestion;
+                firstQuestion.fields = [firstField, secondField];
+                firstField.parentQuestion = firstQuestion;
+                secondField.parentQuestion = firstQuestion;
                 var secondQuestion = jasmine.createSpyObj('secondQuestion', ['toggleSelection']);
-                secondQuestion.fields = [secondQuestion]; secondField.parentQuestion = secondQuestion;
+                secondQuestion.fields = [thirdField];
+                thirdField.parentQuestion = secondQuestion;
                 questionsKeyboardHandler.selectedQuestion.andReturn(secondQuestion);
 
                 var wasHandled = fieldsKeyboardHandler.handleShiftTabKey();
 
+                expect(thirdField.toggleSelection).toHaveBeenCalled();
                 expect(secondField.toggleSelection).toHaveBeenCalled();
-                expect(firstField.toggleSelection).toHaveBeenCalled();
                 expect(secondQuestion.toggleSelection).toHaveBeenCalled();
                 expect(firstQuestion.toggleSelection).toHaveBeenCalled();
             });
