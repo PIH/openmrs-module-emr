@@ -151,16 +151,23 @@ var SectionMouseHandler = function(sectionModels) {
 
         var currentSectionIndex = _.indexOf(sections, currentSection);
         var clickedSectionIndex = _.indexOf(sections, section);
-        if(clickedSectionIndex > currentSectionIndex && !currentSection.isValid()) {
+        var shouldSelectClickedSection = true;
+        if(clickedSectionIndex > currentSectionIndex) {
+            for(var i=currentSectionIndex; i<clickedSectionIndex; i++) {
+                shouldSelectClickedSection = sections[i].isValid() && shouldSelectClickedSection;
+            }
+        }
+
+        if(!shouldSelectClickedSection) {
             var selectedQuestion = selectedModel(currentSection.questions);
             var selectedField = selectedModel(selectedQuestion.fields);
             selectedField && selectedField.select();
-            return
+        } else {
+            currentSection.toggleSelection();
+            section.toggleSelection();
+            section.questions[0].toggleSelection();
+            section.questions[0].fields[0].toggleSelection();
         }
-        currentSection.toggleSelection();
-        section.toggleSelection();
-        section.questions[0].toggleSelection();
-        section.questions[0].fields[0].toggleSelection();
     }
 };
 
@@ -183,15 +190,21 @@ var QuestionsMouseHandler = function(questionModels) {
 
         var currentQuestionIndex = _.indexOf(questions, currentQuestion);
         var clickedQuestionIndex = _.indexOf(questions, question);
-        if(clickedQuestionIndex > currentQuestionIndex && !currentQuestion.isValid()) {
-            var selectedField = selectedModel(currentQuestion.fields);
-            selectedField && selectedField.select();
-            return;
+        var shouldSelectClickedQuestion = true;
+        if(clickedQuestionIndex > currentQuestionIndex) {
+            for(var i=currentQuestionIndex; i<clickedQuestionIndex; i++) {
+                shouldSelectClickedQuestion = questions[i].isValid() && shouldSelectClickedQuestion;
+            }
         }
 
-        currentQuestion.toggleSelection();
-        question.toggleSelection();
-        question.fields[0].toggleSelection();
+        if(!shouldSelectClickedQuestion) {
+            var selectedField = selectedModel(currentQuestion.fields);
+            selectedField && selectedField.select();
+        } else {
+            currentQuestion.toggleSelection();
+            question.toggleSelection();
+            question.fields[0].toggleSelection();
+        }
     };
 };
 
@@ -216,11 +229,18 @@ var FieldsMouseHandler = function(fieldsModels) {
 
         var currentFieldIndex = _.indexOf(fields, currentField);
         var clickedFieldIndex = _.indexOf(fields, field);
-        if(clickedFieldIndex > currentFieldIndex && !currentField.isValid()) {
-            currentField.select();
-            return;
+        var shouldSelectClickedField = true;
+        if(clickedFieldIndex > currentFieldIndex) {
+            for(var i=currentFieldIndex; i<clickedFieldIndex; i++) {
+                shouldSelectClickedField = fields[i].isValid() && shouldSelectClickedField;
+            }
         }
-        currentField.toggleSelection();
-        field.toggleSelection();
+
+        if(!shouldSelectClickedField) {
+            currentField.select();
+        } else {
+            currentField.toggleSelection();
+            field.toggleSelection();
+        }
     };
 };

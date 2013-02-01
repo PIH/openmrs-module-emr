@@ -199,15 +199,16 @@ describe("Tests for simple form navigation handlers", function() {
     describe("Mouse handlers", function() {
 
         describe("Section mouse handlers", function() {
-            var sectionsMouseHandler, firstSection, secondSection, question, field;
+            var sectionsMouseHandler, firstSection, secondSection, thirdSection, question, field;
             beforeEach(function() {
                 firstSection = {isSelected: false, toggleSelection: '', isValid: '', title: $('<li></li>')};
                 secondSection = {isSelected: false, toggleSelection: '', isValid: '', title: $('<li></li>')};
+                thirdSection = {isSelected: false, toggleSelection: '', isValid: '', title: $('<li></li>')};
 
                 field = {isSelected: true, toggleSelection: '', select: ''};
                 question = {fields: [field], toggleSelection: '', isSelected: true};
 
-                sectionsMouseHandler = new SectionMouseHandler([firstSection, secondSection]);
+                sectionsMouseHandler = new SectionMouseHandler([firstSection, secondSection, thirdSection]);
             });
 
             it("should switch selection to section ahead if current section is valid", function() {
@@ -235,6 +236,17 @@ describe("Tests for simple form navigation handlers", function() {
 
                 expect(field.select).toHaveBeenCalled();
             });
+            it("should not switch selection to section ahead if section in between is not valid", function() {
+                spyOn(firstSection, 'isValid').andReturn(true);
+                spyOn(secondSection, 'isValid').andReturn(false);
+                spyOn(field, 'select');
+                firstSection.isSelected = true;
+                firstSection.questions = [question];
+
+                thirdSection.title.click();
+
+                expect(field.select).toHaveBeenCalled();
+            });
             it("should switch selection to section behind", function() {
                 spyOn(firstSection, 'toggleSelection');
                 spyOn(secondSection, 'toggleSelection');
@@ -253,14 +265,15 @@ describe("Tests for simple form navigation handlers", function() {
         });
 
         describe("Question mouse handlers", function() {
-           var questionsMouseHandler, firstQuestion, secondQuestion, field;
+           var questionsMouseHandler, firstQuestion, secondQuestion, thirdQuestion, field;
             beforeEach(function() {
                 firstQuestion = {isSelected: false, toggleSelection: '', isValid: '', questionLi: $('<li></li>'), select: ''};
                 secondQuestion = {isSelected: false, toggleSelection: '', isValid: '', questionLi: $('<li></li>')};
+                thirdQuestion = {isSelected: false, questionLi: $('<li></li>')};
 
                 field = {isSelected: false, toggleSelection: '', select: ''};
 
-                questionsMouseHandler = new QuestionsMouseHandler([firstQuestion, secondQuestion]);
+                questionsMouseHandler = new QuestionsMouseHandler([firstQuestion, secondQuestion, thirdQuestion]);
             });
 
             it("should switch selection to question ahead if current question is valid", function() {
@@ -287,6 +300,18 @@ describe("Tests for simple form navigation handlers", function() {
 
                 expect(field.select).toHaveBeenCalled();
             });
+            it("should not switch selection to question ahead if question in between is not valid", function() {
+                spyOn(firstQuestion, 'isValid').andReturn(true);
+                spyOn(secondQuestion, 'isValid').andReturn(false);
+                spyOn(field, 'select');
+                firstQuestion.isSelected=true;
+                field.isSelected = true;
+                firstQuestion.fields = [field];
+
+                thirdQuestion.questionLi.click();
+
+                expect(field.select).toHaveBeenCalled();
+            });
             it("should switch selection to question behind", function() {
                 spyOn(secondQuestion, 'isValid').andReturn(true);
                 spyOn(firstQuestion, 'toggleSelection');
@@ -303,11 +328,12 @@ describe("Tests for simple form navigation handlers", function() {
         });
 
         describe("Fields mouse handlers", function() {
-            var fieldsMouseHandler, firstField, secondField;
+            var fieldsMouseHandler, firstField, secondField, thirdField;
             beforeEach(function() {
                 firstField = {isSelected: false, toggleSelection: '', isValid: '', element: $('<input />'), select:''};
                 secondField = {isSelected: false, toggleSelection: '', isValid: '', element: $('<input />')};
-                fieldsMouseHandler = new FieldsMouseHandler([firstField, secondField]);
+                thirdField = {isSelected: false, toggleSelection: '', element: $('<input />')};
+                fieldsMouseHandler = new FieldsMouseHandler([firstField, secondField, thirdField]);
             });
 
             it("should switch selection to field ahead if current field is valid", function() {
@@ -327,6 +353,16 @@ describe("Tests for simple form navigation handlers", function() {
                 firstField.isSelected=true;
 
                 secondField.element.mousedown();
+
+                expect(firstField.select).toHaveBeenCalled();
+            });
+            it("should not switch selection to field ahead if field in between is not valid", function() {
+                spyOn(firstField, 'isValid').andReturn(true);
+                spyOn(secondField, 'isValid').andReturn(false);
+                spyOn(firstField, 'select');
+                firstField.isSelected=true;
+
+                thirdField.element.mousedown();
 
                 expect(firstField.select).toHaveBeenCalled();
             });
