@@ -55,6 +55,7 @@ import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.IsExpectedRequest;
 import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
 import org.openmrs.module.emr.paperrecord.PaperRecordService;
 import org.openmrs.serialization.SerializationException;
@@ -81,6 +82,7 @@ import static org.mockito.Mockito.verify;
 import static org.openmrs.module.emr.EmrConstants.UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME;
 import static org.openmrs.module.emr.TestUtils.isCollectionOfExactlyElementsWithProperties;
 import static org.openmrs.module.emr.TestUtils.isJustNow;
+import static org.openmrs.module.emr.paperrecord.PaperRecordRequest.Status.*;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -620,12 +622,12 @@ public class AdtServiceTest {
         PaperRecordRequest pullPaperRecordRequest = new PaperRecordRequest();
         pullPaperRecordRequest.setIdentifier("123");
         pullPaperRecordRequest.setPatient(preferred);
-        pullPaperRecordRequest.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_PULL);
+        pullPaperRecordRequest.updateStatus(ASSIGNED_TO_PULL);
         when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(pullPaperRecordRequest));
 
         PaperRecordRequest createPaperRecordRequest = new PaperRecordRequest();
         createPaperRecordRequest.setPatient(notPreferred);
-        createPaperRecordRequest.updateStatus(PaperRecordRequest.Status.OPEN);
+        createPaperRecordRequest.updateStatus(OPEN);
         when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(createPaperRecordRequest));
 
         service.mergePatients(preferred, notPreferred);
@@ -649,12 +651,12 @@ public class AdtServiceTest {
         PaperRecordRequest pullPaperRecordRequest = new PaperRecordRequest();
         pullPaperRecordRequest.setIdentifier("123");
         pullPaperRecordRequest.setPatient(notPreferred);
-        pullPaperRecordRequest.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_PULL);
+        pullPaperRecordRequest.updateStatus(ASSIGNED_TO_PULL);
         when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(pullPaperRecordRequest));
 
         PaperRecordRequest createPaperRecordRequest = new PaperRecordRequest();
         createPaperRecordRequest.setPatient(preferred);
-        createPaperRecordRequest.updateStatus(PaperRecordRequest.Status.OPEN);
+        createPaperRecordRequest.updateStatus(OPEN);
         when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(createPaperRecordRequest));
 
         service.mergePatients(preferred, notPreferred);
@@ -671,12 +673,12 @@ public class AdtServiceTest {
 
         PaperRecordRequest preferredCreatePaperRecordRequest = new PaperRecordRequest();
         preferredCreatePaperRecordRequest.setPatient(preferred);
-        preferredCreatePaperRecordRequest.updateStatus(PaperRecordRequest.Status.OPEN);
+        preferredCreatePaperRecordRequest.updateStatus(OPEN);
         when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(preferredCreatePaperRecordRequest));
 
         PaperRecordRequest notPreferredCreatePaperRecordRequest = new PaperRecordRequest();
         notPreferredCreatePaperRecordRequest.setPatient(notPreferred);
-        notPreferredCreatePaperRecordRequest.updateStatus(PaperRecordRequest.Status.OPEN);
+        notPreferredCreatePaperRecordRequest.updateStatus(OPEN);
         when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(notPreferredCreatePaperRecordRequest));
 
         service.mergePatients(preferred, notPreferred);
@@ -699,12 +701,13 @@ public class AdtServiceTest {
 
         PaperRecordRequest notPreferredCreatePaperRecordRequest = new PaperRecordRequest();
         notPreferredCreatePaperRecordRequest.setPatient(notPreferred);
-        notPreferredCreatePaperRecordRequest.updateStatus(PaperRecordRequest.Status.OPEN);
+        notPreferredCreatePaperRecordRequest.updateStatus(OPEN);
         when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(notPreferredCreatePaperRecordRequest));
 
         service.mergePatients(preferred, notPreferred);
 
-        verify(mockPaperRecordService, times(1)).savePaperRecordRequest(notPreferredCreatePaperRecordRequest);
+        IsExpectedRequest expectedRequest = new IsExpectedRequest(preferred, OPEN, "ABC");
+        verify(mockPaperRecordService, times(1)).savePaperRecordRequest(argThat(expectedRequest));
     }
 
     @Test
@@ -721,12 +724,49 @@ public class AdtServiceTest {
 
         PaperRecordRequest preferredCreatePaperRecordRequest = new PaperRecordRequest();
         preferredCreatePaperRecordRequest.setPatient(preferred);
-        preferredCreatePaperRecordRequest.updateStatus(PaperRecordRequest.Status.OPEN);
+        preferredCreatePaperRecordRequest.updateStatus(OPEN);
         when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(preferredCreatePaperRecordRequest));
 
         service.mergePatients(preferred, notPreferred);
 
-        verify(mockPaperRecordService, times(1)).savePaperRecordRequest(preferredCreatePaperRecordRequest);
+        preferredCreatePaperRecordRequest.setIdentifier("ABC");
+        preferredCreatePaperRecordRequest.updateStatus(ASSIGNED_TO_PULL);
+
+        IsExpectedRequest expectedRequest = new IsExpectedRequest(preferred, ASSIGNED_TO_PULL, "ABC");
+        verify(mockPaperRecordService, times(1)).savePaperRecordRequest(argThat(expectedRequest));
+    }
+
+    @Test
+    public void mergingTwoPatientsWithPaperRecordRequestsShouldNotChangeDossierNumberOfRequest() {
+        Location someLocation = new Location();
+
+        Patient preferred = new Patient();
+        PatientIdentifier preferredIdentifier = new PatientIdentifier("ABC1", paperRecordIdentifierType, someLocation);
+        preferred.addIdentifier(preferredIdentifier);
+
+        Patient notPreferred = new Patient();
+        PatientIdentifier notPreferredIdentifier = new PatientIdentifier("ABC2", paperRecordIdentifierType, someLocation);
+        notPreferred.addIdentifier(notPreferredIdentifier);
+
+        PaperRecordRequest preferredPaperRecordRequest = new PaperRecordRequest();
+        preferredPaperRecordRequest.setPatient(preferred);
+        preferredPaperRecordRequest.updateStatus(ASSIGNED_TO_CREATE);
+        preferredPaperRecordRequest.setIdentifier("ABC1");
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(preferredPaperRecordRequest));
+
+        PaperRecordRequest notPreferredPaperRecordRequest = new PaperRecordRequest();
+        notPreferredPaperRecordRequest.setPatient(preferred);
+        notPreferredPaperRecordRequest.setIdentifier("ABC2");
+        notPreferredPaperRecordRequest.updateStatus(ASSIGNED_TO_CREATE);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(notPreferredPaperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        IsExpectedRequest expectedNotPreferredRequest = new IsExpectedRequest(preferred,
+            ASSIGNED_TO_CREATE, "ABC2");
+        verify(mockPaperRecordService, times(1)).savePaperRecordRequest(argThat(expectedNotPreferredRequest));
+
+        verify(mockPaperRecordService).markPaperRecordsForMerge(preferredIdentifier, notPreferredIdentifier);
     }
 
     private Encounter buildEncounter(Patient patient, Date encounterDatetime) {

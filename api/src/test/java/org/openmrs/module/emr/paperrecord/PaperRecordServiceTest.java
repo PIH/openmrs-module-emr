@@ -36,6 +36,7 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.IsExpectedRequest;
 import org.openmrs.module.emr.paperrecord.PaperRecordRequest.Status;
 import org.openmrs.module.emr.paperrecord.db.PaperRecordMergeRequestDAO;
 import org.openmrs.module.emr.paperrecord.db.PaperRecordRequestDAO;
@@ -988,33 +989,6 @@ public class PaperRecordServiceTest {
         @Override
         protected Location getMedicalRecordLocationAssociatedWith(Location location) {
             return location;
-        }
-
-    }
-
-    public class IsExpectedRequest extends ArgumentMatcher<PaperRecordRequest> {
-
-        private PaperRecordRequest expectedRequest;
-
-        public IsExpectedRequest(PaperRecordRequest expectedRequest) {
-            this.expectedRequest = expectedRequest;
-        }
-
-        @Override
-        public boolean matches(Object o) {
-
-            PaperRecordRequest actualRequest = (PaperRecordRequest) o;
-
-            assertThat(actualRequest.getId(), is(expectedRequest.getId()));
-            assertThat(actualRequest.getAssignee(), is(expectedRequest.getAssignee()));
-            assertThat(actualRequest.getCreator(), is(expectedRequest.getCreator()));
-            assertThat(actualRequest.getIdentifier(), is(expectedRequest.getIdentifier()));
-            assertThat(actualRequest.getRecordLocation(), is(expectedRequest.getRecordLocation()));
-            assertThat(actualRequest.getPatient(), is(expectedRequest.getPatient()));
-            assertThat(actualRequest.getStatus(), is(expectedRequest.getStatus()));
-            assertNotNull(actualRequest.getDateCreated());
-
-            return true;
         }
 
     }

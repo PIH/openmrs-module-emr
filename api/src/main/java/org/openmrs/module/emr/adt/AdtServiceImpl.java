@@ -490,18 +490,6 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
             }
         }
 
-        // see if we need to create any requests to merge paper records (look for paper record identifiers at the same location)
-        List<PatientIdentifier> preferredPaperRecordIdentifiers = preferred.getPatientIdentifiers(emrProperties.getPaperRecordIdentifierType());
-        List<PatientIdentifier> notPreferredPaperRecordIdentifiers = notPreferred.getPatientIdentifiers(emrProperties.getPaperRecordIdentifierType());
-
-        for (PatientIdentifier preferredPaperRecordIdentifier : preferredPaperRecordIdentifiers) {
-            for (PatientIdentifier notPreferredPaperRecordIdentifier: notPreferredPaperRecordIdentifiers) {
-                if (preferredPaperRecordIdentifier.getLocation().equals(notPreferredPaperRecordIdentifier.getLocation())) {
-                    paperRecordService.markPaperRecordsForMerge(preferredPaperRecordIdentifier, notPreferredPaperRecordIdentifier);
-                }
-            }
-        }
-
         fixPaperRecordRequestsForMerge(preferred, notPreferred);
 
         try {
@@ -545,6 +533,18 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
                 request.setIdentifier(preferredPatientIdentifier.getIdentifier());
             }
             paperRecordService.savePaperRecordRequest(request);
+        }
+
+        // see if we need to create any requests to merge paper records (look for paper record identifiers at the same location)
+        List<PatientIdentifier> preferredPaperRecordIdentifiers = preferred.getPatientIdentifiers(emrProperties.getPaperRecordIdentifierType());
+        List<PatientIdentifier> notPreferredPaperRecordIdentifiers = notPreferred.getPatientIdentifiers(emrProperties.getPaperRecordIdentifierType());
+
+        for (PatientIdentifier preferredPaperRecordIdentifier : preferredPaperRecordIdentifiers) {
+            for (PatientIdentifier notPreferredPaperRecordIdentifier: notPreferredPaperRecordIdentifiers) {
+                if (preferredPaperRecordIdentifier.getLocation().equals(notPreferredPaperRecordIdentifier.getLocation())) {
+                    paperRecordService.markPaperRecordsForMerge(preferredPaperRecordIdentifier, notPreferredPaperRecordIdentifier);
+                }
+            }
         }
     }
 
