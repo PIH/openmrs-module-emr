@@ -139,7 +139,7 @@ public class DefaultZplPaperRecordLabelTemplateTest {
 
         String data = template.generateLabel(patient, "123");
         System.out.println(data);
-        Assert.assertTrue(data.equals("^XA^CI28^FO140,40^AVN^FDIndiana Jones^FS^FO140,350^ATN^FD02/Dec/2010  ^FS^FO140,400^ATN^FDtest^FS^FO870,50^FB350,1,0,R,0^AVN^FDABC^FS^FO790,250^ATN^BY4^BCN,150^FD123^FS^XZ"));
+        Assert.assertTrue(data.equals("^XA^CI28^FO140,40^AVN^FDIndiana Jones^FS^FO140,140^ATN^FD02/Dec/2010  ^FS^FO140,190^ATN^FDtest^FS^FO350,140^FB350,1,0,R,0^AVN^FDABC^FS^FO780,40^ATN^BY4^BCN,150^FD123^FS^XZ"));
 
     }
 
