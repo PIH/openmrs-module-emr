@@ -276,7 +276,7 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 
 
     private Provider getProvider(User accountBelongingToUser) {
-        Collection<Provider> candidates = providerService.getProvidersByPerson(accountBelongingToUser.getPerson());
+        Collection<Provider> candidates = providerService.getProvidersByPerson(accountBelongingToUser.getPerson(), false);
         if (candidates.size() == 0) {
             throw new IllegalStateException("User " + accountBelongingToUser.getUsername() + " does not have a Provider account");
         } else if (candidates.size() > 1) {

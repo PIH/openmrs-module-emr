@@ -123,7 +123,7 @@ public class AdtServiceTest {
         providerForCurrentUser = new Provider();
         providerForCurrentUser.setPerson(personForCurrentUser);
         mockProviderService = mock(ProviderService.class);
-        when(mockProviderService.getProvidersByPerson(personForCurrentUser)).thenReturn(Collections.singletonList(providerForCurrentUser));
+        when(mockProviderService.getProvidersByPerson(personForCurrentUser, false)).thenReturn(Collections.singletonList(providerForCurrentUser));
 
         mockVisitService = mock(VisitService.class);
         mockEncounterService = mock(EncounterService.class);
