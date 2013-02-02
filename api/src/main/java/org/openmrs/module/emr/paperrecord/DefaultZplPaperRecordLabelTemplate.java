@@ -25,18 +25,12 @@ public class DefaultZplPaperRecordLabelTemplate implements PaperRecordLabelTempl
 
     private EmrProperties emrProperties;
 
-    private PaperRecordService paperRecordService;
-
     public void setMessageSourceService(MessageSourceService messageSourceService) {
         this.messageSourceService = messageSourceService;
     }
 
     public void setEmrProperties(EmrProperties emrProperties) {
         this.emrProperties = emrProperties;
-    }
-
-    public void setPaperRecordService(PaperRecordService paperRecordService) {
-        this.paperRecordService = paperRecordService;
     }
 
     @Override
@@ -49,7 +43,7 @@ public class DefaultZplPaperRecordLabelTemplate implements PaperRecordLabelTempl
         if (StringUtils.isBlank(paperRecordIdentifier)) {
             throw new IllegalArgumentException("No identifier for paper record");
         }
-        emrProperties.getPaperRecordIdentifierType();
+
         PatientIdentifier primaryIdentifier = patient.getPatientIdentifier(emrProperties.getPrimaryIdentifierType());
 
         if (primaryIdentifier == null) {
