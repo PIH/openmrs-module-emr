@@ -66,23 +66,6 @@ public class DefaultZplPaperRecordLabelTemplateTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGenerateLabelShouldFailIfNoPaperRecordIdentifier() {
-
-        Patient patient = new Patient();
-        patient.setGender("M");
-
-        PatientIdentifier primaryIdentifier = new PatientIdentifier();
-        primaryIdentifier.setIdentifierType(primaryIdentifierType);
-        primaryIdentifier.setIdentifier("ABC");
-        patient.addIdentifier(primaryIdentifier);
-
-        PersonName personName = new PersonName();
-        patient.addName(personName);
-
-        template.generateLabel(patient,"");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
     public void testGenerateLabelShouldFailIfNoPrimaryIdentifier() {
 
         Patient patient = new Patient();

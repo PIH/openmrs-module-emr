@@ -162,7 +162,7 @@ public class PrinterServiceImpl extends BaseOpenmrsService implements PrinterSer
 
             // This method will block no more than timeoutMs.
             // If the timeout occurs, SocketTimeoutException is thrown.
-            int timeoutMs = 500;   // 500ms
+            int timeoutMs = 1000;   // 1s
             socket.connect(sockaddr, timeoutMs);
 
             if (encoding.equals("Windows-1252")) {

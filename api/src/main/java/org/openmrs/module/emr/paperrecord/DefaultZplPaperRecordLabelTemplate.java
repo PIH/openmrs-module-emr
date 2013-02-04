@@ -40,10 +40,6 @@ public class DefaultZplPaperRecordLabelTemplate implements PaperRecordLabelTempl
             throw new IllegalArgumentException("Patient needs to have at least one name");
         }
 
-        if (StringUtils.isBlank(paperRecordIdentifier)) {
-            throw new IllegalArgumentException("No identifier for paper record");
-        }
-
         PatientIdentifier primaryIdentifier = patient.getPatientIdentifier(emrProperties.getPrimaryIdentifierType());
 
         if (primaryIdentifier == null) {
@@ -121,10 +117,10 @@ public class DefaultZplPaperRecordLabelTemplate implements PaperRecordLabelTempl
         /* Print the patient's primary identifier */
         data.append("^FO350,140^FB350,1,0,R,0^AVN^FD" + primaryIdentifier.getIdentifier() + "^FS");
 
-
-        /* Print the bar code, based on the primary identifier */
-        data.append("^FO780,40^ATN^BY4^BCN,150^FD" + paperRecordIdentifier+ "^FS");    // print barcode & identifier
-
+        if(StringUtils.isNotBlank(paperRecordIdentifier)){
+            /* Print the bar code, based on the primary identifier */
+            data.append("^FO780,40^ATN^BY4^BCN,150^FD" + paperRecordIdentifier+ "^FS");    // print barcode & identifier
+        }
         /* Print command */
         data.append("^XZ");
 
