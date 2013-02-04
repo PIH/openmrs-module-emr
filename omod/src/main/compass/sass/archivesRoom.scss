@@ -16,7 +16,7 @@
 
 }
 
-.patients-to-merge {
+.patients-to-merge, #scan-returned-records {
   border-bottom: 1px solid #ccc;
   text-align:center;
   background: #EEE;
@@ -52,4 +52,12 @@
     top: 32%;
     right: 2%;
   }
+}
+#scan-returned-records {
+  border-top: 1px solid #CCC;
+  padding: 20px;
+  text-align: left;
+  margin: 0 auto 20px auto;
+  width: 50%;
+
 }
