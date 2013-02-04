@@ -148,9 +148,11 @@ public class AccountPageController {
     }
 
     private String replaceArguments(String message, Object[] arguments){
-        for (int i = 0 ; i < arguments.length ; i++){
-            String argument = (String) arguments[i];
-            message = message.replaceAll("\\{" + i + "\\}", argument);
+        if (arguments != null) {
+            for (int i = 0 ; i < arguments.length ; i++){
+                String argument = (String) arguments[i];
+                message = message.replaceAll("\\{" + i + "\\}", argument);
+            }
         }
         return message;
     }
