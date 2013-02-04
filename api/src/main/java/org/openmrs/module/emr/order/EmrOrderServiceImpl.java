@@ -23,8 +23,7 @@ public class EmrOrderServiceImpl extends BaseOpenmrsService implements EmrOrderS
 	@Override
 	public void ensureAccessionNumberAssignedTo(Order order) {
 		if (order.getAccessionNumber() == null) {
-			order.setAccessionNumber(order.getOrderId().toString()
-			        + new LuhnMod10IdentifierValidator().getValidIdentifier(order.getOrderId().toString()));
+			order.setAccessionNumber(new LuhnMod10IdentifierValidator().getValidIdentifier(order.getOrderId().toString()));
 		}
 	}
 	

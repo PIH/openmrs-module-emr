@@ -40,7 +40,8 @@ public class EmrOrderServiceTest {
         Order order = new Order();
         order.setOrderId(1);
         emrOrderService.ensureAccessionNumberAssignedTo(order);
-        Assert.assertTrue(verifyCheckDigit(order.getAccessionNumber(), order.getOrderId().toString()));
+        verifyAccessionNumberFormat(order.getAccessionNumber(), order.getId());
+        Assert.assertTrue(verifyCheckDigit(order.getAccessionNumber()));
         assertThat(order.getAccessionNumber(), is(notNullValue()));
     }
 
@@ -53,23 +54,33 @@ public class EmrOrderServiceTest {
             Order order = new Order();
             order.setOrderId(i);
             emrOrderService.ensureAccessionNumberAssignedTo(order);
-            Assert.assertTrue(verifyCheckDigit(order.getAccessionNumber(), order.getOrderId().toString()));
+            verifyAccessionNumberFormat(order.getAccessionNumber(), order.getId());
+            Assert.assertTrue(verifyCheckDigit(order.getAccessionNumber()));
             accessionNumbers.add(order.getAccessionNumber());
         }
         assertThat(accessionNumbers.size(), is(TIMES));
     }
-    
+
+    /**
+     * Checks that the accession number is in the proper format
+     */
+    private static void verifyAccessionNumberFormat(String accessionNumber, Integer orderId) {
+
+        // the length of the accession number should be one character longer than the order id (to account for the check digit)
+        assertThat(accessionNumber.length(), is(orderId.toString().length() + 1));
+        Assert.assertTrue(accessionNumber.startsWith(orderId.toString()));
+    }
+
+
     /**
      * Checks that the specified accessionNumber has a valid check digit assigned to it
      * @param accessionNumber
      * @param orderId
      * @return
      */
-    private static boolean verifyCheckDigit(String accessionNumber,
-			String orderId) {
-		String checkdigitString = accessionNumber.substring(accessionNumber
-				.indexOf(orderId) + orderId.length());
-		char[] charArray = checkdigitString.toCharArray();
+    private static boolean verifyCheckDigit(String accessionNumber) {
+
+		char[] charArray = accessionNumber.toCharArray();
 		int[] numbers = new int[charArray.length];
 		int total = 0;
 
