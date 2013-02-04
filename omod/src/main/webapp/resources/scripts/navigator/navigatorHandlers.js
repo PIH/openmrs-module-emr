@@ -208,39 +208,37 @@ var QuestionsMouseHandler = function(questionModels) {
     };
 };
 
-var FieldsMouseHandler = function(fieldsModels) {
+
+
+var fieldsMouseHandlerInitializer = function(fieldsModels) {
     var fields = fieldsModels;
-    _.each(fields, function(f) {
-        f.element.mousedown(function(event) {
-            clickedField(f, event);
+    _.each(fields, function(field) {
+        field.element.mousedown(function(event) {
+            clickedFieldHandler(fields, field, event);
         });
     });
-    var selectedField = function() {
-        return _.find(fields, function(f) { return f.isSelected; });
-    };
+};
+var clickedFieldHandler = function(fields, field, event) {
+    var currentField = selectedModel(fields);
+    if(currentField == field) {
+        currentField.select();
+        return;
+    }
 
-    var clickedField = function(field, event) {
-        var currentField = selectedField();
-        if(currentField == field) {
-            currentField.select();
-            return;
+    var currentFieldIndex = _.indexOf(fields, currentField);
+    var clickedFieldIndex = _.indexOf(fields, field);
+    var shouldSelectClickedField = true;
+    if(clickedFieldIndex > currentFieldIndex) {
+        for(var i=currentFieldIndex; i<clickedFieldIndex; i++) {
+            shouldSelectClickedField = fields[i].isValid() && shouldSelectClickedField;
         }
+    }
 
-        var currentFieldIndex = _.indexOf(fields, currentField);
-        var clickedFieldIndex = _.indexOf(fields, field);
-        var shouldSelectClickedField = true;
-        if(clickedFieldIndex > currentFieldIndex) {
-            for(var i=currentFieldIndex; i<clickedFieldIndex; i++) {
-                shouldSelectClickedField = fields[i].isValid() && shouldSelectClickedField;
-            }
-        }
-
-        if(!shouldSelectClickedField) {
-            currentField.select();
-        } else {
-            currentField.toggleSelection();
-            field.toggleSelection();
-        }
-        event.preventDefault();
-    };
+    if(!shouldSelectClickedField) {
+        currentField.select();
+    } else {
+        currentField.toggleSelection();
+        field.toggleSelection();
+    }
+    event.preventDefault();
 };

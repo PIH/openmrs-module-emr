@@ -332,53 +332,70 @@ describe("Tests for simple form navigation handlers", function() {
         });
 
         describe("Fields mouse handlers", function() {
-            var fieldsMouseHandler, firstField, secondField, thirdField;
+            var firstField, secondField, thirdField, event, fields;
             beforeEach(function() {
                 firstField = {isSelected: false, toggleSelection: '', isValid: '', element: $('<input />'), select:''};
                 secondField = {isSelected: false, toggleSelection: '', isValid: '', element: $('<input />')};
                 thirdField = {isSelected: false, toggleSelection: '', element: $('<input />')};
-                fieldsMouseHandler = new FieldsMouseHandler([firstField, secondField, thirdField]);
+                event = {preventDefault: ''};
+                fields = [firstField, secondField, thirdField];
             });
 
             it("should switch selection to field ahead if current field is valid", function() {
                 spyOn(firstField, 'isValid').andReturn(true);
                 spyOn(firstField, 'toggleSelection');
                 spyOn(secondField, 'toggleSelection');
+                spyOn(event, 'preventDefault');
                 firstField.isSelected=true;
 
-                secondField.element.mousedown();
+                clickedFieldHandler(fields, secondField, event);
 
                 expect(firstField.toggleSelection).toHaveBeenCalled();
                 expect(secondField.toggleSelection).toHaveBeenCalled();
+                expect(event.preventDefault).toHaveBeenCalled();
             });
             it("should not switch selection to field ahead if current field is not valid", function() {
                 spyOn(firstField, 'isValid').andReturn(false);
                 spyOn(firstField, 'select');
+                spyOn(event, 'preventDefault');
                 firstField.isSelected=true;
 
-                secondField.element.mousedown();
+                clickedFieldHandler(fields, secondField, event);
 
                 expect(firstField.select).toHaveBeenCalled();
+                expect(event.preventDefault).toHaveBeenCalled();
             });
             it("should not switch selection to field ahead if field in between is not valid", function() {
                 spyOn(firstField, 'isValid').andReturn(true);
                 spyOn(secondField, 'isValid').andReturn(false);
                 spyOn(firstField, 'select');
+                spyOn(event, 'preventDefault');
                 firstField.isSelected=true;
 
-                thirdField.element.mousedown();
+                clickedFieldHandler(fields, thirdField, event);
 
                 expect(firstField.select).toHaveBeenCalled();
+                expect(event.preventDefault).toHaveBeenCalled();
             });
             it("should switch selection to field behind", function() {
                 spyOn(firstField, 'toggleSelection');
                 spyOn(secondField, 'toggleSelection');
+                spyOn(event, 'preventDefault');
                 secondField.isSelected=true;
 
-                firstField.element.mousedown();
+                clickedFieldHandler(fields, firstField, event);
 
                 expect(firstField.toggleSelection).toHaveBeenCalled();
                 expect(secondField.toggleSelection).toHaveBeenCalled();
+                expect(event.preventDefault).toHaveBeenCalled();
+            });
+            it("should not prevent default action on event if click is on current field", function() {
+                spyOn(firstField, 'select');
+                firstField.isSelected=true;
+
+                clickedFieldHandler(fields, firstField, event);
+
+                expect(firstField.select).toHaveBeenCalled();
             });
         });
     });

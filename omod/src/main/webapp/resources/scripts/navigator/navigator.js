@@ -27,7 +27,7 @@ function initKeyboardHandlersChain(questions, fields) {
 function initMouseHandlers(sections, questions, fields) {
     SectionMouseHandler(sections);
     QuestionsMouseHandler(questions);
-    FieldsMouseHandler(fields);
+    fieldsMouseHandlerInitializer(fields);
 }
 
 function KeyboardController(formElement) {
