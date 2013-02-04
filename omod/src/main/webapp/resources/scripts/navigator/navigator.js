@@ -25,8 +25,8 @@ function initKeyboardHandlersChain(questions, fields) {
 }
 
 function initMouseHandlers(sections, questions, fields) {
-    SectionMouseHandler(sections);
-    QuestionsMouseHandler(questions);
+    sectionsMouseHandlerInitializer(sections);
+    questionsMouseHandlerInitializer(questions);
     fieldsMouseHandlerInitializer(fields);
 }
 

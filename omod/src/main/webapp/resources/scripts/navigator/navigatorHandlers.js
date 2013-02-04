@@ -134,84 +134,79 @@ function QuestionsKeyboardHandler(questionModels) {
     return api;
 }
 
-var SectionMouseHandler = function(sectionModels) {
-    var sections = sectionModels;
+var sectionsMouseHandlerInitializer = function(sections) {
     _.each(sections, function(section) {
         section.title.click( function(event) {
-            event.stopPropagation();
-            clickedSection(section);
+            clickedSectionHandler(sections, section, event);
         });
     });
+};
+var clickedSectionHandler = function(sections, section, event) {
+    event.stopPropagation();
+    var currentSection = selectedModel(sections);
+    if(currentSection == section) {
+        return;
+    }
 
-    var clickedSection = function(section) {
-        var currentSection = selectedModel(sections);
-        if(currentSection == section) {
-            return;
+    var currentSectionIndex = _.indexOf(sections, currentSection);
+    var clickedSectionIndex = _.indexOf(sections, section);
+    var shouldSelectClickedSection = true;
+    if(clickedSectionIndex > currentSectionIndex) {
+        for(var i=currentSectionIndex; i<clickedSectionIndex; i++) {
+            shouldSelectClickedSection = sections[i].isValid() && shouldSelectClickedSection;
         }
+    }
 
-        var currentSectionIndex = _.indexOf(sections, currentSection);
-        var clickedSectionIndex = _.indexOf(sections, section);
-        var shouldSelectClickedSection = true;
-        if(clickedSectionIndex > currentSectionIndex) {
-            for(var i=currentSectionIndex; i<clickedSectionIndex; i++) {
-                shouldSelectClickedSection = sections[i].isValid() && shouldSelectClickedSection;
-            }
-        }
-
-        if(!shouldSelectClickedSection) {
-            var selectedQuestion = selectedModel(currentSection.questions);
-            var selectedField = selectedModel(selectedQuestion.fields);
-            selectedField && selectedField.select();
-        } else {
-            currentSection.toggleSelection();
-            section.toggleSelection();
-            section.questions[0].toggleSelection();
-            section.questions[0].fields[0].toggleSelection();
-        }
+    if(!shouldSelectClickedSection) {
+        var selectedQuestion = selectedModel(currentSection.questions);
+        var selectedField = selectedModel(selectedQuestion.fields);
+        selectedField && selectedField.select();
+    } else {
+        currentSection.toggleSelection();
+        section.toggleSelection();
+        section.questions[0].toggleSelection();
+        section.questions[0].fields[0].toggleSelection();
     }
 };
 
-var QuestionsMouseHandler = function(questionModels) {
-    var questions = questionModels;
+var questionsMouseHandlerInitializer = function(questions) {
     _.each(questions, function(question) {
         if(question.questionLi) {
             question.questionLi.click(function(event) {
-                event.stopPropagation();
-                clickedQuestion(question);
+                clickedQuestionHandler(questions, question, event);
             });
         }
     });
+};
+var clickedQuestionHandler = function(questions, question, event) {
+    event.stopPropagation();
+    var currentQuestion = selectedModel(questions);
+    if(currentQuestion == question) {
+        return;
+    }
 
-    var clickedQuestion = function(question) {
-        var currentQuestion = selectedModel(questions);
-        if(currentQuestion == question) {
-            return;
+    var currentQuestionIndex = _.indexOf(questions, currentQuestion);
+    var clickedQuestionIndex = _.indexOf(questions, question);
+    var shouldSelectClickedQuestion = true;
+    if(clickedQuestionIndex > currentQuestionIndex) {
+        for(var i=currentQuestionIndex; i<clickedQuestionIndex; i++) {
+            shouldSelectClickedQuestion = questions[i].isValid() && shouldSelectClickedQuestion;
         }
+    }
 
-        var currentQuestionIndex = _.indexOf(questions, currentQuestion);
-        var clickedQuestionIndex = _.indexOf(questions, question);
-        var shouldSelectClickedQuestion = true;
-        if(clickedQuestionIndex > currentQuestionIndex) {
-            for(var i=currentQuestionIndex; i<clickedQuestionIndex; i++) {
-                shouldSelectClickedQuestion = questions[i].isValid() && shouldSelectClickedQuestion;
-            }
-        }
-
-        if(!shouldSelectClickedQuestion) {
-            var selectedField = selectedModel(currentQuestion.fields);
-            selectedField && selectedField.select();
-        } else {
-            currentQuestion.toggleSelection();
-            question.toggleSelection();
-            question.fields[0].toggleSelection();
-        }
-    };
+    if(!shouldSelectClickedQuestion) {
+        var selectedField = selectedModel(currentQuestion.fields);
+        selectedField && selectedField.select();
+    } else {
+        currentQuestion.toggleSelection();
+        question.toggleSelection();
+        question.fields[0].toggleSelection();
+    }
 };
 
 
 
-var fieldsMouseHandlerInitializer = function(fieldsModels) {
-    var fields = fieldsModels;
+var fieldsMouseHandlerInitializer = function(fields) {
     _.each(fields, function(field) {
         field.element.mousedown(function(event) {
             clickedFieldHandler(fields, field, event);
