@@ -179,7 +179,7 @@ public class PrinterServiceTest {
         String testData = "test data";
 
         printerService.printViaSocket(testData, printer, "UTF-8");
-        verify(mockedSocket).connect(argThat(new IsExpectedSocketAddress("127.0.0.1", "9100")), eq(500));
+        verify(mockedSocket).connect(argThat(new IsExpectedSocketAddress("127.0.0.1", "9100")), eq(1000));
         verify(mockedSocket).getOutputStream();
 
         verifyStatic();
@@ -198,7 +198,7 @@ public class PrinterServiceTest {
         String testData = "test data";
 
         printerService.printViaSocket(testData, printer, "Windows-1252");
-        verify(mockedSocket).connect(argThat(new IsExpectedSocketAddress("127.0.0.1", "9100")), eq(500));
+        verify(mockedSocket).connect(argThat(new IsExpectedSocketAddress("127.0.0.1", "9100")), eq(1000));
         verify(mockedSocket).getOutputStream();
 
         verifyStatic();
