@@ -15,6 +15,7 @@
 package org.openmrs.module.emr.task;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.UserContext;
 import org.openmrs.module.emr.EmrContext;
@@ -22,35 +23,81 @@ import org.openmrs.module.emr.EmrContext;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class TaskServiceTest {
 
+    TaskServiceImpl service;
+    EmrContext context;
+    UserContext userContext;
+
+    @Before
+    public void setUp() throws Exception {
+        service = new TaskServiceImpl();
+        userContext = mock(UserContext.class);
+        context = new EmrContext();
+        context.setUserContext(userContext);
+    }
+
     @Test
     public void shouldGetAvailableTasks() {
-        TaskServiceImpl service = new TaskServiceImpl();
-
-        List<TaskDescriptor> allTasks = new ArrayList<TaskDescriptor>();
         SimpleTaskDescriptor taskA = new SimpleTaskDescriptor();
         taskA.setId("A");
-        allTasks.add(taskA);
         SimpleTaskDescriptor taskB = new SimpleTaskDescriptor();
         taskB.setId("B");
+
+        List<TaskDescriptor> allTasks = new ArrayList<TaskDescriptor>();
+        allTasks.add(taskA);
         allTasks.add(taskB);
         service.setAllTasksInternal(allTasks);
+        service.setAllTaskFactoriesInternal(new ArrayList<TaskFactory>());
 
-        UserContext userContext = mock(UserContext.class);
         when(userContext.hasPrivilege(taskA.getRequiredPrivilegeName())).thenReturn(false);
         when(userContext.hasPrivilege(taskB.getRequiredPrivilegeName())).thenReturn(true);
-
-        EmrContext context = new EmrContext();
-        context.setUserContext(userContext);
 
         List<TaskDescriptor> availableTasks = service.getAvailableTasks(context);
         Assert.assertEquals(1, availableTasks.size());
         Assert.assertEquals(taskB, availableTasks.get(0));
+    }
+
+    @Test
+    public void shouldGetAvailableTasksIncludingThoseFromFactories() {
+        SimpleTaskDescriptor taskA = new SimpleTaskDescriptor();
+        taskA.setId("defined-directly");
+        final SimpleTaskDescriptor taskB = new SimpleTaskDescriptor();
+        taskB.setId("from-factory-1");
+        final SimpleTaskDescriptor taskC = new SimpleTaskDescriptor();
+        taskC.setId("from-factory-2");
+
+        TaskFactory factory = new TaskFactory() {
+            @Override
+            public List<TaskDescriptor> getTaskDescriptors(EmrContext emrContext) {
+                List<TaskDescriptor> ret = new ArrayList<TaskDescriptor>();
+                ret.add(taskB);
+                ret.add(taskC);
+                return ret;
+            }
+        };
+
+        List<TaskDescriptor> allTasks = new ArrayList<TaskDescriptor>();
+        allTasks.add(taskA);
+
+        service.setAllTasksInternal(allTasks);
+        service.setAllTaskFactoriesInternal(asList(factory));
+
+        when(userContext.hasPrivilege(taskA.getRequiredPrivilegeName())).thenReturn(true);
+        when(userContext.hasPrivilege(taskB.getRequiredPrivilegeName())).thenReturn(true);
+        when(userContext.hasPrivilege(taskC.getRequiredPrivilegeName())).thenReturn(false);
+
+        List<TaskDescriptor> availableTasks = service.getAvailableTasks(context);
+        assertThat(availableTasks.size(), is(2));
+        assertThat(availableTasks, containsInAnyOrder((TaskDescriptor) taskA, (TaskDescriptor) taskB));
     }
 
     @Test
@@ -72,14 +119,10 @@ public class TaskServiceTest {
         taskB.setPriority(2);
         allTasks.add(taskB);
 
-        TaskServiceImpl service = new TaskServiceImpl();
         service.setAllTasksInternal(allTasks);
+        service.setAllTaskFactoriesInternal(new ArrayList<TaskFactory>());
 
-        UserContext userContext = mock(UserContext.class);
         when(userContext.hasPrivilege(anyString())).thenReturn(true);
-
-        EmrContext context = new EmrContext();
-        context.setUserContext(userContext);
 
         List<TaskDescriptor> availableTasks = service.getAvailableTasks(context);
         Assert.assertEquals(3, availableTasks.size());

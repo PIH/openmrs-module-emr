@@ -53,4 +53,13 @@ public interface TaskService extends OpenmrsService {
      */
     void setAllTasksInternal(List<TaskDescriptor> tasks);
 
+    /**
+     * Sets the complete list of task factories available. (These will be queried when the getAvailableTasks method is called.)
+     *
+     * This is a utility method intended for internal use by this module. Do not call it yourself from client code.
+     *
+     * @param taskFactories
+     */
+    void setAllTaskFactoriesInternal(List<TaskFactory> taskFactories);
+
 }

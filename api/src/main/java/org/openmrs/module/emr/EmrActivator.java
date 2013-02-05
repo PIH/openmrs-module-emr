@@ -34,6 +34,7 @@ import org.openmrs.module.emr.adt.EmrVisitAssignmentHandler;
 import org.openmrs.module.emr.htmlformentry.UiMessageTagHandler;
 import org.openmrs.module.emr.printer.PrinterDatatype;
 import org.openmrs.module.emr.task.TaskDescriptor;
+import org.openmrs.module.emr.task.TaskFactory;
 import org.openmrs.module.emr.task.TaskService;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.scheduler.SchedulerException;
@@ -87,11 +88,10 @@ public class EmrActivator implements ModuleActivator {
             taskService.ensurePrivilegeExistsInternal(task);
         }
 
-		log.info("EMR Module refreshed. " + allTasks.size() + " tasks available.");
-        if (log.isDebugEnabled()) {
-            for (TaskDescriptor task : allTasks)
-                log.debug(task.getId() + " (" + task.getClass().getName() + ")");
-        }
+        List<TaskFactory> allTaskFactories = Context.getRegisteredComponents(TaskFactory.class);
+        taskService.setAllTaskFactoriesInternal(allTaskFactories);
+
+        log.info("EMR Module refreshed. " + allTasks.size() + " tasks and " + allTaskFactories.size() + " task factories available.");
 
         ensurePrivilegeLevelRoles();
 

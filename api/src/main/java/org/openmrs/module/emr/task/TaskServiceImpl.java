@@ -32,6 +32,8 @@ public class TaskServiceImpl extends BaseOpenmrsService implements TaskService {
     UserService userService;
 
     List<TaskDescriptor> allTasks;
+
+    List<TaskFactory> allTaskFactories;
     
     public void setUserService(UserService userService) {
     	this.userService = userService;
@@ -39,10 +41,20 @@ public class TaskServiceImpl extends BaseOpenmrsService implements TaskService {
 
 	@Override
     public List<TaskDescriptor> getAvailableTasks(final EmrContext context) {
+        if (allTasks == null || allTaskFactories == null) {
+            throw new IllegalStateException("Need to configure with list of TaskDescriptor and TaskFactory");
+        }
         List<TaskDescriptor> available = new ArrayList<TaskDescriptor>();
         for (TaskDescriptor candidate : allTasks) {
             if (candidate.isAvailable(context)) {
                 available.add(candidate);
+            }
+        }
+        for (TaskFactory factory : allTaskFactories) {
+            for (TaskDescriptor candidate : factory.getTaskDescriptors(context)) {
+                if (candidate.isAvailable(context)) {
+                    available.add(candidate);
+                }
             }
         }
         Collections.sort(available, new Comparator<TaskDescriptor>() {
@@ -73,5 +85,10 @@ public class TaskServiceImpl extends BaseOpenmrsService implements TaskService {
     @Override
     public void setAllTasksInternal(List<TaskDescriptor> tasks) {
         this.allTasks = tasks;
+    }
+
+    @Override
+    public void setAllTaskFactoriesInternal(List<TaskFactory> taskFactories) {
+        this.allTaskFactories = taskFactories;
     }
 }
