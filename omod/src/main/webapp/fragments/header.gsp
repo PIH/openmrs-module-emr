@@ -40,8 +40,12 @@
                 element.addClass('selected');
                 jq("#spinner").hide();
             })
-        })
 
+            jq('#session-location').hide();
+            jq(".change-location a").removeClass('focus');
+            jq(".change-location a i:nth-child(3)").addClass("icon-caret-down");
+            jq(".change-location a i:nth-child(3)").removeClass("icon-caret-up");
+        });
     });
 
 </script>
