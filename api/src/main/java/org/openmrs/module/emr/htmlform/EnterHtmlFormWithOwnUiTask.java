@@ -21,9 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Wraps our simple UI around the given HTML Form
+ * Doesn't provide extra decoration beyond what the html form itself does
  */
-public class EnterHtmlFormWithSimpleUiTask extends BaseEnterPatientHtmlFormTask {
+public class EnterHtmlFormWithOwnUiTask extends BaseEnterPatientHtmlFormTask {
 
     @Override
     public String getUrl(EmrContext context) {
@@ -32,7 +32,7 @@ public class EnterHtmlFormWithSimpleUiTask extends BaseEnterPatientHtmlFormTask 
         params.put("patientId", context.getCurrentPatient().getId());
         params.put("timing", timing);
         params.put("htmlFormId", htmlForm.getId());
-        return uiUtils.pageLinkWithoutContextPath("emr", "htmlform/enterHtmlFormWithSimpleUi", params);
+        return uiUtils.pageLinkWithoutContextPath("emr", "htmlform/enterHtmlFormWithOwnUi", params);
     }
 
 }

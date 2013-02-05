@@ -12,12 +12,20 @@
 <script type="text/javascript">
     \$j = jQuery;
 
-    function showDiv(id) {
+    var getValueIfLegal = function(idAndProperty) {
+        var jqField = getField(idAndProperty);
+        if (jqField && jqField.hasClass('illegalValue')) {
+            return null;
+        }
+        return getValue(idAndProperty);
+    }
+
+    var showDiv = function(id) {
         var div = document.getElementById(id);
         if ( div ) { div.style.display = ""; }
     }
 
-    function hideDiv(id) {
+    var hideDiv = function(id) {
         var div = document.getElementById(id);
         if ( div ) { div.style.display = "none"; }
     }

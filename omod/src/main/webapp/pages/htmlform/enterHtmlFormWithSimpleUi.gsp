@@ -9,13 +9,6 @@
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
 <script type="text/javascript">
-    var getValueIfLegal = function(idAndProperty) {
-        var jqField = getField(idAndProperty);
-        if (jqField && jqField.hasClass('illegalValue')) {
-            return null;
-        }
-        return getValue(idAndProperty);
-    }
 
     jQuery(function() {
         jq('input.submitButton').hide();
