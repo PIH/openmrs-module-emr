@@ -49,7 +49,7 @@
             },
             autoFocus: true,
             minLength: 2,
-            delay: 200,
+            delay: 300,
             select: function(event, ui) {
                 setSearchValue(ui.item);
                 return false;
@@ -67,23 +67,13 @@
             var self= this;
             var fieldId =  '${ config.id }';
 
-            if (items.length == 1 && (items[0].patientId !== 0)) {
+            if (items.length == 1 && (items[0].patientId == 0)) {
                 setSearchValue(items[0]);
-
-                if (${ config.onExactMatchFunction } !== null) {
-                     ${ config.onExactMatchFunction }(items[0]);
-                }
-            } else if (items.length == 1 && (items[0].patientId == 0)) {
-                setSearchValue(items[0]);
-
-                jq.each( items , function(i, item) {
-                    self._renderItem(ul, item);
-                });
-            } else {
-                jq.each( items , function(i, item) {
-                    self._renderItem(ul, item);
-                });
             }
+            jq.each( items , function(i, item) {
+                self._renderItem(ul, item);
+            });
+
         };
     });
 </script>
