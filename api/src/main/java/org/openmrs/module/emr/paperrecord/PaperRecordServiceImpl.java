@@ -209,8 +209,10 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
             null, null, null, false);
     }
 
+    // we break this out into an external public and internal private method because we want the transaction to
+    // occur within the synchronized block
+
     @Override
-    @Transactional
     public synchronized Map<String, List<String>> assignRequests(List<PaperRecordRequest> requests, Person assignee, Location location) {
 
         if (requests == null) {
@@ -220,6 +222,13 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         if (assignee == null) {
             throw new IllegalStateException("Assignee cannot be null");
         }
+
+        return assignRequestsInternal(requests, assignee, location);
+    }
+
+
+    @Transactional
+    private Map<String, List<String>>  assignRequestsInternal(List<PaperRecordRequest> requests, Person assignee, Location location) {
 
         Map<String, List<String>> response = new HashMap<String, List<String>>();
         response.put("success", new LinkedList<String>());
@@ -235,7 +244,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
                 String identifier = request.getIdentifier();
                 if (StringUtils.isBlank(identifier)) {
                     identifier = createPaperMedicalRecordNumberFor(request.getPatient(),
-                        request.getRecordLocation());
+                            request.getRecordLocation());
                     request.setIdentifier(identifier);
                     request.updateStatus(Status.ASSIGNED_TO_CREATE);
 
