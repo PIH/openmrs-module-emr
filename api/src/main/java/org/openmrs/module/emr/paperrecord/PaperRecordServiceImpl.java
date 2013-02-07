@@ -213,7 +213,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     // occur within the synchronized block
 
     @Override
-    public synchronized Map<String, List<String>> assignRequests(List<PaperRecordRequest> requests, Person assignee, Location location) {
+    public synchronized Map<String, List<String>> assignRequests(List<PaperRecordRequest> requests, Person assignee, Location location) throws UnableToPrintPaperRecordLabelException {
 
         if (requests == null) {
             throw new IllegalStateException("Requests cannot be null");
@@ -228,7 +228,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
 
     @Transactional
-    private Map<String, List<String>>  assignRequestsInternal(List<PaperRecordRequest> requests, Person assignee, Location location) {
+    private Map<String, List<String>>  assignRequestsInternal(List<PaperRecordRequest> requests, Person assignee, Location location) throws UnableToPrintPaperRecordLabelException {
 
         Map<String, List<String>> response = new HashMap<String, List<String>>();
         response.put("success", new LinkedList<String>());
@@ -366,25 +366,25 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     }
 
     @Override
-    public void printPaperRecordLabel(PaperRecordRequest request, Location location) {
+    public void printPaperRecordLabel(PaperRecordRequest request, Location location) throws UnableToPrintPaperRecordLabelException {
        printPaperRecordLabels(request, location, 1);
     }
 
 
     @Override
-    public void printPaperRecordLabels(PaperRecordRequest request, Location location, Integer count) {
+    public void printPaperRecordLabels(PaperRecordRequest request, Location location, Integer count) throws UnableToPrintPaperRecordLabelException {
       printPaperRecordLabels(request.getPatient(), request.getIdentifier(), location, count);
 
     }
 
     @Override
-    public void printPaperRecordLabels(Patient patient, Location location, Integer count) {
+    public void printPaperRecordLabels(Patient patient, Location location, Integer count) throws UnableToPrintPaperRecordLabelException {
         PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient, emrProperties.getPaperRecordIdentifierType(), getMedicalRecordLocationAssociatedWith(location));
         printPaperRecordLabels(patient, paperRecordIdentifier != null ? paperRecordIdentifier.getIdentifier() : null, location, count);
     }
 
 
-    private void printPaperRecordLabels(Patient patient, String identifier, Location location, Integer count) {
+    private void printPaperRecordLabels(Patient patient, String identifier, Location location, Integer count) throws UnableToPrintPaperRecordLabelException {
         if (count == null || count == 0) {
             return;  // just do nothing if we don't have a count
         }

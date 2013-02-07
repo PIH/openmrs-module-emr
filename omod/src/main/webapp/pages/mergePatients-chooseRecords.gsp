@@ -35,10 +35,10 @@
 </script>
 
 <h3>${ ui.message("emr.mergePatients.selectTwo") }</h3>
-<input type= "hidden" name= "isUnknownPatient" value= "${isUnknownPatient}"/>
 <div id="merge-patient-container">
     <h4>${ ui.message("emr.mergePatients.enterIds") }</h4>
     <form>
+        <input type= "hidden" name= "isUnknownPatient" value= "${isUnknownPatient}"/>
         <p>
             ${ ui.includeFragment("emr", "field/findPatientById",[
                     label: ui.message("emr.mergePatients.chooseFirstLabel"),

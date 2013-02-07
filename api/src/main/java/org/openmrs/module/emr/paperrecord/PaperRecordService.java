@@ -121,7 +121,7 @@ public interface PaperRecordService extends OpenmrsService {
      * @throws IllegalStateException if any of the requests are not in the OPEN status
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
-    Map<String, List<String>> assignRequests(List<PaperRecordRequest> requests, Person assignee, Location location);
+    Map<String, List<String>> assignRequests(List<PaperRecordRequest> requests, Person assignee, Location location) throws UnableToPrintPaperRecordLabelException;
 
 
     /**
@@ -196,7 +196,7 @@ public interface PaperRecordService extends OpenmrsService {
      * @param location
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS)
-    void printPaperRecordLabel(PaperRecordRequest request, Location location);
+    void printPaperRecordLabel(PaperRecordRequest request, Location location) throws UnableToPrintPaperRecordLabelException;
 
 
     /**
@@ -208,7 +208,7 @@ public interface PaperRecordService extends OpenmrsService {
      * @param count the number of labels to print
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS)
-    void printPaperRecordLabels(PaperRecordRequest request, Location location, Integer count);
+    void printPaperRecordLabels(PaperRecordRequest request, Location location, Integer count) throws UnableToPrintPaperRecordLabelException;
 
     /**
      * Prints x numbers of labels for the paper record associated with the patient
@@ -218,7 +218,7 @@ public interface PaperRecordService extends OpenmrsService {
      * @param count the of labels to print
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS)
-    void printPaperRecordLabels(Patient patient, Location location, Integer count);
+    void printPaperRecordLabels(Patient patient, Location location, Integer count) throws UnableToPrintPaperRecordLabelException;
 
 
     /**
