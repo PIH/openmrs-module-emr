@@ -14,7 +14,6 @@
 
 package org.openmrs.module.emr.paperrecord;
 
-// we made this a RuntimeException so that it forces a transaction rollback when it is thrown
 public class UnableToPrintPaperRecordLabelException extends Exception {
 
     private static final long serialVersionUID = 1L;

@@ -223,12 +223,17 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
             throw new IllegalStateException("Assignee cannot be null");
         }
 
-        return assignRequestsInternal(requests, assignee, location);
+        // HACK: we need to reference the service here because an internal call won't pick up the @Transactional on the
+        // internal method; we could potentially wire the bean into itself, but are unsure of that
+        // see PaperRecordService.assignRequestsInternal(...  for more information
+        return Context.getService(PaperRecordService.class).assignRequestsInternal(requests, assignee, location);
     }
 
 
-    @Transactional
-    private Map<String, List<String>>  assignRequestsInternal(List<PaperRecordRequest> requests, Person assignee, Location location) throws UnableToPrintPaperRecordLabelException {
+    // HACK; note that this method must be public in order for Spring to pick up the @Transactional annotation;
+    // see PaperRecordService.assignRequestsInternal(...  for more information
+    @Transactional(rollbackFor = UnableToPrintPaperRecordLabelException.class)
+    public  Map<String, List<String>>  assignRequestsInternal(List<PaperRecordRequest> requests, Person assignee, Location location) throws UnableToPrintPaperRecordLabelException {
 
         Map<String, List<String>> response = new HashMap<String, List<String>>();
         response.put("success", new LinkedList<String>());

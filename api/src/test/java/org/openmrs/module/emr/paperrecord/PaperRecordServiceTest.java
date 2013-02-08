@@ -116,6 +116,10 @@ public class PaperRecordServiceTest {
         paperRecordService.setPrinterService(mockPrinterService);
         paperRecordService.setEmrProperties(mockEmrProperties);
         paperRecordService.setPaperRecordLabelTemplate(mockPaperRecordLabelTemplate);
+
+        // so we handle the hack in PaperRecordServiceImpl to make sure assignRequestsInternal is transactional
+        when(Context.getService(PaperRecordService.class)).thenReturn(paperRecordService);
+
     }
 
     @Test

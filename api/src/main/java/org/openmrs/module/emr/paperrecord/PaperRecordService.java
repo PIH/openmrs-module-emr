@@ -123,6 +123,15 @@ public interface PaperRecordService extends OpenmrsService {
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     Map<String, List<String>> assignRequests(List<PaperRecordRequest> requests, Person assignee, Location location) throws UnableToPrintPaperRecordLabelException;
 
+    /**
+     * This internal method should not be invoked directly!
+     *
+     * Workaround because we need this method to be @Transactional and Spring won't handle calling a @Transactional
+     * method from within the same class:
+     * http://stackoverflow.com/questions/3423972/spring-transaction-method-call-by-the-method-within-the-same-class-does-not-wo
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
+    Map<String, List<String>>  assignRequestsInternal(List<PaperRecordRequest> requests, Person assignee, Location location) throws UnableToPrintPaperRecordLabelException;
 
     /**
      * Retrieves all records that have been assigned and need to be pulled
@@ -185,6 +194,7 @@ public interface PaperRecordService extends OpenmrsService {
      * Marks all active requests with the specified identifier as returned
      */
     // TODO: once we have multiple medical record locations, we will need to add location as a criteria (see paperRecordExists)
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     void markPaperRecordRequestsAsReturned(String identifier)
         throws NoMatchingPaperMedicalRequestException;
 
