@@ -21,6 +21,8 @@ import org.openmrs.module.emr.EmrContext;
  */
 public abstract class BaseTaskDescriptor implements TaskDescriptor {
 
+    protected String requiredPrivilegeName;
+
     /**
      * @param context
      * @return Base implementation returns true if the authenticated user has the privilege given by getRequiredPrivilegeName()
@@ -35,12 +37,20 @@ public abstract class BaseTaskDescriptor implements TaskDescriptor {
         }
     }
 
+    public void setRequiredPrivilegeName(String requiredPrivilege) {
+        this.requiredPrivilegeName = requiredPrivilege;
+    }
+
     /**
-     * @return Base implementation returns "Task: ${ this.id }"
+     * @return Base implementation returns "Task: ${ this.id }" unless you override that with #setRequiredPrivilegeName()
      */
     @Override
     public String getRequiredPrivilegeName() {
-        return "Task: " + getId();
+        if (requiredPrivilegeName != null) {
+            return requiredPrivilegeName;
+        } else {
+            return "Task: " + getId();
+        }
     }
 
     /**
