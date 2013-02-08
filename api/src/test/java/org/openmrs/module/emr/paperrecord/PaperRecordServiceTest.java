@@ -171,7 +171,7 @@ public class PaperRecordServiceTest {
         return createLocation(3,"Mirebalais");
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testRequestPaperRecordShouldThrowExceptionIfPatientNull() throws Exception {
 
         Location medicalRecordLocation = createMedicalRecordLocation();
@@ -182,7 +182,7 @@ public class PaperRecordServiceTest {
 
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testRequestPaperRecordShouldThrowExceptionIfRecordLocationNull() throws Exception {
 
         Patient patient = new Patient();
@@ -195,7 +195,7 @@ public class PaperRecordServiceTest {
     }
 
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testRequestPaperRecordShouldThrowExceptionIfRequestLocationNull() throws Exception {
 
         Patient patient = new Patient();
@@ -287,14 +287,14 @@ public class PaperRecordServiceTest {
     }
 
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testAssignRequestsShouldFailIfRequestsNull() throws Exception {
 
         Person assignTo = new Person(15);
         paperRecordService.assignRequests(null, assignTo, null);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testAssignRequestsShouldFailIfAssigneeNull() throws Exception {
 
         List<PaperRecordRequest> requests = new ArrayList<PaperRecordRequest>();
