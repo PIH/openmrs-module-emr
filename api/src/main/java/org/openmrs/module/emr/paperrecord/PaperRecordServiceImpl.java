@@ -136,15 +136,15 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         // TODO: (ie, what to do if the record is already out on the floor--right now it will just create a new request)
 
         if (patient == null) {
-            throw new IllegalStateException("Patient cannot be null");
+            throw new IllegalArgumentException("Patient cannot be null");
         }
 
         if (location == null) {
-            throw new IllegalStateException("Record Location cannot be null");
+            throw new IllegalArgumentException("Record Location cannot be null");
         }
 
         if (requestLocation == null) {
-            throw new IllegalStateException("Request Location cannot be null");
+            throw new IllegalArgumentException("Request Location cannot be null");
         }
 
         // fetch the nearest medical record location (or just return the given location if it is a valid
@@ -216,11 +216,11 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     public synchronized Map<String, List<String>> assignRequests(List<PaperRecordRequest> requests, Person assignee, Location location) throws UnableToPrintPaperRecordLabelException {
 
         if (requests == null) {
-            throw new IllegalStateException("Requests cannot be null");
+            throw new IllegalArgumentException("Requests cannot be null");
         }
 
         if (assignee == null) {
-            throw new IllegalStateException("Assignee cannot be null");
+            throw new IllegalArgumentException("Assignee cannot be null");
         }
 
         // HACK: we need to reference the service here because an internal call won't pick up the @Transactional on the
