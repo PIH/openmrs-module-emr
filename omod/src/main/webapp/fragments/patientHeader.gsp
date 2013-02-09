@@ -5,6 +5,18 @@
 %>
 
 
+<script type="text/javascript">
+    jq(document).ready(function(){
+        jq(".demographics .name").click(function(){
+            emr.navigateTo({
+                provider: 'emr',
+                page: 'patient',
+                query: { patientId: ${patient.patient.id} }
+            });
+        })
+    })
+</script>
+
 <div class="patient-header">
 
     <div class="demographics">

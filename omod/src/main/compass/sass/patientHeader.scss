@@ -16,6 +16,11 @@
     position: relative;
     float: left;
     vertical-align: top;
+
+    .name {
+      cursor: pointer;
+    }
+
     h1 {
       margin: 0;
       span {

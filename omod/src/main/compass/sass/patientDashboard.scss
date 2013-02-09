@@ -1,53 +1,14 @@
 @import "colors";
 @import "compass";
 
+.tabs {
+  min-height: 300px;
+}
+
 .dashboard-container {
-  aside {
     display: inline-block;
-    vertical-align: top;
-    background: white;
-    width: 23%;
-    text-align: left;
-
-    ul {
-      li {
-        border: 1px solid #DEDEDE;
-        border-bottom: none;
-        border-right: none;
-        
-        a {
-          display: block;
-          padding: 10px;
-          color: $text;
-          
-          &:hover {
-            text-decoration: none;
-          }
-        }
-
-        &.selected {
-          font-family: "OpenSansBold";
-          background: #EEE;
-          
-          &:hover {
-            background: #EEE;
-          }
-        }
-
-        &:hover {
-          background: #F9F9F9;
-        }
-
-        &:first-child {
-          @include border-top-left-radius(3px);
-        }
-
-        &:last-child {
-          @include border-bottom-left-radius(3px);
-          border-bottom: 1px solid #EEE;
-        }
-      }
-    }
+    width: 76.5%;
+    min-height: 30%;
 
     .actions {
       margin: 0 8px;
@@ -59,7 +20,19 @@
         margin-bottom: 5px;
       }
     }
+}
+
+div {
+  aside {
+    display: inline-block;
+    vertical-align: top;
+    background: white;
+    width: 23%;
+    text-align: left;
+    margin-top: 40px;
   }
+}
+
 
   .dashboard {
     display: inline-block;
@@ -84,6 +57,10 @@
     }
 
     #visit-details {
+      .ui-tabs {
+        padding: 0;
+      }
+
       h3 {
         margin-bottom: 0;
       }
@@ -97,4 +74,3 @@
       }
     }
   }
-}
