@@ -8,7 +8,7 @@
 
 %>
 
-${ ui.includeFragment("emr", "decorator/validationMessages")}
+${ ui.includeFragment("emr", "validationMessages")}
 
 <script type="text/javascript">
     jQuery(function() {
@@ -123,6 +123,9 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             <div id="confirmationQuestion">
                 Confirm submission? <p style="display: inline"><input type="submit" value="Yes" /></p> or <p style="display: inline"><input id="cancelSubmission" type="button" value="No" /></p>
             </div>
+            <div class="before-dataCanvas"></div>
+            <div id="dataCanvas"></div>
+            <div class="after-data-canvas"></div>
         </div>
     </form>
 </div>

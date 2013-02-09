@@ -1,9 +1,120 @@
 describe("Test for form validators", function() {
     emrMessages = {
         requiredField: 'requiredFieldMessage',
-        dateField: 'dateFieldMessage'
+        dateField: 'dateFieldMessage',
+        integerField: 'integerFieldMessage',
+        numberField: 'numberFieldMessage',
+        numericRangeLow: 'numericRangeLow {0}',
+        numericRangeHigh: 'numericRangeHigh {0}'
     };
     var validator, field;
+
+    describe("Integer fields", function() {
+        beforeEach(function() {
+            validator = new IntegerFieldValidator();
+            field = jasmine.createSpyObj("field", ['value']);
+        });
+        it("should allow an empty string", function() {
+            field.value.andReturn("");
+
+            var validationMessage = validator.validate(field);
+            expect(validationMessage).toBe(null);
+        });
+        it("should not allow whitespaces", function() {
+            field.value.andReturn(" ");
+
+            var validationMessage = validator.validate(field);
+            expect(validationMessage).toBe(null);
+        });
+        it("should validate an integer", function() {
+            field.value.andReturn("7");
+
+            var validationMessage = validator.validate(field);
+            expect(validationMessage).toBe(null);
+        });
+        it("should not validate a float", function() {
+            field.value.andReturn("7.5");
+
+            var validationMessage = validator.validate(field);
+            expect(validationMessage).toBe('integerFieldMessage');
+        });
+        it("should not validate text", function() {
+            field.value.andReturn("something");
+
+            var validationMessage = validator.validate(field);
+            expect(validationMessage).toBe('integerFieldMessage');
+        });
+    });
+
+    describe("Number fields", function() {
+        beforeEach(function() {
+            validator = new NumberFieldValidator();
+            field = jasmine.createSpyObj("field", ['value']);
+        });
+        it("should validate an integer", function() {
+            field.value.andReturn("7");
+
+            var validationMessage = validator.validate(field);
+            expect(validationMessage).toBe(null);
+        });
+        it("should validate a float", function() {
+            field.value.andReturn("-7.5");
+
+            var validationMessage = validator.validate(field);
+            expect(validationMessage).toBe(null);
+        });
+        it("should not validate text", function() {
+            field.value.andReturn("something");
+
+            var validationMessage = validator.validate(field);
+            expect(validationMessage).toBe('numberFieldMessage');
+        });
+    });
+
+    describe("Numeric ranges", function() {
+        beforeEach(function() {
+            validator = new NumericRangeFieldValidator();
+            field = {
+                value: function() { return "7" }
+            }
+        });
+        it("should validate a number greater than min", function() {
+            field.element = $('<input type="text" min="5"/>');
+
+            var validationMessage = validator.validate(field);
+            expect(validationMessage).toBe(null);
+        });
+        it("should not validate a number less than min", function() {
+            field.element = $('<input type="text" min="10"/>');
+
+            var validationMessage = validator.validate(field);
+            expect(validationMessage).toBe('numericRangeLow 10');
+        });
+        it("should validate a number less than max", function() {
+            field.element = $('<input type="text" max="10"/>');
+
+            var validationMessage = validator.validate(field);
+            expect(validationMessage).toBe(null);
+        });
+        it("should not validate a number greater than max", function() {
+            field.element = $('<input type="text" max="5"/>');
+
+            var validationMessage = validator.validate(field);
+            expect(validationMessage).toBe('numericRangeHigh 5');
+        });
+        it("should validate a number in range", function() {
+            field.element = $('<input type="text" min="5" max="10"/>');
+
+            var validationMessage = validator.validate(field);
+            expect(validationMessage).toBe(null);
+        });
+        it("should not validate a number outside range", function() {
+            field.element = $('<input type="text" min="0" max="5"/>');
+
+            var validationMessage = validator.validate(field);
+            expect(validationMessage).toBe('numericRangeHigh 5');
+        });
+    });
 
     describe("Required fields", function() {
         beforeEach(function() {

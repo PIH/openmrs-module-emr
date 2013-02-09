@@ -40,7 +40,64 @@ DateFieldValidator.prototype.isValid = function(fieldValue) {
     return true;
 }
 
+
+function IntegerFieldValidator() {
+    this.messageIdentifier = "integerField";
+}
+IntegerFieldValidator.prototype = new FieldValidator();
+IntegerFieldValidator.prototype.constructor = IntegerFieldValidator;
+IntegerFieldValidator.prototype.isValid = function(fieldValue) {
+    var integerRegex = /^-?\d+$/;
+    if (fieldValue && fieldValue.length > 0) {
+        return integerRegex.test(fieldValue);
+    }
+    return true;
+}
+
+
+function NumberFieldValidator() {
+    this.messageIdentifier = "numberField";
+}
+NumberFieldValidator.prototype = new FieldValidator();
+NumberFieldValidator.prototype.constructor = NumberFieldValidator;
+NumberFieldValidator.prototype.isValid = function(fieldValue) {
+    var numberRegex = /^-?((\d+(\.\d+)?)|(\.\d+))$/;
+    if (fieldValue && fieldValue.length > 0) {
+        return numberRegex.test(fieldValue);
+    }
+    return true;
+}
+
+
+function NumericRangeFieldValidator() {
+    this.lowMessageIdentifier = "numericRangeLow";
+    this.highMessageIdentifier = "numericRangeHigh";
+}
+NumericRangeFieldValidator.prototype = new FieldValidator();
+NumericRangeFieldValidator.prototype.constructor = NumericRangeFieldValidator;
+NumericRangeFieldValidator.prototype.validate = function(field) {
+    var asNumber = parseFloat(field.value());
+    if (asNumber) {
+        var rangeMin = parseFloat(field.element.attr("min"));
+        if (rangeMin) {
+            if (asNumber < rangeMin) {
+                return emrMessages[this.lowMessageIdentifier].replace("{0}", rangeMin);
+            }
+        }
+        var rangeMax = parseFloat(field.element.attr("max"));
+        if (rangeMax) {
+            if (asNumber > rangeMax) {
+                return emrMessages[this.highMessageIdentifier].replace("{0}", rangeMax);
+            }
+        }
+    }
+    return null;
+}
+
 var Validators = {
     required: new RequiredFieldValidator(),
-    date: new DateFieldValidator()
+    date: new DateFieldValidator(),
+    integer: new IntegerFieldValidator(),
+    number: new NumberFieldValidator(),
+    "numeric-range": new NumericRangeFieldValidator()
 }

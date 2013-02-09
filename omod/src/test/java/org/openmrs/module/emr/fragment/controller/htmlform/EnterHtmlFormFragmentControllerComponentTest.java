@@ -16,7 +16,6 @@ package org.openmrs.module.emr.fragment.controller.htmlform;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -26,6 +25,7 @@ import org.openmrs.api.FormService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;
+import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
@@ -45,6 +45,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -78,14 +79,18 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 
     ResourceFactory resourceFactory;
 
+    EmrContext emrContext;
+
     public static final String FORM_DEFINITION = "<htmlform formUuid=\"form-uuid\" formName=\"Form Name\" formVersion=\"1.0\">Weight:<obs id=\"weight\" conceptId=\"5089\"/> <encounterDate/> <encounterLocation/> <encounterProvider/></htmlform>";
     private EnterHtmlFormFragmentController controller;
 
 
     @Before
     public void before() throws Exception {
-        resourceFactory = Mockito.mock(ResourceFactory.class);
+        resourceFactory = mock(ResourceFactory.class);
         when(resourceFactory.getResourceAsString("emr", "htmlforms/vitals.xml")).thenReturn(FORM_DEFINITION);
+
+        emrContext = mock(EmrContext.class);
 
         controller = new EnterHtmlFormFragmentController();
     }
@@ -100,7 +105,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         config.put("patient", patient);
         config.put("definitionResource", resourcePath);
 
-        controller.controller(config, htmlFormEntryService, formService, resourceFactory, patient, null, null, null, resourcePath, null, null, null, model, null);
+        controller.controller(config, emrContext, htmlFormEntryService, formService, resourceFactory, patient, null, null, null, resourcePath, null, null, null, true, model, null);
 
         FormEntrySession command = (FormEntrySession) model.getAttribute("command");
         String html = command.getHtmlToDisplay();

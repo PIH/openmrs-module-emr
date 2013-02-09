@@ -22,6 +22,7 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
+import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.htmlform.HtmlFormUtil;
 import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.openmrs.module.htmlformentry.FormEntrySession;
@@ -49,7 +50,27 @@ import java.util.Map;
  */
 public class EnterHtmlFormFragmentController {
 
+    /**
+     * @param config
+     * @param emrContext
+     * @param htmlFormEntryService
+     * @param formService
+     * @param resourceFactory
+     * @param patient
+     * @param hf
+     * @param form
+     * @param formUuid
+     * @param definitionUiResource
+     * @param encounter
+     * @param visit
+     * @param returnUrl
+     * @param automaticValidation defaults to true. If you don't want HFE's automatic validation, set it to false
+     * @param model
+     * @param httpSession
+     * @throws Exception
+     */
     public void controller(FragmentConfiguration config,
+                           EmrContext emrContext,
                            @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
                            @SpringBean("formService") FormService formService,
                            @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
@@ -61,6 +82,7 @@ public class EnterHtmlFormFragmentController {
                            @FragmentParam(value = "encounter", required = false) Encounter encounter,
                            @FragmentParam(value = "visit", required = false) Visit visit,
                            @FragmentParam(value = "returnUrl", required = false) String returnUrl,
+                           @FragmentParam(value = "automaticValidation", defaultValue = "true") boolean automaticValidation,
                            FragmentModel model,
                            HttpSession httpSession) throws Exception {
 
@@ -91,10 +113,10 @@ public class EnterHtmlFormFragmentController {
         // the code below doesn't handle the HFFS case where you might want to _add_ data to an existing encounter
         FormEntrySession fes;
         if (encounter != null) {
-            fes = new FormEntrySession(patient, encounter, FormEntryContext.Mode.EDIT, hf, httpSession);
+            fes = new FormEntrySession(patient, encounter, FormEntryContext.Mode.EDIT, hf, emrContext.getSessionLocation(), httpSession, automaticValidation, !automaticValidation);
         }
         else {
-            fes = new FormEntrySession(patient, hf, httpSession);
+            fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, emrContext.getSessionLocation(), httpSession, automaticValidation, !automaticValidation);
         }
 
         if (returnUrl != null) {

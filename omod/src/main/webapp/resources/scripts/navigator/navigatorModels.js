@@ -85,14 +85,12 @@ FieldModel.prototype.resetErrorMessages = function() {
 function QuestionModel(elem, section, titleListElem) {
     SelectableModel.apply(this, [elem]);
     this.parentSection = section;
-    var fieldContainers = this.element.find("p");
+    var fieldContainers = this.element.find("p").has("input, select");
     this.fields = _.map(fieldContainers, function(container) {
         return new FieldModel($(container).find("input, select").first(), this, $(container).find("span.field-error").first());
     }, this);
-    this.valueElement = $("<span></span>");
-    var questionLegend = this.element.find('legend').first();
-    this.valueElement.appendTo(questionLegend);
-    this.questionLi = $('<li><span>' + questionLegend.text() + '</span></li>');
+    this.questionLegend = this.element.find('legend').first();
+    this.questionLi = $('<li><span>' + this.questionLegend.text() + '</span></li>');
     this.questionLi.appendTo(titleListElem);
     this.fieldSeparator = this.element.attr('field-separator') ? this.element.attr('field-separator') : ' ';
 }
@@ -100,14 +98,13 @@ QuestionModel.prototype = new SelectableModel();
 QuestionModel.prototype.constructor = QuestionModel;
 QuestionModel.prototype.select = function() {
     SelectableModel.prototype.select.apply(this);
-    this.valueElement.text("");
+    this.valueAsText = "";
     this.questionLi.addClass("focused");
     _.each(this.fields, function(field) { field.resetErrorMessages(); });
 }
 QuestionModel.prototype.unselect = function() {
     SelectableModel.prototype.unselect.apply(this);
-    this.valueElement.text( _.map(this.fields, function(field) { return field.value() }, this).join(this.fieldSeparator) );
-    this.valueElement.show();
+    this.valueAsText = _.map(this.fields, function(field) { return field.value() }, this).join(this.fieldSeparator);
     _.each(this.fields, function(field) { field.unselect(); });
     this.questionLi.removeClass("focused");
 }
@@ -117,7 +114,7 @@ QuestionModel.prototype.isValid = function() {
     }, true);
 }
 QuestionModel.prototype.title = function() {
-    return this.valueElement;
+    return this.questionLegend;
 }
 
 /*
@@ -164,8 +161,7 @@ function ConfirmationSectionModel(elem, formMenuElem, regularSections) {
     this.title = $("<li><span>" + title.text() + "</span></li>");
     formMenuElem.append(this.title);
     title.remove();
-    this.dataCanvas = $("<div id='dataCanvas'></div>");
-    this.element.append(this.dataCanvas);
+    this.dataCanvas = this.element.find('#dataCanvas');
 
     this.questions = _.map(this.element.find("#confirmationQuestion"), function(questionElement) {
         return new QuestionModel(questionElement, this);
@@ -181,7 +177,7 @@ ConfirmationSectionModel.prototype.select = function() {
     this.dataCanvas.append(listElement);
     _.each(this.sections, function(section) {
         _.each(section.questions, function(question) {
-            listElement.append("<li><span class='label'>" + question.title().text() + "</span> " + question.valueElement.text() + "</li>");
+            listElement.append("<li><span class='label'>" + question.title().text() + ":</span> <span class='value'>" + question.valueAsText + "</span></li>");
         })
     });
 }
