@@ -48,9 +48,6 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest {
     private PersonService personService;
 
     @Autowired
-    private ProviderService providerService;
-
-    @Autowired
     private ProviderManagementService providerManagementService;
 
     @Before
@@ -63,7 +60,7 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest {
 
         Person person = new Person();
 
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
+        AccountDomainWrapper account = accountService.getAccountByPerson(person);
         account.setGivenName("Mark");
         account.setFamilyName("Jones");
         account.setGender("M");
@@ -98,7 +95,7 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest {
 
         Person person = new Person();
 
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
+        AccountDomainWrapper account = accountService.getAccountByPerson(person);
         account.setGivenName("Mark");
         account.setFamilyName("Jones");
         account.setGender("M");
@@ -163,7 +160,7 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest {
 
         Person person = personService.getPerson(501);  // existing person with user account in test dataset
 
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
+        AccountDomainWrapper account = accountService.getAccountByPerson(person);
 
         Assert.assertEquals("Bruno", account.getGivenName());
         Assert.assertEquals("Otterbourg", account.getFamilyName());
@@ -186,7 +183,7 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest {
 
         Person person = personService.getPerson(502);  // existing person with active user account in test dataset
 
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
+        AccountDomainWrapper account = accountService.getAccountByPerson(person);
         account.setUserEnabled(false);
         account.save();
 
@@ -205,7 +202,7 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest {
 
         Person person = personService.getPerson(501);  // existing person with retired user account in test dataset
 
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
+        AccountDomainWrapper account = accountService.getAccountByPerson(person);
         account.setUserEnabled(true);
         account.save();
 
@@ -224,7 +221,7 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest {
 
         Person person = personService.getPerson(501);  // existing person with active provider account
 
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
+        AccountDomainWrapper account = accountService.getAccountByPerson(person);
         account.setProviderRole(null);
         account.save();
 
@@ -243,7 +240,7 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest {
 
         Person person = personService.getPerson(501);  // existing person with active provider account
 
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
+        AccountDomainWrapper account = accountService.getAccountByPerson(person);
         account.setProviderRole(null);
         account.save();
 
@@ -267,7 +264,7 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest {
 
         Person person = personService.getPerson(2);
 
-        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
+        AccountDomainWrapper account = accountService.getAccountByPerson(person);
 
         Assert.assertNull(account.getUser());
         Assert.assertNull(account.getUsername());
@@ -276,11 +273,6 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest {
         Assert.assertNull(account.getPrivilegeLevel());
         Assert.assertNull(account.getUserEnabled());
 
-    }
-
-    private AccountDomainWrapper initializeNewAccountDomainWrapper(Person person) {
-        return new AccountDomainWrapper(person, accountService, userService, providerService,
-                providerManagementService, personService);
     }
 
 }

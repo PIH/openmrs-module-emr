@@ -44,19 +44,14 @@ public class AccountPageController {
 	
 	protected final Log log = LogFactory.getLog(getClass());
 
-    // TODO: better way to inject these?
-    // TODO: handle the new initialization through the service
+
     public AccountDomainWrapper getAccount(@RequestParam(value = "personId", required = false) Person person,
-                                @SpringBean("accountService") AccountService accountService,
-                                @SpringBean("providerService") ProviderService providerService,
-                                @SpringBean("providerManagementService") ProviderManagementService providerManagementService,
-                                @SpringBean("userService") UserService userService,
-                                @SpringBean("personService") PersonService personService) {
+                                @SpringBean("accountService") AccountService accountService) {
 
         AccountDomainWrapper account;
+
         if (person == null) {
-            account = new AccountDomainWrapper((new Person()), accountService, userService, providerService,
-                    providerManagementService, personService);
+            account = accountService.getAccountByPerson(new Person());
         }
         else {
             account = accountService.getAccountByPerson(person);

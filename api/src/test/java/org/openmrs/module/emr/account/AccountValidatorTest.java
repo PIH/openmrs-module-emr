@@ -52,6 +52,8 @@ public class AccountValidatorTest {
 
     private PersonService personService;
 
+    private ProviderIdentifierGenerator providerIdentifierGenerator;
+
     private Role fullPrivileges;
 
     private Role someCapability;
@@ -83,7 +85,7 @@ public class AccountValidatorTest {
         Person person = new Person();
         person.addName(new PersonName());
         account = new AccountDomainWrapper(person, accountService, userService, providerService,
-                providerManagementService, personService);
+                providerManagementService, personService, providerIdentifierGenerator);
 	}
 	
 	/**

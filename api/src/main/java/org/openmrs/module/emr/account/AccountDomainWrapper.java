@@ -38,38 +38,27 @@ public class AccountDomainWrapper {
 
     private String confirmPassword;
 
-    @Autowired
     private AccountService accountService;
 
-    @Autowired
     private UserService userService;
 
-    @Autowired
     private PersonService personService;
 
-    @Autowired
     private ProviderService providerService;
 
-    @Autowired
     private ProviderManagementService providerManagementService;
 
-    public AccountDomainWrapper() {
-        this.person = new Person();
-    }
-
-    public AccountDomainWrapper(Person person) {
-        this.person = person;
-        this.user = getUserByPerson(this.person);
-        this.provider = getProviderByPerson(person);
-    }
+    private ProviderIdentifierGenerator providerIdentifierGenerator;
 
     public AccountDomainWrapper(Person person, AccountService accountService, UserService userService, ProviderService providerService,
-                                ProviderManagementService providerManagementService, PersonService personService) {
+                                ProviderManagementService providerManagementService, PersonService personService,
+                                ProviderIdentifierGenerator providerIdentifierGenerator) {
         this.accountService = accountService;
         this.userService = userService;
         this.providerService = providerService;
         this.providerManagementService = providerManagementService;
         this.personService = personService;
+        this.providerIdentifierGenerator = providerIdentifierGenerator;
 
         this.person = person;
 
@@ -80,24 +69,16 @@ public class AccountDomainWrapper {
         }
     }
 
-    public void setAccountService(AccountService accountService) {
-        this.accountService = accountService;
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    public void setProviderManagementService(ProviderManagementService providerManagementService) {
-        this.providerManagementService = providerManagementService;
-    }
-
     public Person getPerson() {
         return person;
     }
 
     public User getUser() {
         return user;
+    }
+
+    public Provider getProvider() {
+        return provider;
     }
 
     public void setProviderRole(ProviderRole providerRole) {
@@ -348,6 +329,11 @@ public class AccountDomainWrapper {
             }
             else {
                 providerService.saveProvider(provider);
+                // generate identifier if one doesn't exist and a provider generator has been specified
+                if (providerIdentifierGenerator != null && StringUtils.isBlank(provider.getIdentifier())) {
+                    provider.setIdentifier(providerIdentifierGenerator.generateIdentifier(provider));
+                    providerService.saveProvider(provider);
+                }
             }
         }
     }

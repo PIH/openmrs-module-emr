@@ -31,6 +31,8 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 
     private ProviderManagementService providerManagementService;
 
+    private ProviderIdentifierGenerator providerIdentifierGenerator = null;
+
     /**
 	 * @param userService the userService to set
 	 */
@@ -58,8 +60,16 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
 	}
-	
-	/**
+
+    /**
+     * @param providerIdentifierGenerator
+     */
+    @Override
+    public void setProviderIdentifierGenerator(ProviderIdentifierGenerator providerIdentifierGenerator) {
+        this.providerIdentifierGenerator = providerIdentifierGenerator;
+    }
+
+    /**
 	 * @see org.openmrs.module.emr.account.AccountService#getAllAccounts()
 	 */
 	@Override
@@ -74,7 +84,7 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 				continue;
 
 			byPerson.put(user.getPerson(), new AccountDomainWrapper(user.getPerson(), this, userService,
-                    providerService, providerManagementService, personService) );
+                    providerService, providerManagementService, personService, providerIdentifierGenerator) );
 		}
 
 		for (Provider provider : providerService.getAllProviders()) {
@@ -84,7 +94,7 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 			AccountDomainWrapper account = byPerson.get(provider.getPerson());
 			if (account == null) {
 				byPerson.put(provider.getPerson(), new AccountDomainWrapper(provider.getPerson(), this, userService,
-                        providerService, providerManagementService, personService) );
+                        providerService, providerManagementService, personService, providerIdentifierGenerator) );
 			}
 		}
 		
@@ -121,7 +131,7 @@ public class AccountServiceImpl extends BaseOpenmrsService implements AccountSer
 	@Transactional(readOnly = true)
 	public AccountDomainWrapper getAccountByPerson(Person person) {
 		return new AccountDomainWrapper(person, this, userService,
-                providerService, providerManagementService, personService);
+                providerService, providerManagementService, personService, providerIdentifierGenerator);
 	}
 	
 	/**

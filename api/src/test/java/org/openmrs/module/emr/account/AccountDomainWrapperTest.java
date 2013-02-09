@@ -33,8 +33,10 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.openmrs.util.OpenmrsConstants.PROVIDER_ROLE;
@@ -52,6 +54,8 @@ public class AccountDomainWrapperTest {
     private ProviderService providerService;
 
     private ProviderManagementService providerManagementService;
+
+    private ProviderIdentifierGenerator providerIdentifierGenerator = null;
 
     private Role fullPrivileges;
 
@@ -528,9 +532,75 @@ public class AccountDomainWrapperTest {
         verify(providerService, never()).retireProvider(any(Provider.class), anyString());
     }
 
+    @Test
+    public void testShouldGenerateProviderIdentifierIfProviderIdentifierGeneratorSet() throws Exception {
+
+        Person person = new Person();
+        ProviderRole providerRole = new ProviderRole();
+
+        providerIdentifierGenerator = mock(ProviderIdentifierGenerator.class);
+        when(providerIdentifierGenerator.generateIdentifier(any(Provider.class))).thenReturn("123");
+
+        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
+        account.setProviderRole(providerRole);
+        account.save();
+
+        Provider expectedProvider = new Provider();
+        expectedProvider.setProviderRole(providerRole);
+
+        Provider expectedProviderWithIdentifier = new Provider();
+        expectedProviderWithIdentifier.setProviderRole(providerRole);
+        expectedProviderWithIdentifier.setIdentifier("123");
+
+        verify(personService).savePerson(person);
+        verify(providerService, atLeast(1)).saveProvider(argThat(new IsExpectedProvider(expectedProviderWithIdentifier)));
+
+    }
+
+    @Test
+    public void testShouldNotModifyExistingProviderIdentifier() throws Exception {
+
+        Person person = new Person();
+        ProviderRole providerRole = new ProviderRole();
+
+        providerIdentifierGenerator = mock(ProviderIdentifierGenerator.class);
+        when(providerIdentifierGenerator.generateIdentifier(any(Provider.class))).thenReturn("456");
+
+        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
+        account.setProviderRole(providerRole);
+        account.getProvider().setIdentifier("123");  // existing identifier
+        account.save();
+
+        Provider expectedProvider = new Provider();
+        expectedProvider.setProviderRole(providerRole);
+        expectedProvider.setIdentifier("123");
+
+        verify(personService).savePerson(person);
+        verify(providerService, times(1)).saveProvider(argThat(new IsExpectedProvider(expectedProvider)));
+    }
+
+    @Test
+    public void testShouldNotFailIfProviderIdentifierGeneratorDefinedButNoProvider() throws Exception {
+
+        providerIdentifierGenerator = mock(ProviderIdentifierGenerator.class);
+        when(providerIdentifierGenerator.generateIdentifier(any(Provider.class))).thenReturn("123");
+
+        Person person = new Person();
+
+        AccountDomainWrapper account = initializeNewAccountDomainWrapper(person);
+        account.setUserEnabled(true);
+        account.setPassword("abc");
+        account.setConfirmPassword("abc");
+        account.save();
+
+        verify(personService).savePerson(person);
+        verify(userService).saveUser(account.getUser(), "abc");
+        verify(userService, never()).changePassword(account.getUser(), "abc");
+    }
+
     private AccountDomainWrapper initializeNewAccountDomainWrapper(Person person) {
         return new AccountDomainWrapper(person, accountService, userService,
-                providerService, providerManagementService, personService);
+                providerService, providerManagementService, personService, providerIdentifierGenerator);
     }
 
     private class IsExpectedProvider extends ArgumentMatcher<Provider> {
