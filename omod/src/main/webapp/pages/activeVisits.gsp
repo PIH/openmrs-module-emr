@@ -14,6 +14,11 @@
 		</tr>
 	</thead>
 	<tbody>
+        <% if (visitSummaries.size() == 0) { %>
+            <tr>
+                <td colspan="4">${ ui.message("emr.none") }</td>
+            </tr>
+        <% } %>
 		<% visitSummaries.each { v ->
 			def checkIn = v.checkInEncounter
 			def latest = v.lastEncounter
