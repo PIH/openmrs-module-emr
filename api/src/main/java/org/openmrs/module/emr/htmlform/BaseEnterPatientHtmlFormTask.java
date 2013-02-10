@@ -72,6 +72,8 @@ public abstract class BaseEnterPatientHtmlFormTask extends BasePatientSpecificTa
 
     private Integer htmlFormId;
 
+    private String returnUrl;
+
     private double priority = 0d;
 
     public void setId(String id) {
@@ -199,4 +201,11 @@ public abstract class BaseEnterPatientHtmlFormTask extends BasePatientSpecificTa
         return formDefinitionFromUiResource;
     }
 
+    public String getReturnUrl() {
+        return returnUrl;
+    }
+
+    public void setReturnUrl(String returnUrl) {
+        this.returnUrl = returnUrl;
+    }
 }

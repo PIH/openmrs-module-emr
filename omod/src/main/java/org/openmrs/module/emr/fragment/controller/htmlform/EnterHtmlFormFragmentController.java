@@ -22,6 +22,7 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
+import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.htmlform.HtmlFormUtil;
 import org.openmrs.module.htmlformentry.FormEntryContext;
@@ -31,6 +32,7 @@ import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.htmlformentry.HtmlFormEntryUtil;
 import org.openmrs.ui.framework.SimpleObject;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
@@ -168,6 +170,7 @@ public class EnterHtmlFormFragmentController {
                          @RequestParam(value = "returnUrl", required = false) String returnUrl,
                          @SpringBean("encounterService") EncounterService encounterService,
                          @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
+                         UiUtils ui,
                          HttpServletRequest request) throws Exception {
 
         // TODO formModifiedTimestamp and encounterModifiedTimestamp
@@ -225,6 +228,10 @@ public class EnterHtmlFormFragmentController {
             encounter.setVisit(visit);
             encounterService.saveEncounter(encounter);
         }
+
+        request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
+                ui.message("emr.task.enterHtmlForm.successMessage", ui.format(hf.getForm()), ui.format(patient)));
+        request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
         return returnHelper(null, null);
     }

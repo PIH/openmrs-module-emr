@@ -32,6 +32,9 @@ public class EnterHtmlFormWithSimpleUiTask extends BaseEnterPatientHtmlFormTask 
         params.put("patientId", context.getCurrentPatient().getId());
         params.put("timing", timing);
         params.put("htmlFormId", htmlForm.getId());
+        if (getReturnUrl() != null) {
+            params.put("returnUrl", getReturnUrl());
+        }
         return uiUtils.pageLinkWithoutContextPath("emr", "htmlform/enterHtmlFormWithSimpleUi", params);
     }
 
