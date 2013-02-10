@@ -496,7 +496,10 @@ public class AccountDomainWrapperTest {
     }
 
     @Test
-    public void testSaveAccountShouldRetireProviderIfProviderSetToNull() throws Exception {
+    public void testSaveAccountShouldNotRetireProviderIfProviderRoleSetToNull() throws Exception {
+
+        // we used to retire a provider in this case, but we've switched it so we don't
+        // we will probably want to add an explicit way to retire a provider
 
         Person person = new Person();
         person.setId(1);
@@ -511,7 +514,7 @@ public class AccountDomainWrapperTest {
         account.setProviderRole(null);
         account.save();
 
-        verify(providerService).retireProvider(argThat(new IsExpectedProvider(provider)), anyString());
+        verify(providerService, never()).retireProvider(any(Provider.class), anyString());
     }
 
     @Test

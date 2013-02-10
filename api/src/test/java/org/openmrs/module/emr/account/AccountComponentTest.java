@@ -217,7 +217,7 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest {
     }
 
     @Test
-    public void shouldRetireExistingProvider() {
+    public void shouldSetProviderRoleToNull() {
 
         Person person = personService.getPerson(501);  // existing person with active provider account
 
@@ -228,35 +228,9 @@ public class AccountComponentTest extends BaseModuleContextSensitiveTest {
         Context.flushSession();
         Context.clearSession();
 
-        List<Provider> providers = providerManagementService.getProvidersByPerson(person, true);
+        List<Provider> providers = providerManagementService.getProvidersByPerson(person, false);
         Assert.assertEquals(1, providers.size());
-        Assert.assertTrue(providers.get(0).isRetired());
-    }
-
-    @Test
-    public void shouldRetireExistingProviderAndCreateNewProvider() {
-
-        ProviderRole doctor = providerManagementService.getProviderRole(1002);
-
-        Person person = personService.getPerson(501);  // existing person with active provider account
-
-        AccountDomainWrapper account = accountService.getAccountByPerson(person);
-        account.setProviderRole(null);
-        account.save();
-
-        account.setProviderRole(doctor);
-        account.save();
-
-        Context.flushSession();
-        Context.clearSession();
-
-        List<Provider> providers = providerManagementService.getProvidersByPerson(person, true);
-        Assert.assertEquals(2, providers.size());
-
-        providers = providerManagementService.getProvidersByPerson(person, false);
-        Assert.assertEquals(1, providers.size());
-        Assert.assertEquals(doctor, providers.get(0).getProviderRole());
-
+        Assert.assertNull(providers.get(0).getProviderRole());
     }
 
     @Test

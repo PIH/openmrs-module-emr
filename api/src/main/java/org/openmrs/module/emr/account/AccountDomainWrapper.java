@@ -321,19 +321,11 @@ public class AccountDomainWrapper {
         }
 
         if (provider != null) {
-            // retire the provider if role == null and the provider is persistent (determined by having an id)
-            // otherwise, save the provider
-            if (provider.getProviderRole() == null && provider.getId() != null) {
-                providerService.retireProvider(provider, "Retired by Account Domain Wrapper");
-                provider = null;
-            }
-            else {
+            providerService.saveProvider(provider);
+            // generate identifier if one doesn't exist and a provider generator has been specified
+            if (providerIdentifierGenerator != null && StringUtils.isBlank(provider.getIdentifier())) {
+                provider.setIdentifier(providerIdentifierGenerator.generateIdentifier(provider));
                 providerService.saveProvider(provider);
-                // generate identifier if one doesn't exist and a provider generator has been specified
-                if (providerIdentifierGenerator != null && StringUtils.isBlank(provider.getIdentifier())) {
-                    provider.setIdentifier(providerIdentifierGenerator.generateIdentifier(provider));
-                    providerService.saveProvider(provider);
-                }
             }
         }
     }
