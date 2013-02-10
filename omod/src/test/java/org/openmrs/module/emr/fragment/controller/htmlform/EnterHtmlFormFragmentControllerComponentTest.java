@@ -26,10 +26,12 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.module.emr.EmrContext;
+import org.openmrs.module.emr.TestUiUtils;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.ui.framework.SimpleObject;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.ui.framework.resource.ResourceFactory;
@@ -79,6 +81,8 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 
     ResourceFactory resourceFactory;
 
+    UiUtils ui;
+
     EmrContext emrContext;
 
     public static final String FORM_DEFINITION = "<htmlform formUuid=\"form-uuid\" formName=\"Form Name\" formVersion=\"1.0\">Weight:<obs id=\"weight\" conceptId=\"5089\"/> <encounterDate/> <encounterLocation/> <encounterProvider/></htmlform>";
@@ -91,6 +95,8 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         when(resourceFactory.getResourceAsString("emr", "htmlforms/vitals.xml")).thenReturn(FORM_DEFINITION);
 
         emrContext = mock(EmrContext.class);
+
+        ui = new TestUiUtils();
 
         controller = new EnterHtmlFormFragmentController();
     }
@@ -136,7 +142,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         request.addParameter("w5", "2"); // location = Xanadu
         request.addParameter("w7", "502"); // provider = Hippocrates
 
-        SimpleObject result = controller.submit(patient, hf, null, null, null, encounterService, resourceFactory, request);
+        SimpleObject result = controller.submit(patient, hf, null, null, null, encounterService, resourceFactory, ui, request);
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
         Encounter created = encounterService.getEncountersByPatient(patient).get(0);
