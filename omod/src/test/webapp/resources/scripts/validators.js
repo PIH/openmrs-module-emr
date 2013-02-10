@@ -24,7 +24,7 @@ describe("Test for form validators", function() {
             field.value.andReturn(" ");
 
             var validationMessage = validator.validate(field);
-            expect(validationMessage).toBe(null);
+            expect(validationMessage).toBe('integerFieldMessage');
         });
         it("should validate an integer", function() {
             field.value.andReturn("7");
