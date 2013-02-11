@@ -208,13 +208,12 @@
 
 
     <div class="messages-container">
-        <h2>
+        <h1>
             ${ ui.message("emr.mergePatients.confirmationSubtext") }
-            <em>${ ui.message("emr.mergePatients.allDataWillBeCombined") }</em>
             <% if (overlappingVisits) { %>
             <em>${ ui.message("emr.mergePatients.overlappingVisitsWillBeJoined") }</em>
             <% } %>
-        </h2>
+        </h1>
     </div>
 
     <% def buttonClass = (isUnknownPatient ? "button confirm" : "button disabled") %>

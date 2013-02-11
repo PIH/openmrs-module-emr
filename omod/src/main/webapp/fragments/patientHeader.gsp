@@ -21,8 +21,8 @@
 
     <div class="demographics">
         <h1 class="name">
-            <span>${ ui.format(patient.patient.familyName) },<em>surname</em></span>
-            <span>${ ui.format(patient.patient.givenName) }<em>name</em></span>
+            <span>${ ui.format(patient.patient.familyName) },<em>${ui.message("emr.patientHeader.surname")}</em></span>
+            <span>${ ui.format(patient.patient.givenName) }<em>${ui.message("emr.patientHeader.name")}</em></span>
         </h1>
         <div class="gender-age">
             <span>${ ui.message("emr.gender." + patient.gender) }</span>
@@ -44,7 +44,7 @@
 
 
     <div class="identifiers">
-        <em>ID number</em>
+        <em>${ui.message("emr.patientHeader.patientId")}</em>
         <span>${patient.primaryIdentifier.identifier}</span>
         <% if (patient.paperRecordIdentifier) { %>
             <br />

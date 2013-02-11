@@ -199,11 +199,11 @@ public class ArchivesRoomFragmentControllerTest {
     }
 
     @Test
-    public void testControllerShouldAssignRequsets() throws Exception {
+    public void testControllerShouldAssignRequests() throws Exception {
 
         List<PaperRecordRequest> requests = createSamplePaperRecordRequestList();
 
-        FragmentActionResult result = controller.assignRequests(requests, paperRecordService, emrContext, ui);
+        FragmentActionResult result = controller.pullRequests(requests, paperRecordService, emrContext, ui);
 
         assertThat(result, instanceOf(SuccessResult.class));
         verify(paperRecordService).assignRequests(eq(requests), eq(authenicatedUser.getPerson()), eq(sessionLocation));

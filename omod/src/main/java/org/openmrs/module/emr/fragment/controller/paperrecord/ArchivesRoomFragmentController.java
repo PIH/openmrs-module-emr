@@ -121,7 +121,7 @@ public class ArchivesRoomFragmentController {
         return results;
     }
 
-    public FragmentActionResult assignRequests(@RequestParam("requestId[]") List<PaperRecordRequest> requests,
+    public FragmentActionResult pullRequests(@RequestParam("requestId[]") List<PaperRecordRequest> requests,
                                                 @SpringBean("paperRecordService") PaperRecordService paperRecordService,
                                                 EmrContext emrContext, UiUtils ui) {
 
@@ -129,7 +129,28 @@ public class ArchivesRoomFragmentController {
 
         try {
             paperRecordService.assignRequests(requests, assignTo, emrContext.getSessionLocation());
-            return new SuccessResult(ui.message("emr.archivesRoom.assignRecords.message"));
+            return new SuccessResult(ui.message("emr.archivesRoom.pullRequests.message"));
+        }
+        catch (UnableToPrintPaperRecordLabelException ex) {
+            log.error(ex);
+            return new FailureResult(ui.message("emr.archivesRoom.error.unableToPrintLabel"));
+        }
+        catch (IllegalStateException ex) {
+            log.error(ex);
+            return new FailureResult(ui.message("emr.archivesRoom.error.unableToAssignRecords"));
+        }
+
+    }
+
+    public FragmentActionResult createRequests(@RequestParam("requestId[]") List<PaperRecordRequest> requests,
+                                             @SpringBean("paperRecordService") PaperRecordService paperRecordService,
+                                             EmrContext emrContext, UiUtils ui) {
+
+        Person assignTo = emrContext.getUserContext().getAuthenticatedUser().getPerson();
+
+        try {
+            paperRecordService.assignRequests(requests, assignTo, emrContext.getSessionLocation());
+            return new SuccessResult(ui.message("emr.archivesRoom.createRequests.message"));
         }
         catch (UnableToPrintPaperRecordLabelException ex) {
             log.error(ex);
