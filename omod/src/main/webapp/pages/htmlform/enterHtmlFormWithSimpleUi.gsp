@@ -33,14 +33,20 @@ ${ ui.includeFragment("emr", "htmlform/enterHtmlForm", [
 <script type="text/template" id="confirmation-template">
     <div id="confirmation">
         <span class="title">${ ui.message("mirebalais.vitals.confirm.title") }</span>
-        <div id="confirmationQuestion">
-            ${ ui.message("emr.simpleFormUi.confirm.question") }
-            <input type="submit" value="${ ui.message("emr.yes") }" class="confirm"/>
-            ${ ui.message("emr.simpleFormUi.confirm.or")}
-            <input type="button" value="${ ui.message("emr.no") }" class="cancel" />
+
+        <div id="confirmationQuestion" class="container half-width">
+            <h3>${ ui.message("emr.simpleFormUi.confirm.question") }</h3>
+
+            <div class="before-dataCanvas"></div>
+            <div id="dataCanvas"></div>
+            <div class="after-data-canvas"></div>
+
+            <p style="display: inline">
+                <input type="submit" value="${ ui.message("emr.save") }" class="confirm right"/>
+            </p>
+            <p style="display: inline">
+                <input type="button" value="${ ui.message("emr.no") }" class="cancel" />
+            </p>
         </div>
-        <div class="before-dataCanvas"></div>
-        <div id="dataCanvas"></div>
-        <div class="after-data-canvas"></div>
     </div>
 </script>

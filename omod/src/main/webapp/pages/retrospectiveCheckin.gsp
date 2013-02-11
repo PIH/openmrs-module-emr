@@ -13,9 +13,6 @@ ${ ui.includeFragment("emr", "validationMessages")}
 <script type="text/javascript">
     jQuery(function() {
         KeyboardController();
-        jQuery("#cancelSubmission").click(function() {
-            window.location.href = emr.pageLink("emr", "patient", {patientId:${patient.id}});
-        });
     });
 </script>
 
@@ -121,7 +118,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
         <div id="confirmation">
             <span class="title">Confirm</span>
             <div id="confirmationQuestion">
-                Confirm submission? <p style="display: inline"><input type="submit" value="Yes" /></p> or <p style="display: inline"><input id="cancelSubmission" type="button" value="No" /></p>
+                Confirm submission? <p style="display: inline"><input type="submit" class="confirm" value="Yes" /></p> or <p style="display: inline"><input id="cancelSubmission" class="cancel" type="button" value="No" /></p>
             </div>
             <div class="before-dataCanvas"></div>
             <div id="dataCanvas"></div>

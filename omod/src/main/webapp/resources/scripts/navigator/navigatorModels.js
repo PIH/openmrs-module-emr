@@ -118,6 +118,18 @@ QuestionModel.prototype.title = function() {
 }
 
 /*
+ * Specific model for the Yes/No confirmation question
+ */
+function ConfirmationQuestionModel(elem, section, titleListElem) {
+    QuestionModel.apply(this, [elem, section, titleListElem]);
+    $(elem).find('input.cancel').click(function() {
+        section.sections[0].title.click();
+    });
+}
+ConfirmationQuestionModel.prototype = new QuestionModel();
+ConfirmationQuestionModel.prototype.constructor = ConfirmationQuestionModel;
+
+/*
  * Prototype for sections
  */
 function SectionModel(elem, formMenuElem) {
@@ -164,7 +176,7 @@ function ConfirmationSectionModel(elem, formMenuElem, regularSections) {
     this.dataCanvas = this.element.find('#dataCanvas');
 
     this.questions = _.map(this.element.find("#confirmationQuestion"), function(questionElement) {
-        return new QuestionModel(questionElement, this);
+        return new ConfirmationQuestionModel(questionElement, this);
     }, this);
 }
 ConfirmationSectionModel.prototype = new SelectableModel();
@@ -177,7 +189,7 @@ ConfirmationSectionModel.prototype.select = function() {
     this.dataCanvas.append(listElement);
     _.each(this.sections, function(section) {
         _.each(section.questions, function(question) {
-            listElement.append("<li><span class='label'>" + question.title().text() + ":</span> <span class='value'>" + question.valueAsText + "</span></li>");
+            listElement.append("<li><span class='label'>" + question.title().text() + ":</span> <strong>" + question.valueAsText + "</strong></li>");
         })
     });
 }
