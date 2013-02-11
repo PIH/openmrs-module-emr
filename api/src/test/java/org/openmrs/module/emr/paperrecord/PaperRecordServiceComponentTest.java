@@ -72,13 +72,13 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     }
 
     @Test
-    public void testPaperMedicalRecordExistsReturnsTrueIfPaperMedicalRecordExists() {
+    public void testPaperMedicalRecordExistsWithIdentifierReturnsTrueIfPaperMedicalRecordExists() {
 
         // from the standard test dataset
         Location medicalRecordLocation = locationService.getLocation(1);
 
         // this identifier exists in the standard test data set
-        Assert.assertTrue(paperRecordService.paperRecordExists("101", medicalRecordLocation));
+        Assert.assertTrue(paperRecordService.paperRecordExistsWithIdentifier("101", medicalRecordLocation));
     }
 
     @Test
@@ -88,7 +88,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Location medicalRecordLocation = locationService.getLocation(1001);
 
         // this identifier exists in the standard test data set
-        Assert.assertTrue(paperRecordService.paperRecordExists("101", medicalRecordLocation));
+        Assert.assertTrue(paperRecordService.paperRecordExistsWithIdentifier("101", medicalRecordLocation));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Location medicalRecordLocation = locationService.getLocation(1);
 
         // this identifier exists in the standard test data set
-        Assert.assertFalse(paperRecordService.paperRecordExists("112", medicalRecordLocation));
+        Assert.assertFalse(paperRecordService.paperRecordExistsWithIdentifier("112", medicalRecordLocation));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Location medicalRecordLocation = locationService.getLocation(2);
 
         // this identifier exists in the standard test data set
-        Assert.assertFalse(paperRecordService.paperRecordExists("101", medicalRecordLocation));
+        Assert.assertFalse(paperRecordService.paperRecordExistsWithIdentifier("101", medicalRecordLocation));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Location medicalRecordLocation = locationService.getLocation(1);
 
         // this identifier exists in the standard test data set
-        Assert.assertFalse(paperRecordService.paperRecordExists("6TS-4", medicalRecordLocation));
+        Assert.assertFalse(paperRecordService.paperRecordExistsWithIdentifier("6TS-4", medicalRecordLocation));
     }
 
     @Test
@@ -128,7 +128,47 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Location medicalRecordLocation = locationService.getLocation(1);
 
         // this identifier exists in the standard test data set
-        Assert.assertFalse(paperRecordService.paperRecordExists("ABC123", medicalRecordLocation));
+        Assert.assertFalse(paperRecordService.paperRecordExistsWithIdentifier("ABC123", medicalRecordLocation));
+    }
+
+    @Test
+    public void testPaperMedicalRecordExistsForPatientWithIdentifierReturnsTrueIfPaperMedicalRecordExists() {
+
+        // from the standard test dataset
+        Location medicalRecordLocation = locationService.getLocation(1);
+
+        // this identifier exists in the standard test data set
+        Assert.assertTrue(paperRecordService.paperRecordExistsForPatientWithIdentifier("101-6", medicalRecordLocation));
+    }
+
+    @Test
+    public void testPaperMedicalRecordExistsForPatientShouldReturnFalseIfWrongIdentifierType() {
+
+        // from the standard test dataset
+        Location medicalRecordLocation = locationService.getLocation(1);
+
+        // this identifier exists in the standard test data set, but it is paper record identifier, not a patient identifier
+        Assert.assertFalse(paperRecordService.paperRecordExistsForPatientWithIdentifier("101", medicalRecordLocation));
+    }
+
+    @Test
+    public void testPaperMedicalRecordExistsForPatientShouldReturnFalseIfWrongLocation() {
+
+        // from the standard test dataset
+        Location medicalRecordLocation = locationService.getLocation(2);
+
+        // the patient with this primary identifier has a paper record identifier for location 1, but not location 2
+        Assert.assertFalse(paperRecordService.paperRecordExistsForPatientWithIdentifier("101-6", medicalRecordLocation));
+    }
+
+    @Test
+    public void testPaperMedicalRecordExistsForPatientShouldReturnFalseIfPaperRecordIdentifierVoided() {
+
+        // from the standard test dataset
+        Location medicalRecordLocation = locationService.getLocation(1);
+
+        // the patient with this primary identifier has a paper record identifier, but it is voided
+        Assert.assertFalse(paperRecordService.paperRecordExistsForPatientWithIdentifier("7TU-8", medicalRecordLocation));
     }
 
     @Test
@@ -296,7 +336,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     }
 
     @Test
-    public void testRequestPaperRecordWhenDuplicateRecord() {
+    public void testRequestPaperRecordWithDuplicateRequest() {
 
         // all these are from the standard test dataset
         Patient patient = patientService.getPatient(2) ;
@@ -327,7 +367,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     }
 
     @Test
-    public void testRequestPaperRecordWhenDuplicateRecordShouldUpdateLocation() {
+    public void testRequestPaperRecordWhenDuplicateRequestShouldUpdateLocation() {
 
         // all these are from the standard test dataset
         Patient patient = patientService.getPatient(2) ;
@@ -359,7 +399,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     }
 
     @Test
-    public void testRequestPaperRecordWhenDuplicateRecordThatHasAlreadyBeenAssigned() throws UnableToPrintPaperRecordLabelException {
+    public void testRequestPaperRecordWhenDuplicateRequestThatHasAlreadyBeenAssigned() throws UnableToPrintPaperRecordLabelException {
 
         // all these are from the standard test dataset
         Patient patient = patientService.getPatient(2) ;
@@ -424,7 +464,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
 
     @Test
-    public void testRequestPaperRecordShouldNotConsiderCompletedRequestAsDuplicate() {
+    public void testRequestPaperRecordShouldNotConsiderSentRequestAsDuplicate() {
 
         // create a request for the patient that has a "completed" request defined in paperRecordServiceComponentTestDataset.xml
         Patient patient = patientService.getPatient(7) ;
@@ -501,6 +541,27 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     }
 
     @Test
+    public void testGetPendingRequestByIdentifierShouldReturnOpenRequestWhenReferencedByPatientIdentifier() {
+
+        // all these are from the standard test dataset
+        Patient patient = patientService.getPatient(2) ;
+        Location medicalRecordLocation = locationService.getLocation(1);
+        Location requestLocation = locationService.getLocation(3);
+
+        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
+
+        PaperRecordRequest request = paperRecordService.getPendingPaperRecordRequestByIdentifier("101-6");
+
+        Assert.assertEquals(new Integer(2), request.getPatient().getId());
+        Assert.assertEquals(new Integer(1), request.getRecordLocation().getId());
+        Assert.assertEquals(new Integer(3), request.getRequestLocation().getId());
+        Assert.assertEquals("101", request.getIdentifier());
+        Assert.assertEquals(PaperRecordRequest.Status.OPEN, request.getStatus());
+        Assert.assertNull(request.getAssignee());
+
+    }
+
+    @Test
     public void testGetPendingRequestByIdentifierShouldReturnNullIfNoActiveRequests() {
         // there is a paper record request in the sample database with this identifier, but it is marked as SENT
         Assert.assertNull(paperRecordService.getPendingPaperRecordRequestByIdentifier("CATBALL"));
@@ -555,7 +616,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         paperRecordService.markPaperRecordRequestAsSent(request);
 
         // mark it as returned
-        paperRecordService.markPaperRecordRequestsAsReturned(request.getIdentifier());
+        paperRecordService.markPaperRecordRequestAsReturned(request);
 
         // make sure this request has been changed to "returned" in the database
         Context.flushSession();
@@ -565,31 +626,25 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Assert.assertEquals(PaperRecordRequest.Status.RETURNED, request.getStatus());
     }
 
-    @Test(expected = NoMatchingPaperMedicalRequestException.class)
-    public void testMarkPaperRecordRequestsAsReturnedShouldThrowExceptionIfNoMatchingRequestInSentState()
-        throws Exception{
-
-        // all these are from the standard test dataset
-        Patient patient = patientService.getPatient(2) ;
-        Location medicalRecordLocation = locationService.getLocation(1);
-        Location requestLocation = locationService.getLocation(3);
-
-        // request a record
-        paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
-
-        // retrieve that record
-        PaperRecordRequest request = paperRecordService.getOpenPaperRecordRequestsToPull().get(0);
-
-        // mark it as returned
-        paperRecordService.markPaperRecordRequestsAsReturned(request.getIdentifier());
+    @Test
+    public void testGetSentPaperRecordRequestsShouldFetchSentRecordRequest() {
+        // this identifier exists in the sample test data
+        List<PaperRecordRequest> requests = paperRecordService.getSentPaperRecordRequestByIdentifier("CATBALL");
+        Assert.assertNotNull(requests);
+        Assert.assertEquals(1, requests.size());
+        Assert.assertEquals(new Integer(1), requests.get(0).getId());
     }
 
     @Test
-    public void testGetSentPaperRecordRequestShouldFetchSentRecordRequest() {
+    public void testGetSentPaperRecordRequestsShouldFetchSentRecordRequestsReferencedByPatientIdentifier() {
         // this identifier exists in the sample test data
-        PaperRecordRequest request = paperRecordService.getSentPaperRecordRequestByIdentifier("CATBALL");
-        Assert.assertNotNull(request);
-        Assert.assertEquals(new Integer(1), request.getId());
+        List<PaperRecordRequest> requests = paperRecordService.getSentPaperRecordRequestByIdentifier("6TS-4");
+        Assert.assertNotNull(requests);
+        Assert.assertEquals(2, requests.size());
+
+        // make sure the right requests are returned
+        Assert.assertTrue((requests.get(0).getId() == 1 && requests.get(1).getId() == 2) ||
+                (requests.get(0).getId() == 2 && requests.get(1).getId() == 1));
     }
 
     @Test

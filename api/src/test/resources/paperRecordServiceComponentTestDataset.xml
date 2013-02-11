@@ -7,6 +7,7 @@
     <global_property property="emr.primaryIdentifierType" property_value="1a339fe9-38bc-4ab3-b180-320988c0b968" uuid="776cb3c3-9e66-42c6-8f03-2a0c1e9ca2a8"/>
 
     <emr_paper_record_request request_id="1" identifier="CATBALL" patient_id="7" request_location="2" record_location="1" status="SENT" date_created="2006-01-18 00:00:00.0" uuid="696cb3c3-9e66-42c6-8f03-2a0c1e9ca2a8"/>
+    <emr_paper_record_request request_id="2" identifier="DOGBALL" patient_id="7" request_location="2" record_location="1" status="SENT" date_created="2006-01-18 00:00:00.0" uuid="776cb3c3-9e66-42c6-8f03-2a0c1e9ca2a8"/>
 
     <location_tag location_tag_id="1001" name="Medical Record Location" description="Medical Record Location"
                   creator="1" date_created="2012-10-23 16:13:45 " retired="0" uuid="0967d73d-f3c9-492b-abed-356478610a66" />

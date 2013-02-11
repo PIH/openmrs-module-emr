@@ -183,14 +183,16 @@ public class ArchivesRoomFragmentController {
             PaperRecordRequest paperRecordRequest = paperRecordService.getPendingPaperRecordRequestByIdentifier(identifier);
 
             if (paperRecordRequest == null) {
-                // if matching request found, determine what error we need to return
-                paperRecordRequest = paperRecordService.getSentPaperRecordRequestByIdentifier(identifier);
-                if (paperRecordRequest == null) {
+                // if no matching request found, determine what error we need to return
+                List<PaperRecordRequest> sentRequests = paperRecordService.getSentPaperRecordRequestByIdentifier(identifier);
+                if (sentRequests == null || sentRequests.size() == 0) {
                     return new FailureResult(ui.message("emr.archivesRoom.error.paperRecordNotRequested", ui.format(identifier)));
                 }
                 else {
-                    return new FailureResult(ui.message("emr.archivesRoom.error.paperRecordAlreadySent", ui.format(identifier),
-                            ui.format(paperRecordRequest.getRequestLocation()), ui.format(paperRecordRequest.getDateStatusChanged())));
+                    // note that if for some reason there are multiple sent requests, we just return the identifier of
+                    // the last request in the list (under the possibly faulty assumption that this is the most recent)
+                    return new FailureResult(ui.message("emr.archivesRoom.error.paperRecordAlreadySent", ui.format(sentRequests.get(sentRequests.size() - 1).getIdentifier()),
+                            ui.format(sentRequests.get(sentRequests.size() - 1).getRequestLocation()), ui.format(sentRequests.get(sentRequests.size() - 1).getDateStatusChanged())));
                 }
             }
            else {
@@ -204,7 +206,7 @@ public class ArchivesRoomFragmentController {
                             "</span>" +
                             ui.message("emr.archivesRoom.recordNumber.label") + 
                             "<span class=\"toast-record-id\">" + 
-                                ui.format(identifier) + 
+                                ui.format(paperRecordRequest.getIdentifier()) +
                             "</span>" + 
                         "</span>");
             }
@@ -223,20 +225,28 @@ public class ArchivesRoomFragmentController {
                                                                 UiUtils ui) {
 
         try {
-            paperRecordService.markPaperRecordRequestsAsReturned(identifier);
+            // fetch the send requests associated with this message
+            List<PaperRecordRequest> sentRequests = paperRecordService.getSentPaperRecordRequestByIdentifier(identifier);
+
+            // handle not finding a match
+            if (sentRequests == null || sentRequests.size() == 0) {
+                // as long as this identifier exists, we can return a success message (no error if they mistakenly scan a record twice)
+                if (paperRecordService.paperRecordExistsWithIdentifier(identifier, emrContext.getSessionLocation())
+                        || paperRecordService.paperRecordExistsForPatientWithIdentifier(identifier, emrContext.getSessionLocation()) ) {
+                    return new SuccessResult(ui.message("emr.archivesRoom.recordReturned.message"));
+                }
+                else {
+                    return new FailureResult(ui.message("emr.archivesRoom.error.noPaperRecordExists"));
+                }
+            }
+
+            // mark all the records as returned
+            for (PaperRecordRequest request : sentRequests) {
+                paperRecordService.markPaperRecordRequestAsReturned(request);
+            }
+
             return new SuccessResult(ui.message("emr.archivesRoom.recordReturned.message") + "<br/><br/>"
-                    + ui.message("emr.archivesRoom.recordNumber.label") + ": " + ui.format(identifier));
-        }
-        catch (NoMatchingPaperMedicalRequestException e)  {
-           // as long as this record exists, we can return a success message
-            if (paperRecordService.paperRecordExists(identifier, emrContext.getSessionLocation())) {
-                return new SuccessResult(ui.message("emr.archivesRoom.recordReturned.message") + "<br/><br/>"
-                        + ui.message("emr.archivesRoom.recordNumber.label") + ": " + ui.format(identifier));
-            }
-            else {
-                log.warn(e);
-                return new FailureResult(ui.message("emr.archivesRoom.error.noPaperRecordExists", ui.format(identifier)));
-            }
+                    + ui.message("emr.archivesRoom.recordNumber.label") + " " + ui.format(sentRequests.get(0).getIdentifier()));
         }
         catch (Exception e) {
             // generic catch-all

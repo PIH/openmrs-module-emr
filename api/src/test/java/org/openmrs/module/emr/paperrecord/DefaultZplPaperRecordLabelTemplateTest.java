@@ -38,7 +38,9 @@ public class DefaultZplPaperRecordLabelTemplateTest {
         when(Context.getLocale()).thenReturn(new Locale("en"));
 
         MessageSourceService messageSourceService = mock(MessageSourceService.class);
-        when(messageSourceService.getMessage(any(String.class))).thenReturn("test");
+        when(messageSourceService.getMessage("emr.archivesRoom.recordNumber.label")).thenReturn("Dossier id:");
+        when(messageSourceService.getMessage("emr.gender.M")).thenReturn("Male");
+        when(messageSourceService.getMessage("emr.gender.F")).thenReturn("Female");
 
         EmrProperties emrProperties = mock(EmrProperties.class);
         primaryIdentifierType = new PatientIdentifierType();
@@ -122,7 +124,7 @@ public class DefaultZplPaperRecordLabelTemplateTest {
 
         String data = template.generateLabel(patient, "123");
         System.out.println(data);
-        Assert.assertTrue(data.equals("^XA^CI28^FO140,40^AVN^FDIndiana Jones^FS^FO140,140^ATN^FD02/Dec/2010  ^FS^FO140,190^ATN^FDtest^FS^FO350,140^FB350,1,0,R,0^AVN^FDABC^FS^FO780,40^ATN^BY4^BCN,150^FD123^FS^XZ"));
+        Assert.assertTrue(data.equals("^XA^CI28^FO140,40^AVN^FDIndiana Jones^FS^FO140,120^AUN^FDABC^FS^FO140,190^ATN^FD02/Dec/2010, Female^FS^FO680,40^FB520,1,0,R,0^AUN^FDDossier id: 123^FS^FO780,100^ATN^BY4^BCN,150,N^FDABC^FS^XZ"));
 
     }
 
@@ -146,8 +148,8 @@ public class DefaultZplPaperRecordLabelTemplateTest {
         patient.addIdentifier(primaryIdentifier);
 
         PersonName name = new PersonName();
-        name.setFamilyName("Ellen");
-        name.setGivenName("Jazayeri");
+        name.setFamilyName("Jazayeri");
+        name.setGivenName("Ellen");
         patient.addName(name);
 
         PersonAddress personAddress = new PersonAddress();
@@ -158,12 +160,10 @@ public class DefaultZplPaperRecordLabelTemplateTest {
         personAddress.setCountyDistrict("Centre");
         personAddress.setCountry("Haiti");
 
-
-
         String data = template.generateLabel(patient, "A000071");
 
         Printer printer = new Printer();
-        printer.setIpAddress("10.3.18.113");
+        printer.setIpAddress("10.3.18.107");
         printer.setPort("9100");
 
         new PrinterServiceImpl().printViaSocket(data, printer, "UTF-8");

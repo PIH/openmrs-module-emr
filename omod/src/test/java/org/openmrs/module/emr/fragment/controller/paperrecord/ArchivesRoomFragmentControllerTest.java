@@ -37,6 +37,7 @@ import org.openmrs.ui.framework.fragment.action.SuccessResult;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -108,15 +109,16 @@ public class ArchivesRoomFragmentControllerTest {
     }
 
     @Test
-    public void testControllerShouldReturnFailureResultIfSentRequestFound() throws Exception {
+    public void testControllerShouldReturnFailureResultIfRecordAlreadySent() throws Exception {
 
         PaperRecordRequest request = new PaperRecordRequest();
         Location location = new Location();
         location.setName("Test location");
         request.setRequestLocation(location);
+        request.setIdentifier("123");
 
         when(paperRecordService.getPendingPaperRecordRequestByIdentifier(eq("123"))).thenReturn(null);
-        when(paperRecordService.getSentPaperRecordRequestByIdentifier(eq("123"))).thenReturn(request);
+        when(paperRecordService.getSentPaperRecordRequestByIdentifier(eq("123"))).thenReturn(Collections.singletonList(request));
 
         FragmentActionResult result = controller.markPaperRecordRequestAsSent("123", paperRecordService, ui);
 
@@ -133,7 +135,9 @@ public class ArchivesRoomFragmentControllerTest {
         Location location = new Location();
         location.setName("Test location");
         request.setRequestLocation(location);
+        request.setIdentifier("123");
         request.setDateCreated(new Date());
+        request.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_PULL);
 
         when(paperRecordService.getPendingPaperRecordRequestByIdentifier(eq("123"))).thenReturn(request);
 
@@ -144,6 +148,26 @@ public class ArchivesRoomFragmentControllerTest {
         SuccessResult successResult = (SuccessResult) result;
         assertThat(successResult.getMessage(), containsString("123"));
         assertThat(successResult.getMessage(), containsString("Test location"));
+    }
+
+    @Test
+    public void testControllerShouldMarkRecordAsReturned() throws Exception {
+
+        PaperRecordRequest request = new PaperRecordRequest();
+        Location location = new Location();
+        location.setName("Test location");
+        request.setRequestLocation(location);
+        request.setIdentifier("123");
+        request.setDateCreated(new Date());
+        request.updateStatus(PaperRecordRequest.Status.SENT);
+
+        when(paperRecordService.getSentPaperRecordRequestByIdentifier(eq("123"))).thenReturn(Collections.singletonList(request));
+
+        FragmentActionResult result = controller.markPaperRecordRequestAsReturned("123", paperRecordService, emrContext, ui);
+        assertThat(result, instanceOf(SuccessResult.class));
+        SuccessResult successResult = (SuccessResult) result;
+        assertThat(successResult.getMessage(), containsString("123"));
+
     }
 
     @Test

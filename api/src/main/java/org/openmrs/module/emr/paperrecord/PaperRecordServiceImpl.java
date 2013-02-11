@@ -29,6 +29,7 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Person;
+import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
@@ -47,8 +48,6 @@ import static org.openmrs.module.emr.paperrecord.PaperRecordRequest.PENDING_STAT
 import static org.openmrs.module.emr.paperrecord.PaperRecordRequest.Status;
 
 public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperRecordService {
-
-
 
     private PaperRecordRequestDAO paperRecordRequestDAO;
 
@@ -108,13 +107,36 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
 
     @Override
-    public boolean paperRecordExists(String identifier, Location location) {
+    public boolean paperRecordExistsWithIdentifier(String identifier, Location location) {
 
         List<PatientIdentifier> identifiers = patientService.getPatientIdentifiers(identifier,
             Collections.singletonList(emrProperties.getPaperRecordIdentifierType()),
             Collections.singletonList(getMedicalRecordLocationAssociatedWith(location)), null, null);
 
         return identifiers != null && identifiers.size() > 0 ? true : false;
+    }
+
+    @Override
+    public boolean paperRecordExistsForPatientWithIdentifier(String patientIdentifier, Location location) {
+
+        List<Patient> patients = patientService.getPatients(null, patientIdentifier, Collections.singletonList(emrProperties.getPrimaryIdentifierType()), true);
+
+        if (patients == null || patients.size() == 0) {
+            return false;
+        }
+
+        if (patients.size() > 1) {
+            // data model should prevent us from ever getting her, but just in case
+            throw new APIException("Multiple patients found with identifier " + patientIdentifier);
+        }
+        else {
+
+            List<PatientIdentifier> identifiers = patientService.getPatientIdentifiers(null,
+                    Collections.singletonList(emrProperties.getPaperRecordIdentifierType()),
+                    Collections.singletonList(getMedicalRecordLocationAssociatedWith(location)), Collections.singletonList(patients.get(0)), null);
+
+            return identifiers != null && identifiers.size() > 0 ? true : false;
+        }
     }
 
     @Override
@@ -304,13 +326,12 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     @Transactional(readOnly = true)
     public PaperRecordRequest getPendingPaperRecordRequestByIdentifier(String identifier) {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
-        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(PENDING_STATUSES, null, null,
-            identifier, null);
+        List<PaperRecordRequest> requests = getPaperRecordRequestByIdentifierAndStatus(identifier, PENDING_STATUSES);
 
         if (requests == null || requests.size() == 0) {
             return null;
         } else if (requests.size() > 1) {
-            throw new IllegalStateException("Duplicate pending record requests exist with identifier " + identifier);
+            throw new IllegalStateException("Duplicate record requests in the pending state with identifier " + identifier);
         } else {
             return requests.get(0);
         }
@@ -319,18 +340,34 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
     @Override
     @Transactional(readOnly = true)
-    public PaperRecordRequest getSentPaperRecordRequestByIdentifier(String identifier) {
+    public List<PaperRecordRequest> getSentPaperRecordRequestByIdentifier(String identifier) {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
-        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(
-            Collections.singletonList(Status.SENT), null, null, identifier, null);
+        return getPaperRecordRequestByIdentifierAndStatus(identifier, Collections.singletonList(Status.SENT));
+    }
 
+    private List<PaperRecordRequest> getPaperRecordRequestByIdentifierAndStatus(String identifier, List<Status> statusList) {
+        // TODO: once we have multiple medical record locations, we will need to add location as a criteria
+
+        // first see if we find any requests by paper record identifier
+        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(
+                statusList, null, null, identifier, null);
+
+        // if no requests, see if this is patient identifier
         if (requests == null || requests.size() == 0) {
-            return null;
-        } else if (requests.size() > 1) {
-            throw new IllegalStateException("Duplicate sent record requests exist with identifier " + identifier);
-        } else {
-            return requests.get(0);
+            List<Patient> patients = patientService.getPatients(null, identifier, Collections.singletonList(emrProperties.getPrimaryIdentifierType()), true);
+            if (patients != null && patients.size() > 0)  {
+                if (patients.size() > 1) {
+                    throw new IllegalStateException("Duplicate patients exist with identifier " + identifier);
+                }
+                else {
+                    requests = paperRecordRequestDAO.findPaperRecordRequests(statusList, patients.get(0), null,
+                            null, null);
+                }
+            }
+
         }
+
+        return requests;
     }
 
     @Override
@@ -350,24 +387,9 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
     @Override
     @Transactional
-    public void markPaperRecordRequestsAsReturned(String identifier)
-        throws NoMatchingPaperMedicalRequestException {
-        // TODO: once we have multiple medical record locations, we will need to add location as a criteria
-
-        List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(
-            Collections.singletonList(Status.SENT),
-            null, null, identifier, null);
-
-        if (requests.size() == 0) {
-            throw new NoMatchingPaperMedicalRequestException();
-        }
-
-        // we should never have more than one request in the sent state for the same record, but there
-        // shouldn't be any harm in marking them all as closed if we do
-        for (PaperRecordRequest request : requests) {
-            request.updateStatus(Status.RETURNED);
-            savePaperRecordRequest(request);
-        }
+    public void markPaperRecordRequestAsReturned(PaperRecordRequest request) {
+        request.updateStatus(Status.RETURNED);
+        savePaperRecordRequest(request);
     }
 
     @Override
