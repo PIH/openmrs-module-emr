@@ -140,6 +140,36 @@ var emr = (function($) {
             }
         },
 
+        updateBreadcrumbs: function(extraBreadcrumbs) {
+            if (typeof breadcrumbs == 'undefined') {
+                return;
+            }
+            var toUse = breadcrumbs;
+            if (extraBreadcrumbs) {
+                toUse = _.clone(breadcrumbs);
+                if (extraBreadcrumbs == null || extraBreadcrumbs.length == 0) {
+                    var index = toUse.length - 1;
+                    var modified = _.clone(toUse[index]);
+                    modified.link = null;
+                    toUse[index] = modified;
+                }
+                _.each(extraBreadcrumbs, function(item) {
+                    toUse.push(item);
+                })
+            }
+            $('#breadcrumbs').html(this.generateBreadcrumbHtml(toUse));
+        },
+
+        generateBreadcrumbHtml: function(breadcrumbs) {
+            var breadcrumbTemplate = _.template($('#breadcrumb-template').html());
+            var html = "";
+
+            _.each(breadcrumbs, function(item, index) {
+                html += breadcrumbTemplate({ breadcrumb: item, first: index == 0, last: index == breadcrumbs.length-1 });
+            });
+            return html;
+        },
+
         // opts requires 'encounterId' and 'targetSelector'
         showEncounterWithHtmlForm: function(opts) {
             getFragmentActionWithCallback('emr', 'htmlform/viewEncounterWithHtmlForm', 'getAsHtml', { encounterId: opts.encounterId }, function(data) {

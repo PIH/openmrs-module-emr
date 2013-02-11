@@ -1,7 +1,13 @@
 <%
     def dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy")
 %>
-
+<script type="text/javascript">
+    var breadcrumbs = [
+        { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
+        { label: "${ ui.format(patient.patient.familyName) }, ${ ui.format(patient.patient.givenName) }" , link: '${ui.pageLink("emr", "patient", [patientId: patient.patient.id])}'},
+        { label: "${ui.message("emr.patientDashBoard.visits")}" , link:'${ui.pageLink("emr", "patient", [patientId: patient.id])}'}
+    ];
+</script>
 <script type="text/template" id="visitDetailsTemplate">
     <h3>${ui.message("emr.patientDashBoard.visitDetails")}</h3>
     <p>
@@ -50,6 +56,9 @@
                     visitDetailsSection.html(visitDetailsTemplate(data));
                     visitsSection.hide();
                     visitDetailsSection.show();
+                    emr.updateBreadcrumbs([
+                        { label: "Visit Details", last: true }
+                    ]);
                 })
                 .error(function(err) {
                     emr.errorMessage(err);

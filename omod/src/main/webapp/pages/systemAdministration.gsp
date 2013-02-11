@@ -4,6 +4,13 @@
     ui.includeCss("mirebalais", "systemAdministration.css")
 %>
 
+<script type="text/javascript">
+    var breadcrumbs = [
+        { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
+        { label: "${ ui.message("emr.app.systemAdministration.label")}"}
+    ];
+</script>
+
 <div id="tasks">
     <a class="button big" href="${ ui.pageLink("emr", "account/manageAccounts") }">
         <div class="task">

@@ -21,6 +21,8 @@
 
 </script>
 
+
+
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
 <div class="tabs" xmlns="http://www.w3.org/1999/html">
     <div class="dashboard-container">

@@ -2,6 +2,13 @@
     ui.decorateWith("emr", "standardEmrPage")
     ui.includeCss("emr", "account.css")
 %>
+<script type="text/javascript">
+    var breadcrumbs = [
+        { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
+        { label: "${ ui.message("emr.app.systemAdministration.label")}", link: '${ui.pageLink("emr", "systemAdministration")}' },
+        { label: "${ ui.message("emr.task.accountManagement.label")}" }
+    ];
+</script>
 
 <h3>${  ui.message("emr.task.accountManagement.label") }</h3>
 
