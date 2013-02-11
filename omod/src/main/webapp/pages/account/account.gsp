@@ -147,7 +147,7 @@
 	
 	<fieldset>
 		<legend>${ ui.message("emr.provider.details") }</legend>
-		<div class="emr_providerDetails" ${ (!account.providerRole) ? "style='display: none'" : "" }>
+		<div class="emr_providerDetails" ${ (!account.provider) ? "style='display: none'" : "" }>
             <p>
                 ${ ui.includeFragment("emr", "field/dropDown", [
                         label: ui.message("emr.account.providerRole.label"),
@@ -161,7 +161,7 @@
 
         </div>
 		<div class="emr_providerDetails">
-		<% if(!account.providerRole) { %>
+		<% if(!account.provider) { %>
 			<button id="createProviderAccountButton" type="button" onclick="javascript:emr_createProviderAccount()">${ ui.message("emr.provider.createProviderAccount") }</button>
 		<% } %>
 		</div>
