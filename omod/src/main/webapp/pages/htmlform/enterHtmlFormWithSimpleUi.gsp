@@ -4,7 +4,7 @@
     ui.includeJavascript("emr", "navigator/navigator.js", Integer.MAX_VALUE - 20)
     ui.includeJavascript("emr", "navigator/navigatorHandlers.js", Integer.MAX_VALUE - 21)
     ui.includeJavascript("emr", "navigator/navigatorModels.js", Integer.MAX_VALUE - 21)
-    ui.includeCss("emr", "simpleFormUi.css")
+    ui.includeCss("emr", "simpleFormUi.css", -200)
 %>
 
 ${ ui.includeFragment("emr", "validationMessages")}

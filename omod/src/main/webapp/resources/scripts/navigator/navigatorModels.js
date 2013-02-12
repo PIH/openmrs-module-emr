@@ -62,7 +62,7 @@ FieldModel.prototype.isValid = function() {
            this.messagesContainer.append(message);
         }, this);
         this.element.addClass("error");
-        this.messagesContainer.css("display", "inline");
+        this.messagesContainer.show();
         return false;
     }
     return true;

@@ -112,6 +112,7 @@ section, #confirmation {
 
   p {
     margin: 0 5px;
+    text-align: left;
     label {
       font-size: 1.2em;
       span {
@@ -121,7 +122,8 @@ section, #confirmation {
     }
     .field-error {
       color: $error;
-      font-size: 0.9em;
+      font-size: 1.1em;
+      display: block;
     }
   }
 
@@ -137,6 +139,7 @@ section, #confirmation {
     legend { display: none }
 
     select, input {
+      display: inline;
       &:focus {
         border: 2px solid $link;
 
@@ -157,5 +160,11 @@ section, #confirmation {
   }
   ul > li > strong {
     font-size: 2em;
+  }
+}
+
+form {
+  input {
+    min-width: auto;
   }
 }
