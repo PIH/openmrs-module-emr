@@ -24,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -504,10 +505,52 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
     }
 
     private void fixPaperRecordRequestsForMerge(Patient preferred, Patient notPreferred) {
-        List<PaperRecordRequest> preferredRecordRequests = paperRecordService.getPaperRecordRequestsByPatient(preferred);
-        List<PaperRecordRequest> notPreferredRecordRequests = paperRecordService.getPaperRecordRequestsByPatient(notPreferred);
 
-        if (preferredRecordRequests.size() > 0 && notPreferredRecordRequests.size() > 0) {
+        List<PaperRecordRequest> requestsForPreferred = paperRecordService.getPaperRecordRequestsByPatient(preferred);
+        List<PaperRecordRequest> requestsForNotPreferred = paperRecordService.getPaperRecordRequestsByPatient(notPreferred);
+        List<PaperRecordRequest> allRequests = ListUtils.union(requestsForPreferred, requestsForNotPreferred);
+
+        // for now, we will just cancel any pending paper record requests for the preferred patient and non-preferred patient
+        for (PaperRecordRequest request : allRequests) {
+            if(PaperRecordRequest.PENDING_STATUSES.contains(request.getStatus())) {
+                paperRecordService.markPaperRecordRequestAsCancelled(request);
+            }
+        }
+
+        // also copy over all the non-preferred patient requests to the new patient
+        for (PaperRecordRequest request : requestsForNotPreferred) {
+            request.setPatient(preferred);
+            paperRecordService.savePaperRecordRequest(request);
+        }
+
+        // see if we need to create any requests to merge paper records (look for paper record identifiers at the same location)
+        List<PatientIdentifier> preferredPaperRecordIdentifiers = preferred.getPatientIdentifiers(emrProperties.getPaperRecordIdentifierType());
+        List<PatientIdentifier> notPreferredPaperRecordIdentifiers = notPreferred.getPatientIdentifiers(emrProperties.getPaperRecordIdentifierType());
+
+        for (PatientIdentifier preferredPaperRecordIdentifier : preferredPaperRecordIdentifiers) {
+            for (PatientIdentifier notPreferredPaperRecordIdentifier: notPreferredPaperRecordIdentifiers) {
+                if (preferredPaperRecordIdentifier.getLocation().equals(notPreferredPaperRecordIdentifier.getLocation())) {
+                    paperRecordService.markPaperRecordsForMerge(preferredPaperRecordIdentifier, notPreferredPaperRecordIdentifier);
+                }
+            }
+        }
+
+        // TODO: this code is potential strategy #1 for improved handling of merging... we reissue cancelled requests...
+        // TODO: this would be done after cancelling all the requests
+
+        /*// now that the records have been marked for merge (and identifiers have been combined) reissue the cancelled requests, using the preferred patient
+        // (note that if there happened to be pending requests for both patients at the record location, we will only end up with one request)
+        for (PaperRecordRequest request : recordRequestsToReissue) {
+            paperRecordService.requestPaperRecord(preferred, request.getRecordLocation(), request.getRequestLocation());
+        }
+*/
+
+        // TODO: this code is potential strategy #2 for improved handling of pending paper record requests when merging two patient records
+        // TODO: this would be done in lieu of cancelling all the requests
+
+        // see if we have pending requests for both records
+
+     /*   if (preferredRecordRequests.size() > 0 && notPreferredRecordRequests.size() > 0) {
             if (!cancelOpenCreateRequest(notPreferredRecordRequests)) {
                cancelOpenCreateRequest(preferredRecordRequests);
             }
@@ -534,18 +577,7 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
             }
             paperRecordService.savePaperRecordRequest(request);
         }
-
-        // see if we need to create any requests to merge paper records (look for paper record identifiers at the same location)
-        List<PatientIdentifier> preferredPaperRecordIdentifiers = preferred.getPatientIdentifiers(emrProperties.getPaperRecordIdentifierType());
-        List<PatientIdentifier> notPreferredPaperRecordIdentifiers = notPreferred.getPatientIdentifiers(emrProperties.getPaperRecordIdentifierType());
-
-        for (PatientIdentifier preferredPaperRecordIdentifier : preferredPaperRecordIdentifiers) {
-            for (PatientIdentifier notPreferredPaperRecordIdentifier: notPreferredPaperRecordIdentifiers) {
-                if (preferredPaperRecordIdentifier.getLocation().equals(notPreferredPaperRecordIdentifier.getLocation())) {
-                    paperRecordService.markPaperRecordsForMerge(preferredPaperRecordIdentifier, notPreferredPaperRecordIdentifier);
-                }
-            }
-        }
+*/
     }
 
     private boolean cancelOpenCreateRequest(List<PaperRecordRequest> requests) {

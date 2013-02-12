@@ -117,7 +117,7 @@ public class AdtServiceComponentTest extends BaseModuleContextSensitiveTest {
     }
 
     @Test
-    public void shouldCancelOnlyOneOpenPaperRecordRequestsToCreateAfterMerge() {
+    public void shouldCancelPendingPaperRecordRequestsTAfterMerge() {
         PatientService patientService = Context.getPatientService();
         Location paperRecordLocation = locationService.getLocation(1);
         Location someLocation = locationService.getLocation(2);
@@ -136,20 +136,20 @@ public class AdtServiceComponentTest extends BaseModuleContextSensitiveTest {
 
         service.mergePatients(preferredPatient, notPreferredPatient);
 
-        assertThat(paperRecordService.getOpenPaperRecordRequestsToCreate().size(), Matchers.is(1));
+        assertThat(paperRecordService.getOpenPaperRecordRequestsToCreate().size(), is(0));
 
-        List<PaperRecordRequest> requestList = paperRecordService.getPaperRecordRequestsByPatient(
+        List<PaperRecordRequest> paperRecordRequestsPreferred = paperRecordService.getPaperRecordRequestsByPatient(
             preferredPatient);
-        assertThat(requestList.size(), is(2));
-        assertThat(requestList,
-            hasItem(new IsExpectedPaperRecordRequest(PaperRecordRequest.Status.CANCELLED)));
-        assertThat(requestList,
-            hasItem(new IsExpectedPaperRecordRequest(PaperRecordRequest.Status.OPEN)));
+        assertThat(paperRecordRequestsPreferred.size(), is(2));
+
+        for (PaperRecordRequest request : paperRecordRequestsPreferred) {
+            assertThat(request.getStatus(), is(PaperRecordRequest.Status.CANCELLED));
+        }
 
         assertThat(paperRecordService.getPaperRecordRequestsByPatient(notPreferredPatient).size(), is(0));
     }
 
-    @Test
+  /*  @Test
     public void shoulMoveOpenPaperRecordRequestsToCreateToOpenRequestToPullAfterMerge() {
         PatientService patientService = Context.getPatientService();
         Location paperRecordLocation = locationService.getLocation(1);
@@ -206,7 +206,7 @@ public class AdtServiceComponentTest extends BaseModuleContextSensitiveTest {
         assertThat(requestList.get(0).getIdentifier(),
             is(preferredPatient.getPatientIdentifier(emrProperties.getPaperRecordIdentifierType()).getIdentifier()));
     }
-
+*/
     private class IsExpectedPaperRecordRequest extends ArgumentMatcher<PaperRecordRequest> {
         private PaperRecordRequest.Status status;
 

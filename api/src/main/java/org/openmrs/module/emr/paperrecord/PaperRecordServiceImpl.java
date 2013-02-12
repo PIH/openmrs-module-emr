@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -480,7 +478,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         // any request for the not preferred record, as this record should no longer exist
         closeOutSentPaperRecordRequestsForNotPreferredRecord(mergeRequest);
 
-        // the just mark the request as merged
+        // then just mark the request as merged
         mergeRequest.setStatus(PaperRecordMergeRequest.Status.MERGED);
         paperRecordMergeRequestDAO.saveOrUpdate(mergeRequest);
     }

@@ -608,26 +608,322 @@ public class AdtServiceTest {
     }
 
     @Test
-    public void mergingAPreferredPatientWithAKnownChartRequestWithANotPreferredPatientWithACreateChartRequestWillDropCreateRequest() {
+    public void mergingPatientsShouldCancelOpenRequestForPreferredPatient() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        Location recordLocation = new Location();
+        Location requestLocation = new Location();
+
+        PaperRecordRequest paperRecordRequest = new PaperRecordRequest();
+        paperRecordRequest.setIdentifier("ABC");
+        paperRecordRequest.setPatient(preferred);
+        paperRecordRequest.setRecordLocation(recordLocation);
+        paperRecordRequest.setRequestLocation(requestLocation);
+        paperRecordRequest.updateStatus(OPEN);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(paperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService).markPaperRecordRequestAsCancelled(paperRecordRequest);
+
+        // TODO: if we ever add back in the "reissue" functionality
+        //verify(mockPaperRecordService).requestPaperRecord(preferred, recordLocation, requestLocation);
+
+    }
+
+    @Test
+    public void mergingPatientsShouldCancelAssignedToCreateRequestForPreferredPatient() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        Location recordLocation = new Location();
+        Location requestLocation = new Location();
+
+        PaperRecordRequest paperRecordRequest = new PaperRecordRequest();
+        paperRecordRequest.setIdentifier("ABC");
+        paperRecordRequest.setPatient(preferred);
+        paperRecordRequest.setRecordLocation(recordLocation);
+        paperRecordRequest.setRequestLocation(requestLocation);
+        paperRecordRequest.updateStatus(ASSIGNED_TO_CREATE);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(paperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService).markPaperRecordRequestAsCancelled(paperRecordRequest);
+
+        // TODO: if we ever add back in the "reissue" functionality
+        //verify(mockPaperRecordService).requestPaperRecord(preferred, recordLocation, requestLocation);
+    }
+
+    @Test
+    public void mergingPatientsShouldCancelAssignedToPullRequestForPreferredPatient() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        Location recordLocation = new Location();
+        Location requestLocation = new Location();
+
+        PaperRecordRequest paperRecordRequest = new PaperRecordRequest();
+        paperRecordRequest.setIdentifier("ABC");
+        paperRecordRequest.setPatient(preferred);
+        paperRecordRequest.setRecordLocation(recordLocation);
+        paperRecordRequest.setRequestLocation(requestLocation);
+        paperRecordRequest.updateStatus(ASSIGNED_TO_PULL);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(paperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService).markPaperRecordRequestAsCancelled(paperRecordRequest);
+
+        // TODO: if we ever add back in the "reissue" functionality
+        //verify(mockPaperRecordService).requestPaperRecord(preferred, recordLocation, requestLocation);
+    }
+
+    @Test
+    public void mergingPatientsShouldNotCancelSentRequestForPreferredPatient() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        Location recordLocation = new Location();
+        Location requestLocation = new Location();
+
+        PaperRecordRequest paperRecordRequest = new PaperRecordRequest();
+        paperRecordRequest.setIdentifier("ABC");
+        paperRecordRequest.setPatient(preferred);
+        paperRecordRequest.setRecordLocation(recordLocation);
+        paperRecordRequest.setRequestLocation(requestLocation);
+        paperRecordRequest.updateStatus(SENT);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(paperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService, never()).markPaperRecordRequestAsCancelled(paperRecordRequest);
+
+        // TODO: if we ever add back in the "reissue" functionality
+        //verify(mockPaperRecordService, never()).requestPaperRecord(preferred, recordLocation, requestLocation);
+
+    }
+
+    @Test
+    public void mergingPatientsShouldNotCancelReturnedRequestForPreferredPatient() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        Location recordLocation = new Location();
+        Location requestLocation = new Location();
+
+        PaperRecordRequest paperRecordRequest = new PaperRecordRequest();
+        paperRecordRequest.setIdentifier("ABC");
+        paperRecordRequest.setPatient(preferred);
+        paperRecordRequest.setRecordLocation(recordLocation);
+        paperRecordRequest.setRequestLocation(requestLocation);
+        paperRecordRequest.updateStatus(RETURNED);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(paperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService, never()).markPaperRecordRequestAsCancelled(paperRecordRequest);
+
+        // TODO: if we ever add back in the "reissue" functionality
+        //verify(mockPaperRecordService, never()).requestPaperRecord(preferred, recordLocation, requestLocation);
+
+    }
+
+    @Test
+    public void mergingPatientsShouldCancelOpenRequestNotForPreferredPatient() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        Location recordLocation = new Location();
+        Location requestLocation = new Location();
+
+        PaperRecordRequest paperRecordRequest = new PaperRecordRequest();
+        paperRecordRequest.setIdentifier("ABC");
+        paperRecordRequest.setPatient(notPreferred);
+        paperRecordRequest.setRecordLocation(recordLocation);
+        paperRecordRequest.setRequestLocation(requestLocation);
+        paperRecordRequest.updateStatus(OPEN);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(paperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService).markPaperRecordRequestAsCancelled(paperRecordRequest);
+
+        // TODO: if we ever add back in the "reissue" functionality
+        //verify(mockPaperRecordService).requestPaperRecord(preferred, recordLocation, requestLocation);
+
+    }
+
+    @Test
+    public void mergingPatientsShouldCancelAssignedToCreateRequestForNotPreferredPatient() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        Location recordLocation = new Location();
+        Location requestLocation = new Location();
+
+        PaperRecordRequest paperRecordRequest = new PaperRecordRequest();
+        paperRecordRequest.setIdentifier("ABC");
+        paperRecordRequest.setPatient(notPreferred);
+        paperRecordRequest.setRecordLocation(recordLocation);
+        paperRecordRequest.setRequestLocation(requestLocation);
+        paperRecordRequest.updateStatus(ASSIGNED_TO_CREATE);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(paperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService).markPaperRecordRequestAsCancelled(paperRecordRequest);
+
+        // TODO: if we ever add back in the "reissue" functionality
+        //verify(mockPaperRecordService).requestPaperRecord(preferred, recordLocation, requestLocation);
+    }
+
+    @Test
+    public void mergingPatientsShouldCancelAssignedToPullRequestForNotPreferredPatientAndReissue() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        Location recordLocation = new Location();
+        Location requestLocation = new Location();
+
+        PaperRecordRequest paperRecordRequest = new PaperRecordRequest();
+        paperRecordRequest.setIdentifier("ABC");
+        paperRecordRequest.setPatient(notPreferred);
+        paperRecordRequest.setRecordLocation(recordLocation);
+        paperRecordRequest.setRequestLocation(requestLocation);
+        paperRecordRequest.updateStatus(ASSIGNED_TO_PULL);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(paperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService).markPaperRecordRequestAsCancelled(paperRecordRequest);
+
+        // TODO: if we ever add back in the "reissue" functionality
+        //verify(mockPaperRecordService).requestPaperRecord(preferred, recordLocation, requestLocation);
+    }
+
+    @Test
+    public void mergingPatientsShouldNotCancelSentRequestForNotPreferredPatient() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        Location recordLocation = new Location();
+        Location requestLocation = new Location();
+
+        PaperRecordRequest paperRecordRequest = new PaperRecordRequest();
+        paperRecordRequest.setIdentifier("ABC");
+        paperRecordRequest.setPatient(notPreferred);
+        paperRecordRequest.setRecordLocation(recordLocation);
+        paperRecordRequest.setRequestLocation(requestLocation);
+        paperRecordRequest.updateStatus(SENT);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(paperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService, never()).markPaperRecordRequestAsCancelled(paperRecordRequest);
+        //verify(mockPaperRecordService, never()).requestPaperRecord(preferred, recordLocation, requestLocation);
+
+    }
+
+    @Test
+    public void mergingPatientsShouldNotCancelReturnedRequestSendForNotPreferredPatient() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        Location recordLocation = new Location();
+        Location requestLocation = new Location();
+
+        PaperRecordRequest paperRecordRequest = new PaperRecordRequest();
+        paperRecordRequest.setIdentifier("ABC");
+        paperRecordRequest.setPatient(notPreferred);
+        paperRecordRequest.setRecordLocation(recordLocation);
+        paperRecordRequest.setRequestLocation(requestLocation);
+        paperRecordRequest.updateStatus(RETURNED);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(paperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService, never()).markPaperRecordRequestAsCancelled(paperRecordRequest);
+
+        // TODO: if we ever add back in the "reissue" functionality
+        //verify(mockPaperRecordService, never()).requestPaperRecord(preferred, recordLocation, requestLocation);
+    }
+
+    @Test
+    public void mergingPatientsShouldMoveAllPaperRecordRequestsToPreferredPatient() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        Location recordLocation = new Location();
+        Location requestLocation = new Location();
+
+        PaperRecordRequest preferredRequest = new PaperRecordRequest();
+        preferredRequest.setIdentifier("ABC");
+        preferredRequest.setPatient(preferred);
+        preferredRequest.setRecordLocation(recordLocation);
+        preferredRequest.setRequestLocation(requestLocation);
+        preferredRequest.updateStatus(SENT);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(preferredRequest));
+
+        PaperRecordRequest nonPreferredRequest = new PaperRecordRequest();
+        nonPreferredRequest.setIdentifier("DEF");
+        nonPreferredRequest.setPatient(notPreferred);
+        nonPreferredRequest.setRecordLocation(recordLocation);
+        nonPreferredRequest.setRequestLocation(requestLocation);
+        nonPreferredRequest.updateStatus(SENT);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(nonPreferredRequest));
+
+        // we are expecting that the non-preferred request is saved, but that the patient on this request is now the preferred patient
+        PaperRecordRequest expectedRequestToSave = new PaperRecordRequest();
+        expectedRequestToSave.setIdentifier("DEF");
+        expectedRequestToSave.setPatient(preferred);
+        expectedRequestToSave.setRecordLocation(recordLocation);
+        expectedRequestToSave.setRequestLocation(requestLocation);
+        expectedRequestToSave.updateStatus(SENT);
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService).savePaperRecordRequest(argThat(new IsExpectedRequest(expectedRequestToSave)));
+    }
+
+    // TODO: all these tests are to test improved handling of pending paper record requests when merging two patient records
+    // TODO: right now we are just keeping it simple and cancelling and reissuing all requests
+
+
+   /* @Test
+    public void mergingAPreferredPatientWithAnOpenPullChartRequestWithANotPreferredPatientWithAssignedCreateChartRequestWillDropCreateRequest() {
 
         Patient preferred = new Patient();
         Patient notPreferred = new Patient();
 
         Location someLocation = new Location();
 
-        PatientIdentifier preferredIdentifier =  new PatientIdentifier("123", paperRecordIdentifierType, someLocation);
+        PatientIdentifier preferredIdentifier =  new PatientIdentifier("ABC1", paperRecordIdentifierType, someLocation);
 
         preferred.addIdentifier(preferredIdentifier);
 
         PaperRecordRequest pullPaperRecordRequest = new PaperRecordRequest();
-        pullPaperRecordRequest.setIdentifier("123");
+        pullPaperRecordRequest.setIdentifier("ABC1");
         pullPaperRecordRequest.setPatient(preferred);
-        pullPaperRecordRequest.updateStatus(ASSIGNED_TO_PULL);
+        pullPaperRecordRequest.updateStatus(OPEN);
         when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(pullPaperRecordRequest));
 
         PaperRecordRequest createPaperRecordRequest = new PaperRecordRequest();
+        createPaperRecordRequest.setIdentifier("ABC2");
         createPaperRecordRequest.setPatient(notPreferred);
-        createPaperRecordRequest.updateStatus(OPEN);
+        createPaperRecordRequest.updateStatus(ASSIGNED_TO_CREATE);
         when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(createPaperRecordRequest));
 
         service.mergePatients(preferred, notPreferred);
@@ -636,8 +932,40 @@ public class AdtServiceTest {
 
     }
 
+
     @Test
-    public void mergingANotPreferredPatientWithAKnownChartRequestWithAPreferredPatientWithACreateChartRequestWillDropCreateRequest() {
+    public void mergingAPreferredPatientWithAssignedPullChartRequestWithANotPreferredPatientWithAssignedCreateChartRequestWillDropCreateRequest() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        Location someLocation = new Location();
+
+        PatientIdentifier preferredIdentifier =  new PatientIdentifier("ABC1", paperRecordIdentifierType, someLocation);
+
+        preferred.addIdentifier(preferredIdentifier);
+
+        PaperRecordRequest pullPaperRecordRequest = new PaperRecordRequest();
+        pullPaperRecordRequest.setIdentifier("ABC1");
+        pullPaperRecordRequest.setPatient(preferred);
+        pullPaperRecordRequest.updateStatus(ASSIGNED_TO_PULL);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(pullPaperRecordRequest));
+
+        PaperRecordRequest createPaperRecordRequest = new PaperRecordRequest();
+        createPaperRecordRequest.setIdentifier("ABC2");
+        createPaperRecordRequest.setPatient(notPreferred);
+        createPaperRecordRequest.updateStatus(ASSIGNED_TO_CREATE);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(createPaperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService).markPaperRecordRequestAsCancelled(createPaperRecordRequest);
+
+    }
+
+
+    @Test
+    public void mergingANotPreferredPatientWithAssignedPullChartRequestWithAPreferredPatientWithAOpenCreateChartRequestWillDropCreateRequest() {
 
         Patient preferred = new Patient();
         Patient notPreferred = new Patient();
@@ -666,6 +994,66 @@ public class AdtServiceTest {
     }
 
     @Test
+    public void mergingANotPreferredPatientWithOpenPullChartRequestWithAPreferredPatientWithAOpenCreateChartRequestWillDropCreateRequest() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        Location someLocation = new Location();
+
+        PatientIdentifier preferredIdentifier =  new PatientIdentifier("123", paperRecordIdentifierType, someLocation);
+
+        preferred.addIdentifier(preferredIdentifier);
+
+        PaperRecordRequest pullPaperRecordRequest = new PaperRecordRequest();
+        pullPaperRecordRequest.setIdentifier("123");
+        pullPaperRecordRequest.setPatient(notPreferred);
+        pullPaperRecordRequest.updateStatus(OPEN);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(pullPaperRecordRequest));
+
+        PaperRecordRequest createPaperRecordRequest = new PaperRecordRequest();
+        createPaperRecordRequest.setPatient(preferred);
+        createPaperRecordRequest.updateStatus(OPEN);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(createPaperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService).markPaperRecordRequestAsCancelled(createPaperRecordRequest);
+
+    }
+
+    @Test
+    public void mergingANotPreferredPatientWithAnAssignedPullChartRequestWithAPreferredPatientWithAnAssignedToCreateChartRequestWillDropCreateRequest() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        Location someLocation = new Location();
+
+        PatientIdentifier preferredIdentifier =  new PatientIdentifier("ABC1", paperRecordIdentifierType, someLocation);
+
+        preferred.addIdentifier(preferredIdentifier);
+
+        PaperRecordRequest pullPaperRecordRequest = new PaperRecordRequest();
+        pullPaperRecordRequest.setIdentifier("ABC1");
+        pullPaperRecordRequest.setPatient(notPreferred);
+        pullPaperRecordRequest.updateStatus(ASSIGNED_TO_PULL);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(pullPaperRecordRequest));
+
+        PaperRecordRequest createPaperRecordRequest = new PaperRecordRequest();
+        createPaperRecordRequest.setIdentifier("ABC2");
+        createPaperRecordRequest.setPatient(preferred);
+        createPaperRecordRequest.updateStatus(ASSIGNED_TO_CREATE);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(createPaperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService).markPaperRecordRequestAsCancelled(createPaperRecordRequest);
+
+    }
+
+
+    @Test
     public void mergingTwoPatientsWithOpenCreatePaperRecordRequestWillLeaveOnlyOneCreateRequest() {
 
         Patient preferred = new Patient();
@@ -685,6 +1073,127 @@ public class AdtServiceTest {
 
         verify(mockPaperRecordService).markPaperRecordRequestAsCancelled(notPreferredCreatePaperRecordRequest);
         verify(mockPaperRecordService, never()).markPaperRecordRequestAsCancelled(preferredCreatePaperRecordRequest);
+    }
+
+    @Test
+    public void mergingPatientWithOpenCreatePaperRecordRequestAndAssignedToCreatePaperRequestCreateWillLeaveOnlyAssignedCreateRequest() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        PaperRecordRequest preferredCreatePaperRecordRequest = new PaperRecordRequest();
+        preferredCreatePaperRecordRequest.setPatient(preferred);
+        preferredCreatePaperRecordRequest.updateStatus(OPEN);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(preferredCreatePaperRecordRequest));
+
+        PaperRecordRequest notPreferredCreatePaperRecordRequest = new PaperRecordRequest();
+        notPreferredCreatePaperRecordRequest.setIdentifier("ABC1");
+        notPreferredCreatePaperRecordRequest.setPatient(notPreferred);
+        notPreferredCreatePaperRecordRequest.updateStatus(ASSIGNED_TO_CREATE);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(notPreferredCreatePaperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService).markPaperRecordRequestAsCancelled(preferredCreatePaperRecordRequest);
+        verify(mockPaperRecordService, never()).markPaperRecordRequestAsCancelled(notPreferredCreatePaperRecordRequest);
+    }
+
+
+    @Test
+    public void mergingTwoPatientsWithOpenPullPaperRecordRequestWillLeaveOnlyOnePullRequest() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        PaperRecordRequest preferredPullPaperRecordRequest = new PaperRecordRequest();
+        preferredPullPaperRecordRequest.setIdentifier("ABC1");
+        preferredPullPaperRecordRequest.setPatient(preferred);
+        preferredPullPaperRecordRequest.updateStatus(OPEN);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(preferredPullPaperRecordRequest));
+
+        PaperRecordRequest notPreferredPullPaperRecordRequest = new PaperRecordRequest();
+        notPreferredPullPaperRecordRequest.setIdentifier("ABC2");
+        notPreferredPullPaperRecordRequest.setPatient(notPreferred);
+        notPreferredPullPaperRecordRequest.updateStatus(OPEN);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(notPreferredPullPaperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService).markPaperRecordRequestAsCancelled(notPreferredPullPaperRecordRequest);
+        verify(mockPaperRecordService, never()).markPaperRecordRequestAsCancelled(preferredPullPaperRecordRequest);
+    }
+
+    @Test
+    public void mergingPatientsWithOpenPullPaperRecordRequestWithPatientWithAssignedPullRequestWillLeaveOnlyAssignedPullRequest() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        PaperRecordRequest preferredPullPaperRecordRequest = new PaperRecordRequest();
+        preferredPullPaperRecordRequest.setIdentifier("ABC1");
+        preferredPullPaperRecordRequest.setPatient(preferred);
+        preferredPullPaperRecordRequest.updateStatus(OPEN);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(preferredPullPaperRecordRequest));
+
+        PaperRecordRequest notPreferredPullPaperRecordRequest = new PaperRecordRequest();
+        notPreferredPullPaperRecordRequest.setIdentifier("ABC2");
+        notPreferredPullPaperRecordRequest.setPatient(notPreferred);
+        notPreferredPullPaperRecordRequest.updateStatus(ASSIGNED_TO_PULL);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(notPreferredPullPaperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService).markPaperRecordRequestAsCancelled(preferredPullPaperRecordRequest);
+        verify(mockPaperRecordService, never()).markPaperRecordRequestAsCancelled(notPreferredPullPaperRecordRequest);
+    }
+
+
+    @Test
+    public void mergingTwoPatientsWithAssignedToPullPaperRecordRequestWillLeaveOnlyOnePullRequest() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        PaperRecordRequest preferredPullPaperRecordRequest = new PaperRecordRequest();
+        preferredPullPaperRecordRequest.setIdentifier("ABC1");
+        preferredPullPaperRecordRequest.setPatient(preferred);
+        preferredPullPaperRecordRequest.updateStatus(ASSIGNED_TO_PULL);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(preferredPullPaperRecordRequest));
+
+        PaperRecordRequest notPreferredPullPaperRecordRequest = new PaperRecordRequest();
+        notPreferredPullPaperRecordRequest.setIdentifier("ABC2");
+        notPreferredPullPaperRecordRequest.setPatient(notPreferred);
+        notPreferredPullPaperRecordRequest.updateStatus(ASSIGNED_TO_PULL);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(notPreferredPullPaperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService).markPaperRecordRequestAsCancelled(notPreferredPullPaperRecordRequest);
+        verify(mockPaperRecordService, never()).markPaperRecordRequestAsCancelled(preferredPullPaperRecordRequest);
+    }
+
+    @Test
+    public void mergingTwoPatientsWithAssignedToCreatePaperRecordRequestWillLeaveOnlyOneCreateRequest() {
+
+        Patient preferred = new Patient();
+        Patient notPreferred = new Patient();
+
+        PaperRecordRequest preferredPullPaperRecordRequest = new PaperRecordRequest();
+        preferredPullPaperRecordRequest.setIdentifier("ABC1");
+        preferredPullPaperRecordRequest.setPatient(preferred);
+        preferredPullPaperRecordRequest.updateStatus(ASSIGNED_TO_CREATE);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(preferred)).thenReturn(Collections.singletonList(preferredPullPaperRecordRequest));
+
+        PaperRecordRequest notPreferredPullPaperRecordRequest = new PaperRecordRequest();
+        notPreferredPullPaperRecordRequest.setIdentifier("ABC2");
+        notPreferredPullPaperRecordRequest.setPatient(notPreferred);
+        notPreferredPullPaperRecordRequest.updateStatus(ASSIGNED_TO_CREATE);
+        when(mockPaperRecordService.getPaperRecordRequestsByPatient(notPreferred)).thenReturn(Collections.singletonList(notPreferredPullPaperRecordRequest));
+
+        service.mergePatients(preferred, notPreferred);
+
+        verify(mockPaperRecordService).markPaperRecordRequestAsCancelled(notPreferredPullPaperRecordRequest);
+        verify(mockPaperRecordService, never()).markPaperRecordRequestAsCancelled(preferredPullPaperRecordRequest);
     }
 
     @Test
@@ -767,7 +1276,7 @@ public class AdtServiceTest {
         verify(mockPaperRecordService, times(1)).savePaperRecordRequest(argThat(expectedNotPreferredRequest));
 
         verify(mockPaperRecordService).markPaperRecordsForMerge(preferredIdentifier, notPreferredIdentifier);
-    }
+    }*/
 
     private Encounter buildEncounter(Patient patient, Date encounterDatetime) {
         Encounter encounter = new Encounter();
