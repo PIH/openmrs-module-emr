@@ -63,7 +63,7 @@
                 </div>
             </span>
             <div id="assignedcreaterequest" class="box-align">
-                <div class="sending-records">
+                <div class="sending-records scan-input">
                     <div id="scan-create-records" class="container">
                         <form class="mark-as-pulled">
                             <input type="text" size="40" name="mark-as-pulled-identifier" class="mark-as-pulled-identifier" placeholder="${ ui.message("emr.archivesRoom.typeOrIdentifyBarCode.label") }"/>
@@ -138,7 +138,7 @@
                 </div>
             </span>
                 <div id="assignedpullrequest" class="box-align">
-                    <div class="sending-records">
+                    <div class="sending-records scan-input">
                         <div id="scan-pull-records" class="container">
                             <form class="mark-as-pulled">
                                 <input type="text" size="40" name="mark-as-pulled-identifier" class="mark-as-pulled-identifier" placeholder="${ ui.message("emr.archivesRoom.typeOrIdentifyBarCode.label") }"/>
@@ -200,8 +200,8 @@
                 <div id="scan-returned-records">
                     ${ ui.message("emr.archivesRoom.typeOrIdentifyBarCode.label") }
                     <br/>
-                    <form class="mark-as-returned">
-                        <input type="text" size="40" name="mark-as-returned-identifier" class="mark-as-returned-identifier"/>
+                    <form class="mark-as-returned scan-input">
+                        <input type="text" size="40" name="mark-as-returned-identifier" class="mark-as-returned-identifier" placeholder="${ ui.message("emr.archivesRoom.typeOrIdentifyBarCode.label") }"/>
                     </form>
                 </div>
 

@@ -82,7 +82,7 @@
 <% def disabled = (config.disabled) ? "disabled=disabled" : "" %>
 
 <span class="autocomplete-label">${ config.label }</span>
-<div>
+<div <% if (config.cssClass){ %> class="${config.cssClass}"<% } %>>
     <input type="hidden" class="field-value" id="${ config.id }-value" name="${ config.formFieldName }" <%=  (config.patientId!=null && config.patientId!="" ) ? "value=" + config.patientId : ""  %>  />
     <input type="text" class="field-display" id="${ config.id }-search" ${disabled} placeholder="${ config.placeholder ?: '' }" value="${value}" size="40"/>
 </div>

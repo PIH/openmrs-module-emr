@@ -57,6 +57,7 @@
     <div class="search-input">
         ${ ui.includeFragment("emr", "field/autocomplete", [
                 id: "patient-search-field",
+                cssClass: "scan-input",
                 label: "",
                 placeholder: ui.message("emr.searchByNameOrIdOrScan"),
                 formFieldName: "patientId",
