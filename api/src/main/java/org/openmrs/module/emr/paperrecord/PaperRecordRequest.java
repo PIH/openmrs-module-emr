@@ -64,9 +64,8 @@ import java.util.List;
  *
  *  CANCELLED--nots that a request has been cancelled without being fulfilled
  *
- * All the states except for "RETURNED" are considered "active" states.  A single paper record should never have more
- * than one request in an "active" state at any one time.  (This may change in the future if we want to allow a record
- * that has been "SENT" to be requested by another location).
+ * "OPEN", "ASSIGNED_TO_PULL", "ASSIGNED_TO_CREATE" are considered "pending" states. A single paper record
+ * should never have more than one request in a "pending" state at any one time.
  *
  * A few notes--we don't currently 100% support multiple paper record locations... there are a few API methods within
  * the PaperRecordService that will have to be modified to support filtering by location in order to fully support
@@ -86,8 +85,6 @@ public class PaperRecordRequest extends BaseOpenmrsObject {
     public static enum Status{ OPEN, ASSIGNED_TO_PULL, ASSIGNED_TO_CREATE, SENT, RETURNED, CANCELLED }
 
     public static List<Status> PENDING_STATUSES = Arrays.asList(Status.OPEN, Status.ASSIGNED_TO_PULL, Status.ASSIGNED_TO_CREATE);
-
-    public static List<Status> ACTIVE_STATUSES = Arrays.asList(Status.OPEN, Status.ASSIGNED_TO_PULL, Status.ASSIGNED_TO_CREATE, Status.SENT);
 
     private Integer requestId;
 
