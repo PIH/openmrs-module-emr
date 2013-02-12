@@ -8,7 +8,12 @@
     ui.includeCss("emr", "archivesRoom.css")
 
 %>
-
+<script type="text/javascript">
+    var breadcrumbs = [
+        { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
+        { label: "${ ui.message("emr.app.archivesRoom.label")}"}
+    ];
+</script>
 <div id="tabs" xmlns="http://www.w3.org/1999/html">
 
         <ul>

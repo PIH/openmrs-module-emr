@@ -1,5 +1,6 @@
 <%
     def dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy")
+    def timeFormat = new java.text.SimpleDateFormat("HH:mm")
 %>
 <script type="text/javascript">
     var breadcrumbs = [
@@ -76,12 +77,16 @@
         <thead>
         <tr>
             <th>${ui.message("emr.patientDashBoard.date")}</th>
-            <th>${ui.message("emr.patientDashBoard.actions")}</th>
+            <th>${ui.message("emr.patientDashBoard.startTime")}</th>
+            <th>${ui.message("emr.patientDashBoard.location")}</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <% patient.allVisitsUsingWrappers.each { wrapper -> %>
         <tr>
-            <td>${dateFormat.format(wrapper.visit.startDatetime)}</td>
+            <td>${dateFormat.format(wrapper.visit.startDatetime)} <br>(${wrapper.differenceInDaysBetweenCurrentDateAndStartDate} days ago) </td>
+            <td>${timeFormat.format(wrapper.visit.startDatetime)}</td>
+            <td>${ ui.format(wrapper.visit.location) }</td>
             <td><a href="#" class="viewVisitDetails" visitId="${wrapper.visit.visitId}">${ ui.message("emr.visitDetailsLink")} <i class="icon-chevron-right link"></i></a></td>
         </tr>
         <% } %>

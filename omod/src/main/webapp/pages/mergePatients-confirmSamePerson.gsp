@@ -74,6 +74,15 @@
     });
 </script>
 
+<script type="text/javascript">
+    var breadcrumbs = [
+        { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
+        { label: "${ ui.message("emr.app.systemAdministration.label")}", link: '${ui.pageLink("emr", "systemAdministration")}' },
+        { label: "${ ui.message("emr.mergePatients")}" , link: '${ui.pageLink("emr", "mergePatients")}'},
+        { label: "${ ui.message("emr.mergePatients.confirmationQuestion")}" }
+    ];
+</script>
+
 <form method="post">
     <% def preferred = (isUnknownPatient ? patient2.patient.id : "") %>
     <input type="hidden" name="patient1" value="${ patient1.patient.id }" />
