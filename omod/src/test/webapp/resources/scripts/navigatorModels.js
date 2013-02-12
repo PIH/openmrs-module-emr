@@ -44,7 +44,7 @@ describe("Test for simple form models", function() {
 
             var fieldModel = new FieldModel();
             fieldModel.element = jasmine.createSpyObj('element', ['addClass']);
-            fieldModel.messagesContainer = jasmine.createSpyObj('messagesContainer', ['empty', 'append', 'css']);
+            fieldModel.messagesContainer = jasmine.createSpyObj('messagesContainer', ['empty', 'append', 'show']);
             fieldModel.validators = [firstValidator, secondValidator];
 
             var isValid = fieldModel.isValid();
@@ -53,7 +53,7 @@ describe("Test for simple form models", function() {
             expect(secondValidator.validate).toHaveBeenCalledWith(fieldModel);
             expect(fieldModel.messagesContainer.empty).toHaveBeenCalled();
             expect(fieldModel.messagesContainer.append).toHaveBeenCalledWith("Invalid field");
-            expect(fieldModel.messagesContainer.css).toHaveBeenCalledWith("display", "inline");
+            expect(fieldModel.messagesContainer.show).toHaveBeenCalled();
             expect(fieldModel.element.addClass).toHaveBeenCalledWith("error");
             expect(isValid).toBe(false);
         });
