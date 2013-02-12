@@ -49,7 +49,7 @@
     }
 </script>
 
-<form id="patient-search-form">
+<form id="patient-search-form" class="patient-search-form">
     <label>
         <i class="icon-search small"></i>
         ${ ui.message("emr.searchPatientHeading") }
