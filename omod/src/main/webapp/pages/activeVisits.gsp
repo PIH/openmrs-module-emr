@@ -1,6 +1,12 @@
 <%
     ui.decorateWith("emr", "standardEmrPage")
 %>
+<script type="text/javascript">
+    var breadcrumbs = [
+        { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
+        { label: "${ ui.message("emr.app.activeVisits.label")}"}
+    ];
+</script>
 
 <h3>${ ui.message("emr.activeVisits.title") }</h3>
 
