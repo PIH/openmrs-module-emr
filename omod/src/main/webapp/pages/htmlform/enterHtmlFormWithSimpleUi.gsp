@@ -27,7 +27,8 @@ ${ ui.includeFragment("emr", "htmlform/enterHtmlForm", [
         htmlFormId: htmlFormId,
         visit: visit,
         returnUrl: returnUrl,
-        automaticValidation: false
+        automaticValidation: false,
+        cssClass: "simple-form-ui"
 ]) }
 
 <script type="text/template" id="confirmation-template">

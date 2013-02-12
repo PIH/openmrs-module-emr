@@ -1,5 +1,6 @@
 <%
-    // config supports style (css style on html form div)
+    // config supports style (css style on div around form)
+    // config supports cssClass (css class on div around form)
 
     // assumes jquery and jquery-ui from emr module
     ui.includeJavascript("emr", "dwr-util.js")
@@ -183,7 +184,7 @@
     }
 </script>
 
-<div id="${ config.id }" <% if (config.style) { %>style="${ config.style }"<% } %>>
+<div id="${ config.id }" <% if (config.style) { %>style="${ config.style }"<% } %> <% if (config.cssClass) { %>class="${config.cssClass}"<% } %>>
 
     <span class="error" style="display: none" id="general-form-error"></span>
 
