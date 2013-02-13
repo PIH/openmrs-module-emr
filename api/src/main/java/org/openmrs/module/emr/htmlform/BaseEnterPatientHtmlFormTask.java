@@ -76,6 +76,8 @@ public abstract class BaseEnterPatientHtmlFormTask extends BasePatientSpecificTa
 
     private double priority = 0d;
 
+    private String breadcrumbOverride;
+
     public void setId(String id) {
         this.id = id;
     }
@@ -207,5 +209,16 @@ public abstract class BaseEnterPatientHtmlFormTask extends BasePatientSpecificTa
 
     public void setReturnUrl(String returnUrl) {
         this.returnUrl = returnUrl;
+    }
+
+    /**
+     * @param breadcrumbOverride json-formatted string, representing a list of breadcrumbs that go after the homepage link, and before the form name
+     */
+    public void setBreadcrumbOverride(String breadcrumbOverride) {
+        this.breadcrumbOverride = breadcrumbOverride;
+    }
+
+    public String getBreadcrumbOverride() {
+        return breadcrumbOverride;
     }
 }

@@ -15,12 +15,17 @@
 package org.openmrs.module.emr.page.controller.htmlform;
 
 import org.apache.commons.lang.StringUtils;
+import org.openmrs.Form;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
+import org.openmrs.api.FormService;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.htmlform.EntryTiming;
+import org.openmrs.module.htmlformentry.HtmlForm;
+import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
+import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -32,13 +37,27 @@ public abstract class BaseEnterHtmlFormPageController {
     public void get(EmrContext emrContext,
                     @RequestParam("timing") EntryTiming timing,
                     @RequestParam(value = "formUuid", required = false) String formUuid,
-                    @RequestParam(value = "htmlFormId", required = false) String htmlFormId,
+                    @RequestParam(value = "htmlFormId", required = false) HtmlForm htmlForm,
                     @RequestParam(value = "visitId", required = false) Visit visit,
                     @RequestParam(value = "returnUrl", required = false) String returnUrl,
+                    @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride,
+                    @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
+                    @SpringBean("formService") FormService formService,
                     UiUtils ui,
                     PageModel model) {
 
         emrContext.requireAuthentication();
+
+        if (htmlForm == null && formUuid != null) {
+            Form form = formService.getFormByUuid(formUuid);
+            if (form != null) {
+                htmlForm = htmlFormEntryService.getHtmlFormByForm(form);
+            }
+        }
+
+        if (htmlForm == null) {
+            throw new IllegalArgumentException("Couldn't find a form");
+        }
 
         if (timing == EntryTiming.REAL_TIME) {
             if (emrContext.getActiveVisitSummary() == null) {
@@ -62,11 +81,11 @@ public abstract class BaseEnterHtmlFormPageController {
             }
         }
 
-        model.addAttribute("formUuid", formUuid);
-        model.addAttribute("htmlFormId", htmlFormId);
+        model.addAttribute("htmlForm", htmlForm);
         model.addAttribute("patient", currentPatient);
         model.addAttribute("visit", visit);
         model.addAttribute("returnUrl", returnUrl);
+        model.addAttribute("breadcrumbOverride", breadcrumbOverride);
     }
 
 }

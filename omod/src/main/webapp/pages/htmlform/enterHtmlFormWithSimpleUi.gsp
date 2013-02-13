@@ -5,6 +5,10 @@
     ui.includeJavascript("emr", "navigator/navigatorHandlers.js", Integer.MAX_VALUE - 21)
     ui.includeJavascript("emr", "navigator/navigatorModels.js", Integer.MAX_VALUE - 21)
     ui.includeCss("emr", "simpleFormUi.css", -200)
+
+    def breadcrumbMiddle = breadcrumbOverride ?: """
+        [ { label: "${ ui.escapeJs(ui.format(patient.familyName)) }, ${ ui.escapeJs(ui.format(patient.givenName)) }" , link: '${ui.pageLink("emr", "patient", [patientId: patient.id])}'} ]
+    """
 %>
 
 ${ ui.includeFragment("emr", "validationMessages")}
@@ -12,6 +16,11 @@ ${ ui.includeFragment("emr", "validationMessages")}
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
 <script type="text/javascript">
+    var breadcrumbs = _.flatten([
+        { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
+        ${ breadcrumbMiddle },
+        { label: "${ ui.escapeJs(ui.format(htmlForm)) }" }
+    ]);
 
     jQuery(function() {
         jq('input.submitButton').hide();
@@ -23,8 +32,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
 ${ ui.includeFragment("emr", "htmlform/enterHtmlForm", [
         patient: patient,
-        formUuid: formUuid,
-        htmlFormId: htmlFormId,
+        htmlForm: htmlForm,
         visit: visit,
         returnUrl: returnUrl,
         automaticValidation: false,

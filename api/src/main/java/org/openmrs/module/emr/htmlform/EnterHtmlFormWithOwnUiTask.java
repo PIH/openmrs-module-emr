@@ -35,6 +35,9 @@ public class EnterHtmlFormWithOwnUiTask extends BaseEnterPatientHtmlFormTask {
         if (getReturnUrl() != null) {
             params.put("returnUrl", getReturnUrl());
         }
+        if (getBreadcrumbOverride() != null) {
+            params.put("breadcrumbOverride", getBreadcrumbOverride());
+        }
         return uiUtils.pageLinkWithoutContextPath("emr", "htmlform/enterHtmlFormWithOwnUi", params);
     }
 

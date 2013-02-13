@@ -1,11 +1,3 @@
-<script type="text/javascript">
-    var breadcrumbs = [
-        { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.format(patient.patient.familyName) }, ${ ui.format(patient.patient.givenName) }" },
-        { label: "${ui.message("emr.patientDashBoard.visits")}" , link:'${ui.pageLink("emr", "patient", [patientId: patient.id])}'}
-    ];
-</script>
-
 <h3>${ui.message("emr.patientDashBoard.contactinfo")}</h3>
 
 <div class="contact-info">

@@ -77,7 +77,8 @@ public class EnterHtmlFormFragmentController {
                            @SpringBean("formService") FormService formService,
                            @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
                            @FragmentParam("patient") Patient patient,
-                           @FragmentParam(value = "htmlFormId", required = false) HtmlForm hf,
+                           @FragmentParam(value = "htmlForm", required = false) HtmlForm hf,
+                           @FragmentParam(value = "htmlFormId", required = false) Integer htmlFormId,
                            @FragmentParam(value = "formId", required = false) Form form,
                            @FragmentParam(value = "formUuid", required = false) String formUuid,
                            @FragmentParam(value = "definitionUiResource", required = false) String definitionUiResource,
@@ -88,10 +89,12 @@ public class EnterHtmlFormFragmentController {
                            FragmentModel model,
                            HttpSession httpSession) throws Exception {
 
-        config.require("patient", "htmlFormId | formId | formUuid | definitionResource | encounter");
+        config.require("patient", "htmlForm | htmlFormId | formId | formUuid | definitionResource | encounter");
 
         if (hf == null) {
-            if (form != null) {
+            if (htmlFormId != null) {
+                hf = htmlFormEntryService.getHtmlForm(htmlFormId);
+            } else if (form != null) {
                 hf = htmlFormEntryService.getHtmlFormByForm(form);
             } else if (formUuid != null) {
                 form = formService.getFormByUuid(formUuid);
