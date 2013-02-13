@@ -1,3 +1,12 @@
+
+var pullRequestsViewModel;
+var createRequestsViewModel;
+var assignedPullRequestsViewModel;
+var assignedCreateRequestsViewModel;
+var mergeRequestsViewModel;
+
+var cancelPaperRecordRequestDialog = null;
+
 function RecordRequestModel(requestId, patientName, patientId, dossierNumber, sendToLocation, timeRequested, timeRequestedSortable, dateLastSent, locationLastSent) {
     var model = {};
     model.requestId = requestId;
@@ -78,6 +87,10 @@ function PullRequestsViewModel(recordsToPull) {
         });
     });
 
+    api.cancelRequest = function (request) {
+        openCancelPaperRecordRequestDialog(request.requestId);
+    }
+
     api.load = function() {
 
         // reload via ajax
@@ -140,6 +153,10 @@ function CreateRequestsViewModel(recordsToCreate) {
         });
     });
 
+    api.cancelRequest = function (request) {
+        openCancelPaperRecordRequestDialog(request.requestId);
+    }
+
     api.load = function() {
 
         // reload via ajax
@@ -170,6 +187,10 @@ function AssignedPullRequestsViewModel(assignedRecordsToPull) {
     var api = {};
     api.assignedRecordsToPull = ko.observableArray(assignedRecordsToPull);
 
+    api.cancelRequest = function (request) {
+        openCancelPaperRecordRequestDialog(request.requestId);
+    }
+
     api.load = function() {
 
         // reload via ajax
@@ -184,6 +205,55 @@ function AssignedPullRequestsViewModel(assignedRecordsToPull) {
                     api.assignedRecordsToPull.push(RecordRequestModel(request.requestId, request.patient,
                         request.patientIdentifier, request.identifier, request.requestLocation, request.dateCreated,
                         request.dateCreatedSortable, request.dateLastSent, request.locationLastSent));
+                });
+
+            })
+            .error(function(xhr) {
+                emr.handleError(xhr);
+            });
+
+    }
+
+    api.printLabel = function (request) {
+
+        jQuery.ajax({
+            url: emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "printLabel", { requestId: request.requestId }),
+            dataType: 'json',
+            type: 'POST'
+        })
+            .success(function(data) {
+                emr.successMessage(data.message);
+            })
+            .error(function(xhr) {
+                emr.handleError(xhr);
+            });
+    }
+
+    return api;
+}
+
+function AssignedCreateRequestsViewModel(assignedRecordsToCreate) {
+    var api = {};
+    api.assignedRecordsToCreate = ko.observableArray(assignedRecordsToCreate);
+
+    api.cancelRequest = function (request) {
+        openCancelPaperRecordRequestDialog(request.requestId);
+    }
+
+    api.load = function() {
+
+        // reload via ajax
+        jQuery.getJSON(emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "getAssignedRecordsToCreate"))
+            .success(function(data) {
+
+                // remove any existing entries
+                api.assignedRecordsToCreate.removeAll();
+
+                // create the new list
+                jQuery.each(data, function(index, request) {
+                    api.assignedRecordsToCreate.push(RecordRequestModel(request.requestId, request.patient,
+                        request.patientIdentifier, request.identifier, request.requestLocation, request.dateCreated,
+                        request.dateCreatedSortable));
                 });
 
             })
@@ -249,47 +319,32 @@ function MergeRequestsViewModel(requestsToMerge){
 
 }
 
-function AssignedCreateRequestsViewModel(assignedRecordsToCreate) {
-    var api = {};
-    api.assignedRecordsToCreate = ko.observableArray(assignedRecordsToCreate);
-
-    api.load = function() {
-
-        // reload via ajax
-        jQuery.getJSON(emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "getAssignedRecordsToCreate"))
-            .success(function(data) {
-
-                // remove any existing entries
-                api.assignedRecordsToCreate.removeAll();
-
-                // create the new list
-                jQuery.each(data, function(index, request) {
-                    api.assignedRecordsToCreate.push(RecordRequestModel(request.requestId, request.patient,
-                        request.patientIdentifier, request.identifier, request.requestLocation, request.dateCreated,
-                        request.dateCreatedSortable));
-                });
-
-            })
-            .error(function(xhr) {
-                emr.handleError(xhr);
-            });
-
-    }
-
-    api.printLabel = function (request) {
-
-        jQuery.ajax({
-            url: emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "printLabel", { requestId: request.requestId }),
-            dataType: 'json',
-            type: 'POST'
-        })
-            .success(function(data) {
-                emr.successMessage(data.message);
-            })
-            .error(function(xhr) {
-                emr.handleError(xhr);
-            });
-    }
-
-    return api;
+function refreshAllQueues() {
+    pullRequestsViewModel.load();
+    createRequestsViewModel.load()
+    assignedCreateRequestsViewModel.load();
+    assignedPullRequestsViewModel.load();
+    mergeRequestsViewModel.load();
 }
+
+function openCancelPaperRecordRequestDialog(requestId) {
+
+    cancelPaperRecordRequestDialog = emr.setupConfirmationDialog({
+        selector: '#cancel-paper-record-request-dialog',
+        actions: {
+            confirm: function() {
+                emr.getFragmentActionWithCallback('emr', 'paperrecord/archivesRoom', 'markPaperRecordRequestAsCancelled', { requestId: requestId }, function(data) {
+                    cancelPaperRecordRequestDialog .close();
+                    refreshAllQueues();
+                });
+            },
+            cancel: function() {
+                cancelPaperRecordRequestDialog.close();
+            }
+        }
+    });
+
+    cancelPaperRecordRequestDialog.show();
+    return false;
+}
+

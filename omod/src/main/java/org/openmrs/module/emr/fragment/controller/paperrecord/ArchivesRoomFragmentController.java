@@ -257,6 +257,22 @@ public class ArchivesRoomFragmentController {
 
     }
 
+    public FragmentActionResult markPaperRecordRequestAsCancelled(@RequestParam("requestId") PaperRecordRequest request,
+                                           @SpringBean("paperRecordService") PaperRecordService paperRecordService,
+                                           EmrContext emrContext,
+                                           UiUtils ui) {
+
+        try {
+            paperRecordService.markPaperRecordRequestAsCancelled(request);
+            return new SuccessResult();
+        }
+        catch (Exception e) {
+            log.error(e);
+            return new FailureResult(ui.message("emr.error.systemError"));
+
+        }
+    }
+
     public FragmentActionResult printLabel(@RequestParam("requestId") PaperRecordRequest request,
                                              @SpringBean("paperRecordService") PaperRecordService paperRecordService,
                                              EmrContext emrContext,

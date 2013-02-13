@@ -174,6 +174,23 @@ public class ArchivesRoomFragmentControllerTest {
     }
 
     @Test
+    public void testControllerShouldMarkRecordAsCancelled() throws Exception {
+
+        PaperRecordRequest request = new PaperRecordRequest();
+        Location location = new Location();
+        location.setName("Test location");
+        request.setRequestLocation(location);
+        request.setIdentifier("123");
+        request.setDateCreated(new Date());
+        request.updateStatus(PaperRecordRequest.Status.OPEN);
+
+        FragmentActionResult result = controller.markPaperRecordRequestAsCancelled(request, paperRecordService, emrContext, ui);
+        verify(paperRecordService).markPaperRecordRequestAsCancelled(request);
+        assertThat(result, instanceOf(SuccessResult.class));
+    }
+
+
+    @Test
     public void testControllerShouldReturnOpenRequestsToPull() throws Exception {
 
         List<PaperRecordRequest> requests = createSamplePullPaperRecordRequestList();

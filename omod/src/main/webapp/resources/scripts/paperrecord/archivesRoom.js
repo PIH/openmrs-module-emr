@@ -6,37 +6,28 @@ jq(document).ready( function() {
     jq("#tabs").tabs();
 
     // set up models for the table
-    var pullRequestsViewModel = PullRequestsViewModel([]);
+    pullRequestsViewModel = PullRequestsViewModel([]);
     ko.applyBindings(pullRequestsViewModel, document.getElementById('pullrequest'));
 
-    var createRequestsViewModel = CreateRequestsViewModel([]);
+    createRequestsViewModel = CreateRequestsViewModel([]);
     ko.applyBindings(createRequestsViewModel, document.getElementById('createrequest'));
 
-    var assignedPullRequestsViewModel = AssignedPullRequestsViewModel([]);
+    assignedPullRequestsViewModel = AssignedPullRequestsViewModel([]);
     ko.applyBindings(assignedPullRequestsViewModel, document.getElementById('assignedpullrequest'));
 
-    var assignedCreateRequestsViewModel = AssignedCreateRequestsViewModel([]);
+    assignedCreateRequestsViewModel = AssignedCreateRequestsViewModel([]);
     ko.applyBindings(assignedCreateRequestsViewModel, document.getElementById('assignedcreaterequest'));
 
-    var mergeRequestsViewModel = MergeRequestsViewModel([]);
+    mergeRequestsViewModel = MergeRequestsViewModel([]);
     ko.applyBindings(mergeRequestsViewModel, document.getElementById('mergeRequests'));
 
 
     // load the tables
-    pullRequestsViewModel.load();
-    createRequestsViewModel.load()
-    assignedCreateRequestsViewModel.load();
-    assignedPullRequestsViewModel.load();
-    mergeRequestsViewModel.load();
-
+    refreshAllQueues();
 
     // set up auto-refresh of tables every 2 minutes
     setInterval(function() {
-        pullRequestsViewModel.load();
-        createRequestsViewModel.load()
-        assignedCreateRequestsViewModel.load();
-        assignedPullRequestsViewModel.load();
-        mergeRequestsViewModel.load();
+        refreshAllQueues();
     }, 120000)
 
     // handle entering identifiers to mark records as pulled
@@ -58,10 +49,7 @@ jq(document).ready( function() {
                         jq('.mark-as-pulled-identifier:visible').val('');
 
                         // reload the lists
-                        pullRequestsViewModel.load();
-                        createRequestsViewModel.load()
-                        assignedCreateRequestsViewModel.load();
-                        assignedPullRequestsViewModel.load();
+                        refreshAllQueues();
 
                         emr.successAlert(data.message);
                     })
@@ -118,8 +106,7 @@ jq(document).ready( function() {
             type: 'POST'
         })
             .success(function(data) {
-                createRequestsViewModel.load();
-                assignedCreateRequestsViewModel.load();
+                refreshAllQueues();
 
                 emr.successMessage(data.message);
             })
@@ -145,8 +132,7 @@ jq(document).ready( function() {
             type: 'POST'
         })
             .success(function(data) {
-                pullRequestsViewModel.load();
-                assignedPullRequestsViewModel.load();
+                refreshAllQueues();
 
                 emr.successMessage(data.message);
             })
