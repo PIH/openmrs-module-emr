@@ -14,6 +14,7 @@
 
 package org.openmrs.module.emr.fragment.controller.paperrecord;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Person;
@@ -56,7 +57,7 @@ public class ArchivesRoomFragmentController {
         List<SimpleObject> results = new ArrayList<SimpleObject>();
 
         if (requests != null && requests.size() > 0) {
-            results = convertPaperRecordRequestsToSimpleObjects(requests, emrProperties, ui);
+            results = convertPaperRecordRequestsToSimpleObjects(requests, paperRecordService, emrProperties, ui);
         }
 
         return results;
@@ -71,7 +72,7 @@ public class ArchivesRoomFragmentController {
         List<SimpleObject> results = new ArrayList<SimpleObject>();
 
         if (requests != null && requests.size() > 0) {
-            results = convertPaperRecordRequestsToSimpleObjects(requests, emrProperties, ui);
+            results = convertPaperRecordRequestsToSimpleObjects(requests, paperRecordService, emrProperties, ui);
         }
 
         return results;
@@ -100,7 +101,7 @@ public class ArchivesRoomFragmentController {
         List<SimpleObject> results = new ArrayList<SimpleObject>();
 
         if (requests != null && requests.size() > 0) {
-            results = convertPaperRecordRequestsToSimpleObjects(requests, emrProperties, ui);
+            results = convertPaperRecordRequestsToSimpleObjects(requests, paperRecordService, emrProperties, ui);
         }
 
         return results;
@@ -115,15 +116,15 @@ public class ArchivesRoomFragmentController {
         List<SimpleObject> results = new ArrayList<SimpleObject>();
 
         if (requests != null && requests.size() > 0) {
-            results = convertPaperRecordRequestsToSimpleObjects(requests, emrProperties, ui);
+            results = convertPaperRecordRequestsToSimpleObjects(requests, paperRecordService, emrProperties, ui);
         }
 
         return results;
     }
 
-    public FragmentActionResult pullRequests(@RequestParam("requestId[]") List<PaperRecordRequest> requests,
-                                                @SpringBean("paperRecordService") PaperRecordService paperRecordService,
-                                                EmrContext emrContext, UiUtils ui) {
+    public FragmentActionResult assignPullRequests(@RequestParam("requestId[]") List<PaperRecordRequest> requests,
+                                                   @SpringBean("paperRecordService") PaperRecordService paperRecordService,
+                                                   EmrContext emrContext, UiUtils ui) {
 
         Person assignTo = emrContext.getUserContext().getAuthenticatedUser().getPerson();
 
@@ -142,9 +143,9 @@ public class ArchivesRoomFragmentController {
 
     }
 
-    public FragmentActionResult createRequests(@RequestParam("requestId[]") List<PaperRecordRequest> requests,
-                                             @SpringBean("paperRecordService") PaperRecordService paperRecordService,
-                                             EmrContext emrContext, UiUtils ui) {
+    public FragmentActionResult assignCreateRequests(@RequestParam("requestId[]") List<PaperRecordRequest> requests,
+                                                     @SpringBean("paperRecordService") PaperRecordService paperRecordService,
+                                                     EmrContext emrContext, UiUtils ui) {
 
         Person assignTo = emrContext.getUserContext().getAuthenticatedUser().getPerson();
 
@@ -273,7 +274,9 @@ public class ArchivesRoomFragmentController {
 
     }
 
-    private List<SimpleObject> convertPaperRecordRequestsToSimpleObjects(List<PaperRecordRequest> requests, EmrProperties emrProperties, UiUtils ui) {
+    private List<SimpleObject> convertPaperRecordRequestsToSimpleObjects(List<PaperRecordRequest> requests,
+                                                                         PaperRecordService paperRecordService,
+                                                                         EmrProperties emrProperties, UiUtils ui) {
 
         List<SimpleObject> results = new ArrayList<SimpleObject>();
 
@@ -284,6 +287,19 @@ public class ArchivesRoomFragmentController {
             result.put("dateCreated", timeAndDateFormat.format(request.getDateCreated()));
             result.put("dateCreatedSortable", request.getDateCreated()) ;
             result.put("patientIdentifier", ui.format(request.getPatient().getPatientIdentifier(emrProperties.getPrimaryIdentifierType()).getIdentifier()));
+
+            // add the last sent and last sent date to any pending pull requests
+            if (request.getStatus().equals(PaperRecordRequest.Status.ASSIGNED_TO_PULL)
+                    || (request.getStatus().equals(PaperRecordRequest.Status.OPEN) && StringUtils.isNotBlank(request.getIdentifier()))) {
+
+                PaperRecordRequest lastSentRequest = paperRecordService.getMostRecentSentPaperRecordRequestByIdentifier(request.getIdentifier());
+
+                if (lastSentRequest != null) {
+                    result.put("locationLastSent", ui.format(lastSentRequest.getRequestLocation()));
+                    result.put("dateLastSent", timeAndDateFormat.format(lastSentRequest.getDateStatusChanged()));
+                }
+
+            }
 
             results.add(result);
         }

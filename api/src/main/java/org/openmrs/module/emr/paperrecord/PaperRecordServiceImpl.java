@@ -15,12 +15,14 @@
 package org.openmrs.module.emr.paperrecord;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.ComparatorUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -366,6 +368,27 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
         }
 
         return requests;
+    }
+
+    @Override
+    public PaperRecordRequest getMostRecentSentPaperRecordRequestByIdentifier(String identifier) {
+
+        List<PaperRecordRequest> requests = getSentPaperRecordRequestByIdentifier(identifier);
+
+        if (requests == null || requests.size() == 0) {
+            return null;
+        }
+        else {
+            Collections.sort(requests, new Comparator<PaperRecordRequest>() {
+                @Override
+                public int compare(PaperRecordRequest request1, PaperRecordRequest request2) {
+                    // get date status changed should never be null, but just to be safe
+                    return request1.getDateStatusChanged() == null ? 1 : request2.getDateStatusChanged() == null ? -1
+                            : request1.getDateStatusChanged().compareTo(request2.getDateStatusChanged());
+                }
+            });
+            return requests.get(requests.size() - 1);  // most recent is last one in list
+        }
     }
 
     @Override

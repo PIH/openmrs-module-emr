@@ -1,4 +1,4 @@
-function RecordRequestModel(requestId, patientName, patientId, dossierNumber, sendToLocation, timeRequested, timeRequestedSortable) {
+function RecordRequestModel(requestId, patientName, patientId, dossierNumber, sendToLocation, timeRequested, timeRequestedSortable, dateLastSent, locationLastSent) {
     var model = {};
     model.requestId = requestId;
     model.patientName = patientName;
@@ -7,6 +7,8 @@ function RecordRequestModel(requestId, patientName, patientId, dossierNumber, se
     model.sendToLocation = sendToLocation;
     model.timeRequested = timeRequested;
     model.timeRequestedSortable = timeRequestedSortable;
+    model.locationLastSent = locationLastSent;
+    model.dateLastSent = dateLastSent;
     model.selected = ko.observable(false);
     model.hovered = ko.observable(false);
 
@@ -89,7 +91,7 @@ function PullRequestsViewModel(recordsToPull) {
                 jQuery.each(data, function(index, request) {
                     api.recordsToPull.push(RecordRequestModel(request.requestId, request.patient,
                         request.patientIdentifier, request.identifier, request.requestLocation, request.dateCreated,
-                        request.dateCreatedSortable));
+                        request.dateCreatedSortable, request.dateLastSent, request.locationLastSent));
                 });
 
             })
@@ -181,7 +183,7 @@ function AssignedPullRequestsViewModel(assignedRecordsToPull) {
                 jQuery.each(data, function(index, request) {
                     api.assignedRecordsToPull.push(RecordRequestModel(request.requestId, request.patient,
                         request.patientIdentifier, request.identifier, request.requestLocation, request.dateCreated,
-                        request.dateCreatedSortable));
+                        request.dateCreatedSortable, request.dateLastSent, request.locationLastSent));
                 });
 
             })

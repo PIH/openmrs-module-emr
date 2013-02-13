@@ -131,6 +131,9 @@
                             <td><span data-bind="text: sendToLocation"></span></td>
                             <td><span data-bind="text: timeRequested"></span></td>
                         </tr>
+                        <tr>
+                            <td colspan="4" data-bind="visible: locationLastSent" ><span data-bind="text: dossierNumber"></span> ${ ui.message("emr.archivesRoom.sentTo") } <span data-bind="text: locationLastSent"></span> ${ ui.message("emr.archivesRoom.at") } <span data-bind="text: dateLastSent"></span></td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -167,6 +170,9 @@
                             <td><span data-bind="text: sendToLocation"></span></td>
                             <td><span data-bind="text: timeRequested"></span></td>
                             <td><button data-bind="click: \$root.printLabel" class="print" title="${ui.message("emr.archivesRoom.reprint")}"><i class="icon-print"></i> </button></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" data-bind="visible: locationLastSent" ><span data-bind="text: dossierNumber"></span> ${ ui.message("emr.archivesRoom.sentTo") } <span data-bind="text: locationLastSent"></span> ${ ui.message("emr.archivesRoom.at") } <span data-bind="text: dateLastSent"></span></td>
                         </tr>
                         </tbody>
                     </table>

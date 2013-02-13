@@ -112,7 +112,7 @@ jq(document).ready( function() {
         });
 
         jQuery.ajax({
-            url: emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "createRequests"),
+            url: emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "assignCreateRequests"),
             data: { requestId: requestIds },
             dataType: 'json',
             type: 'POST'
@@ -139,7 +139,7 @@ jq(document).ready( function() {
         });
 
         jQuery.ajax({
-            url: emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "pullRequests"),
+            url: emr.fragmentActionLink("emr", "paperrecord/archivesRoom", "assignPullRequests"),
             data: { requestId: requestIds },
             dataType: 'json',
             type: 'POST'

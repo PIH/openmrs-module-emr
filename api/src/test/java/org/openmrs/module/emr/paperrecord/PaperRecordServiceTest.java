@@ -16,6 +16,7 @@ package org.openmrs.module.emr.paperrecord;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -614,12 +615,66 @@ public class PaperRecordServiceTest {
         when(mockPatientService.getPatients(null, "Patient_ID", Collections.singletonList(primaryIdentifierType), true)).thenReturn(Collections.singletonList(patient));
         when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(Collections.singletonList(Status.SENT))),
                 eq(patient), argThat(new NullLocation()), argThat(new NullString()), argThat(new NullBoolean()))).thenReturn(Collections.singletonList(request));
+
         IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(request);
 
         List<PaperRecordRequest> returnedRequests = paperRecordService.getSentPaperRecordRequestByIdentifier("Patient_ID");
-        expectedRequestMatcher.matches(returnedRequests.get(0));
+        assertTrue(expectedRequestMatcher.matches(returnedRequests.get(0)));
 
     }
+
+    @Test
+    public void getMostRecentSentPaperRecordRequestByIdentifierShouldRetrieveMostRecentSentRequest() {
+
+        Patient patient = new Patient();
+        patient.setId(15);
+
+        Location medicalRecordLocation = createMedicalRecordLocation();
+        Location requestLocation = createLocation(4, "Outpatient Clinic");
+
+        // generate a few existing paper record request
+        String identifier = "ABC123";
+        PaperRecordRequest request = createPaperRecordRequest(patient, medicalRecordLocation, identifier);
+        request.setId(10);
+        request.setRequestLocation(requestLocation);
+        request.setDateCreated(new Date());
+        request.updateStatus(Status.SENT);
+
+        PaperRecordRequest anotherRequest = createPaperRecordRequest(patient, medicalRecordLocation, identifier);
+        anotherRequest.setId(11);
+        anotherRequest.setRequestLocation(requestLocation);
+        anotherRequest.setDateCreated(new Date());
+        anotherRequest.updateStatus(Status.SENT);
+
+        PaperRecordRequest yetAnotherRequest = createPaperRecordRequest(patient, medicalRecordLocation, identifier);
+        yetAnotherRequest.setId(12);
+        yetAnotherRequest.setRequestLocation(requestLocation);
+        yetAnotherRequest.setDateCreated(new Date());
+        yetAnotherRequest.updateStatus(Status.SENT);
+
+        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(Collections.singletonList(Status.SENT))),
+                argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier), argThat(new NullBoolean())))
+                .thenReturn(Arrays.asList(request, anotherRequest, yetAnotherRequest));
+
+        IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(yetAnotherRequest);
+
+        PaperRecordRequest returnedRequest = paperRecordService.getMostRecentSentPaperRecordRequestByIdentifier(identifier);
+        expectedRequestMatcher.matches(returnedRequest);
+    }
+
+    @Test
+    public void getMostRecentSentPaperRecordRequestByIdentifierShouldReturnNullIfNoSentRequests() {
+
+        String identifier = "ABC123";
+
+        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(Collections.singletonList(Status.SENT))),
+                argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier), argThat(new NullBoolean())))
+                .thenReturn(null);
+
+
+        assertNull(paperRecordService.getMostRecentSentPaperRecordRequestByIdentifier(identifier));
+    }
+
 
     @Test
     public void testMarkRequestAsSentShouldMarkRequestAsSent() throws Exception {

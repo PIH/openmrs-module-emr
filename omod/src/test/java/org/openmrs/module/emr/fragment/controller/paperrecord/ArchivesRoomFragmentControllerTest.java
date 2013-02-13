@@ -44,6 +44,9 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -173,67 +176,125 @@ public class ArchivesRoomFragmentControllerTest {
     @Test
     public void testControllerShouldReturnOpenRequestsToPull() throws Exception {
 
-        List<PaperRecordRequest> requests = createSamplePaperRecordRequestList();
+        List<PaperRecordRequest> requests = createSamplePullPaperRecordRequestList();
 
         when(paperRecordService.getOpenPaperRecordRequestsToPull()).thenReturn(requests);
+        when(paperRecordService.getMostRecentSentPaperRecordRequestByIdentifier("123")).thenReturn(createSampleSentRequest());
         when(emrProperties.getPrimaryIdentifierType()).thenReturn(patientIdentifierType);
 
         List<SimpleObject> results = controller.getOpenRecordsToPull(paperRecordService, emrProperties, ui);
 
-        assertProperResultsList(results);
+        assertProperPullResultsList(results);
     }
 
     @Test
     public void testControllerShouldReturnOpenRequestsToCreate() throws Exception {
 
-        List<PaperRecordRequest> requests = createSamplePaperRecordRequestList();
+        List<PaperRecordRequest> requests = createSampleCreatePaperRecordRequestList();
 
         when(paperRecordService.getOpenPaperRecordRequestsToCreate()).thenReturn(requests);
         when(emrProperties.getPrimaryIdentifierType()).thenReturn(patientIdentifierType);
 
         List<SimpleObject> results = controller.getOpenRecordsToCreate(paperRecordService, emrProperties, ui);
 
-        assertProperResultsList(results);
+        assertProperCreateResultsList(results);
     }
 
     @Test
     public void testControllerShouldReturnAssignedRequestsToPull() throws Exception {
 
-        List<PaperRecordRequest> requests = createSamplePaperRecordRequestList();
+        List<PaperRecordRequest> requests = createSamplePullPaperRecordRequestList();
 
         when(paperRecordService.getAssignedPaperRecordRequestsToPull()).thenReturn(requests);
+        when(paperRecordService.getMostRecentSentPaperRecordRequestByIdentifier("123")).thenReturn(createSampleSentRequest());
         when(emrProperties.getPrimaryIdentifierType()).thenReturn(patientIdentifierType);
 
         List<SimpleObject> results = controller.getAssignedRecordsToPull(paperRecordService, emrProperties, ui);
 
-        assertProperResultsList(results);
+        assertProperPullResultsList(results);
     }
 
     @Test
     public void testControllerShouldReturnAssignedRequestsToCreate() throws Exception {
 
-        List<PaperRecordRequest> requests = createSamplePaperRecordRequestList();
+        List<PaperRecordRequest> requests = createSampleCreatePaperRecordRequestList();
 
         when(paperRecordService.getAssignedPaperRecordRequestsToCreate()).thenReturn(requests);
         when(emrProperties.getPrimaryIdentifierType()).thenReturn(patientIdentifierType);
 
         List<SimpleObject> results = controller.getAssignedRecordsToCreate(paperRecordService, emrProperties, ui);
 
-        assertProperResultsList(results);
+        assertProperCreateResultsList(results);
     }
 
     @Test
     public void testControllerShouldAssignRequests() throws Exception {
 
-        List<PaperRecordRequest> requests = createSamplePaperRecordRequestList();
+        List<PaperRecordRequest> requests = createSamplePullPaperRecordRequestList();
 
-        FragmentActionResult result = controller.pullRequests(requests, paperRecordService, emrContext, ui);
+        FragmentActionResult result = controller.assignPullRequests(requests, paperRecordService, emrContext, ui);
 
         assertThat(result, instanceOf(SuccessResult.class));
         verify(paperRecordService).assignRequests(eq(requests), eq(authenicatedUser.getPerson()), eq(sessionLocation));
     }
 
-    private List<PaperRecordRequest> createSamplePaperRecordRequestList() {
+    private List<PaperRecordRequest> createSampleCreatePaperRecordRequestList() {
+
+        Patient patient = new Patient();
+        PersonName name = new PersonName();
+        name.setFamilyName("Jones");
+        name.setGivenName("Tom");
+        patient.addName(name);
+
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setIdentifier("987");
+        patientIdentifier.setIdentifierType(patientIdentifierType);
+        patient.addIdentifier(patientIdentifier);
+
+        Patient patient2 = new Patient();
+        name = new PersonName();
+        name.setFamilyName("Wallace");
+        name.setGivenName("Mike");
+        patient2.addName(name);
+
+        patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setIdentifier("763");
+        patientIdentifier.setIdentifierType(patientIdentifierType);
+        patient2.addIdentifier(patientIdentifier);
+
+        Location location = new Location();
+        location.setName("Test location");
+
+        Location location2 = new Location();
+        location2.setName("Another location");
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2012, 2, 22, 11, 10);
+
+        PaperRecordRequest request = new PaperRecordRequest();
+        request.setId(1);
+        request.setRequestLocation(location);
+        request.setDateCreated(calendar.getTime());
+        request.setPatient(patient);
+        request.updateStatus(PaperRecordRequest.Status.OPEN);
+
+        PaperRecordRequest request2 = new PaperRecordRequest();
+        request2.setId(2);
+        request2.setIdentifier("ABC");
+        request2.setRequestLocation(location2);
+        calendar.set(2012,2,22,12, 11);
+        request2.setDateCreated(calendar.getTime());
+        request2.setPatient(patient2);
+        request2.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_CREATE);
+
+        List<PaperRecordRequest> requests = new ArrayList<PaperRecordRequest>();
+        requests.add(request);
+        requests.add(request2);
+
+        return requests;
+    }
+
+    private List<PaperRecordRequest> createSamplePullPaperRecordRequestList() {
 
         Patient patient = new Patient();
         PersonName name = new PersonName();
@@ -272,6 +333,7 @@ public class ArchivesRoomFragmentControllerTest {
         request.setRequestLocation(location);
         request.setDateCreated(calendar.getTime());
         request.setPatient(patient);
+        request.updateStatus(PaperRecordRequest.Status.OPEN);
 
         PaperRecordRequest request2 = new PaperRecordRequest();
         request2.setId(2);
@@ -280,6 +342,7 @@ public class ArchivesRoomFragmentControllerTest {
         calendar.set(2012,2,22,12, 11);
         request2.setDateCreated(calendar.getTime());
         request2.setPatient(patient2);
+        request2.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_PULL);
 
         List<PaperRecordRequest> requests = new ArrayList<PaperRecordRequest>();
         requests.add(request);
@@ -288,7 +351,64 @@ public class ArchivesRoomFragmentControllerTest {
         return requests;
     }
 
-    private void assertProperResultsList(List<SimpleObject> results) {
+
+    private PaperRecordRequest createSampleSentRequest() {
+
+        Patient patient = new Patient();
+        PersonName name = new PersonName();
+        name.setFamilyName("Jones");
+        name.setGivenName("Tom");
+        patient.addName(name);
+
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setIdentifier("987");
+        patientIdentifier.setIdentifierType(patientIdentifierType);
+        patient.addIdentifier(patientIdentifier);
+
+        Location location = new Location();
+        location.setName("Previously sent location");
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2012, 2, 22, 11, 10);
+
+        PaperRecordRequest request = new PaperRecordRequest();
+        request.setId(3);
+        request.setIdentifier("123");
+        request.setRequestLocation(location);
+        request.setDateCreated(calendar.getTime());
+        request.setPatient(patient);
+        request.updateStatus(PaperRecordRequest.Status.SENT);
+
+        return request;
+    }
+
+    private void assertProperCreateResultsList(List<SimpleObject> results) {
+
+        assertThat(results.size(), is(2));
+
+        SimpleObject result = results.get(0);
+        assertThat((Integer) result.get("requestId"), is(1));
+        assertThat((String) result.get("requestLocation"), is("Test location"));
+        assertNull(result.get("identifier"));
+        assertThat((String) result.get("patient"), is("Tom Jones"));
+        assertThat((String) result.get("patientIdentifier"), is("987"));
+        assertThat((String) result.get("dateCreated"), is("11:10 22/03"));
+        assertFalse(result.containsKey("dateLastSent"));
+        assertFalse(result.containsKey("locationLastSent"));
+
+        SimpleObject result2 = results.get(1);
+        assertThat((Integer) result2.get("requestId"), is(2));
+        assertThat((String) result2.get("requestLocation"), is("Another location"));
+        assertThat((String) result2.get("identifier"), is("ABC"));
+        assertThat((String) result2.get("patient"), is("Mike Wallace"));
+        assertThat((String) result2.get("patientIdentifier"), is("763"));
+        assertThat((String) result2.get("dateCreated"), is("12:11 22/03"));
+        assertFalse(result.containsKey("dateLastSent"));
+        assertFalse(result.containsKey("locationLastSent"));
+
+    }
+
+    private void assertProperPullResultsList(List<SimpleObject> results) {
 
         assertThat(results.size(), is(2));
 
@@ -299,6 +419,8 @@ public class ArchivesRoomFragmentControllerTest {
         assertThat((String) result.get("patient"), is("Tom Jones"));
         assertThat((String) result.get("patientIdentifier"), is("987"));
         assertThat((String) result.get("dateCreated"), is("11:10 22/03"));
+        assertThat((String) result.get("locationLastSent"), is("Previously sent location"));
+        assertNotNull(result.get("dateLastSent"));
 
         SimpleObject result2 = results.get(1);
         assertThat((Integer) result2.get("requestId"), is(2));
@@ -307,6 +429,8 @@ public class ArchivesRoomFragmentControllerTest {
         assertThat((String) result2.get("patient"), is("Mike Wallace"));
         assertThat((String) result2.get("patientIdentifier"), is("763"));
         assertThat((String) result2.get("dateCreated"), is("12:11 22/03"));
+        assertFalse(result2.containsKey("dateLastSent"));
+        assertFalse(result2.containsKey("locationLastSent"));
 
     }
 }

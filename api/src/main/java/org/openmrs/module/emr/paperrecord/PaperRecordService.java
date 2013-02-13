@@ -176,7 +176,7 @@ public interface PaperRecordService extends OpenmrsService {
 
     /**
      * Returns the "sent" paper record requests (if any) for the record with specified identifier
-     * (there may be multiple requests if for some reason a record was sent out twice without ever being)
+     * (there may be multiple requests if for some reason a record was sent out twice without ever being returned)
      *
      * @param identifier the paper record identifier OR the patient identifier associated with the request
      * @return returns the "sent" paper record requests (if any) for the record with specified identifier
@@ -185,6 +185,15 @@ public interface PaperRecordService extends OpenmrsService {
     // TODO: once we have multiple medical record locations, we will need to add location as a criteria (see paperRecordExistsWithIdentifier)
     List<PaperRecordRequest> getSentPaperRecordRequestByIdentifier(String identifier);
 
+
+    /**
+     * Returns the most recent "sent" paper record request (if any) for the record with the specified identifier
+     * "Most Recent" is the one with the most recent dateStatusChanged field
+     *
+     * @param identifier the paper record identifier OR the patient identifier associated with the request
+     * @return returns the most recent "sent" paper record request (if any) for the record with specified identifier
+     */
+    PaperRecordRequest getMostRecentSentPaperRecordRequestByIdentifier(String identifier);
 
     /**
      * Marks the specified paper record request as "sent"
