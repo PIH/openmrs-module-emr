@@ -45,7 +45,9 @@
 
     <div class="identifiers">
         <em>${ui.message("emr.patientHeader.patientId")}</em>
-        <span>${patient.primaryIdentifier.identifier}</span>
+        <% patient.primaryIdentifiers.each{ %>
+            <span>${it.identifier}</span>
+        <% } %>
         <% if (patient.paperRecordIdentifier) { %>
             <br />
             <em>${ ui.format(emrProperties.paperRecordIdentifierType) }</em>
