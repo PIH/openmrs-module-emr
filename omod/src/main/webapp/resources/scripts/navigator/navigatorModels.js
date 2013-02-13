@@ -74,6 +74,15 @@ FieldModel.prototype.value = function() {
     }
     return this.element.val() ? this.element.val() : "";
 }
+FieldModel.prototype.displayValue = function() {
+    var value = this.value();
+    if (value) {
+        var extra = _.map(this.element.parent().find(".append-to-value"), function(item) { return $(item).html() }).join(" ");
+        return extra ? (value + " <span class='after-value'>" + extra + "</span>") : value;
+    } else {
+        return "";
+    }
+}
 FieldModel.prototype.resetErrorMessages = function() {
     this.messagesContainer.empty();
     this.element.removeClass("error");
@@ -104,7 +113,7 @@ QuestionModel.prototype.select = function() {
 }
 QuestionModel.prototype.unselect = function() {
     SelectableModel.prototype.unselect.apply(this);
-    this.valueAsText = _.map(this.fields, function(field) { return field.value() }, this).join(this.fieldSeparator);
+    this.valueAsText = _.map(this.fields, function(field) { return field.displayValue() }, this).join(this.fieldSeparator);
     _.each(this.fields, function(field) { field.unselect(); });
     this.questionLi.removeClass("focused");
 }
