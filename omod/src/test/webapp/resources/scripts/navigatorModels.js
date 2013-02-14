@@ -63,8 +63,8 @@ describe("Test for simple form models", function() {
     describe("Unit tests for QuestionModel", function() {
         it("should select and unselect the question", function() {
             var questionModel = new QuestionModel();
-            var firstField = jasmine.createSpyObj('firstField', ['unselect', 'resetErrorMessages', 'value']);
-            var secondField = jasmine.createSpyObj('secondField', ['unselect', 'resetErrorMessages', 'value']);
+            var firstField = jasmine.createSpyObj('firstField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
+            var secondField = jasmine.createSpyObj('secondField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
             questionModel.fields = [firstField, secondField];
             questionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass']);
             spyOn(questionModel.questionLi, 'addClass');
