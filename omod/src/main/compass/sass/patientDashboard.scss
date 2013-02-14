@@ -7,7 +7,7 @@
 
 .dashboard-container {
     display: inline-block;
-    width: 76.5%;
+    width: 100%;
     min-height: 30%;
 
     .actions {
@@ -33,7 +33,108 @@
     }
   }
 
+  #visits {
+    padding: 5px;
+  }
+
+  #visits-list {
+    display: inline-block;
+
+    li {
+      border: 1px solid #ddd;
+      border-bottom: none;
+      padding: 10px;
+      height: 55px;
+      color: $text;
+      background: white;
+      position: relative;
+
+      &:last-child {
+        border-bottom: 1px solid #ddd;
+      }
+
+      &:hover:not(.selected) {
+        color: white;
+        background: lighten($text, 15%);
+        cursor: pointer;
+
+        .visit-primary-diagnosis { 
+          color: white;
+        }
+      }
+
+      .arrow-border, .arrow {
+        display: none;
+      }
+
+      &.selected {
+        color: white;
+        background: $text;
+
+        .arrow-border, .arrow {
+          display: block;
+        }
+
+        .visit-primary-diagnosis { 
+          color: white;
+        }
+      }
+
+      i {
+        font-size: 1.2em;
+      }
+
+      .visit-date {
+        font-size: 0.75em;
+        border-bottom: 1px dotted #eee;
+        padding-bottom: 7px;
+      }
+
+      .visit-primary-diagnosis {
+        font-size: 0.95em;
+        color: #666;
+        padding-top: 7px;
+      }
+
+      .visit-date, .visit-primary-diagnosis {
+        display: block;
+      }
+
+      .arrow-border {
+        border-color: transparent transparent transparent #ddd;
+        border-style: solid;
+        border-right-width: 20px;
+        border-left-width: 14px;
+        border-bottom-width: 16px;
+        border-top-width: 16px;
+        height:0;
+        width:0;
+        position:absolute;
+        right: -35px;
+        top: 23px;
+      }
+      
+      .arrow {
+        border-color: transparent transparent transparent $text;
+        border-style: solid;
+        border-right-width: 20px;
+        border-left-width: 14px;
+        border-bottom-width: 16px;
+        border-top-width: 16px;
+        height:0;
+        width:0;
+        position:absolute;
+        right: -34px;
+        top: 23px;
+      }
+    }
+  }
+
   #visit-details {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 20px;
+
     .ui-tabs {
       padding: 0;
     }
@@ -60,7 +161,7 @@ div {
     background: white;
     width: 23%;
     text-align: left;
-    margin-top: 40px;
+    margin-top: 10px;
   }
 }
 

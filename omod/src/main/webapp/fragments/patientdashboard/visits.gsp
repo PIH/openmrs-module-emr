@@ -2,6 +2,7 @@
     def dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy")
     def timeFormat = new java.text.SimpleDateFormat("HH:mm")
 %>
+
 <script type="text/javascript">
     breadcrumbs.push({ label: "${ui.message("emr.patientDashBoard.visits")}" , link:'${ui.pageLink("emr", "patient", [patientId: patient.id])}'});
 </script>
@@ -43,52 +44,54 @@
 
 <script type="text/javascript">
     jq(function() {
+        function loadVisit(visitElement) {
+            jq.getJSON(
+                emr.fragmentActionLink("emr", "visit/visitDetails", "getVisitDetails", {
+                    visitId: visitElement.attr('visitId')
+                }) 
+            ).success(function(data) {
+                jq('.viewVisitDetails').removeClass('selected');
+                visitElement.addClass('selected');
+                visitDetailsSection.html(visitDetailsTemplate(data));
+                visitDetailsSection.show();
+            }).error(function(err) {
+                emr.errorMessage(err);
+            });
+        }
+
         var visitDetailsTemplate = _.template(jq('#visitDetailsTemplate').html());
         var visitsSection = jq("#visits-list");
         var visitDetailsSection = jq("#visit-details");
-        visitDetailsSection.hide();
 
-        jq('a.viewVisitDetails').click(function() {
-            jq.getJSON(emr.fragmentActionLink("emr", "visit/visitDetails", "getVisitDetails", {visitId:jq(this).attr('visitId')}) )
-                .success(function(data) {
-                    visitDetailsSection.html(visitDetailsTemplate(data));
-                    visitsSection.hide();
-                    visitDetailsSection.show();
-                    emr.updateBreadcrumbs([
-                        { label: "Visit Details", last: true }
-                    ]);
-                })
-                .error(function(err) {
-                    emr.errorMessage(err);
-                }
-            );
+        //load first visit
+        loadVisit(jq('.viewVisitDetails').first());
+
+        jq('.viewVisitDetails').click(function() {
+            loadVisit(jq(this));
             return false;
         });
     });
 </script>
 
-<div id="visits-list">
-    <h3>${ui.message("emr.patientDashBoard.visits")}</h3>
-
-    <table>
-        <thead>
-        <tr>
-            <th>${ui.message("emr.patientDashBoard.date")}</th>
-            <th>${ui.message("emr.patientDashBoard.startTime")}</th>
-            <th>${ui.message("emr.patientDashBoard.location")}</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <% patient.allVisitsUsingWrappers.each { wrapper -> %>
-        <tr>
-            <td>${dateFormat.format(wrapper.visit.startDatetime)} <br>(${wrapper.differenceInDaysBetweenCurrentDateAndStartDate} days ago) </td>
-            <td>${timeFormat.format(wrapper.visit.startDatetime)}</td>
-            <td>${ ui.format(wrapper.visit.location) }</td>
-            <td><a href="#" class="viewVisitDetails" visitId="${wrapper.visit.visitId}">${ ui.message("emr.visitDetailsLink")} <i class="icon-chevron-right link"></i></a></td>
-        </tr>
-        <% } %>
-    </table>
-</div>
-
+<ul id="visits-list">
+    <% patient.allVisitsUsingWrappers.each { wrapper -> %>
+        <li class="viewVisitDetails" visitId="${wrapper.visit.visitId}">
+            <span class="visit-date">
+                <i class="icon-time"></i>
+                ${dateFormat.format(wrapper.visit.startDatetime)}
+                <% if(wrapper.visit.stopDatetime != null) { %>
+                    - ${dateFormat.format(wrapper.visit.stopDatetime)}
+                <% } else { %>
+                    (active since ${timeFormat.format(wrapper.visit.startDatetime)})
+                <% } %>
+            </span>
+            <span class="visit-primary-diagnosis">
+                No diagnosis yet.
+            </span>
+            <span class="arrow-border"></span>
+            <span class="arrow"></span>
+        </li>
+    <% } %>
+</ul>
 <div id="visit-details">
 </div>
