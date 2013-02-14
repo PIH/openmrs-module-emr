@@ -92,6 +92,9 @@
             <span class="arrow"></span>
         </li>
     <% } %>
+    <% if(patient.allVisitsUsingWrappers.size == 0) { %>
+        No visits yet.
+    <% } %>
 </ul>
 <div id="visit-details">
 </div>

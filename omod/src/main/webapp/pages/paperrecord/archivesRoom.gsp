@@ -56,7 +56,7 @@
                             <td><span data-bind="text: patientId"></span></td>
                             <td><span data-bind="text: sendToLocation"></span></td>
                             <td><span data-bind="text: timeRequested"></span></td>
-                            <td><button data-bind="click: \$root.cancelRequest" class="cancel" title="${ui.message("emr.archivesRoom.cancel")}">X</button></td>
+                            <td><a data-bind="click: \$root.cancelRequest" class="cancel" title="${ui.message("emr.archivesRoom.cancel")}">X</a></td>
                         </tr>
                         </tbody>
                     </table>
@@ -95,7 +95,7 @@
                         <td><span data-bind="text: sendToLocation"></span></td>
                         <td><span data-bind="text: timeRequested"></span></td>
                         <td><button data-bind="click: \$root.printLabel" class="print" title="${ui.message("emr.archivesRoom.reprint")}"><i class="icon-print"></i> </button></td>
-                        <td><button data-bind="click: \$root.cancelRequest" class="cancel" title="${ui.message("emr.archivesRoom.cancel")}">X</button></td>
+                        <td><a data-bind="click: \$root.cancelRequest" class="cancel" title="${ui.message("emr.archivesRoom.cancel")}">X</a></td>
                     </tr>
                     </tbody>
                 </table>
@@ -135,7 +135,7 @@
                             <td><span data-bind="text: dossierNumber"></span></td>
                             <td><span data-bind="text: sendToLocation"></span></td>
                             <td><span data-bind="text: timeRequested"></span></td>
-                            <td><button data-bind="click: \$root.cancelRequest" class="cancel" title="${ui.message("emr.archivesRoom.cancel")}">X</button></td>
+                            <td><a data-bind="click: \$root.cancelRequest" class="cancel" title="${ui.message("emr.archivesRoom.cancel")}">X</a></td>
                         </tr>
                         <tr>
                             <td colspan="5" data-bind="visible: locationLastSent" ><span data-bind="text: dossierNumber"></span> ${ ui.message("emr.archivesRoom.sentTo") } <span data-bind="text: locationLastSent"></span> ${ ui.message("emr.archivesRoom.at") } <span data-bind="text: dateLastSent"></span></td>
@@ -177,7 +177,7 @@
                             <td><span data-bind="text: sendToLocation"></span></td>
                             <td><span data-bind="text: timeRequested"></span></td>
                             <td><button data-bind="click: \$root.printLabel" class="print" title="${ui.message("emr.archivesRoom.reprint")}"><i class="icon-print"></i> </button></td>
-                            <td><button data-bind="click: \$root.cancelRequest" class="cancel" title="${ui.message("emr.archivesRoom.cancel")}">X</button></td>
+                            <td><a data-bind="click: \$root.cancelRequest" class="cancel" title="${ui.message("emr.archivesRoom.cancel")}">X</a></td>
                         </tr>
                         <tr>
                             <td colspan="6" data-bind="visible: locationLastSent" ><span data-bind="text: dossierNumber"></span> ${ ui.message("emr.archivesRoom.sentTo") } <span data-bind="text: locationLastSent"></span> ${ ui.message("emr.archivesRoom.at") } <span data-bind="text: dateLastSent"></span></td>

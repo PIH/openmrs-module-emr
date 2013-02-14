@@ -61,6 +61,10 @@
         .visit-primary-diagnosis { 
           color: white;
         }
+
+        .visit-date {
+          border-bottom: 1px dotted #888;
+        }
       }
 
       .arrow-border, .arrow {
@@ -78,10 +82,16 @@
         .visit-primary-diagnosis { 
           color: white;
         }
+
+        .visit-date {
+          border-bottom: 1px dotted #888;
+        }
       }
 
       i {
         font-size: 1.2em;
+        margin: -3px;
+        padding: 0px;
       }
 
       .visit-date {
