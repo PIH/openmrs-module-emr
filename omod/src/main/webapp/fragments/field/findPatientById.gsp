@@ -28,5 +28,7 @@ jq(function() {
 
     <label>${config.label}</label>
     <input type="hidden" id="${ config.hiddenFieldName}"  name="${ config.hiddenFieldName}" />
-    <input type="text" id="${ config.textFieldName}" AUTOCOMPLETE="OFF" />
+    <div class="scan-input">
+        <input type="text" id="${ config.textFieldName}" AUTOCOMPLETE="OFF" size="40" placeholder="${ ui.message("emr.archivesRoom.typeOrIdentifyBarCode.label") }"/>
+    </div>
     <span id="${ config.fullNameField}"></span>
