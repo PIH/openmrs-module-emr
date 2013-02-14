@@ -51,7 +51,7 @@
                         </tr>
                         </thead>
                         <tbody data-bind="foreach: recordsToCreate">
-                        <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), hover: hovered(), even: (\$index() % 2 == 0) }, event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordsToBeCreated" >
+                        <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), hover: hovered() }, event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordsToBeCreated" >
                             <td><span data-bind="text: patientName"></span></td>
                             <td><span data-bind="text: patientId"></span></td>
                             <td><span data-bind="text: sendToLocation"></span></td>
@@ -89,7 +89,7 @@
                     </tr>
                     </thead>
                     <tbody data-bind="foreach: assignedRecordsToCreate">
-                    <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), hover: hovered(), even: (\$index() % 2 == 0) }, event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordsToBeCreated" >
+                    <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), hover: hovered() }, event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordsToBeCreated" >
                         <td><span data-bind="text: patientName"></span></td>
                         <td><span data-bind="text: dossierNumber"></span></td>
                         <td><span data-bind="text: sendToLocation"></span></td>
@@ -130,7 +130,7 @@
                         </tr>
                         </thead>
                         <tbody data-bind="foreach: recordsToPull">
-                        <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), hover: hovered(), even: (\$index() % 2 == 0) }, event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords  }, click: \$root.selectRequestToBePulled" >
+                        <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), hover: hovered() }, event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords  }, click: \$root.selectRequestToBePulled" >
                             <td><span data-bind="text: patientName"></span></td>
                             <td><span data-bind="text: dossierNumber"></span></td>
                             <td><span data-bind="text: sendToLocation"></span></td>
@@ -171,7 +171,7 @@
                         </tr>
                         </thead>
                         <tbody data-bind="foreach: assignedRecordsToPull">
-                        <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), even: (\$index() % 2 == 0) }" >
+                        <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected() }" >
                             <td><span data-bind="text: patientName"></span></td>
                             <td><span data-bind="text: dossierNumber"></span></td>
                             <td><span data-bind="text: sendToLocation"></span></td>
