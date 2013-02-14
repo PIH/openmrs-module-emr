@@ -1039,6 +1039,105 @@ public class PaperRecordServiceTest {
         verify(mockPrinterService).printViaSocket("data\nlines\n", Printer.Type.LABEL, location, "UTF-8");
     }
 
+    @Test
+    public void testExpirePullRequestsShouldCancelPullRequestsBeforeSpecifiedDate() throws Exception {
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(2012, 1, 22);
+        cal.set(Calendar.HOUR_OF_DAY, 4);
+        cal.set(Calendar.MINUTE, 40);
+        Date beforeExpireDate = cal.getTime();
+
+        cal.set(Calendar.MINUTE, 50);
+
+        Date afterExpireDate = cal.getTime();
+
+        cal.set(Calendar.MINUTE, 45);
+        Date expireDate = cal.getTime();
+
+        Patient patient1 = new Patient(1);
+        Patient patient2 = new Patient(2);
+        Patient patient3 = new Patient(3);
+        Patient patient4 = new Patient(4);
+        Location requestLocation = new Location(1);
+        Location recordLocation = new Location(1);
+
+        PaperRecordRequest request1 = createPaperRecordRequest(patient1, recordLocation, "ABC", requestLocation,
+                Status.ASSIGNED_TO_PULL);
+        request1.setDateCreated(beforeExpireDate);
+
+        PaperRecordRequest request2 = createPaperRecordRequest(patient2, recordLocation, "DEF", requestLocation,
+                Status.ASSIGNED_TO_PULL);
+        request2.setDateCreated(afterExpireDate);
+
+        PaperRecordRequest request3 = createPaperRecordRequest(patient3, recordLocation, "GHI", requestLocation,
+                Status.OPEN);
+        request3.setDateCreated(beforeExpireDate);
+
+        PaperRecordRequest request4 = createPaperRecordRequest(patient4, recordLocation, "JKL", requestLocation,
+                Status.OPEN);
+        request4.setDateCreated(afterExpireDate);
+
+        when(mockPaperRecordDAO.findPaperRecordRequests(Collections.singletonList(Status.OPEN), null,
+                null, null, true)).thenReturn(Arrays.asList(request1, request2));
+
+        when(mockPaperRecordDAO.findPaperRecordRequests(Collections.singletonList(Status.ASSIGNED_TO_PULL), null,
+                null, null, null)).thenReturn(Arrays.asList(request3, request4));
+
+        paperRecordService.expirePendingPullRequests(expireDate);
+
+        verify(mockPaperRecordDAO).saveOrUpdate(request1);
+        verify(mockPaperRecordDAO).saveOrUpdate(request3);
+
+        verify(mockPaperRecordDAO, never()).saveOrUpdate(request2);
+        verify(mockPaperRecordDAO, never()).saveOrUpdate(request4);
+
+        assertThat(request1.getStatus(), is(Status.CANCELLED));
+        assertThat(request3.getStatus(), is(Status.CANCELLED));
+
+        assertThat(request2.getStatus(), is(Status.ASSIGNED_TO_PULL));
+        assertThat(request4.getStatus(), is(Status.OPEN));
+    }
+
+    @Test
+    public void testExpirePullRequestsShouldoNotCancelCreateRequests() throws Exception {
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(2012, 1, 22);
+        cal.set(Calendar.HOUR_OF_DAY, 4);
+        cal.set(Calendar.MINUTE, 40);
+        Date beforeExpireDate = cal.getTime();
+
+        cal.set(Calendar.MINUTE, 45);
+        Date expireDate = cal.getTime();
+
+        Patient patient1 = new Patient(1);
+        Patient patient2 = new Patient(2);
+        Location requestLocation = new Location(1);
+        Location recordLocation = new Location(1);
+
+        PaperRecordRequest request1 = createPaperRecordRequest(patient1, recordLocation, "ABC", requestLocation,
+                Status.ASSIGNED_TO_CREATE);
+        request1.setDateCreated(beforeExpireDate);
+
+        PaperRecordRequest request2 = createPaperRecordRequest(patient2, recordLocation, null, requestLocation,
+                Status.OPEN);
+        request2.setDateCreated(beforeExpireDate);
+
+        when(mockPaperRecordDAO.findPaperRecordRequests(Collections.singletonList(Status.ASSIGNED_TO_CREATE), null,
+                null, null, null)).thenReturn(Collections.singletonList(request1));
+
+        when(mockPaperRecordDAO.findPaperRecordRequests(Collections.singletonList(Status.OPEN), null,
+                null, null, false)).thenReturn(Collections.singletonList(request2));
+
+        paperRecordService.expirePendingPullRequests(expireDate);
+
+        verify(mockPaperRecordDAO, never()).saveOrUpdate(request1);
+        verify(mockPaperRecordDAO, never()).saveOrUpdate(request2);
+
+        assertThat(request1.getStatus(), is(Status.ASSIGNED_TO_CREATE));
+        assertThat(request2.getStatus(), is(Status.OPEN));
+    }
 
     private PatientIdentifier createIdentifier(Location medicalRecordLocation, String identifier) {
         PatientIdentifier identifer = new PatientIdentifier();

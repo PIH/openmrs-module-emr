@@ -89,6 +89,10 @@ public class EmrConstants {
 
     public static final long TASK_CLOSE_STALE_VISITS_REPEAT_INTERVAL = 5 * 60; // 5 minutes
 
+    public static final String TASK_CLOSE_STALE_PULL_REQUESTS = "EMR module - Close Stale Pull Request";
+
+    public static final String TASK_CLOSE_STALE_PULL_REQUESTS_DESCRIPTION = "Closes any pending pull record requests older than a specified date";
+
     public static final String UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME="Unknown patient";
 
     public static final String TELEPHONE_ATTRIBUTE_TYPE_NAME="Telephone Number";

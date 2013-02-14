@@ -14,6 +14,7 @@
 
 package org.openmrs.module.emr.paperrecord;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -507,9 +508,29 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PaperRecordMergeRequest> getOpenPaperRecordMergeRequests() {
         return paperRecordMergeRequestDAO.findPaperRecordMergeRequest(
             Collections.singletonList(PaperRecordMergeRequest.Status.OPEN));
+    }
+
+    @Override
+    @Transactional
+    public void expirePendingPullRequests(Date expireDate) {
+
+        List<PaperRecordRequest> pullRequests = new ArrayList<PaperRecordRequest>();
+
+        // note that since we are calling the other service methods directly, they
+        // won't be transactional, so we need to make sure this method is transactional
+
+        pullRequests.addAll(getOpenPaperRecordRequestsToPull());
+        pullRequests.addAll(getAssignedPaperRecordRequestsToPull());
+
+        for (PaperRecordRequest request : pullRequests) {
+            if (request.getDateCreated().before(expireDate)) {
+                markPaperRecordRequestAsCancelled(request);
+            }
+        }
     }
 
     // leaving this method as public so that it can be tested by integration test in mirebalais module
@@ -530,7 +551,6 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
         return paperRecordId;
     }
-
 
     protected Location getMedicalRecordLocationAssociatedWith(Location location) {
 

@@ -14,6 +14,7 @@
 
 package org.openmrs.module.emr.paperrecord;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -272,6 +273,16 @@ public interface PaperRecordService extends OpenmrsService {
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     List<PaperRecordMergeRequest> getOpenPaperRecordMergeRequests();
+
+
+    /**
+     * Expires all pending pull requests (ie, those pull requests with status OPEN or ASSIGNED_TO_PULL) that
+     * have a date_created before the specified expire date; Expires requests by setting the status
+     * of those requests to CANCELLED
+     *
+     * @param expireDate
+     */
+    void expirePendingPullRequests(Date expireDate);
 
     /**
      * Hack to bring this up to the interface level to allow us to stub out the template when printing
