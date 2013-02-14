@@ -218,7 +218,8 @@
 
     <div class="messages-container">
         <h1>
-            ${ ui.message("emr.mergePatients.confirmationSubtext") }
+            ${ ui.message("emr.mergePatients.confirmationSubtext") }  <br/>
+            ${ ui.message("emr.mergePatients.checkRecords") }
             <% if (overlappingVisits) { %>
             <em>${ ui.message("emr.mergePatients.overlappingVisitsWillBeJoined") }</em>
             <% } %>
