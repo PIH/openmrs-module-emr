@@ -34,24 +34,27 @@
   }
 
   #visits {
-    padding: 5px;
+    padding: 10px 0;
   }
 
   #visits-list {
     display: inline-block;
+    border: 1px solid #ccc;
+    border-left: none;
 
     li {
-      border: 1px solid #ddd;
-      border-bottom: none;
+      border-bottom: 1px solid white;
       padding: 10px;
       height: 55px;
       width: 200px;
       color: $text;
-      background: white;
+      background: #eee;
       position: relative;
+      @include box-shadow(inset 0px -1px 0px #BBB);
 
       &:last-child {
-        border-bottom: 1px solid #ddd;
+        border-bottom: none;
+        @include box-shadow(none);
       }
 
       &:hover:not(.selected) {
@@ -64,7 +67,7 @@
         }
 
         .visit-date {
-          border-bottom: 1px dotted #888;
+          border-bottom: 1px dotted white;
         }
       }
 
@@ -73,15 +76,10 @@
       }
 
       &.selected {
-        color: white;
-        background: $text;
+        background: white;
 
         .arrow-border, .arrow {
           display: block;
-        }
-
-        .visit-primary-diagnosis { 
-          color: white;
         }
 
         .visit-date {
@@ -96,37 +94,21 @@
       }
 
       .visit-date {
+        display: inline;
         font-size: 0.75em;
-        border-bottom: 1px dotted #eee;
+        border-bottom: 1px dotted #ccc;
         padding-bottom: 7px;
       }
 
       .visit-primary-diagnosis {
+        display: block;
         font-size: 0.95em;
         color: #666;
         padding-top: 7px;
       }
 
-      .visit-date, .visit-primary-diagnosis {
-        display: block;
-      }
-
       .arrow-border {
-        border-color: transparent transparent transparent #ddd;
-        border-style: solid;
-        border-right-width: 20px;
-        border-left-width: 14px;
-        border-bottom-width: 16px;
-        border-top-width: 16px;
-        height:0;
-        width:0;
-        position:absolute;
-        right: -35px;
-        top: 23px;
-      }
-      
-      .arrow {
-        border-color: transparent transparent transparent $text;
+        border-color: transparent transparent transparent #bbb;
         border-style: solid;
         border-right-width: 20px;
         border-left-width: 14px;
@@ -138,13 +120,30 @@
         right: -34px;
         top: 23px;
       }
+      
+      .arrow {
+        border-color: transparent transparent transparent white;
+        border-style: solid;
+        border-right-width: 20px;
+        border-left-width: 14px;
+        border-bottom-width: 16px;
+        border-top-width: 16px;
+        height:0;
+        width:0;
+        position:absolute;
+        right: -33px;
+        top: 23px;
+      }
     }
   }
 
   #visit-details {
     display: inline-block;
     vertical-align: top;
-    margin-left: 20px;
+    padding-left: 25px;
+    border-top: 1px solid #ccc;
+    width: 74%;
+    margin-left: -6px;
 
     .ui-tabs {
       padding: 0;
@@ -163,6 +162,38 @@
     }
   }
 
+}
+
+#encountersList {
+  .encounter-date, .encounter-details {
+    display: block;
+  }
+
+  .encounter-date {
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 5px;
+
+    i {
+      font-size: 1.1em;
+      padding: 0;
+      margin: -2px;
+    }
+  }
+
+  .encounter-type {
+    margin: auto 0;
+    border-right: 1px solid #ccc;
+    padding-left: 10px;
+    margin-right: 15px;
+    padding-right: 15px;
+  }
+
+  .encounter-details {
+    margin: auto 0;
+    height: 45px;
+    border: 1px solid #ccc;
+  }
 }
 
 div {

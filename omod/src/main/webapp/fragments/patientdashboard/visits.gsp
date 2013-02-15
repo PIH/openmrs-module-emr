@@ -8,7 +8,6 @@
 </script>
 
 <script type="text/template" id="visitDetailsTemplate">
-    <h3>${ui.message("emr.patientDashBoard.visitDetails")}</h3>
     <p>
         {{ if (stopDatetime) { }}
             ${ ui.message("emr.visitDetails", '{{- startDatetime }}', '{{- stopDatetime }}', '{{- location }}') }
@@ -17,29 +16,27 @@
         {{ } }}
     </p>
 
-    <h4>${ui.message("emr.patientDashBoard.encounters")}</h4>
-    <table id="encountersList">
-        <thead>
-        <tr>
-            <th>${ ui.message("emr.patientDashBoard.date")}</th>
-            <th>${ ui.message("emr.patientDashBoard.time")}</th>
-            <th>${ ui.message("emr.patientDashBoard.type")}</th>
-            <th>${ ui.message("emr.patientDashBoard.location")}</th>
-            <th>${ ui.message("emr.patientDashBoard.provider")}</th>
-        </tr>
-        </thead>
-        <tbody>
+    <h4>Encounters</h4>
+    <ul id="encountersList">
         {{ _.each(encounters, function(encounter) { }}
-        <tr>
-            <td>{{- encounter.encounterDate }}</td>
-            <td>{{- encounter.encounterTime }}</td>
-            <td>{{- encounter.encounterType }}</td>
-            <td>{{- encounter.location }}</td>
-            <td>{{- encounter.encounterProviders[0].provider }}</td>
-        </tr>
+            <li>
+                <span class="encounter-date">
+                    <i class="icon-time"></i>
+                    {{- encounter.encounterTime }}
+                    {{- encounter.encounterDate }}
+                </span>
+                <span class="encounter-details">
+                    <span class="encounter-type"> 
+                        {{- encounter.encounterType }}
+                    </span>
+                    by
+                    {{- encounter.encounterProviders[0].provider }}
+                    in
+                    {{- encounter.location }}
+                </span>
+            </li>
         {{ }); }}
-        </tbody>
-    </table>
+    </ul>
 </script>
 
 <script type="text/javascript">
