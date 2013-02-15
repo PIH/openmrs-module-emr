@@ -30,7 +30,16 @@
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
 <div class="tabs" xmlns="http://www.w3.org/1999/html">
     <div class="dashboard-container">
-
+        <div class="actions">
+            <% availableTasks.each {
+                def url = it.getUrl(emrContext)
+                if (!url.startsWith("javascript:")) {
+                    url = "/" + contextPath + "/" + url
+                }
+            %>
+            <div><a href="${ url }">${ it.getLabel(emrContext) }</a></div>
+            <% } %>
+        </div>
         <ul>
             <% tabs.each { %>
                 <li>
@@ -48,19 +57,6 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
         <% } %>
 
     </div>
-    <aside>
-        <div class="actions">
-            <strong>${ ui.message("emr.patientDashBoard.actions") }</strong>
-                <% availableTasks.each {
-                    def url = it.getUrl(emrContext)
-                    if (!url.startsWith("javascript:")) {
-                        url = "/" + contextPath + "/" + url
-                    }
-                %>
-            <div><a href="${ url }">${ it.getLabel(emrContext) }</a></div>
-            <% } %>
-        </div>
-    </aside>
 </div>
 
 <div id="request-paper-record-dialog" class="dialog" style="display: none">

@@ -11,13 +11,13 @@
     min-height: 30%;
 
     .actions {
-      margin: 0 8px;
-      margin-top: 20px;
+      font-size: 0.85em;
+      text-align: right;
+      margin-top: 25px;
+      margin-bottom: -40px;
 
-      strong {
-        display: block;
-        border-bottom: 1px solid #eee;
-        margin-bottom: 5px;
+      div {
+        display: inline-block;
       }
     }
 
