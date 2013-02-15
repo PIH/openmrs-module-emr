@@ -45,8 +45,8 @@ public class PatientPageController {
         patientDomainWrapper.setPatient(patient);
         model.addAttribute("patient", patientDomainWrapper);
         model.addAttribute("orders", orderService.getOrdersByPatient(patient));
-        model.addAttribute("availableTasks", taskService.getAvailableTasksByExtensionPoint(emrContext, GLOBAL_ACTIONS.getValue()));
-        model.addAttribute("activeVisitTasks", taskService.getAvailableTasksByExtensionPoint(emrContext, ACTIVE_VISITS.getValue()));
+        model.addAttribute("availableTasks", taskService.getAvailableTasksByExtensionPoint(emrContext, GLOBAL_ACTIONS));
+        model.addAttribute("activeVisitTasks", taskService.getAvailableTasksByExtensionPoint(emrContext, ACTIVE_VISITS));
         model.addAttribute("selectedTab", selectedTab);
         model.addAttribute("addressHierarchyLevels", GeneralUtils.getAddressHierarchyLevels());
     }

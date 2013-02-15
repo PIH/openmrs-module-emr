@@ -58,9 +58,10 @@ public interface TaskService extends OpenmrsService {
 
 
     /**
+     *
      * @param context
      * @param extensionPoint
      * @return all tasks available for the given context and the given extension point
      */
-    List<TaskDescriptor> getAvailableTasksByExtensionPoint(EmrContext context, String extensionPoint);
+    List<TaskDescriptor> getAvailableTasksByExtensionPoint(EmrContext context, ExtensionPoint extensionPoint);
 }
