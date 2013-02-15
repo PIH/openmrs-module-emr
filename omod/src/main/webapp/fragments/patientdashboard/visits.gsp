@@ -18,7 +18,7 @@
             <span class="status active"></span> ${ui.message("emr.activeVisit")}
         </div>
 
-        <div class="actions">
+        <div class="visit-actions">
 
             <%
                 activeVisitTasks.each{task ->
