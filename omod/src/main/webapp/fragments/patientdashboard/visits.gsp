@@ -20,20 +20,24 @@
     <ul id="encountersList">
         {{ _.each(encounters, function(encounter) { }}
             <li>
-                <span class="encounter-date">
+                <div class="encounter-date">
                     <i class="icon-time"></i>
                     {{- encounter.encounterTime }}
                     {{- encounter.encounterDate }}
-                </span>
-                <span class="encounter-details">
+                </div>
+                <div class="encounter-details">
                     <span class="encounter-type"> 
-                        {{- encounter.encounterType }}
+                        <strong>
+                            {{- encounter.encounterType }}
+                        </strong>
                     </span>
-                    by
-                    {{- encounter.encounterProviders[0].provider }}
-                    in
-                    {{- encounter.location }}
-                </span>
+                    <span>
+                        by
+                        <strong>{{- encounter.encounterProviders[0].provider }}</strong>
+                        in
+                        <strong>{{- encounter.location }}</strong>
+                    </span>  
+                </div>
             </li>
         {{ }); }}
     </ul>
