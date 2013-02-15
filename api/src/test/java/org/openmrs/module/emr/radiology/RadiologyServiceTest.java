@@ -88,7 +88,7 @@ public class RadiologyServiceTest {
         when(emrProperties.getRadiologyOrderEncounterType()).thenReturn(placeOrdersEncounterType);
         when(emrProperties.getOrderingProviderEncounterRole()).thenReturn(clinicianEncounterRole);
         when(emrContext.getSessionLocation()).thenReturn(currentLocation);
-        when(emrProperties.getTestOrderType()).thenReturn(orderType);
+        when(emrProperties.getRadiologyTestOrderType()).thenReturn(orderType);
         when(encounterService.saveEncounter(isA(Encounter.class))).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {

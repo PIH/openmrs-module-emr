@@ -85,10 +85,10 @@
         </description>
     </globalProperty>
     <globalProperty>
-        <property>emr.testOrderType</property>
+        <property>emr.radiologyTestOrderType</property>
         <defaultValue></defaultValue>
         <description>
-            UUID of the OrderType that represents lab tests and radiology studies
+            UUID of the OrderType that represents radiology studies
         </description>
     </globalProperty>
 

@@ -41,7 +41,7 @@ public class RadiologyServiceImpl extends BaseOpenmrsService implements Radiolog
             order.setConcept(study);
             order.setUrgency(requisition.getUrgency());
             order.setStartDate(new Date());
-            order.setOrderType(emrProperties.getTestOrderType());
+            order.setOrderType(emrProperties.getRadiologyTestOrderType());
             order.setPatient(requisition.getPatient());
             encounter.addOrder(order);
         }

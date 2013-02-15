@@ -67,8 +67,8 @@ public class EmrProperties extends ModuleProperties {
 		return userService.getRole(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
 	}
 
-    public OrderType getTestOrderType() {
-        return getOrderTypeByGlobalProperty(EmrConstants.GP_TEST_ORDER_TYPE);
+    public OrderType getRadiologyTestOrderType() {
+        return getOrderTypeByGlobalProperty(EmrConstants.GP_RADIOLOGY_TEST_ORDER_TYPE);
     }
 
     public VisitType getAtFacilityVisitType() {

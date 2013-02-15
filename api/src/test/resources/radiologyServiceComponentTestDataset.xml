@@ -4,6 +4,6 @@
     <!-- just use a random types from the test dataset -->
     <global_property property="emr.radiologyOrderEncounterType" property_value="61ae96f4-6afe-4351-b6f8-cd4fc383cce1" uuid="696cb344-9e66-42c6-8f03-2a0c1e9ca2a8"/>
     <global_property property="emr.orderingProviderEncounterRole" property_value="a0b03050-c99b-11e0-9572-0800200c9a66" uuid="696cb344-9e66-6666-8f03-2a0c1e9ca2a8"/>
-    <global_property property="emr.testOrderType" property_value="f149b5e1-4314-4d0d-a95f-1c4f8031161d" uuid="677cb344-9e66-6666-8f03-2a0c1e9ca2a8"/>
+    <global_property property="emr.radiologyTestOrderType" property_value="f149b5e1-4314-4d0d-a95f-1c4f8031161d" uuid="677cb344-9e66-6666-8f03-2a0c1e9ca2a8"/>
 
 </dataset>
