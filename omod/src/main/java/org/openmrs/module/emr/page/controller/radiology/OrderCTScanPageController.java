@@ -1,4 +1,4 @@
-package org.openmrs.module.emr.page.controller;
+package org.openmrs.module.emr.page.controller.radiology;
 
 import org.openmrs.Concept;
 import org.openmrs.Patient;
@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
-public class OrderUltrasoundPageController {
+public class OrderCTScanPageController {
 
     public void controller(@RequestParam("patientId") Patient patient,
                            @SpringBean("conceptService") ConceptService conceptService,
@@ -27,24 +27,21 @@ public class OrderUltrasoundPageController {
         Collection<Provider> providers = Context.getProviderService().getProvidersByPerson(Context.getAuthenticatedUser().getPerson());
         model.addAttribute("currentProvider", providers.iterator().next());
 
-        model.addAttribute("ultrasoundOrderables", ui.toJson(getUltrasoundOrderables(conceptService, Context.getLocale())));
+        model.addAttribute("ctScanOrderables", ui.toJson(getCTScanOrderables(conceptService, Context.getLocale())));
         model.addAttribute("patient", patient);
     }
 
-    private List<SimpleObject> getUltrasoundOrderables(ConceptService conceptService, Locale locale) {
+    private List<SimpleObject> getCTScanOrderables(ConceptService conceptService, Locale locale) {
         List<SimpleObject> items = new ArrayList<SimpleObject>();
-        Concept ultrasoundOrderables = conceptService.getConceptByUuid(Context.getAdministrationService().getGlobalProperty(EmrConstants.GP_ULTRASOUND_ORDERABLES_CONCEPT));
-        if( ultrasoundOrderables != null ) {
-            for (Concept concept : ultrasoundOrderables.getSetMembers()) {
-                SimpleObject item = new SimpleObject();
-                item.put("value", concept.getId());
+        Concept ctScanOrderables = conceptService.getConceptByUuid(Context.getAdministrationService().getGlobalProperty(EmrConstants.GP_CT_SCAN_ORDERABLES_CONCEPT));
+        for (Concept concept : ctScanOrderables.getSetMembers()) {
+            SimpleObject item = new SimpleObject();
+            item.put("value", concept.getId());
 
-                // TODO: this should really be fully specified name based on local
-                item.put("label", concept.getName().getName());
-                items.add(item);
-            }
+            // TODO: this should really be fully specified name based on local
+            item.put("label", concept.getName().getName());
+            items.add(item);
         }
-        
         return items;
     }
 }

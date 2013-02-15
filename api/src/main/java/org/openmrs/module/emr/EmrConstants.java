@@ -21,7 +21,7 @@ public class EmrConstants {
 
     public static final String EMR_MODULE_ID = "emr";
 
-    public final static String GP_PLACE_ORDERS_ENCOUNTER_TYPE = "emr.placeOrdersEncounterType";
+    public final static String GP_RADIOLOGY_ORDER_ENCOUNTER_TYPE = "emr.radiologyOrderEncounterType";
 
     public static final String GP_CHECK_IN_ENCOUNTER_TYPE = "emr.checkInEncounterType";
 
@@ -29,7 +29,7 @@ public class EmrConstants {
 
     public static final String GP_AT_FACILITY_VISIT_TYPE = "emr.atFacilityVisitType";
     
-    public static final String GP_CLINICIAN_ENCOUNTER_ROLE = "emr.clinicianEncounterRole";
+    public static final String GP_ORDERING_PROVIDER_ENCOUNTER_ROLE = "emr.orderingProviderEncounterRole";
 
     public static final String GP_CHECK_IN_CLERK_ENCOUNTER_ROLE = "emr.checkInClerkEncounterRole";
     

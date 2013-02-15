@@ -85,8 +85,8 @@ public class RadiologyServiceTest {
 
         VisitSummary currentVisitSummary = new VisitSummary(currentVisit, null);
         when(emrContext.getActiveVisitSummary()).thenReturn(currentVisitSummary);
-        when(emrProperties.getPlaceOrdersEncounterType()).thenReturn(placeOrdersEncounterType);
-        when(emrProperties.getClinicianEncounterRole()).thenReturn(clinicianEncounterRole);
+        when(emrProperties.getRadiologyOrderEncounterType()).thenReturn(placeOrdersEncounterType);
+        when(emrProperties.getOrderingProviderEncounterRole()).thenReturn(clinicianEncounterRole);
         when(emrContext.getSessionLocation()).thenReturn(currentLocation);
         when(emrProperties.getTestOrderType()).thenReturn(orderType);
         when(encounterService.saveEncounter(isA(Encounter.class))).thenAnswer(new Answer<Object>() {

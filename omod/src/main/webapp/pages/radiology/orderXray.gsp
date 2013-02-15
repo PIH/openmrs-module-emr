@@ -34,7 +34,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
 <div id="contentForm">
 <h1>${ ui.message("emr.orderXray.title") }</h1>
-<form action="${ ui.actionLink("emr", "radiologyRequisition", "orderXray") }" data-bind="submit: isValid">
+<form action="${ ui.actionLink("emr", "radiology/radiologyRequisition", "orderXray") }" data-bind="submit: isValid">
     <input type="hidden" name="successUrl" value="${ ui.pageLink("emr", "patient", [ patientId: patient.id ]) }"/>
     <input type="hidden" name="patient" value="${ patient.id }"/>
     <input type="hidden" name="requestedBy" value="${ currentProvider.id }"/>

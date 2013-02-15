@@ -54,10 +54,10 @@
 
     <!-- Global Properties -->
     <globalProperty>
-        <property>emr.placeOrdersEncounterType</property>
+        <property>emr.radiologyOrderEncounterType</property>
         <defaultValue></defaultValue>
         <description>
-            UUID of the encounter type used for placing orders (e.g. requisitioning radiology studies)
+            UUID of the encounter type used for placing radiology orders
         </description>
     </globalProperty>
 
@@ -70,10 +70,10 @@
     </globalProperty>
 
     <globalProperty>
-        <property>emr.clinicianEncounterRole</property>
+        <property>emr.orderingProviderEncounterRole</property>
         <defaultValue></defaultValue>
         <description>
-            UUID of the encounter role that represents the primary clinician who is seeing the patient
+            UUID of the encounter role that represents the provider ordering the order associated with the encounter
         </description>
     </globalProperty>
     

@@ -6,7 +6,7 @@
 
 <script type="text/javascript">
     jq(document).ready( function() {
-        ko.applyBindings( new StudiesViewModel(${ctScanOrderables}) );
+        ko.applyBindings( new StudiesViewModel(${ultrasoundOrderables}) );
     });
 </script>
 <style type="text/css">
@@ -57,8 +57,8 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
 <div id="contentForm">
     <p><span style="color:red">This is only a mockup. It's not a working version!</span></p>
-    <h1>CT Scan Requisition</h1>
-    <form action="${ ui.actionLink("emr", "radiologyRequisition", "orderCTScan") }" onsubmit="return false;">
+    <h1>Ultrasound Requisition</h1>
+    <form action="${ ui.actionLink("emr", "radiology/radiologyRequisition", "orderUltrasound") }" onsubmit="return false;">
         <input type="hidden" name="successUrl" value="${ ui.pageLink("emr", "patient", [ patientId: patient.id ]) }"/>
         <input type="hidden" name="patient" value="${ patient.id }"/>
         <input type="hidden" name="requestedBy" value="${ currentProvider.id }"/>

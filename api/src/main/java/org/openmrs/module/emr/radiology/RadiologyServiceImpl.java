@@ -21,8 +21,8 @@ public class RadiologyServiceImpl extends BaseOpenmrsService implements Radiolog
     @Override
     public Encounter placeRadiologyRequisition(EmrContext emrContext, RadiologyRequisition requisition) {
         Encounter encounter = new Encounter();
-        encounter.setEncounterType(emrProperties.getPlaceOrdersEncounterType());
-        encounter.setProvider(emrProperties.getClinicianEncounterRole(), requisition.getRequestedBy());
+        encounter.setEncounterType(emrProperties.getRadiologyOrderEncounterType());
+        encounter.setProvider(emrProperties.getOrderingProviderEncounterRole(), requisition.getRequestedBy());
         encounter.setPatient(requisition.getPatient());
         encounter.setLocation(emrContext.getSessionLocation());
         VisitSummary activeVisitSummary = emrContext.getActiveVisitSummary();

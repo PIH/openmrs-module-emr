@@ -45,7 +45,7 @@
     <bean id="emrOrderXrayTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
         <property name="id" value="emr.orderXray"/>
         <property name="labelCode" value="emr.task.orderXray.label"/>
-        <property name="url" value="emr/orderXray.page"/>
+        <property name="url" value="emr/radiology/orderXray.page"/>
         <property name="priority" value="20.2"/>
         <property name="extensionPoint" value="patient.visits.active.actions"/>
         <property name="iconUrl" value="icon-eye-close"/>
@@ -55,13 +55,13 @@
     <bean id="emrOrderUltrasoundTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
         <property name="id" value="emr.orderUltrasound"/>
         <property name="labelCode" value="emr.task.orderUltrasound.label"/>
-        <property name="url" value="emr/orderUltrasound.page"/>
+        <property name="url" value="emr/radiology/orderUltrasound.page"/>
         <property name="priority" value="20.1"/>
     </bean>
     <bean id="emrOrderCTScanTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
         <property name="id" value="emr.orderCTScan"/>
         <property name="labelCode" value="emr.task.orderCTScan.label"/>
-        <property name="url" value="emr/orderCTScan.page"/>
+        <property name="url" value="emr/radiology/orderCTScan.page"/>
         <property name="priority" value="20"/>
     </bean>
     -->

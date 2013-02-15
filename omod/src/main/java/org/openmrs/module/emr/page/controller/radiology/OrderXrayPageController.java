@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.emr.page.controller;
+package org.openmrs.module.emr.page.controller.radiology;
 
 import org.openmrs.Concept;
 import org.openmrs.Location;

@@ -43,8 +43,8 @@ public class EmrProperties extends ModuleProperties {
         return getConceptByGlobalProperty(EmrConstants.GP_XRAY_ORDERABLES_CONCEPT);
     }
 
-    public EncounterType getPlaceOrdersEncounterType() {
-        return getEncounterTypeByGlobalProperty(EmrConstants.GP_PLACE_ORDERS_ENCOUNTER_TYPE);
+    public EncounterType getRadiologyOrderEncounterType() {
+        return getEncounterTypeByGlobalProperty(EmrConstants.GP_RADIOLOGY_ORDER_ENCOUNTER_TYPE);
     }
 
     public EncounterType getCheckInEncounterType() {
@@ -55,8 +55,8 @@ public class EmrProperties extends ModuleProperties {
         return getEncounterTypeByGlobalProperty(EmrConstants.GP_TRIAGE_ENCOUNTER_TYPE);
     }
 
-    public EncounterRole getClinicianEncounterRole() {
-        return getEncounterRoleByGlobalProperty(EmrConstants.GP_CLINICIAN_ENCOUNTER_ROLE);
+    public EncounterRole getOrderingProviderEncounterRole() {
+        return getEncounterRoleByGlobalProperty(EmrConstants.GP_ORDERING_PROVIDER_ENCOUNTER_ROLE);
     }
 
     public EncounterRole getCheckInClerkEncounterRole() {
