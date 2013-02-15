@@ -30,6 +30,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.openmrs.module.emr.task.ExtensionPoint.ACTIVE_VISITS;
 
 public class TaskServiceTest {
 
@@ -49,8 +50,10 @@ public class TaskServiceTest {
     public void shouldGetAvailableTasks() {
         SimpleTaskDescriptor taskA = new SimpleTaskDescriptor();
         taskA.setId("A");
+        taskA.setExtensionPoint(ACTIVE_VISITS.getValue());
         SimpleTaskDescriptor taskB = new SimpleTaskDescriptor();
         taskB.setId("B");
+        taskB.setExtensionPoint(ACTIVE_VISITS.getValue());
 
         List<TaskDescriptor> allTasks = new ArrayList<TaskDescriptor>();
         allTasks.add(taskA);
@@ -61,7 +64,7 @@ public class TaskServiceTest {
         when(userContext.hasPrivilege(taskA.getRequiredPrivilegeName())).thenReturn(false);
         when(userContext.hasPrivilege(taskB.getRequiredPrivilegeName())).thenReturn(true);
 
-        List<TaskDescriptor> availableTasks = service.getAvailableTasks(context);
+        List<TaskDescriptor> availableTasks = service.getAvailableTasksByExtensionPoint(context, ACTIVE_VISITS);
         Assert.assertEquals(1, availableTasks.size());
         Assert.assertEquals(taskB, availableTasks.get(0));
     }
@@ -70,10 +73,13 @@ public class TaskServiceTest {
     public void shouldGetAvailableTasksIncludingThoseFromFactories() {
         SimpleTaskDescriptor taskA = new SimpleTaskDescriptor();
         taskA.setId("defined-directly");
+        taskA.setExtensionPoint(ACTIVE_VISITS.getValue());
         final SimpleTaskDescriptor taskB = new SimpleTaskDescriptor();
         taskB.setId("from-factory-1");
+        taskB.setExtensionPoint(ACTIVE_VISITS.getValue());
         final SimpleTaskDescriptor taskC = new SimpleTaskDescriptor();
         taskC.setId("from-factory-2");
+        taskC.setExtensionPoint(ACTIVE_VISITS.getValue());
 
         TaskFactory factory = new TaskFactory() {
             @Override
@@ -95,7 +101,7 @@ public class TaskServiceTest {
         when(userContext.hasPrivilege(taskB.getRequiredPrivilegeName())).thenReturn(true);
         when(userContext.hasPrivilege(taskC.getRequiredPrivilegeName())).thenReturn(false);
 
-        List<TaskDescriptor> availableTasks = service.getAvailableTasks(context);
+        List<TaskDescriptor> availableTasks = service.getAvailableTasksByExtensionPoint(context, ACTIVE_VISITS);
         assertThat(availableTasks.size(), is(2));
         assertThat(availableTasks, containsInAnyOrder((TaskDescriptor) taskA, (TaskDescriptor) taskB));
     }
@@ -107,16 +113,19 @@ public class TaskServiceTest {
         SimpleTaskDescriptor taskA = new SimpleTaskDescriptor();
         taskA.setId("A");
         taskA.setPriority(3);
+        taskA.setExtensionPoint(ACTIVE_VISITS.getValue());
         allTasks.add(taskA);
 
         SimpleTaskDescriptor taskC = new SimpleTaskDescriptor();
         taskC.setId("C");
         taskC.setPriority(1);
+        taskC.setExtensionPoint(ACTIVE_VISITS.getValue());
         allTasks.add(taskC);
 
         SimpleTaskDescriptor taskB = new SimpleTaskDescriptor();
         taskB.setId("B");
         taskB.setPriority(2);
+        taskB.setExtensionPoint(ACTIVE_VISITS.getValue());
         allTasks.add(taskB);
 
         service.setAllTasksInternal(allTasks);
@@ -124,7 +133,7 @@ public class TaskServiceTest {
 
         when(userContext.hasPrivilege(anyString())).thenReturn(true);
 
-        List<TaskDescriptor> availableTasks = service.getAvailableTasks(context);
+        List<TaskDescriptor> availableTasks = service.getAvailableTasksByExtensionPoint(context, ACTIVE_VISITS);
         Assert.assertEquals(3, availableTasks.size());
         Assert.assertEquals(taskA, availableTasks.get(0));
         Assert.assertEquals(taskB, availableTasks.get(1));
