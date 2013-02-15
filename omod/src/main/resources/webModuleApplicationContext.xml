@@ -39,13 +39,16 @@
         <property name="labelCode" value="emr.task.requestPaperRecord.label"/>
         <property name="javascript" value="showRequestChartDialog()"/>
         <property name="priority" value="-10.0"/>
+        <property name="extensionPoint" value="patient.globalActions"/>
     </bean>
     <bean id="emrOrderXrayTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
         <property name="id" value="emr.orderXray"/>
         <property name="labelCode" value="emr.task.orderXray.label"/>
         <property name="url" value="emr/orderXray.page"/>
         <property name="priority" value="20.2"/>
+        <property name="extensionPoint" value="patient.visits.active.actions"/>
     </bean>
+
     <!--
     <bean id="emrOrderUltrasoundTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
         <property name="id" value="emr.orderUltrasound"/>
@@ -65,5 +68,6 @@
         <property name="labelCode" value="emr.task.retrospectiveCheckin.label"/>
         <property name="url" value="emr/retrospectiveCheckin.page"/>
         <property name="priority" value="20.3"/>
+        <property name="extensionPoint" value="patient.globalActions"/>
     </bean>
 </beans>

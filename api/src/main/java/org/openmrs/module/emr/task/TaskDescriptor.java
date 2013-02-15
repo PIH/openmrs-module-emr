@@ -70,4 +70,12 @@ public interface TaskDescriptor {
      */
     double getPriority(EmrContext context);
 
+
+    /**
+     * It returns where in the application this Task should live
+     * Eg. patient.globalactions , patient.visits.active.actions
+     * @return the extension point where the task should live
+     */
+    String getExtensionPoint();
+
 }

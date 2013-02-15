@@ -17,12 +17,16 @@ import org.openmrs.Patient;
 import org.openmrs.api.OrderService;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.patient.PatientDomainWrapper;
+import org.openmrs.module.emr.task.ExtensionPoint;
 import org.openmrs.module.emr.task.TaskService;
 import org.openmrs.module.emr.utils.GeneralUtils;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import static org.openmrs.module.emr.task.ExtensionPoint.ACTIVE_VISITS;
+import static org.openmrs.module.emr.task.ExtensionPoint.GLOBAL_ACTIONS;
 
 
 /**
@@ -41,7 +45,8 @@ public class PatientPageController {
         patientDomainWrapper.setPatient(patient);
         model.addAttribute("patient", patientDomainWrapper);
         model.addAttribute("orders", orderService.getOrdersByPatient(patient));
-        model.addAttribute("availableTasks", taskService.getAvailableTasks(emrContext));
+        model.addAttribute("availableTasks", taskService.getAvailableTasksByExtensionPoint(emrContext, GLOBAL_ACTIONS.getValue()));
+        model.addAttribute("activeVisitTasks", taskService.getAvailableTasksByExtensionPoint(emrContext, ACTIVE_VISITS.getValue()));
         model.addAttribute("selectedTab", selectedTab);
         model.addAttribute("addressHierarchyLevels", GeneralUtils.getAddressHierarchyLevels());
     }

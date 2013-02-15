@@ -23,6 +23,8 @@ public abstract class BaseTaskDescriptor implements TaskDescriptor {
 
     protected String requiredPrivilegeName;
 
+    protected String extensionPoint = "";
+
     /**
      * @param context
      * @return Base implementation returns true if the authenticated user has the privilege given by getRequiredPrivilegeName()
@@ -67,4 +69,12 @@ public abstract class BaseTaskDescriptor implements TaskDescriptor {
         return "Task: " + getId();
     }
 
+    @Override
+    public String getExtensionPoint() {
+        return extensionPoint;
+    }
+
+    public void setExtensionPoint(String extensionPoint) {
+        this.extensionPoint = extensionPoint;
+    }
 }

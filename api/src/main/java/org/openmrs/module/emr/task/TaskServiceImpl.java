@@ -39,20 +39,26 @@ public class TaskServiceImpl extends BaseOpenmrsService implements TaskService {
     	this.userService = userService;
     }
 
-	@Override
-    public List<TaskDescriptor> getAvailableTasks(final EmrContext context) {
+    @Override
+    public List<TaskDescriptor> getAvailableTasksByExtensionPoint(final EmrContext context, String extensionPoint) {
         if (allTasks == null || allTaskFactories == null) {
             throw new IllegalStateException("Need to configure with list of TaskDescriptor and TaskFactory");
         }
+
+        if (extensionPoint == null){
+            throw new IllegalStateException("You should pass an extensionPoint");
+        }
+
         List<TaskDescriptor> available = new ArrayList<TaskDescriptor>();
         for (TaskDescriptor candidate : allTasks) {
-            if (candidate.isAvailable(context)) {
+            if (candidate.isAvailable(context) && extensionPoint.equals(candidate.getExtensionPoint())) {
                 available.add(candidate);
             }
         }
+
         for (TaskFactory factory : allTaskFactories) {
             for (TaskDescriptor candidate : factory.getTaskDescriptors(context)) {
-                if (candidate.isAvailable(context)) {
+                if (candidate.isAvailable(context) && extensionPoint.equals(candidate.getExtensionPoint())) {
                     available.add(candidate);
                 }
             }

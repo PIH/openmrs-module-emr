@@ -28,12 +28,6 @@ import java.util.List;
 public interface TaskService extends OpenmrsService {
 
     /**
-     * @param context
-     * @return all tasks available for the given context
-     */
-    List<TaskDescriptor> getAvailableTasks(EmrContext context);
-
-    /**
      * Creates a privilege for task, if it doesn't already exist.
      *
      * This is a utility method intended for internal use by this module. Do not call it yourself from client code.
@@ -62,4 +56,11 @@ public interface TaskService extends OpenmrsService {
      */
     void setAllTaskFactoriesInternal(List<TaskFactory> taskFactories);
 
+
+    /**
+     * @param context
+     * @param extensionPoint
+     * @return all tasks available for the given context and the given extension point
+     */
+    List<TaskDescriptor> getAvailableTasksByExtensionPoint(EmrContext context, String extensionPoint);
 }
