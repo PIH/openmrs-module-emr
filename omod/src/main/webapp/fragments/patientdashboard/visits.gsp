@@ -12,9 +12,31 @@
         {{ if (stopDatetime) { }}
             ${ ui.message("emr.visitDetails", '{{- startDatetime }}', '{{- stopDatetime }}', '{{- location }}') }
         {{ } else { }}
-            ${ ui.message("emr.activeVisit", '{{- startDatetime }}', '{{- location }}') }
-        {{ } }}
-    </p>
+
+        <div class="visit-status">
+            <i class="icon-time small"></i>  ${ ui.message("emr.activeVisit.time", '{{- startDatetime }}')}
+            <span class="status active"></span> ${ui.message("emr.activeVisit")}
+        </div>
+
+        <div class="actions">
+
+            <%
+                activeVisitTasks.each{task ->
+                    def url = task.getUrl(emrContext)
+
+                    if (!url.startsWith("javascript:")) {
+                        url = "/" + contextPath + "/" + url
+                    }
+            %>
+
+            <a href="${ url }" class="button task">
+                <i class="${task.getIconUrl(emrContext)}"></i> ${ task.getLabel(emrContext) }
+            </a>
+
+             <% } %>
+        </div>
+       {{  } }}
+</p>
 
     <h4>Encounters</h4>
     <ul id="encountersList">

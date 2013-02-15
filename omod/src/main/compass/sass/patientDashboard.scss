@@ -145,6 +145,17 @@
     width: 74%;
     margin-left: -6px;
 
+    .actions {
+      text-align: center;
+      padding: 15px 0 15px 0;
+      border: 1px solid #CCC;
+      @include border-radius(4px);
+
+       a {
+         margin-right: 7px;
+       }
+    }
+
     .ui-tabs {
       padding: 0;
     }
@@ -155,9 +166,6 @@
 
     p {
       font-size: 0.9em;
-      color: #666;
-      border-bottom: 1px solid #DDD;
-      margin-bottom: 20px;
       padding: 5px 0;
     }
   }
@@ -204,6 +212,27 @@
         display: inline-block;
         margin: 1px;
       }
+    }
+  }
+}
+
+.visit-status, .unknown-patient {
+  font-size: 0.9em;
+  display: inline-block;
+  border: 1px solid #EAEAEA;
+  background: white;
+  padding: 5px;
+  margin: 5px 0;
+  @include box-shadow(1px 1px 1px white);
+  .status {
+    display: inline-block;
+    height: 5px;
+    width: 5px;
+    margin: 2px;
+    @include border-radius(20px);
+    &.active {
+      background: $success;
+      border: 1px solid white;
     }
   }
 }

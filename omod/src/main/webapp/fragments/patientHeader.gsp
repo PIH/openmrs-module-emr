@@ -37,7 +37,7 @@
         <div class="visit-status">
             <% def visit = emrContext.activeVisitSummary.visit %>
             <span class="status active"></span>
-            ${ ui.message("emr.activeVisit", ui.format(visit.startDatetime), ui.format(visit.location)) }
+            ${ ui.message("emr.activeVisit.time", ui.format(visit.startDatetime)) }
         </div>
         <% } %>
     </div>
