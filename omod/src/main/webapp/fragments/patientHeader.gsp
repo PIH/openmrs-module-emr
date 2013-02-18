@@ -2,6 +2,7 @@
     def patient = config.patient
 
     ui.includeCss("emr", "patientHeader.css")
+    ui.includeJavascript("emr", "patient.js")
 %>
 
 
