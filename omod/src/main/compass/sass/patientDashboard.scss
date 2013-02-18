@@ -153,6 +153,11 @@
 
        a {
          margin-right: 7px;
+
+         &:hover {
+          color: white;
+          text-decoration: none;
+         }
        }
     }
 
