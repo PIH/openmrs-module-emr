@@ -78,7 +78,7 @@
                    if (extraPatientIdentifier) { %>
                         <span><a class="editPatientIdentifier" data-identifier-type-id="${ it.id }" data-identifier-type-name="${ it.name }" data-patient-identifier-value="${ extraPatientIdentifier }" href="#${ it.id }">${ extraPatientIdentifier }</a></span>
                 <% }else{ %>
-                        <span><a class="editPatientIdentifier" data-identifier-type-id="${ it.id }" data-identifier-type-name="${ it.name }" data-patient-identifier-value="" href="#${ it.id }">${ ui.message("emr.patient.identifier.add") }</a></span>
+                        <span class="add-id"><a class="editPatientIdentifier" data-identifier-type-id="${ it.id }" data-identifier-type-name="${ it.name }" data-patient-identifier-value="" href="#${ it.id }">${ ui.message("emr.patient.identifier.add") }</a></span>
                 <% } %>
             <% } %>
         <% } %>

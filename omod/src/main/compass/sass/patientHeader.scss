@@ -47,7 +47,7 @@
     }
   }
   .identifiers {
-    max-width: 320px;
+    max-width: 520px;
     display: inline-block;
     float: right;
     text-align: right;
@@ -69,6 +69,12 @@
       padding: 3px 8px;
       font-size: 0.8em;
       @include border-radius(50px);
+      &.add-id {
+        background: none;
+      }
+      a, a:link, a:visited {
+        color: #FFF;
+      }
     }
 
   }
