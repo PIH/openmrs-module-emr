@@ -123,5 +123,4 @@
     <% } %>
 </ul>
 <div id="visit-details">
-    <i class="icon-spinner icon-spin icon-2x pull-left"></i>
 </div>
