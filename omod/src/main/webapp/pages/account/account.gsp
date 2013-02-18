@@ -61,16 +61,16 @@
 	<fieldset>
 		<legend>${ ui.message("emr.person.details") }</legend>
 
-        ${ ui.includeFragment("emr", "field/text", [ 
-            label: ui.message("emr.person.givenName"), 
-            formFieldName: "givenName", 
-            initialValue: (account.givenName ?: '') 
-        ])}
-
-        ${ ui.includeFragment("emr", "field/text", [ 
-            label: ui.message("emr.person.familyName"), 
+        ${ ui.includeFragment("emr", "field/text", [
+            label: ui.message("emr.person.familyName"),
             formFieldName: "familyName", 
             initialValue: (account.familyName ?: '') 
+        ])}
+
+        ${ ui.includeFragment("emr", "field/text", [
+                label: ui.message("emr.person.givenName"),
+                formFieldName: "givenName",
+                initialValue: (account.givenName ?: '')
         ])}
 
         ${ ui.includeFragment("emr", "field/radioButtons", [ 
