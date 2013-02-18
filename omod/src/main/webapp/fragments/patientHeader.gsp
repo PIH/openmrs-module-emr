@@ -1,6 +1,8 @@
 <%
     def patient = config.patient
 
+    def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy hh:mm a")
+
     ui.includeCss("emr", "patientHeader.css")
     ui.includeJavascript("emr", "patient.js")
 %>
@@ -52,7 +54,7 @@
         <div class="visit-status">
             <% def visit = emrContext.activeVisitSummary.visit %>
             <span class="status active"></span>
-            ${ ui.message("emr.activeVisit.time", ui.format(visit.startDatetime)) }
+            ${ ui.message("emr.activeVisit.time", dateFormat.format(visit.startDatetime)) }
         </div>
         <% } %>
     </div>
