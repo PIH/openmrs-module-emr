@@ -35,6 +35,7 @@ import org.openmrs.module.emr.api.EmrService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -170,6 +171,20 @@ public abstract class ModuleProperties {
             throw new IllegalStateException("Configuration required: " + globalPropertyName);
         }
         return patientIdentifierType;
+    }
+    protected List<PatientIdentifierType> getPatientIdentifierTypesByGlobalProperty(String globalPropertyName, boolean required) {
+        List<PatientIdentifierType> types = null;
+        String globalProperty = getGlobalProperty(globalPropertyName, required);
+        if(StringUtils.isNotEmpty(globalProperty)){
+            types = new ArrayList<PatientIdentifierType>();
+            for (String type : globalPropertyName.split(",") ){
+                PatientIdentifierType patientIdentifierType = getPatientIdentifierTypeByGlobalProperty(type, false);
+                if(patientIdentifierType!=null){
+                    types.add(patientIdentifierType);
+                }
+            }
+        }
+        return types;
     }
 
     private String getGlobalProperty(String globalPropertyName, boolean required) {

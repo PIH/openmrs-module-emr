@@ -95,6 +95,10 @@ public class EmrProperties extends ModuleProperties {
         return getPatientIdentifierTypeByGlobalProperty(EmrConstants.GP_PAPER_RECORD_IDENTIFIER_TYPE, false);
     }
 
+    public List<PatientIdentifierType> getExtraPatientIdentifierTypes() {
+        return getPatientIdentifierTypesByGlobalProperty(EmrConstants.GP_EXTRA_PATIENT_IDENTIFIER_TYPES, false);
+    }
+
     public Concept getPaymentConstructConcept() {
         return getConceptByGlobalProperty(EmrConstants.PAYMENT_CONSTRUCT_CONCEPT);
     }

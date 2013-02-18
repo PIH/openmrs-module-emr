@@ -81,4 +81,3 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
         <button class="cancel">${ ui.message("emr.cancel") }</button>
     </div>
 </div>
-

@@ -109,6 +109,14 @@
     </globalProperty>
 
     <globalProperty>
+        <property>emr.extraPatientIdentifierTypes</property>
+        <defaultValue></defaultValue>
+        <description>
+            A list of UUIDs indicating extra Patient Identifier Types that should be displayed
+        </description>
+    </globalProperty>
+
+    <globalProperty>
         <property>emr.xrayOrderablesConcept</property>
         <defaultValue></defaultValue>
         <description>

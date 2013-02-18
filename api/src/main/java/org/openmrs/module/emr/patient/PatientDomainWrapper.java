@@ -138,6 +138,21 @@ public class PatientDomainWrapper {
         }
     }
 
+    public List<PatientIdentifier> getExtraIdentifiers(){
+        ArrayList<PatientIdentifier> patientIdentifiers = null;
+        List<PatientIdentifierType> types = emrProperties.getExtraPatientIdentifierTypes();
+        if(types!=null && types.size()>0){
+            patientIdentifiers = new ArrayList<PatientIdentifier>();
+            for(PatientIdentifierType type : types){
+                PatientIdentifier patientIdentifier = patient.getPatientIdentifier(type);
+                if(patientIdentifier!=null){
+                    patientIdentifiers.add(patientIdentifier);
+                }
+            }
+        }
+        return patientIdentifiers;
+    }
+
     public List<PatientIdentifier> getPaperRecordIdentifiers() {
         PatientIdentifierType paperRecordIdentifierType = emrProperties.getPaperRecordIdentifierType();
         if (paperRecordIdentifierType == null) {

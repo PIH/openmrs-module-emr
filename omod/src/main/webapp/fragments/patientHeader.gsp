@@ -7,6 +7,20 @@
 
 <script type="text/javascript">
     jq(document).ready(function(){
+        createEditPatientIdentifierDialog(${patient.id});
+
+        jq(".editPatientIdentifier").click(function(event) {
+            var identifierTypeId = jq(event.target).attr("data-identifier-type-id");
+            var identifierTypeName = jq(event.target).attr("data-identifier-type-name");
+            var patientIdentifierValue = jq(event.target).attr("data-patient-identifier-value");
+
+            jq("#hiddenIdentifierTypeId").val(identifierTypeId);
+            jq("#identifierTypeNameSpan").text(identifierTypeName);
+            jq("#patientIdentifierValue").val(patientIdentifierValue);
+
+            showEditPatientIdentifierDialog();
+        });
+
         jq(".demographics .name").click(function(){
             emr.navigateTo({
                 provider: 'emr',
@@ -53,6 +67,18 @@
             <em>${ ui.format(emrProperties.paperRecordIdentifierType) }</em>
             <span>${patient.paperRecordIdentifier.identifier }</span>
         <% } %>
+        <br />
+        <% if (emrProperties.extraPatientIdentifierTypes) { %>
+            <% emrProperties.extraPatientIdentifierTypes.each{ %>
+                <em>${ ui.format(it) }</em>
+                <% def extraPatientIdentifier = patient.patient.getPatientIdentifier(it)
+                   if (extraPatientIdentifier) { %>
+                        <span><a class="editPatientIdentifier" data-identifier-type-id="${ it.id }" data-identifier-type-name="${ it.name }" data-patient-identifier-value="${ extraPatientIdentifier }" href="#${ it.id }">${ extraPatientIdentifier }</a></span>
+                <% }else{ %>
+                        <span><a class="editPatientIdentifier" data-identifier-type-id="${ it.id }" data-identifier-type-name="${ it.name }" data-patient-identifier-value="" href="#${ it.id }">${ ui.message("emr.patient.identifier.add") }</a></span>
+                <% } %>
+            <% } %>
+        <% } %>
     </div>
 
     <div class="unknown-patient" style=<%= (!patient.unknownPatient) ? "display:none" : "" %>>
@@ -65,4 +91,27 @@
     </div>
 
     <div class="close"></div>
+</div>
+<div id="edit-patient-identifier-dialog" class="dialog" style="display: none">
+    <div class="dialog-header">
+        <h3>${ ui.message("emr.patientDashBoard.editPatientIdentifier.title") }</h3>
+    </div>
+    <div class="dialog-content">
+        <input type="hidden" id="hiddenIdentifierTypeId" value=""/>
+        <ul>
+            <li class="info">
+                <span>${ ui.message("emr.patient") }</span>
+                <h5>${ ui.format(patient.patient) }</h5>
+            </li>
+            <li class="info">
+                <span id="identifierTypeNameSpan"></span>
+            </li>
+            <li class="info">
+                <input id="patientIdentifierValue" value=""/>
+            </li>
+        </ul>
+
+        <button class="confirm right">${ ui.message("emr.confirm") }</button>
+        <button class="cancel">${ ui.message("emr.cancel") }</button>
+    </div>
 </div>
