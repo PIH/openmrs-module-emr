@@ -1,6 +1,6 @@
 <%
-    def dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy")
-    def timeFormat = new java.text.SimpleDateFormat("HH:mm")
+    def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy")
+    def timeFormat = new java.text.SimpleDateFormat("hh:mm a")
 %>
 
 <script type="text/javascript">
@@ -10,31 +10,33 @@
 <script type="text/template" id="visitDetailsTemplate">
     <p>
         {{ if (stopDatetime) { }}
-            ${ ui.message("emr.visitDetails", '{{- startDatetime }}', '{{- stopDatetime }}', '{{- location }}') }
+            <div class="visit-status">
+                <i class="icon-time small"></i> ${ ui.message("emr.visitDetails", '{{- startDatetime }}', '{{- stopDatetime }}')}
+            </div>
         {{ } else { }}
 
-        <div class="visit-status">
-            <i class="icon-time small"></i>  ${ ui.message("emr.activeVisit.time", '{{- startDatetime }}')}
-            <span class="status active"></span> ${ui.message("emr.activeVisit")}
-        </div>
+            <div class="visit-status">
+                <i class="icon-time small"></i> ${ ui.message("emr.activeVisit.time", '{{- startDatetime }}')}
+                <span class="status active"></span> ${ui.message("emr.activeVisit")}
+            </div>
 
-        <div class="visit-actions">
+            <div class="visit-actions">
 
-            <%
-                activeVisitTasks.each{task ->
-                    def url = task.getUrl(emrContext)
+                <%
+                    activeVisitTasks.each{task ->
+                        def url = task.getUrl(emrContext)
 
-                    if (!url.startsWith("javascript:")) {
-                        url = "/" + contextPath + "/" + url
-                    }
-            %>
+                        if (!url.startsWith("javascript:")) {
+                            url = "/" + contextPath + "/" + url
+                        }
+                %>
 
-            <a href="${ url }" class="button task">
-                <i class="${task.getIconUrl(emrContext)}"></i> ${ task.getLabel(emrContext) }
-            </a>
+                <a href="${ url }" class="button task">
+                    <i class="${task.getIconUrl(emrContext)}"></i> ${ task.getLabel(emrContext) }
+                </a>
 
-             <% } %>
-        </div>
+                 <% } %>
+            </div>
        {{  } }}
 </p>
 

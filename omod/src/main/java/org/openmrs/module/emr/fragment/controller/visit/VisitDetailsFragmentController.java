@@ -21,16 +21,27 @@ public class VisitDetailsFragmentController {
             @RequestParam("visitId") Visit visit,
             UiUtils uiUtils) throws ParseException {
 
-        SimpleObject simpleObject = SimpleObject.fromObject(visit, uiUtils, "startDatetime", "stopDatetime", "location",
+        SimpleObject simpleObject = SimpleObject.fromObject(visit, uiUtils, "location",
                 "encounters.encounterId", "encounters.encounterDatetime", "encounters.encounterType",
                 "encounters.location", "encounters.encounterProviders.provider");
+
+        Date startDatetime = visit.getStartDatetime();
+        Date stopDatetime = visit.getStopDatetime();
+
+        simpleObject.put("startDatetime", DateFormatUtils.format(startDatetime, "dd MMM yyyy hh:mm a"));
+
+        if (stopDatetime!=null){
+            simpleObject.put("stopDatetime", DateFormatUtils.format(stopDatetime, "dd MMM yyyy hh:mm a"));
+        } else {
+            simpleObject.put("stopDatetime", null);
+        }
 
         List<SimpleObject> encounters = (List<SimpleObject>) simpleObject.get("encounters");
         String[] datePatterns = { administrationService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATETIME_FORMAT) };
         for(SimpleObject so: encounters) {
             Date encounterDatetime = null;
             encounterDatetime = DateUtils.parseDate((String) so.get("encounterDatetime"), datePatterns);
-            so.put("encounterDate", DateFormatUtils.format(encounterDatetime, "dd/MM/yyyy"));
+            so.put("encounterDate", DateFormatUtils.format(encounterDatetime, "dd MMM yyyy"));
             so.put("encounterTime", DateFormatUtils.format(encounterDatetime, "hh:mm a"));
         }
 

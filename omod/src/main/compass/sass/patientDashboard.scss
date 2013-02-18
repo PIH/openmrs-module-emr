@@ -229,13 +229,14 @@
   }
 }
 
-.visit-status, .unknown-patient {
+.visit-status, {
   font-size: 0.9em;
   display: inline-block;
   border: 1px solid #EAEAEA;
-  background: white;
+  background: #eee;
   padding: 5px;
   margin: 5px 0;
+  width: 98%;
   @include box-shadow(1px 1px 1px white);
   .status {
     display: inline-block;
