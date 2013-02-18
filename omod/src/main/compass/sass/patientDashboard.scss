@@ -5,6 +5,28 @@
   min-height: 300px;
 }
 
+.visit-status, .unknown-patient {
+  font-size: 0.9em;
+  display: inline-block;
+  border: 1px solid #EAEAEA;
+  background: white;
+  padding: 5px;
+  margin: 5px 0;
+  @include box-shadow(1px 1px 1px white);
+  .status {
+    display: inline-block;
+    height: 5px;
+    width: 5px;
+    margin: 2px;
+    @include border-radius(20px);
+    &.active {
+      background: $success;
+      border: 1px solid darken($success, 5%);
+      @include box-shadow(0 0 5px $success);
+    }
+  }
+}
+
 .dashboard-container {
     display: inline-block;
     width: 100%;
@@ -149,6 +171,10 @@
     width: 73%;
     margin-left: -6px;
 
+    .visit-status {
+      width: 98%;
+    }
+
     .visit-actions {
       text-align: center;
       padding: 15px 0 15px 0;
@@ -229,28 +255,6 @@
         display: inline-block;
         margin: 1px;
       }
-    }
-  }
-}
-
-.visit-status, {
-  font-size: 0.9em;
-  display: inline-block;
-  border: 1px solid #EAEAEA;
-  background: #eee;
-  padding: 5px;
-  margin: 5px 0;
-  width: 98%;
-  @include box-shadow(1px 1px 1px white);
-  .status {
-    display: inline-block;
-    height: 5px;
-    width: 5px;
-    margin: 2px;
-    @include border-radius(20px);
-    &.active {
-      background: $success;
-      border: 1px solid white;
     }
   }
 }
