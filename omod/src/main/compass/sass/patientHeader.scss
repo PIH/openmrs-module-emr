@@ -69,11 +69,14 @@
       padding: 3px 8px;
       font-size: 0.8em;
       @include border-radius(50px);
-      &.add-id {
-        background: none;
-      }
       a, a:link, a:visited {
         color: #FFF;
+      }
+      &.add-id {
+        background: none;
+        a, a:link, a:visited {
+          color: $link;
+        }
       }
     }
 
