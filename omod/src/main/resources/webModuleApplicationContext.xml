@@ -66,6 +66,7 @@
         <property name="priority" value="20"/>
     </bean>
     -->
+    <!-- not for first release
     <bean id="emrRetrospectiveCheckin" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
         <property name="id" value="emr.retrospectiveCheckin"/>
         <property name="labelCode" value="emr.task.retrospectiveCheckin.label"/>
@@ -74,4 +75,5 @@
         <property name="extensionPoint" value="patient.globalActions"/>
         <property name="iconUrl" value="icon-calendar"/>
     </bean>
+    -->
 </beans>
