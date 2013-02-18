@@ -70,6 +70,7 @@
 <script type="text/javascript">
     jq(function() {
         function loadVisit(visitElement) {
+            visitDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");
             jq.getJSON(
                 emr.fragmentActionLink("emr", "visit/visitDetails", "getVisitDetails", {
                     visitId: visitElement.attr('visitId')
@@ -122,4 +123,5 @@
     <% } %>
 </ul>
 <div id="visit-details">
+    <i class="icon-spinner icon-spin icon-2x pull-left"></i>
 </div>
