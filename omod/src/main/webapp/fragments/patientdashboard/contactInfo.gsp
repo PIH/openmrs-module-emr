@@ -4,10 +4,8 @@
     <ul>
         <li><strong>${ ui.message("emr.person.address")}: </strong>
         <% addressHierarchyLevels.each { addressLevel -> %>
-           <% if(patient.personAddress!=null) { %>
-                 ${patient.personAddress[addressLevel]}
-                <% if(addressLevel != addressHierarchyLevels.last()){%>,
-                <% }%>
+           <% if(patient.personAddress && patient.personAddress[addressLevel]) { %>
+                 ${patient.personAddress[addressLevel]}<% if(addressLevel != addressHierarchyLevels.last()){%>,<%}%>
             <% }%>
         <% } %>
         </li>

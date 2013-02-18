@@ -101,6 +101,8 @@ public class EmrConstants {
 
     public static final String LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD = "a5fb5770-409a-11e2-a25f-0800200c9a66";
 
+    public static final String LOCATION_ATTRIBUTE_TYPE_LOCATION_CODE = "64f01c78-191d-4947-a201-7e0a7f0caf21";
+
     // remember if we add more types here to also create them in the module activator
     public static final Map<String, String> LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER = new HashMap<String, String>() {{
         put("ID_CARD", "b48ef9a0-38d3-11e2-81c1-0800200c9a66");
