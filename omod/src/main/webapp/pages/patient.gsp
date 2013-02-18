@@ -37,7 +37,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
                     url = "/" + contextPath + "/" + url
                 }
             %>
-            <div><a href="${ url }">${ it.getLabel(emrContext) }</a></div>
+            <div><a href="${ url }"><i class="${ it.getIconUrl(emrContext) }"></i>${ it.getLabel(emrContext) }</a></div>
             <% } %>
         </div>
         <ul>

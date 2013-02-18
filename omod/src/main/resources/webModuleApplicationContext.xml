@@ -40,6 +40,7 @@
         <property name="javascript" value="showRequestChartDialog()"/>
         <property name="priority" value="-10.0"/>
         <property name="extensionPoint" value="patient.globalActions"/>
+        <property name="iconUrl" value="icon-folder-open"/>
     </bean>
 
     <bean id="emrOrderXrayTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
@@ -71,5 +72,6 @@
         <property name="url" value="emr/retrospectiveCheckin.page"/>
         <property name="priority" value="20.3"/>
         <property name="extensionPoint" value="patient.globalActions"/>
+        <property name="iconUrl" value="icon-calendar"/>
     </bean>
 </beans>
