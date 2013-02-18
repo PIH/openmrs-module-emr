@@ -182,6 +182,10 @@
 }
 
 #encountersList {
+  li {
+    margin-bottom: 20px;
+  }
+
   .encounter-date, .encounter-details {
     display: block;
   }
