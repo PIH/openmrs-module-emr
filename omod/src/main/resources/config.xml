@@ -9,7 +9,7 @@
 	<package>${project.parent.groupId}.${project.parent.artifactId}</package>
 	<author>Partners In Health</author>
 	<description>
-		${project.parent.description}
+		${project.parent.description} - Build: ${buildNumber}
 	</description>
 	<updateURL>https://dev.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
 	<!--<require_version>${openMRSVersion}</require_version>-->
