@@ -16,8 +16,9 @@
         {{ } else { }}
 
             <div class="visit-status">
-                <i class="icon-time small"></i> ${ ui.message("emr.activeVisit.time", '{{- startDatetime }}')}
                 <span class="status active"></span> ${ui.message("emr.activeVisit")}
+                <i class="icon-time small"></i> ${ ui.message("emr.activeVisit.time", '{{- startDatetime }}')}
+                
             </div>
 
             <div class="visit-actions">
@@ -52,6 +53,7 @@
                 <div class="encounter-details">
                     <span class="encounter-type"> 
                         <strong>
+                            <i class="{{- getEncounterIcon(encounter.encounterType) }}"></i>
                             {{- encounter.encounterType }}
                         </strong>
                     </span>
@@ -97,6 +99,16 @@
             return false;
         });
     });
+
+  function getEncounterIcon(encounterType) {
+        var encounterIconMap = {
+            "Vitals": "icon-heart",
+            "Check-in": "icon-calendar",
+            "Radiology Order": "icon-eye-close"
+        };
+
+        return encounterIconMap[encounterType] || "icon-time";
+    };
 </script>
 
 <ul id="visits-list">

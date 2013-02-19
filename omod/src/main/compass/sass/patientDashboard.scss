@@ -73,7 +73,7 @@
       padding: 10px;
       height: 55px;
       width: 215px;
-      color: $text;
+      color: #aaa;
       background: #eee;
       position: relative;
       @include box-shadow(inset 0px -1px 0px #BBB);
@@ -103,6 +103,7 @@
 
       &.selected {
         background: white;
+        color: $text;
 
         .arrow-border, .arrow {
           display: block;
@@ -129,7 +130,6 @@
       .visit-primary-diagnosis {
         display: block;
         font-size: 0.95em;
-        color: #666;
         padding-top: 7px;
       }
 
@@ -254,7 +254,33 @@
         padding: 5px 10px;
         display: inline-block;
         margin: 1px;
+
+        i {
+          font-size: 1.7em;
+        }
       }
+    }
+  }
+}
+
+#visit-details .visit-status, {
+  font-size: 0.9em;
+  display: inline-block;
+  border: 1px solid #EAEAEA;
+  background: #f9f9f9;
+  padding: 5px;
+  margin: 5px 0;
+  width: 98%;
+  @include box-shadow(1px 1px 1px white);
+  .status {
+    display: inline-block;
+    height: 5px;
+    width: 5px;
+    margin: 2px;
+    @include border-radius(20px);
+    &.active {
+      background: $success;
+      border: 1px solid white;
     }
   }
 }
