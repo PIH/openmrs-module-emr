@@ -59,7 +59,7 @@
                     </span>
                     <span>
                         ${ ui.message("emr.by") }
-                        <strong>{{- encounter.encounterProviders[0].provider }}</strong>
+                        <strong>{{- encounter.encounterProviders[0] ? encounter.encounterProviders[0].provider : '' }}</strong>
                         ${ ui.message("emr.in") }
                         <strong>{{- encounter.location }}</strong>
                     </span>  
