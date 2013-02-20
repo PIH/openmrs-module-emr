@@ -72,19 +72,24 @@
 <script type="text/javascript">
     jq(function() {
         function loadVisit(visitElement) {
-            visitDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");
-            jq.getJSON(
-                emr.fragmentActionLink("emr", "visit/visitDetails", "getVisitDetails", {
-                    visitId: visitElement.attr('visitId')
-                }) 
-            ).success(function(data) {
-                jq('.viewVisitDetails').removeClass('selected');
-                visitElement.addClass('selected');
-                visitDetailsSection.html(visitDetailsTemplate(data));
-                visitDetailsSection.show();
-            }).error(function(err) {
-                emr.errorMessage(err);
-            });
+
+            if (visitElement != null && visitElement.attr('visitId') != undefined) {
+
+                visitDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");
+                jq.getJSON(
+                    emr.fragmentActionLink("emr", "visit/visitDetails", "getVisitDetails", {
+                        visitId: visitElement.attr('visitId')
+                    })
+                ).success(function(data) {
+                    jq('.viewVisitDetails').removeClass('selected');
+                    visitElement.addClass('selected');
+                    visitDetailsSection.html(visitDetailsTemplate(data));
+                    visitDetailsSection.show();
+                }).error(function(err) {
+                    emr.errorMessage(err);
+                });
+
+            }
         }
 
         var visitDetailsTemplate = _.template(jq('#visitDetailsTemplate').html());
