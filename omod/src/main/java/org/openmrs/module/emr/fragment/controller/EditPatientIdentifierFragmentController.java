@@ -24,7 +24,7 @@ public class EditPatientIdentifierFragmentController {
                                                @RequestParam("patientId") Patient patient,
                                                @RequestParam("identifierTypeId") PatientIdentifierType identifierType,
                                                @RequestParam(value="identifierValue", required = false) String identifierValue,
-                                               @RequestParam("locationId") Location location,
+                                               @RequestParam(value="locationId", required = false) Location location,
                                                @SpringBean("patientService")PatientService service) {
 
         if(patient!=null && StringUtils.isNotBlank(identifierValue) && identifierType!=null){

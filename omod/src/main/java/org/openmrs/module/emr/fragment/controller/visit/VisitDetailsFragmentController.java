@@ -1,9 +1,5 @@
 package org.openmrs.module.emr.fragment.controller.visit;
 
-import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.openmrs.Visit;
@@ -13,6 +9,10 @@ import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.text.ParseException;
+import java.util.Date;
+import java.util.List;
 
 public class VisitDetailsFragmentController {
 

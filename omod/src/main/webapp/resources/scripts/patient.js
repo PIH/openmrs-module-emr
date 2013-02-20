@@ -34,8 +34,7 @@ function createEditPatientIdentifierDialog(patientId) {
                 emr.getFragmentActionWithCallback('emr', 'editPatientIdentifier', 'editPatientIdentifier'
                     , { patientId: patientId,
                         identifierTypeId: jq("#hiddenIdentifierTypeId").val(),
-                        identifierValue: jq("#patientIdentifierValue").val(),
-                        locationId: sessionLocationModel.id()
+                        identifierValue: jq("#patientIdentifierValue").val()
                     }
                     , function(data) {
                         emr.successMessage(data.message);
