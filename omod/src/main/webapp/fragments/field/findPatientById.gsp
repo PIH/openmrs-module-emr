@@ -31,4 +31,5 @@ jq(function() {
     <div class="scan-input">
         <input type="text" id="${ config.textFieldName}" AUTOCOMPLETE="OFF" size="40" placeholder="${ ui.message("emr.archivesRoom.typeOrIdentifyBarCode.label") }"/>
     </div>
+    <br/>
     <span id="${ config.fullNameField}"></span>
