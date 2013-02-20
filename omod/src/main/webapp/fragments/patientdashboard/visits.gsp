@@ -41,7 +41,7 @@
        {{  } }}
 </p>
 
-    <h4>Encounters</h4>
+    <h4>${ ui.message("emr.patientDashBoard.encounters")} </h4>
     <ul id="encountersList">
         {{ _.each(encounters, function(encounter) { }}
             <li>
@@ -58,9 +58,9 @@
                         </strong>
                     </span>
                     <span>
-                        by
+                        ${ ui.message("emr.by") }
                         <strong>{{- encounter.encounterProviders[0].provider }}</strong>
-                        in
+                        ${ ui.message("emr.in") }
                         <strong>{{- encounter.location }}</strong>
                     </span>  
                 </div>
