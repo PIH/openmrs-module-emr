@@ -27,8 +27,12 @@ public class EmrConstants {
 
     public static final String GP_TRIAGE_ENCOUNTER_TYPE = "emr.triageEncounterType";
 
+    public static final String GP_CONSULT_ENCOUNTER_TYPE = "emr.consultEncounterType";
+
     public static final String GP_AT_FACILITY_VISIT_TYPE = "emr.atFacilityVisitType";
-    
+
+    public static final String GP_CLINICIAN_ENCOUNTER_ROLE = "emr.clinicianEncounterRole";
+
     public static final String GP_ORDERING_PROVIDER_ENCOUNTER_ROLE = "emr.orderingProviderEncounterRole";
 
     public static final String GP_CHECK_IN_CLERK_ENCOUNTER_ROLE = "emr.checkInClerkEncounterRole";
@@ -115,4 +119,17 @@ public class EmrConstants {
     public static final String PAYMENT_CONSTRUCT_CONCEPT = "emr.paymentConstructConcept";
 
     public static final String HTMLFORMENTRY_UI_MESSAGE_TAG_NAME = "uimessage";
+
+    public static final String EMR_CONCEPT_SOURCE_NAME = "org.openmrs.module.emr";
+    public static final String EMR_CONCEPT_SOURCE_DESCRIPTION = "Source used to tag concepts used in the EMR module";
+    public static final String EMR_CONCEPT_SOURCE_UUID = "b5e44116-778f-11e2-ad73-903c7bb72694";
+
+    // codes in the concept source provided by this module
+    public static final String CONCEPT_CODE_DIAGNOSIS_CONCEPT_SET = "Diagnosis Concept Set";
+    public static final String CONCEPT_CODE_CONSULT_FREE_TEXT_COMMENT = "Consult Free Text Comments";
+    public static final String CONCEPT_CODE_CODED_DIAGNOSIS = "Coded Diagnosis";
+    public static final String CONCEPT_CODE_NON_CODED_DIAGNOSIS = "Non-Coded Diagnosis";
+    public static final String CONCEPT_CODE_DIAGNOSIS_ORDER = "Diagnosis Order"; // e.g. Primary or Secondary
+    public static final String CONCEPT_CODE_DIAGNOSIS_ORDER_PRIMARY = "Primary";
+    public static final String CONCEPT_CODE_DIAGNOSIS_ORDER_SECONDARY = "Secondary";
 }

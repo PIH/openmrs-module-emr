@@ -49,14 +49,6 @@ public class RadiologyServiceImpl extends BaseOpenmrsService implements Radiolog
         return encounterService.saveEncounter(encounter);
     }
 
-    @Override
-    public void onStartup() {
-    }
-
-    @Override
-    public void onShutdown() {
-    }
-
     public void setEmrProperties(EmrProperties emrProperties) {
         this.emrProperties = emrProperties;
     }

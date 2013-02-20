@@ -19,6 +19,7 @@ import org.openmrs.LocationAttributeType;
 import org.openmrs.Role;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.UserService;
+import org.openmrs.module.emr.consult.ConsultService;
 import org.openmrs.module.emr.printer.Printer;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.scheduler.SchedulerService;
@@ -53,6 +54,20 @@ public class EmrActivatorComponentTest extends BaseModuleContextSensitiveTest {
     @Autowired
     @Qualifier("htmlFormEntryService")
     private HtmlFormEntryService htmlFormEntryService;
+
+    @Autowired
+    @Qualifier("consultService")
+    private ConsultService consultService;
+
+    @Autowired
+    @Qualifier("emrProperties")
+    private EmrProperties emrProperties;
+
+    @Test
+    public void testStarted() throws Exception {
+        new EmrActivator().started();
+        assertThat(emrProperties.getEmrConceptSource().getName(), is(EmrConstants.EMR_CONCEPT_SOURCE_NAME));
+    }
 
     @Test
     public void testContextRefreshed() throws Exception {

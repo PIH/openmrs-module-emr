@@ -62,10 +62,26 @@
     </globalProperty>
 
     <globalProperty>
+        <property>emr.consultEncounterType</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the encounter type used for writing a consult note (e.g. clinician examining the patient)
+        </description>
+    </globalProperty>
+
+    <globalProperty>
         <property>emr.checkInEncounterType</property>
         <defaultValue></defaultValue>
         <description>
             UUID of the encounter type for checking in a patient
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>emr.clinicianEncounterRole</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the encounter role that represents the clinician who signs off on an encounter, e.g. a consult note
         </description>
     </globalProperty>
 

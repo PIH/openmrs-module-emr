@@ -17,11 +17,13 @@ package org.openmrs.module.emr;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.ConceptSource;
 import org.openmrs.GlobalProperty;
 import org.openmrs.LocationAttributeType;
 import org.openmrs.Privilege;
 import org.openmrs.Role;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
@@ -170,9 +172,11 @@ public class EmrActivator implements ModuleActivator {
             LocationService locationService = Context.getLocationService();
             AdministrationService administrationService = Context.getAdministrationService();
             HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
+            ConceptService conceptService = Context.getConceptService();
 
             createGlobalProperties(administrationService);
             createLocationAttributeTypes(locationService);
+            createConceptSources(conceptService);
 
             htmlFormEntryService.addHandler(EmrConstants.HTMLFORMENTRY_UI_MESSAGE_TAG_NAME, new UiMessageTagHandler());
         }
@@ -184,6 +188,21 @@ public class EmrActivator implements ModuleActivator {
 
         log.info("EMR Module started");
 	}
+
+    /**
+     * Creates a single ConceptSource which we will use to tag concepts relevant to this module
+     * @param conceptService
+     */
+    private void createConceptSources(ConceptService conceptService) {
+        ConceptSource conceptSource = conceptService.getConceptSourceByName(EmrConstants.EMR_CONCEPT_SOURCE_NAME);
+        if (conceptSource == null) {
+            conceptSource = new ConceptSource();
+            conceptSource.setName(EmrConstants.EMR_CONCEPT_SOURCE_NAME);
+            conceptSource.setDescription(EmrConstants.EMR_CONCEPT_SOURCE_DESCRIPTION);
+            conceptSource.setUuid(EmrConstants.EMR_CONCEPT_SOURCE_UUID);
+            conceptService.saveConceptSource(conceptSource);
+        }
+    }
 
     private void createGlobalProperties(AdministrationService administrationService) {
 

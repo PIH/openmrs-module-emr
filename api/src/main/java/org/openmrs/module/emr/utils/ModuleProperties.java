@@ -16,6 +16,7 @@ package org.openmrs.module.emr.utils;
 
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Concept;
+import org.openmrs.ConceptSource;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
@@ -128,6 +129,17 @@ public abstract class ModuleProperties {
         return concept;
     }
 
+    protected Concept getSingleConceptByMapping(ConceptSource conceptSource, String code) {
+        List<Concept> candidates = conceptService.getConceptsByMapping(code, conceptSource.getName(), false);
+        if (candidates.size() == 0) {
+            throw new IllegalStateException("Configuration required: can't find a concept by mapping " + conceptSource.getName() + ":" + code);
+        } else if (candidates.size() == 1) {
+            return candidates.get(0);
+        } else {
+            throw new IllegalStateException("Configuration required: found more than one concept mapped as " + conceptSource.getName() + ":" + code);
+        }
+    }
+
     protected EncounterType getEncounterTypeByGlobalProperty(String globalPropertyName) {
         String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
         EncounterType encounterType = encounterService.getEncounterTypeByUuid(globalProperty);
@@ -194,7 +206,7 @@ public abstract class ModuleProperties {
         }
         return globalProperty;
     }
-    
+
     public List<Location> getAllAvailableLocations(){
         return emrService.getLoginLocations();
     }

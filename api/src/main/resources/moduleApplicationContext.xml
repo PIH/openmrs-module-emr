@@ -258,6 +258,32 @@
         </property>
     </bean>
 
+    <bean id="consultService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="${project.parent.groupId}.${project.parent.artifactId}.consult.ConsultServiceImpl">
+                <property name="encounterService" ref="encounterService" />
+                <property name="emrProperties" ref="emrProperties" />
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>
+
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list merge="true">
+                <value>${project.parent.groupId}.${project.parent.artifactId}.consult.ConsultService</value>
+                <ref local="consultService"/>
+            </list>
+        </property>
+    </bean>
 
     <!-- add type converters -->
     <bean class="org.openmrs.module.emr.converter.StringToPrinterConverter"/>

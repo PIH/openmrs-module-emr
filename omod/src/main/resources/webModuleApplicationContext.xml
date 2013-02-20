@@ -52,6 +52,13 @@
         <property name="iconUrl" value="icon-eye-close"/>
     </bean>
 
+    <bean id="emrConsultationTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
+        <property name="id" value="emr.consult"/>
+        <property name="labelCode" value="emr.consult.title"/>
+        <property name="url" value="emr/consult/consult.page"/>
+        <property name="priority" value="30.0"/>
+    </bean>
+
     <!--
     <bean id="emrOrderUltrasoundTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
         <property name="id" value="emr.orderUltrasound"/>

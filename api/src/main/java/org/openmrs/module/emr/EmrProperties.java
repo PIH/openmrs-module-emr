@@ -15,6 +15,7 @@
 package org.openmrs.module.emr;
 
 import org.openmrs.Concept;
+import org.openmrs.ConceptSource;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.LocationAttributeType;
@@ -24,13 +25,16 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.Role;
 import org.openmrs.VisitType;
+import org.openmrs.module.emr.consult.DiagnosisConceptSet;
 import org.openmrs.module.emr.utils.ModuleProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.openmrs.module.emr.EmrConstants.*;
+import static org.openmrs.module.emr.EmrConstants.LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD;
+import static org.openmrs.module.emr.EmrConstants.TELEPHONE_ATTRIBUTE_TYPE_NAME;
+import static org.openmrs.module.emr.EmrConstants.UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME;
 
 @Component("emrProperties")
 public class EmrProperties extends ModuleProperties {
@@ -53,6 +57,14 @@ public class EmrProperties extends ModuleProperties {
 
     public EncounterType getTriageEncounterType() {
         return getEncounterTypeByGlobalProperty(EmrConstants.GP_TRIAGE_ENCOUNTER_TYPE);
+    }
+
+    public EncounterType getConsultEncounterType() {
+        return getEncounterTypeByGlobalProperty(EmrConstants.GP_CONSULT_ENCOUNTER_TYPE);
+    }
+
+    public EncounterRole getClinicianEncounterRole() {
+        return getEncounterRoleByGlobalProperty(EmrConstants.GP_CLINICIAN_ENCOUNTER_ROLE);
     }
 
     public EncounterRole getOrderingProviderEncounterRole() {
@@ -115,7 +127,19 @@ public class EmrProperties extends ModuleProperties {
         return getConceptByGlobalProperty(EmrConstants.PAYMENT_RECEIPT_NUMBER_CONCEPT);
     }
 
-    public PersonAttributeType getUnknownPatientPersonAttributeType(){
+    public DiagnosisConceptSet getDiagnosisConceptSet() {
+        return new DiagnosisConceptSet(conceptService);
+    }
+
+    protected Concept getEmrConceptByMapping(String code) {
+        return getSingleConceptByMapping(getEmrConceptSource(), code);
+    }
+
+    public Concept getConsultFreeTextCommentsConcept() {
+        return getEmrConceptByMapping(EmrConstants.CONCEPT_CODE_CONSULT_FREE_TEXT_COMMENT);
+    }
+
+    public PersonAttributeType getUnknownPatientPersonAttributeType() {
         PersonAttributeType type = null;
         type = personService.getPersonAttributeTypeByName(UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME);
         if (type == null) {
@@ -124,7 +148,7 @@ public class EmrProperties extends ModuleProperties {
         return type;
     }
 
-    public PersonAttributeType getTelephoneAttributeType(){
+    public PersonAttributeType getTelephoneAttributeType() {
         PersonAttributeType type = null;
         type = personService.getPersonAttributeTypeByName(TELEPHONE_ATTRIBUTE_TYPE_NAME);
         if (type == null) {
@@ -150,6 +174,10 @@ public class EmrProperties extends ModuleProperties {
             types.add(paperRecordIdentifierType);
         }
         return types;
+    }
+
+    public ConceptSource getEmrConceptSource() {
+        return conceptService.getConceptSourceByName(EmrConstants.EMR_CONCEPT_SOURCE_NAME);
     }
 
 }
