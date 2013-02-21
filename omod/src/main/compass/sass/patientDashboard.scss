@@ -73,7 +73,7 @@
       padding: 10px;
       height: 55px;
       width: 215px;
-      color: #aaa;
+      color: #666;
       background: #eee;
       position: relative;
       @include box-shadow(inset 0px -1px 0px #BBB);
@@ -234,10 +234,6 @@
     display: inline-block;
     border: 1px solid #ccc;
     padding-right: 10px;
- 
-    strong {
-        color: lighten($text, 20%);
-    }
 
     span {
       padding: 0 10px;
@@ -249,21 +245,22 @@
       padding: 0;
       
       strong {
-        font-size: 1.3em;
+        font-size: 1.2em;
         border-left: 4px solid;
         padding: 5px 10px;
         display: inline-block;
         margin: 1px;
 
         i {
-          font-size: 1.7em;
+          font-size: 1.6em;
+          padding: 0;
         }
       }
     }
   }
 }
 
-#visit-details .visit-status, {
+#visit-details .visit-status {
   color: $text;
   font-size: 0.9em;
   display: inline-block;
@@ -279,10 +276,6 @@
     width: 5px;
     margin: 2px;
     @include border-radius(20px);
-    &.active {
-      background: $success;
-      border: 1px solid white;
-    }
   }
 }
 
