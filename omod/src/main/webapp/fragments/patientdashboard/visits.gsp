@@ -129,18 +129,18 @@
                 <% if(wrapper.visit.stopDatetime != null) { %>
                     - ${dateFormat.format(wrapper.visit.stopDatetime)}
                 <% } else { %>
-                    (active since ${timeFormat.format(wrapper.visit.startDatetime)})
+                    (${ ui.message("emr.patientDashBoard.activeSince")} ${timeFormat.format(wrapper.visit.startDatetime)})
                 <% } %>
             </span>
             <span class="visit-primary-diagnosis">
-                No diagnosis yet.
+                ${ ui.message("emr.patientDashBoard.noDiagnosis")}
             </span>
             <span class="arrow-border"></span>
             <span class="arrow"></span>
         </li>
     <% } %>
     <% if(patient.allVisitsUsingWrappers.size == 0) { %>
-        No visits yet.
+        ${ ui.message("emr.patientDashBoard.noVisits")} 
     <% } %>
 </ul>
 <div id="visit-details">
