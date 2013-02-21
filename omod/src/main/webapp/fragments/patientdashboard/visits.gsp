@@ -109,6 +109,7 @@
         var encounterIconMap = {
             "Vitals": "icon-vitals",
             "Check-in": "icon-check-in",
+            "Consultation": "icon-stethoscope",
             "Radiology Order": "icon-x-ray",
             "Patient Registration": "icon-register",
             "Payment Encounter": "icon-money",
