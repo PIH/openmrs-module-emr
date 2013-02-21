@@ -15,16 +15,21 @@
 package org.openmrs.module.emr.page.controller.consult;
 
 import org.openmrs.Patient;
+import org.openmrs.api.ConceptService;
+import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.consult.ConsultNote;
 import org.openmrs.module.emr.consult.ConsultService;
 import org.openmrs.module.emr.consult.Diagnosis;
+import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -38,24 +43,35 @@ public class ConsultPageController {
         //model.addAttribute("patient", patient);
     }
 
-    public void post(@RequestParam("patientId") Patient patient,
-                     @RequestParam("primaryDiagnosis") String primaryDiagnosisCode,
-                     @RequestParam("secondaryDiagnoses") List<String> secondaryDiagnosisCodes,
-                     @SpringBean("consultService") ConsultService consultService,
-                     @SpringBean EmrProperties emrProperties,
-                     EmrContext emrContext) {
+    public String post(@RequestParam("patientId") Patient patient,
+                       @RequestParam("primaryDiagnosis") String primaryDiagnosisCode,
+                       @RequestParam("secondaryDiagnoses") List<String> secondaryDiagnosisCodes,
+                       @RequestParam(required = false, value = "freeTextComments") String freeTextComments,
+                       HttpSession httpSession,
+                       @SpringBean("consultService") ConsultService consultService,
+                       @SpringBean("conceptService") ConceptService conceptService,
+                       @SpringBean EmrProperties emrProperties,
+                       EmrContext emrContext,
+                       UiUtils ui) {
         ConsultNote consultNote = new ConsultNote();
         consultNote.setPatient(patient);
-        consultNote.setPrimaryDiagnosis(new Diagnosis(primaryDiagnosisCode));
+        consultNote.setPrimaryDiagnosis(Diagnosis.parse(primaryDiagnosisCode, conceptService));
         if (secondaryDiagnosisCodes != null) {
             for (String code : secondaryDiagnosisCodes) {
-                consultNote.addAdditionalDiagnosis(new Diagnosis(code));
+                consultNote.addAdditionalDiagnosis(Diagnosis.parse(code, conceptService));
             }
+        }
+        if (StringUtils.hasText(freeTextComments)) {
+            consultNote.setComments(freeTextComments);
         }
         consultNote.setClinician(emrContext.getCurrentProvider());
         consultNote.setEncounterLocation(emrContext.getSessionLocation());
 
         consultService.saveConsultNote(consultNote);
+
+        httpSession.setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, ui.message("emr.consult.successMessage", ui.format(patient)));
+
+        return "redirect:" + ui.pageLink("emr", "patient", SimpleObject.create("patientId", patient.getId()));
     }
 
 }

@@ -16,6 +16,7 @@ package org.openmrs.module.emr.consult;
 
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
+import org.openmrs.util.OpenmrsUtil;
 
 /**
  * Helper class representing either a coded or non-coded answer to a question. If the answer is coded, this may specify
@@ -51,6 +52,17 @@ public abstract class CodedOrFreeTextAnswer {
 
     public void setNonCodedAnswer(String nonCodedAnswer) {
         this.nonCodedAnswer = nonCodedAnswer;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof CodedOrFreeTextAnswer)) {
+            return false;
+        }
+        CodedOrFreeTextAnswer other = (CodedOrFreeTextAnswer) o;
+        return OpenmrsUtil.nullSafeEquals(codedAnswer, other.codedAnswer) &&
+                OpenmrsUtil.nullSafeEquals(specificCodedAnswer, other.specificCodedAnswer) &&
+                OpenmrsUtil.nullSafeEquals(nonCodedAnswer, other.nonCodedAnswer);
     }
 
 }

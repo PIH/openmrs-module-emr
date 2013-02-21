@@ -57,6 +57,8 @@
         <property name="labelCode" value="emr.consult.title"/>
         <property name="url" value="emr/consult/consult.page"/>
         <property name="priority" value="30.0"/>
+        <property name="extensionPoint" value="patient.visits.active.actions"/>
+        <property name="iconUrl" value="icon-stethoscope"/>
     </bean>
 
     <!--

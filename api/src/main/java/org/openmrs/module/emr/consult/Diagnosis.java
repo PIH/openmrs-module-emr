@@ -23,19 +23,23 @@ import org.openmrs.api.ConceptService;
  */
 public class Diagnosis extends CodedOrFreeTextAnswer {
 
+    public static final String CONCEPT_NAME_PREFIX = "ConceptName:";
+    public static final String CONCEPT_PREFIX = "Concept:";
+    public static final String NON_CODED_PREFIX = "Non-Coded:";
+
     /**
      * @param spec should be "ConceptName:1234", "Concept:123", or "Non-Coded:Some text"
      * @return
      */
-    static Diagnosis parse(String spec, ConceptService conceptService) {
-        if (spec.startsWith("ConceptName:")) {
-            String conceptNameId = spec.substring("ConceptName:".length());
+    public static Diagnosis parse(String spec, ConceptService conceptService) {
+        if (spec.startsWith(CONCEPT_NAME_PREFIX)) {
+            String conceptNameId = spec.substring(CONCEPT_NAME_PREFIX.length());
             return new Diagnosis(conceptService.getConceptName(Integer.valueOf(conceptNameId)));
-        } else if (spec.startsWith("Concept:")) {
-            String conceptId = spec.substring("Concept:".length());
-            return new Diagnosis(conceptService.getConcept(conceptId));
-        } else if (spec.startsWith("Non-Coded:")) {
-            return new Diagnosis(spec.substring("Non-Coded:".length()));
+        } else if (spec.startsWith(CONCEPT_PREFIX)) {
+            String conceptId = spec.substring(CONCEPT_PREFIX.length());
+            return new Diagnosis(conceptService.getConcept(Integer.valueOf(conceptId)));
+        } else if (spec.startsWith(NON_CODED_PREFIX)) {
+            return new Diagnosis(spec.substring(NON_CODED_PREFIX.length()));
         } else {
             throw new IllegalArgumentException("Unknown diagnosis format: " + spec);
         }

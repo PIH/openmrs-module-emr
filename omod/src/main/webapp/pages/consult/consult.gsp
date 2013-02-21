@@ -93,7 +93,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 Not chosen
             </div>
             <div data-bind="visible: primaryDiagnosis, html: formatChosenItem(primaryDiagnosis())"></div>
-            <button data-bind="visible: primaryDiagnosis, click: removePrimaryDiagnosis">Remove</button>
+            <button data-bind="visible: primaryDiagnosis, click: removePrimaryDiagnosis" tabindex="-1">Remove</button>
             <input type="hidden" name="primaryDiagnosis" data-bind="value: valueToSubmit(primaryDiagnosis())">
 
             <br/>
@@ -102,7 +102,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             <ul data-bind="foreach: secondaryDiagnoses">
                 <li>
                     <span data-bind="html: formatChosenItem(\$data)"></span>
-                    <button data-bind="click: \$parent.removeDiagnosis">Remove</button>
+                    <button data-bind="click: \$parent.removeDiagnosis" tabindex="-1">Remove</button>
                     <input type="hidden" name="secondaryDiagnoses" data-bind="value: valueToSubmit(\$data)"/>
                 </li>
             </ul>
