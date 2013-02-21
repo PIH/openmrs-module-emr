@@ -107,10 +107,10 @@
 
   function getEncounterIcon(encounterType) {
         var encounterIconMap = {
-            "Vitals": "icon-vitals icomoon",
-            "Check-in": "icon-check-in icomoon",
-            "Radiology Order": "icon-x-ray icomoon",
-            "Patient Registration": "icon-registration icomoon",
+            "Vitals": "icon-vitals",
+            "Check-in": "icon-check-in",
+            "Radiology Order": "icon-x-ray",
+            "Patient Registration": "icon-register",
             "Payment Encounter": "icon-money",
             "Post-operative note": "icon-user-md",
             "Primary Care Visit": "icon-calendar"
