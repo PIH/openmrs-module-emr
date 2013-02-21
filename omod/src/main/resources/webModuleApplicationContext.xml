@@ -49,7 +49,7 @@
         <property name="url" value="emr/radiology/orderXray.page"/>
         <property name="priority" value="20.2"/>
         <property name="extensionPoint" value="patient.visits.active.actions"/>
-        <property name="iconUrl" value="icon-eye-close"/>
+        <property name="iconUrl" value="icon-x-ray icomoon"/>
     </bean>
 
     <bean id="emrConsultationTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
