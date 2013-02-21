@@ -109,7 +109,11 @@
         var encounterIconMap = {
             "Vitals": "icon-heart",
             "Check-in": "icon-calendar",
-            "Radiology Order": "icon-eye-close"
+            "Radiology Order": "icon-eye-close",
+            "Patient Registration": "icon-user",
+            "Payment Encounter": "icon-money",
+            "Post-operative note": "icon-user-md",
+            "Primary Care Visit": "icon-calendar"
         };
 
         return encounterIconMap[encounterType] || "icon-time";
