@@ -1,0 +1,33 @@
+@import "colors";
+
+#entry-fields {
+  display: inline-block;
+  width: 58%;
+  vertical-align: top;
+
+  p {
+    padding-bottom: 1em;
+  }
+}
+
+#display-diagnoses {
+  display: inline-block;
+  width: 40%;
+  vertical-align: top;
+}
+
+#buttons {
+  margin-top: 1em;
+}
+
+.matched-name {
+  display: block;
+}
+
+.code {
+  float: right;
+}
+
+.ui-menu .ui-menu-item {
+  border-bottom: 1px gray solid;
+}

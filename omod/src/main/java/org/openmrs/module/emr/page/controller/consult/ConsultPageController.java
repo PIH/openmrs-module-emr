@@ -45,7 +45,7 @@ public class ConsultPageController {
 
     public String post(@RequestParam("patientId") Patient patient,
                        @RequestParam("primaryDiagnosis") String primaryDiagnosisCode,
-                       @RequestParam("secondaryDiagnoses") List<String> secondaryDiagnosisCodes,
+                       @RequestParam(required = false, value = "secondaryDiagnoses") List<String> secondaryDiagnosisCodes,
                        @RequestParam(required = false, value = "freeTextComments") String freeTextComments,
                        HttpSession httpSession,
                        @SpringBean("consultService") ConsultService consultService,
@@ -70,6 +70,7 @@ public class ConsultPageController {
         consultService.saveConsultNote(consultNote);
 
         httpSession.setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, ui.message("emr.consult.successMessage", ui.format(patient)));
+        httpSession.setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
         return "redirect:" + ui.pageLink("emr", "patient", SimpleObject.create("patientId", patient.getId()));
     }
