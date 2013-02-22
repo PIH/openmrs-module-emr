@@ -4,6 +4,7 @@
     ui.includeCss("emr", "patientDashboard.css")
 
     ui.includeJavascript("emr", "patient.js")
+    ui.includeJavascript("emr", "custom/visits.js")
 
     def tabs = [
         [ id: "visits", label: ui.message("emr.patientDashBoard.visits") ],
@@ -20,6 +21,7 @@
     jq(function(){
         jq(".tabs").tabs();
         createPaperRecordDialog(${patient.id});
+        visit.createQuickVisitCreationDialog(${patient.id});
         ko.applyBindings( sessionLocationModel, jq('#request-paper-record-dialog').get(0) );
     });
 
@@ -31,6 +33,10 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
 <div class="tabs" xmlns="http://www.w3.org/1999/html">
     <div class="dashboard-container">
         <div class="actions">
+            <% if (!emrContext.activeVisitSummary) { %>
+                <div><a href="javascript:visit.showQuickVisitCreationDialog()"><i class="icon-start-visit"></i>Start visit</a></div>
+            <% } %>
+
             <% availableTasks.each {
                 def url = it.getUrl(emrContext)
                 if (!url.startsWith("javascript:")) {
@@ -76,6 +82,19 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
                 <h5 data-bind="text: text"></h5>
             </li>
         </ul>
+
+        <button class="confirm right">${ ui.message("emr.confirm") }</button>
+        <button class="cancel">${ ui.message("emr.cancel") }</button>
+    </div>
+</div>
+
+<div id="quick-visit-creation-dialog" class="dialog">
+    <div class="dialog-header">
+        <i class="icon-folder-open"></i>
+        <h3>${ ui.message("emr.visit.createQuickVisit.title") }</h3>
+    </div>
+    <div class="dialog-content">
+        <p class="dialog-instructions">Are you sure you want to start a visit for ${ui.format(patient.patient)} now?</p>
 
         <button class="confirm right">${ ui.message("emr.confirm") }</button>
         <button class="cancel">${ ui.message("emr.cancel") }</button>
