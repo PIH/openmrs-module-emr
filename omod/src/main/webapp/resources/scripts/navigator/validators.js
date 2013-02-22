@@ -77,15 +77,15 @@ NumericRangeFieldValidator.prototype = new FieldValidator();
 NumericRangeFieldValidator.prototype.constructor = NumericRangeFieldValidator;
 NumericRangeFieldValidator.prototype.validate = function(field) {
     var asNumber = parseFloat(field.value());
-    if (asNumber) {
+    if (asNumber != null && !isNaN(asNumber)) {
         var rangeMin = parseFloat(field.element.attr("min"));
-        if (rangeMin) {
+        if (rangeMin != null && !isNaN(rangeMin)) {
             if (asNumber < rangeMin) {
                 return emrMessages[this.lowMessageIdentifier].replace("{0}", rangeMin);
             }
         }
         var rangeMax = parseFloat(field.element.attr("max"));
-        if (rangeMax) {
+        if (rangeMax != null && !isNaN(rangeMax)) {
             if (asNumber > rangeMax) {
                 return emrMessages[this.highMessageIdentifier].replace("{0}", rangeMax);
             }

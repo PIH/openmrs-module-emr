@@ -114,6 +114,22 @@ describe("Test for form validators", function() {
             var validationMessage = validator.validate(field);
             expect(validationMessage).toBe('numericRangeHigh 5');
         });
+        it("should correctly interpret min=0 to mean a minimum value of 0", function() {
+
+            field = {
+                element: $('<input type="text" min="0" max="5"/>'),
+                value: function() { return "-1" }
+            }
+
+            var validationMessage = validator.validate(field);
+            expect(validationMessage).toBe('numericRangeLow 0');
+        });
+        it("should correctly interpret max=0 to mean a maximum value of 0", function() {
+            field.element = $('<input type="text" min="-1" max="0"/>');
+
+            var validationMessage = validator.validate(field);
+            expect(validationMessage).toBe('numericRangeHigh 0');
+        });
     });
 
     describe("Required fields", function() {
