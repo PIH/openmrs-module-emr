@@ -1,12 +1,21 @@
 package org.openmrs.module.emr.fragment.controller.visit;
 
+import org.hamcrest.Matcher;
 import org.junit.Test;
-import org.openmrs.*;
+import org.mockito.ArgumentMatcher;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterProvider;
+import org.openmrs.EncounterRole;
+import org.openmrs.EncounterType;
+import org.openmrs.Location;
+import org.openmrs.Provider;
+import org.openmrs.Visit;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.module.emr.TestUiUtils;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.UiUtils;
+import org.openmrs.util.OpenmrsUtil;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -36,6 +45,7 @@ public class VisitDetailsFragmentControllerTest {
         encounterLocation.setName("Location");
         EncounterType encounterType = new EncounterType();
         encounterType.setName("Encounter Type");
+        encounterType.setUuid("abc-123-def-456");
         Provider provider = new Provider();
         provider.setName("Provider");
         EncounterProvider encounterProvider = new EncounterProvider();
@@ -66,7 +76,7 @@ public class VisitDetailsFragmentControllerTest {
         assertThat(actualEncounters.size(), is(1));
         assertThat((Integer) actualEncounter.get("encounterId"), is(7));
         assertThat((String) actualEncounter.get("location"), is("Location"));
-        assertThat((String) actualEncounter.get("encounterType"), is("Encounter Type"));
+        assertThat((SimpleObject) actualEncounter.get("encounterType"), isSimpleObjectWith("uuid", encounterType.getUuid(), "name", encounterType.getName()));
         assertThat(actualEncounter.get("encounterDatetime"), notNullValue());
         assertThat(actualEncounter.get("encounterDate"), notNullValue());
         assertThat(actualEncounter.get("encounterTime"), notNullValue());
@@ -74,4 +84,23 @@ public class VisitDetailsFragmentControllerTest {
         assertThat(actualProviders.size(), is(1));
         assertThat((String) actualProviders.get(0).get("provider"), is("Provider"));
     }
+
+    private Matcher<SimpleObject> isSimpleObjectWith(final Object... propertiesAndValues) {
+        return new ArgumentMatcher<SimpleObject>() {
+            @Override
+            public boolean matches(Object o) {
+                SimpleObject so = (SimpleObject) o;
+                for (int i = 0; i < propertiesAndValues.length; i += 2) {
+                    String property = (String) propertiesAndValues[i];
+                    Object expectedValue = propertiesAndValues[i + 1];
+                    if (!OpenmrsUtil.nullSafeEquals(so.get(property), expectedValue)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        };
+    }
+
+
 }
