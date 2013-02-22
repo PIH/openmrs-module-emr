@@ -54,7 +54,7 @@
                     <span class="encounter-type"> 
                         <strong>
                             <i class="{{- getEncounterIcon(encounter.encounterType) }}"></i>
-                            {{- encounter.encounterType }}
+                            <span class="encounter-name">{{- encounter.encounterType }}</span>
                         </strong>
                     </span>
                     <span class="encounter-by-user">
