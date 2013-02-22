@@ -63,7 +63,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
         </div>
 
         <div id="display-diagnoses">
-            <h3>${ ui.format("emr.consult.primaryDiagnosis") }</h3>
+            <h3>${ ui.message("emr.consult.primaryDiagnosis") }</h3>
             <div data-bind="visible: !primaryDiagnosis()">
                 ${ ui.message("emr.consult.primaryDiagnosis.notChosen") }
             </div>
@@ -73,7 +73,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
             <br/>
 
-            <h3>${ ui.format("emr.consult.secondaryDiagnoses") }</h3>
+            <h3>${ ui.message("emr.consult.secondaryDiagnoses") }</h3>
             <div data-bind="visible: secondaryDiagnoses().length == 0">
                 ${ ui.message("emr.consult.secondaryDiagnoses.notChosen") }
             </div>
