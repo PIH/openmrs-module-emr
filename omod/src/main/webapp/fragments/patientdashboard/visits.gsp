@@ -5,6 +5,7 @@
 
 <script type="text/javascript">
     breadcrumbs.push({ label: "${ui.message("emr.patientDashBoard.visits")}" , link:'${ui.pageLink("emr", "patient", [patientId: patient.id])}'});
+
 </script>
 
 <script type="text/template" id="visitDetailsTemplate">
@@ -42,6 +43,7 @@
     <h4>${ ui.message("emr.patientDashBoard.encounters")} </h4>
     <ul id="encountersList">
         {{ _.each(encounters, function(encounter) { }}
+            {{ if (!encounter.voided) { }}
             <li>
                 <div class="encounter-date">
                     <i class="icon-time"></i>
@@ -55,14 +57,20 @@
                             {{- encounter.encounterType }}
                         </strong>
                     </span>
-                    <span>
+                    <span class="encounter-by-user">
                         ${ ui.message("emr.by") }
                         <strong>{{- encounter.encounterProviders[0] ? encounter.encounterProviders[0].provider : '' }}</strong>
                         ${ ui.message("emr.in") }
                         <strong>{{- encounter.location }}</strong>
-                    </span>  
+                    </span>
+                    <span>
+                        <a class="deleteEncounterId" href='#'>
+                            <i class="cancel icon-remove" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("emr.delete") }"></i>
+                        </a>
+                    </span>
                 </div>
             </li>
+            {{  } }}
         {{ }); }}
     </ul>
 </script>
@@ -70,19 +78,23 @@
 <script type="text/javascript">
     jq(function() {
         function loadVisit(visitElement) {
-
-            if (visitElement != null && visitElement.attr('visitId') != undefined) {
-
+            var localVisitId = visitElement.attr('visitId');
+            if (visitElement != null &&  localVisitId!= undefined) {
                 visitDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");
                 jq.getJSON(
                     emr.fragmentActionLink("emr", "visit/visitDetails", "getVisitDetails", {
-                        visitId: visitElement.attr('visitId')
+                        visitId: localVisitId
                     })
                 ).success(function(data) {
                     jq('.viewVisitDetails').removeClass('selected');
                     visitElement.addClass('selected');
                     visitDetailsSection.html(visitDetailsTemplate(data));
                     visitDetailsSection.show();
+                    jq(".deleteEncounterId").click(function(event){
+                        var encounterId = jq(event.target).attr("data-encounter-id");
+                        createDeleteEncounterDialog(encounterId, jq(this));
+                        showDeleteEncounterDialog();
+                    });
                 }).error(function(err) {
                     emr.errorMessage(err);
                 });
@@ -143,4 +155,21 @@
     <% } %>
 </ul>
 <div id="visit-details">
+</div>
+<div id="delete-encounter-dialog" class="dialog" style="display: none">
+    <div class="dialog-header">
+        <h3>${ ui.message("emr.patientDashBoard.deleteEncounter.title") }</h3>
+    </div>
+    <div class="dialog-content">
+        <input type="hidden" id="encounterId" value=""/>
+        <ul>
+            <li class="info">
+                <span>${ ui.message("emr.patientDashBoard.deleteEncounter.message") }</span>
+            </li>
+
+        </ul>
+
+        <button class="confirm right">${ ui.message("emr.yes") }</button>
+        <button class="cancel">${ ui.message("emr.no") }</button>
+    </div>
 </div>

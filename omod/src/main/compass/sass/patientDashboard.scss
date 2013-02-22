@@ -258,6 +258,20 @@
         }
       }
     }
+    .encounter-by-user {
+      border-right: 1px solid #ccc;
+      display: inline-block;
+      padding: 5px 10px;
+      margin: 1px;
+    }
+  }
+  .cancel {
+    color: $darkerGrey;
+    font-size: 1.1em;
+    cursor: pointer;
+    &:hover {
+      color: $error;
+    }
   }
 }
 

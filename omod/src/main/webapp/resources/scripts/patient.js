@@ -1,5 +1,6 @@
 var requestPaperRecordDialog = null;
 var editPatientIdentifierDialog = null;
+var deleteEncounterDialog= null;
 
 function showRequestChartDialog () {
     requestPaperRecordDialog.show();
@@ -7,6 +8,11 @@ function showRequestChartDialog () {
 }
 function showEditPatientIdentifierDialog () {
     editPatientIdentifierDialog.show();
+    return false;
+}
+
+function showDeleteEncounterDialog () {
+    deleteEncounterDialog.show();
     return false;
 }
 
@@ -44,6 +50,28 @@ function createEditPatientIdentifierDialog(patientId) {
             },
             cancel: function() {
                 editPatientIdentifierDialog.close();
+            }
+        }
+    });
+}
+function createDeleteEncounterDialog(encounterId, deleteElement) {
+    deleteEncounterDialog = emr.setupConfirmationDialog({
+        selector: '#delete-encounter-dialog',
+        actions: {
+            confirm: function() {
+                emr.getFragmentActionWithCallback('emr', 'visit/visitDetails', 'deleteEncounter'
+                    , { encounterId: encounterId}
+                    , function(data) {
+                        emr.successMessage(data.message);
+                        deleteEncounterDialog.close();
+                        var encounterElement = deleteElement.parents("li:first");
+                        if(encounterElement!=null && encounterElement!=undefined){
+                            encounterElement.remove();
+                        }
+                    });
+            },
+            cancel: function() {
+                deleteEncounterDialog.close();
             }
         }
     });
