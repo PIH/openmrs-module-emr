@@ -116,8 +116,6 @@
     });
 
   function getEncounterIcon(encounterType) {
-        console.log(encounterType);
-
         var encounterIconMap = {
             "4fb47712-34a6-40d2-8ed3-e153abbd25b7": "icon-vitals",
             "55a0d3ea-a4d7-4e88-8f01-5aceb2d3c61b": "icon-check-in",
