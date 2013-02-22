@@ -34,7 +34,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
     <div class="dashboard-container">
         <div class="actions">
             <% if (!emrContext.activeVisitSummary) { %>
-                <div><a href="javascript:visit.showQuickVisitCreationDialog()"><i class="icon-start-visit"></i>Start visit</a></div>
+                <div><a href="javascript:visit.showQuickVisitCreationDialog()"><i class="icon-check-in"></i>Start visit</a></div>
             <% } %>
 
             <% availableTasks.each {
