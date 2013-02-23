@@ -19,8 +19,10 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptClass;
 import org.openmrs.ConceptName;
 import org.openmrs.ConceptSearchResult;
-import org.openmrs.api.ConceptService;
+import org.openmrs.ConceptSource;
 import org.openmrs.module.emr.EmrContext;
+import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.api.EmrService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -38,14 +40,18 @@ public class DiagnosesFragmentController {
 
     public List<SimpleObject> search(EmrContext context,
                                      UiUtils ui,
-                                     @SpringBean("conceptService") ConceptService conceptService,
+                                     @SpringBean("emrProperties") EmrProperties emrProperties,
+                                     @SpringBean("emrService") EmrService emrService,
                                      @RequestParam("term") String query,
-                                     @RequestParam(value = "answersToConcept", required = false) Concept answersToConcept,
                                      @RequestParam(value = "start", defaultValue = "0") Integer start,
                                      @RequestParam(value = "size", defaultValue = "50") Integer size) throws Exception {
-        ConceptClass diagnosisClass = conceptService.getConceptClassByName("Diagnosis");
+
+        ConceptClass diagnosisClass = emrProperties.getDiagnosisConceptClass();
         Locale locale = context.getUserContext().getLocale();
-        List<ConceptSearchResult> hits = conceptService.getConcepts(query, Collections.singletonList(locale), false, Collections.singletonList(diagnosisClass), null, null, null, answersToConcept, start, size);
+
+        List<ConceptSource> sources = emrProperties.getConceptSourcesForDiagnosisSearch();
+
+        List<ConceptSearchResult> hits = emrService.conceptSearch(query, locale, Collections.singleton(diagnosisClass), sources, null);
         List<SimpleObject> ret = new ArrayList<SimpleObject>();
         for (ConceptSearchResult hit : hits) {
             ret.add(simplify(hit, ui, locale));
@@ -60,9 +66,7 @@ public class DiagnosesFragmentController {
         ConceptName conceptName = result.getConceptName();
         ConceptName preferredName = concept.getPreferredName(locale);
         PropertyUtils.setProperty(simple, "concept.preferredName", preferredName.getName());
-        boolean thisIsPreferred = conceptName.equals(preferredName);
 
-        simple.put("nameIsPreferred", thisIsPreferred);
         return simple;
     }
 

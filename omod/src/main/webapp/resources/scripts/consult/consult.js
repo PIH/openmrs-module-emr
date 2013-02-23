@@ -4,7 +4,7 @@ function findConceptMapping(concept, sourceName) {
     var matches = _.filter(concept.conceptMappings, function(item) {
         return item.conceptReferenceTerm.conceptSource.name == sourceName
     });
-    if (!matches) {
+    if (!matches || matches.length == 0) {
         return "";
     }
     return _.sortBy(matches, function(item) {
@@ -16,12 +16,12 @@ function findConceptMapping(concept, sourceName) {
 
 function ConceptSearchResult(item) {
     var api = _.extend(item, {
-        matchedName: item.conceptName.name,
-        preferredName: item.nameIsPreferred ? null : item.concept.preferredName,
+        matchedName: item.conceptName ? item.conceptName.name : item.concept.preferredName,
+        preferredName: item.conceptName && item.conceptName.name != item.concept.preferredName ? item.concept.preferredName : null,
         code: findConceptMapping(item.concept, "ICD-10-WHO"),
         conceptId: item.concept.id,
         valueToSubmit: function() {
-            return "ConceptName:" + item.conceptName.id;
+            return item.conceptName ? "ConceptName:" + item.conceptName.id : "Concept:" + item.concept.id;
         }
     });
     return api;

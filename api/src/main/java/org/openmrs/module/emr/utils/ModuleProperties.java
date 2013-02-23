@@ -16,6 +16,7 @@ package org.openmrs.module.emr.utils;
 
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Concept;
+import org.openmrs.ConceptClass;
 import org.openmrs.ConceptSource;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
@@ -115,9 +116,18 @@ public abstract class ModuleProperties {
     public void setPatientService(PatientService patientService) {
         this.patientService = patientService;
     }
-    
+
     public void setEmrService(EmrService emrService){
         this.emrService = emrService;
+    }
+
+    protected ConceptClass getConceptClassByGlobalProperty(String globalPropertyName) {
+        String globalProperty = getGlobalProperty(globalPropertyName, true);
+        ConceptClass conceptClass = conceptService.getConceptClassByUuid(globalProperty);
+        if (conceptClass == null) {
+            throw new IllegalStateException("Configuration required: " + globalPropertyName);
+        }
+        return conceptClass;
     }
 
     protected Concept getConceptByGlobalProperty(String globalPropertyName) {
@@ -184,6 +194,7 @@ public abstract class ModuleProperties {
         }
         return patientIdentifierType;
     }
+
     protected List<PatientIdentifierType> getPatientIdentifierTypesByGlobalProperty(String globalPropertyName, boolean required) {
         List<PatientIdentifierType> types = null;
         String globalProperty = getGlobalProperty(globalPropertyName, required);
@@ -199,7 +210,7 @@ public abstract class ModuleProperties {
         return types;
     }
 
-    private String getGlobalProperty(String globalPropertyName, boolean required) {
+    protected String getGlobalProperty(String globalPropertyName, boolean required) {
         String globalProperty = administrationService.getGlobalProperty(globalPropertyName);
         if (required && StringUtils.isEmpty(globalProperty)) {
             throw new IllegalStateException("Configuration required: " + globalPropertyName);

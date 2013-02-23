@@ -196,6 +196,14 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>emr.conceptClass.diagnosis</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the concept classes representing diagnoses. (If not specified, we look for a concept class named "Diagnosis".)
+        </description>
+    </globalProperty>
+
     <!-- Privileges -->
     <privilege>
         <name>Paper Records - Manage Requests</name>

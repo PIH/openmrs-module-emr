@@ -36,12 +36,14 @@ public class EmrConstants {
     public static final String GP_ORDERING_PROVIDER_ENCOUNTER_ROLE = "emr.orderingProviderEncounterRole";
 
     public static final String GP_CHECK_IN_CLERK_ENCOUNTER_ROLE = "emr.checkInClerkEncounterRole";
-    
+
     public static final String GP_RADIOLOGY_TEST_ORDER_TYPE = "emr.radiologyTestOrderType";
 
     public static final String GP_PAPER_RECORD_IDENTIFIER_TYPE = "emr.paperRecordIdentifierType";
 
     public static final String GP_EXTRA_PATIENT_IDENTIFIER_TYPES = "emr.extraPatientIdentifierTypes";
+
+    public static final String GP_DIAGNOSIS_CONCEPT_CLASS = "emr.conceptClass.diagnosis";
 
     public static final String GP_XRAY_ORDERABLES_CONCEPT = "emr.xrayOrderablesConcept";
 
@@ -62,23 +64,23 @@ public class EmrConstants {
     public static final String LOCATION_TAG_SUPPORTS_LOGIN = "Login Location";
 
     public static final String LOCATION_TAG_MEDICAL_RECORD_LOCATION = "Medical Record Location";
-    
+
     public static final String ROLE_PREFIX_CAPABILITY = "Application Role: ";
 
     public static final String ROLE_PREFIX_PRIVILEGE_LEVEL = "Privilege Level: ";
-    
+
     public static final String PRIVILEGE_LEVEL_FULL_ROLE = ROLE_PREFIX_PRIVILEGE_LEVEL+"Full";
-    
+
     public static final String PRIVILEGE_LEVEL_FULL_DESCRIPTION = "A role that has all API privileges";
 
     public static final String PRIVILEGE_LEVEL_FULL_UUID = "ab2160f6-0941-430c-9752-6714353fbd3c";
-    
+
     public static final String PRIVILEGE_PREFIX_APP = "App: ";
 
     public static final String PRIVILEGE_PREFIX_TASK = "Task: ";
 
     public static final String PRIMARY_IDENTIFIER_TYPE = "emr.primaryIdentifierType";
-    
+
     public static final String DAEMON_USER_UUID = "A4F30A1B-5EB9-11DF-A648-37A07F9C90FB";
 
     public static final String COOKIE_NAME_LAST_SESSION_LOCATION = "emr.lastSessionLocation";

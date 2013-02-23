@@ -15,6 +15,7 @@
 package org.openmrs.module.emr;
 
 import org.openmrs.Concept;
+import org.openmrs.ConceptClass;
 import org.openmrs.ConceptSource;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
@@ -28,8 +29,10 @@ import org.openmrs.VisitType;
 import org.openmrs.module.emr.consult.DiagnosisConceptSet;
 import org.openmrs.module.emr.utils.ModuleProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.openmrs.module.emr.EmrConstants.LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD;
@@ -178,6 +181,28 @@ public class EmrProperties extends ModuleProperties {
 
     public ConceptSource getEmrConceptSource() {
         return conceptService.getConceptSourceByName(EmrConstants.EMR_CONCEPT_SOURCE_NAME);
+    }
+
+    public ConceptClass getDiagnosisConceptClass() {
+        String gp = getGlobalProperty(EmrConstants.GP_DIAGNOSIS_CONCEPT_CLASS, false);
+        if (StringUtils.hasText(gp)) {
+            ConceptClass conceptClass = conceptService.getConceptClassByUuid(gp);
+            if (conceptClass == null) {
+                throw new IllegalStateException("Configuration required: " + EmrConstants.GP_DIAGNOSIS_CONCEPT_CLASS);
+            }
+            return conceptClass;
+        } else {
+            return conceptService.getConceptClassByName("Diagnosis");
+        }
+    }
+
+    public List<ConceptSource> getConceptSourcesForDiagnosisSearch() {
+        ConceptSource icd10 = conceptService.getConceptSourceByName("ICD-10-WHO");
+        if (icd10 != null) {
+            return Arrays.asList(icd10);
+        } else {
+            return null;
+        }
     }
 
 }
