@@ -54,11 +54,11 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
         <div id="entry-fields">
             <p>
                 <label for="diagnosis-search">${ ui.message("emr.consult.addDiagnosis") }</label>
-                <input id="diagnosis-search" type="text" data-bind="autocomplete: searchTerm, itemFormatter: formatAutosuggestion"/>
+                <input id="diagnosis-search" type="text" placeholder="${ ui.message("emr.consult.addDiagnosis.placeholder") }" data-bind="autocomplete: searchTerm, itemFormatter: formatAutosuggestion"/>
             </p>
             <p>
                 <label for="free-text-comments">${ ui.message("emr.consult.freeTextComments") }</label>
-                <textarea id="free-text-comments" rows="5" cols="40" name="freeTextComments"></textarea>
+                <textarea id="free-text-comments" rows="10" cols="55" name="freeTextComments"></textarea>
             </p>
         </div>
 
