@@ -99,6 +99,36 @@ public class CodedOrFreeTextAnswer {
                 OpenmrsUtil.nullSafeEquals(nonCodedAnswer, other.nonCodedAnswer);
     }
 
+    /**
+     * Format as either:
+     * <ul>
+     *     <li>non-coded value</li>
+     *     <li>coded value's preferred name in the current locale</li>
+     * </ul>
+     * (Does not show the specific answer, even if it is set.)
+     * @param locale
+     * @return
+     */
+    public String formatWithoutSpecificAnswer(Locale locale) {
+        if (nonCodedAnswer != null) {
+            return nonCodedAnswer;
+        } else if (codedAnswer == null) {
+            return "?";
+        } else {
+            return codedAnswer.getName(locale).getName();
+        }
+    }
+
+    /**
+     * Formats as either of:
+     * <ul>
+     *     <li>non-coded value</li>
+     *     <li>coded value's preferred name in the current locale</li>
+     *     <li>specific coded value &rarr; coded value's preferred name in the current locale</li>
+     * </ul>
+     * @param locale
+     * @return
+     */
     public String format(Locale locale) {
         if (nonCodedAnswer != null) {
             return nonCodedAnswer;

@@ -3,7 +3,7 @@
     def timeFormat = new java.text.SimpleDateFormat("hh:mm a")
 
     def formatDiagnoses = {
-        it.collect{ it.diagnosis.format(context.locale) } .join(", ")
+        it.collect{ it.diagnosis.formatWithoutSpecificAnswer(context.locale) } .join(", ")
     }
 %>
 
