@@ -30,7 +30,8 @@
 
         <div class="visit-status">
             <span class="status active"></span> ${ui.message("emr.activeVisit")}
-            <i class="icon-time small"></i> ${ ui.message("emr.activeVisit.time", '{{- startDatetime }}')}
+            <i class="icon-time small"></i>
+            ${ ui.message("emr.activeVisit.time", '{{- startDatetime }}')}
             
         </div>
 
@@ -61,7 +62,9 @@
             <li>
                 <div class="encounter-date">
                     <i class="icon-time"></i>
-                    {{- encounter.encounterTime }}
+                    <strong>
+                        {{- encounter.encounterTime }}
+                    </strong>
                     {{- encounter.encounterDate }}
                 </div>
                 <ul class="encounter-details">
