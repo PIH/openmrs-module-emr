@@ -29,6 +29,7 @@ import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.TestUiUtils;
+import org.openmrs.module.emr.consult.CodedOrFreeTextAnswer;
 import org.openmrs.module.emr.consult.ConsultNote;
 import org.openmrs.module.emr.consult.ConsultService;
 import org.openmrs.module.emr.consult.Diagnosis;
@@ -91,9 +92,9 @@ public class ConsultPageControllerTest {
         MockHttpSession httpSession = new MockHttpSession();
         ConsultPageController controller = new ConsultPageController();
         String result = controller.post(patient,
-                Diagnosis.CONCEPT_NAME_PREFIX + primaryConceptNameId,
-                asList(Diagnosis.CONCEPT_PREFIX + secondaryConceptId,
-                        Diagnosis.NON_CODED_PREFIX + secondaryText),
+                CodedOrFreeTextAnswer.CONCEPT_NAME_PREFIX + primaryConceptNameId,
+                asList(CodedOrFreeTextAnswer.CONCEPT_PREFIX + secondaryConceptId,
+                        CodedOrFreeTextAnswer.NON_CODED_PREFIX + secondaryText),
                 freeTextComments,
                 httpSession,
                 consultService,
@@ -107,8 +108,9 @@ public class ConsultPageControllerTest {
             @Override
             public boolean matches(Object o) {
                 ConsultNote actual = (ConsultNote) o;
-                return actual.getPrimaryDiagnosis().equals(new Diagnosis(conceptName2460)) &&
-                        containsInAnyOrder(new Diagnosis(concept3), new Diagnosis(secondaryText)).matches(actual.getAdditionalDiagnoses()) &&
+                return actual.getPrimaryDiagnosis().equals(new Diagnosis(new CodedOrFreeTextAnswer(conceptName2460), Diagnosis.Order.PRIMARY)) &&
+                        containsInAnyOrder(new Diagnosis(new CodedOrFreeTextAnswer(concept3), Diagnosis.Order.SECONDARY),
+                                new Diagnosis(new CodedOrFreeTextAnswer(secondaryText), Diagnosis.Order.SECONDARY)).matches(actual.getAdditionalDiagnoses()) &&
                         actual.getComments().equals(freeTextComments) &&
                         actual.getEncounterLocation().equals(sessionLocation) &&
                         actual.getClinician().equals(currentProvider);

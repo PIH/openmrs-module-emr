@@ -215,7 +215,9 @@ public class PatientDomainWrapper {
         List<VisitDomainWrapper> visitDomainWrappers = new ArrayList<VisitDomainWrapper>();
 
         for (Visit visit : getAllVisits()) {
-            visitDomainWrappers.add(new VisitDomainWrapper(visit));
+            VisitDomainWrapper visitWrapper = new VisitDomainWrapper(visit);
+            visitWrapper.setEmrProperties(emrProperties);
+            visitDomainWrappers.add(visitWrapper);
         }
 
         return visitDomainWrappers;

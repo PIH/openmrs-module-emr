@@ -16,19 +16,52 @@ package org.openmrs.module.emr.consult;
 
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
+import org.openmrs.api.ConceptService;
 import org.openmrs.util.OpenmrsUtil;
 
+import java.util.Locale;
+
 /**
- * Helper class representing either a coded or non-coded answer to a question. If the answer is coded, this may specify
- * a specific ConceptName that was used when the answer was chosen.
+ * Class representing a value that can be either coded (as a Concept or a more specific ConceptName) or non-coded.
  */
-public abstract class CodedOrFreeTextAnswer {
+public class CodedOrFreeTextAnswer {
+
+    public static final String CONCEPT_NAME_PREFIX = "ConceptName:";
+    public static final String CONCEPT_PREFIX = "Concept:";
+    public static final String NON_CODED_PREFIX = "Non-Coded:";
 
     Concept codedAnswer;
 
     ConceptName specificCodedAnswer;
 
     String nonCodedAnswer;
+
+    public CodedOrFreeTextAnswer(String spec, ConceptService conceptService) {
+        if (spec.startsWith(CONCEPT_NAME_PREFIX)) {
+            String conceptNameId = spec.substring(CONCEPT_NAME_PREFIX.length());
+            setSpecificCodedAnswer(conceptService.getConceptName(Integer.valueOf(conceptNameId)));
+        } else if (spec.startsWith(CONCEPT_PREFIX)) {
+            String conceptId = spec.substring(CONCEPT_PREFIX.length());
+            setCodedAnswer(conceptService.getConcept(Integer.valueOf(conceptId)));
+        } else if (spec.startsWith(NON_CODED_PREFIX)) {
+            setNonCodedAnswer(spec.substring(NON_CODED_PREFIX.length()));
+        } else {
+            throw new IllegalArgumentException("Unknown format: " + spec);
+        }
+    }
+
+    public CodedOrFreeTextAnswer(Concept codedAnswer) {
+        this.codedAnswer = codedAnswer;
+    }
+
+    public CodedOrFreeTextAnswer(ConceptName specificCodedAnswer) {
+        this.specificCodedAnswer = specificCodedAnswer;
+        this.codedAnswer = specificCodedAnswer.getConcept();
+    }
+
+    public CodedOrFreeTextAnswer(String nonCodedAnswer) {
+        this.nonCodedAnswer = nonCodedAnswer;
+    }
 
     public Concept getCodedAnswer() {
         return codedAnswer;
@@ -44,6 +77,7 @@ public abstract class CodedOrFreeTextAnswer {
 
     public void setSpecificCodedAnswer(ConceptName specificCodedAnswer) {
         this.specificCodedAnswer = specificCodedAnswer;
+        this.codedAnswer = specificCodedAnswer.getConcept();
     }
 
     public String getNonCodedAnswer() {
@@ -56,13 +90,33 @@ public abstract class CodedOrFreeTextAnswer {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof CodedOrFreeTextAnswer)) {
+        if (o == null || !(o instanceof CodedOrFreeTextAnswer)) {
             return false;
         }
         CodedOrFreeTextAnswer other = (CodedOrFreeTextAnswer) o;
         return OpenmrsUtil.nullSafeEquals(codedAnswer, other.codedAnswer) &&
                 OpenmrsUtil.nullSafeEquals(specificCodedAnswer, other.specificCodedAnswer) &&
                 OpenmrsUtil.nullSafeEquals(nonCodedAnswer, other.nonCodedAnswer);
+    }
+
+    public String format(Locale locale) {
+        if (nonCodedAnswer != null) {
+            return nonCodedAnswer;
+        } else if (codedAnswer == null) {
+            return "?";
+        } else if (specificCodedAnswer == null) {
+            return codedAnswer.getName(locale).getName();
+        } else {
+            if (specificCodedAnswer.isLocalePreferred() && specificCodedAnswer.getLocale().equals(locale)) {
+                return specificCodedAnswer.getName();
+            }
+            ConceptName preferredName = codedAnswer.getName(locale);
+            if (preferredName == null || preferredName.equals(specificCodedAnswer)) {
+                return specificCodedAnswer.getName();
+            } else {
+                return specificCodedAnswer.getName() + " &rarr; " + preferredName.getName();
+            }
+        }
     }
 
 }

@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 /**
  *
  */
-public class DiagnosisConceptSetTest {
+public class DiagnosisMetadataTest {
 
     private ConceptMapType sameAs;
     private ConceptSource emrConceptSource;
@@ -63,11 +63,11 @@ public class DiagnosisConceptSetTest {
         diagnosisSet.addSetMember(nonCodedDiagnosis);
         diagnosisSet.addSetMember(diagnosisOrder);
 
-        DiagnosisConceptSet diagnosisConceptSet = new DiagnosisConceptSet(conceptService);
-        assertThat(diagnosisConceptSet.getDiagnosisSetConcept(), is(diagnosisSet));
-        assertThat(diagnosisConceptSet.getCodedDiagnosisConcept(), is(codedDiagnosis));
-        assertThat(diagnosisConceptSet.getNonCodedDiagnosisConcept(), is(nonCodedDiagnosis));
-        assertThat(diagnosisConceptSet.getDiagnosisOrderConcept(), is(diagnosisOrder));
+        DiagnosisMetadata diagnosisMetadata = new DiagnosisMetadata(conceptService, emrConceptSource);
+        assertThat(diagnosisMetadata.getDiagnosisSetConcept(), is(diagnosisSet));
+        assertThat(diagnosisMetadata.getCodedDiagnosisConcept(), is(codedDiagnosis));
+        assertThat(diagnosisMetadata.getNonCodedDiagnosisConcept(), is(nonCodedDiagnosis));
+        assertThat(diagnosisMetadata.getDiagnosisOrderConcept(), is(diagnosisOrder));
     }
 
     private Concept setupConcept(ConceptService mockConceptService, String name, String mappingCode) {

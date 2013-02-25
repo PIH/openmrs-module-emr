@@ -14,48 +14,76 @@
 
 package org.openmrs.module.emr.consult;
 
-import org.openmrs.Concept;
-import org.openmrs.ConceptName;
-import org.openmrs.api.ConceptService;
+import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.util.OpenmrsUtil;
 
 /**
- * Represents a recorded diagnosis
+ * Represents a recorded presumed/confirmed diagnosis, and whether it is primary/secondary.
+ * (It is straightforward to extend this to include diagnosis certainty, date, and additional ordering.)
  */
-public class Diagnosis extends CodedOrFreeTextAnswer {
+public class Diagnosis {
 
-    public static final String CONCEPT_NAME_PREFIX = "ConceptName:";
-    public static final String CONCEPT_PREFIX = "Concept:";
-    public static final String NON_CODED_PREFIX = "Non-Coded:";
+    CodedOrFreeTextAnswer diagnosis;
 
-    /**
-     * @param spec should be "ConceptName:1234", "Concept:123", or "Non-Coded:Some text"
-     * @return
-     */
-    public static Diagnosis parse(String spec, ConceptService conceptService) {
-        if (spec.startsWith(CONCEPT_NAME_PREFIX)) {
-            String conceptNameId = spec.substring(CONCEPT_NAME_PREFIX.length());
-            return new Diagnosis(conceptService.getConceptName(Integer.valueOf(conceptNameId)));
-        } else if (spec.startsWith(CONCEPT_PREFIX)) {
-            String conceptId = spec.substring(CONCEPT_PREFIX.length());
-            return new Diagnosis(conceptService.getConcept(Integer.valueOf(conceptId)));
-        } else if (spec.startsWith(NON_CODED_PREFIX)) {
-            return new Diagnosis(spec.substring(NON_CODED_PREFIX.length()));
-        } else {
-            throw new IllegalArgumentException("Unknown diagnosis format: " + spec);
+    Order order;
+
+    public Diagnosis(CodedOrFreeTextAnswer diagnosis) {
+        this.diagnosis = diagnosis;
+    }
+
+    public Diagnosis(CodedOrFreeTextAnswer diagnosis, Order order) {
+        this.diagnosis = diagnosis;
+        this.order = order;
+    }
+
+    public CodedOrFreeTextAnswer getDiagnosis() {
+        return diagnosis;
+    }
+
+    public void setDiagnosis(CodedOrFreeTextAnswer diagnosis) {
+        this.diagnosis = diagnosis;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || !(o instanceof Diagnosis)) {
+            return false;
         }
+        Diagnosis other = (Diagnosis) o;
+        return OpenmrsUtil.nullSafeEquals(diagnosis, other.getDiagnosis()) &&
+                OpenmrsUtil.nullSafeEquals(order, other.getOrder());
     }
 
-    public Diagnosis(ConceptName specificCodedAnswer) {
-        this.specificCodedAnswer = specificCodedAnswer;
-        this.codedAnswer = specificCodedAnswer.getConcept();
-    }
+    public enum Order {
+        PRIMARY(EmrConstants.CONCEPT_CODE_DIAGNOSIS_ORDER_PRIMARY),
+        SECONDARY(EmrConstants.CONCEPT_CODE_DIAGNOSIS_ORDER_SECONDARY);
 
-    public Diagnosis(Concept codedAnswer) {
-        this.codedAnswer = codedAnswer;
-    }
+        String codeInEmrConceptSource;
 
-    public Diagnosis(String nonCodedAnswer) {
-        this.nonCodedAnswer = nonCodedAnswer;
+        Order(String codeInEmrConceptSource) {
+            this.codeInEmrConceptSource = codeInEmrConceptSource;
+        }
+
+        String getCodeInEmrConceptSource() {
+            return codeInEmrConceptSource;
+        }
+
+        public static Order parseConceptReferenceCode(String code) {
+            for (Order order : values()) {
+                if (order.getCodeInEmrConceptSource().equals(code)) {
+                    return order;
+                }
+            }
+            return null;
+        }
     }
 
 }

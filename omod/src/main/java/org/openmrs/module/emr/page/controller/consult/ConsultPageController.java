@@ -19,6 +19,7 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.consult.CodedOrFreeTextAnswer;
 import org.openmrs.module.emr.consult.ConsultNote;
 import org.openmrs.module.emr.consult.ConsultService;
 import org.openmrs.module.emr.consult.Diagnosis;
@@ -55,10 +56,10 @@ public class ConsultPageController {
                        UiUtils ui) {
         ConsultNote consultNote = new ConsultNote();
         consultNote.setPatient(patient);
-        consultNote.setPrimaryDiagnosis(Diagnosis.parse(primaryDiagnosisCode, conceptService));
+        consultNote.setPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(primaryDiagnosisCode, conceptService)));
         if (secondaryDiagnosisCodes != null) {
             for (String code : secondaryDiagnosisCodes) {
-                consultNote.addAdditionalDiagnosis(Diagnosis.parse(code, conceptService));
+                consultNote.addAdditionalDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(code, conceptService)));
             }
         }
         if (StringUtils.hasText(freeTextComments)) {

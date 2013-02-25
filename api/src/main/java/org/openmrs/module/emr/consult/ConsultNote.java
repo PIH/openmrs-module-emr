@@ -59,6 +59,7 @@ public class ConsultNote {
     }
 
     public void setPrimaryDiagnosis(Diagnosis primaryDiagnosis) {
+        primaryDiagnosis.setOrder(Diagnosis.Order.PRIMARY);
         this.primaryDiagnosis = primaryDiagnosis;
     }
 
@@ -90,6 +91,7 @@ public class ConsultNote {
         if (additionalDiagnoses == null) {
             additionalDiagnoses = new ArrayList<Diagnosis>();
         }
+        diagnosis.setOrder(Diagnosis.Order.SECONDARY);
         additionalDiagnoses.add(diagnosis);
     }
 

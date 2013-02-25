@@ -123,15 +123,15 @@ public class ConsultServiceTest {
         diagnosisGroupingConcept.addSetMember(codedDiagnosis);
         diagnosisGroupingConcept.addSetMember(nonCodedDiagnosis);
 
-        DiagnosisConceptSet diagnosisConceptSet = new DiagnosisConceptSet();
-        diagnosisConceptSet.setDiagnosisSetConcept(diagnosisGroupingConcept);
-        diagnosisConceptSet.setCodedDiagnosisConcept(codedDiagnosis);
-        diagnosisConceptSet.setNonCodedDiagnosisConcept(nonCodedDiagnosis);
-        diagnosisConceptSet.setDiagnosisOrderConcept(diagnosisOrder);
+        DiagnosisMetadata diagnosisMetadata = new DiagnosisMetadata();
+        diagnosisMetadata.setDiagnosisSetConcept(diagnosisGroupingConcept);
+        diagnosisMetadata.setCodedDiagnosisConcept(codedDiagnosis);
+        diagnosisMetadata.setNonCodedDiagnosisConcept(nonCodedDiagnosis);
+        diagnosisMetadata.setDiagnosisOrderConcept(diagnosisOrder);
 
         emrProperties = mock(EmrProperties.class);
         when(emrProperties.getConsultFreeTextCommentsConcept()).thenReturn(freeTextComments);
-        when(emrProperties.getDiagnosisConceptSet()).thenReturn(diagnosisConceptSet);
+        when(emrProperties.getDiagnosisMetadata()).thenReturn(diagnosisMetadata);
         when(emrProperties.getClinicianEncounterRole()).thenReturn(clinician);
 
         encounterService = mock(EncounterService.class);
@@ -157,7 +157,7 @@ public class ConsultServiceTest {
     @Test
     public void saveConsultNote_shouldHandleCodedPrimaryDiagnosis() {
         ConsultNote consultNote = buildConsultNote();
-        consultNote.setPrimaryDiagnosis(new Diagnosis(malaria));
+        consultNote.setPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(malaria)));
         Encounter encounter = consultService.saveConsultNote(consultNote);
 
         assertNotNull(encounter);
@@ -173,7 +173,7 @@ public class ConsultServiceTest {
     @Test
     public void saveConsultNote_shouldHandleCodedPrimaryDiagnosisWithSpecificName() {
         ConsultNote consultNote = buildConsultNote();
-        consultNote.setPrimaryDiagnosis(new Diagnosis(malariaSynonym));
+        consultNote.setPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(malariaSynonym)));
         Encounter encounter = consultService.saveConsultNote(consultNote);
 
         assertNotNull(encounter);
@@ -189,7 +189,7 @@ public class ConsultServiceTest {
     public void saveConsultNote_shouldHandleNonCodedPrimaryDiagnosis() {
         String nonCodedAnswer = "New disease we've never heard of";
         ConsultNote consultNote = buildConsultNote();
-        consultNote.setPrimaryDiagnosis(new Diagnosis(nonCodedAnswer));
+        consultNote.setPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(nonCodedAnswer)));
         Encounter encounter = consultService.saveConsultNote(consultNote);
 
         assertNotNull(encounter);
@@ -207,9 +207,9 @@ public class ConsultServiceTest {
         final String comments = "This is a very interesting case";
 
         ConsultNote consultNote = buildConsultNote();
-        consultNote.setPrimaryDiagnosis(new Diagnosis(malaria));
-        consultNote.addAdditionalDiagnosis(new Diagnosis(diabetes));
-        consultNote.addAdditionalDiagnosis(new Diagnosis(nonCodedAnswer));
+        consultNote.setPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(malaria)));
+        consultNote.addAdditionalDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(diabetes)));
+        consultNote.addAdditionalDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(nonCodedAnswer)));
         consultNote.setComments(comments);
         Encounter encounter = consultService.saveConsultNote(consultNote);
 

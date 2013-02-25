@@ -1,6 +1,10 @@
 <%
     def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy")
     def timeFormat = new java.text.SimpleDateFormat("hh:mm a")
+
+    def formatDiagnoses = {
+        it.collect{ it.diagnosis.format(context.locale) } .join(", ")
+    }
 %>
 
 <script type="text/javascript">
@@ -132,7 +136,9 @@
 </script>
 
 <ul id="visits-list">
-    <% patient.allVisitsUsingWrappers.each { wrapper -> %>
+    <% patient.allVisitsUsingWrappers.each { wrapper ->
+        def primaryDiagnoses = wrapper.primaryDiagnoses
+    %>
         <li class="viewVisitDetails" visitId="${wrapper.visit.visitId}">
             <span class="visit-date">
                 <i class="icon-time"></i>
@@ -144,7 +150,11 @@
                 <% } %>
             </span>
             <span class="visit-primary-diagnosis">
-                ${ ui.message("emr.patientDashBoard.noDiagnosis")}
+                <% if (primaryDiagnoses) { %>
+                    ${ formatDiagnoses(primaryDiagnoses) }
+                <% } else { %>
+                    ${ ui.message("emr.patientDashBoard.noDiagnosis")}
+                <% } %>
             </span>
             <span class="arrow-border"></span>
             <span class="arrow"></span>

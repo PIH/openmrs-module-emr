@@ -19,7 +19,6 @@ import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.impl.BaseOpenmrsService;
-import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -42,7 +41,7 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
             throw new IllegalArgumentException("Required: patient, encounter location, clinician provider, primary diagnosis");
         }
 
-        DiagnosisConceptSet diagnosisConceptSet = emrProperties.getDiagnosisConceptSet();
+        DiagnosisMetadata diagnosisMetadata = emrProperties.getDiagnosisMetadata();
 
         Encounter encounter = new Encounter();
         encounter.setEncounterDatetime(new Date());
@@ -52,11 +51,11 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
 
         encounter.addProvider(emrProperties.getClinicianEncounterRole(), consultNote.getClinician());
 
-        encounter.addObs(diagnosisConceptSet.buildDiagnosisObsGroup(consultNote.getPrimaryDiagnosis(), EmrConstants.CONCEPT_CODE_DIAGNOSIS_ORDER_PRIMARY));
+        encounter.addObs(diagnosisMetadata.buildDiagnosisObsGroup(consultNote.getPrimaryDiagnosis()));
 
         if (consultNote.getAdditionalDiagnoses() != null) {
             for (Diagnosis diagnosis : consultNote.getAdditionalDiagnoses()) {
-                encounter.addObs(diagnosisConceptSet.buildDiagnosisObsGroup(diagnosis, EmrConstants.CONCEPT_CODE_DIAGNOSIS_ORDER_SECONDARY));
+                encounter.addObs(diagnosisMetadata.buildDiagnosisObsGroup(diagnosis));
             }
         }
 

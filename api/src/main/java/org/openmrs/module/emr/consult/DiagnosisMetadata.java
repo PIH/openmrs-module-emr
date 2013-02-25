@@ -19,6 +19,7 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptAnswer;
 import org.openmrs.ConceptMap;
 import org.openmrs.ConceptReferenceTerm;
+import org.openmrs.ConceptSource;
 import org.openmrs.Obs;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.emr.EmrConstants;
@@ -27,24 +28,27 @@ import org.openmrs.module.emr.EmrConstants;
  * Metadata describing how a diagnosis is represented as an Obs group.
  * TODO refactor to pull more of this functionality into a base class, e.g. ConceptSetDescriptor
  */
-public class DiagnosisConceptSet {
+public class DiagnosisMetadata {
 
     private Concept diagnosisSetConcept;
     private Concept codedDiagnosisConcept;
     private Concept nonCodedDiagnosisConcept;
     private Concept diagnosisOrderConcept;
 
-    public DiagnosisConceptSet(ConceptService conceptService) {
+    private ConceptSource emrConceptSource;
+
+    public DiagnosisMetadata(ConceptService conceptService, ConceptSource emrConceptSource) {
         setup(conceptService, EmrConstants.EMR_CONCEPT_SOURCE_NAME, "diagnosisSetConcept", EmrConstants.CONCEPT_CODE_DIAGNOSIS_CONCEPT_SET,
                 "codedDiagnosisConcept", EmrConstants.CONCEPT_CODE_CODED_DIAGNOSIS,
                 "nonCodedDiagnosisConcept", EmrConstants.CONCEPT_CODE_NON_CODED_DIAGNOSIS,
                 "diagnosisOrderConcept", EmrConstants.CONCEPT_CODE_DIAGNOSIS_ORDER);
+        this.emrConceptSource = emrConceptSource;
     }
 
     /**
-     * Used for testing -- in production you'll typically use the constructor that takes ConceptService
+     * Used for testing -- in production you'll use the constructor that takes ConceptService
      */
-    public DiagnosisConceptSet() {
+    public DiagnosisMetadata() {
     }
 
     private void setup(ConceptService conceptService, String conceptSourceName, String... fieldsAndConceptCodes) {
@@ -108,25 +112,38 @@ public class DiagnosisConceptSet {
         this.diagnosisOrderConcept = diagnosisOrderConcept;
     }
 
-    public Obs buildDiagnosisObsGroup(Diagnosis diagnosis, String codeForOrder) {
+    public ConceptSource getEmrConceptSource() {
+        return emrConceptSource;
+    }
+
+    public void setEmrConceptSource(ConceptSource emrConceptSource) {
+        this.emrConceptSource = emrConceptSource;
+    }
+
+    public Obs buildDiagnosisObsGroup(Diagnosis diagnosis) {
         Obs order = new Obs();
         order.setConcept(diagnosisOrderConcept);
-        order.setValueCoded(findAnswer(diagnosisOrderConcept, codeForOrder));
+        order.setValueCoded(findAnswer(diagnosisOrderConcept, diagnosis.getOrder().getCodeInEmrConceptSource()));
 
-        Obs diagnosisObs = new Obs();
-        if (diagnosis.getNonCodedAnswer() != null) {
-            diagnosisObs.setConcept(nonCodedDiagnosisConcept);
-            diagnosisObs.setValueText(diagnosis.getNonCodedAnswer());
-        } else {
-            diagnosisObs.setConcept(codedDiagnosisConcept);
-            diagnosisObs.setValueCoded(diagnosis.getCodedAnswer());
-            diagnosisObs.setValueCodedName(diagnosis.getSpecificCodedAnswer());
-        }
+        Obs diagnosisObs = buildObsFor(diagnosis.getDiagnosis(), codedDiagnosisConcept, nonCodedDiagnosisConcept);
 
         Obs obs = new Obs();
         obs.setConcept(diagnosisSetConcept);
         obs.addGroupMember(order);
         obs.addGroupMember(diagnosisObs);
+        return obs;
+    }
+
+    private Obs buildObsFor(CodedOrFreeTextAnswer codedOrFreeTextAnswer, Concept questionIfCoded, Concept questionIfNonCoded) {
+        Obs obs = new Obs();
+        if (codedOrFreeTextAnswer.getNonCodedAnswer() != null) {
+            obs.setConcept(nonCodedDiagnosisConcept);
+            obs.setValueText(codedOrFreeTextAnswer.getNonCodedAnswer());
+        } else {
+            obs.setConcept(codedDiagnosisConcept);
+            obs.setValueCoded(codedOrFreeTextAnswer.getCodedAnswer());
+            obs.setValueCodedName(codedOrFreeTextAnswer.getSpecificCodedAnswer());
+        }
         return obs;
     }
 
@@ -152,4 +169,73 @@ public class DiagnosisConceptSet {
         return false;
     }
 
+    public boolean isDiagnosis(Obs obsGroup) {
+        return obsGroup.getConcept().equals(diagnosisSetConcept);
+    }
+
+    public boolean isPrimaryDiagnosis(Obs obsGroup) {
+        return isDiagnosis(obsGroup) && hasDiagnosisOrder(obsGroup, EmrConstants.CONCEPT_CODE_DIAGNOSIS_ORDER_PRIMARY);
+    }
+
+    private boolean hasDiagnosisOrder(Obs obsGroup, String codeForDiagnosisOrderToCheckFor) {
+        Obs orderObs = findMember(obsGroup, diagnosisOrderConcept);
+        //return orderObs.getValueCoded()
+        throw new RuntimeException("Not Yet Implemented");
+    }
+
+    private Obs findMember(Obs obsGroup, Concept concept) {
+        for (Obs candidate : obsGroup.getGroupMembers(false)) {
+            if (candidate.getConcept().equals(concept)) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    public Diagnosis toDiagnosis(Obs obsGroup) {
+        if (!isDiagnosis(obsGroup)) {
+            throw new IllegalArgumentException("Not an obs group for a diagnosis: " + obsGroup);
+        }
+
+        Obs orderObs = findMember(obsGroup, diagnosisOrderConcept);
+        Obs codedObs = findMember(obsGroup, codedDiagnosisConcept);
+        Obs nonCodedObs = null;
+        if (codedObs == null) {
+            nonCodedObs = findMember(obsGroup, nonCodedDiagnosisConcept);
+        }
+        if (codedObs == null && nonCodedObs == null) {
+            throw new IllegalArgumentException("Obs group doesn't contain a coded or non-coded diagnosis: " + obsGroup);
+        }
+        CodedOrFreeTextAnswer diagnosisValue = buildFrom(codedObs, nonCodedObs);
+        Diagnosis diagnosis = new Diagnosis(diagnosisValue, getDiagnosisOrderFrom(orderObs));
+        return diagnosis;
+    }
+
+    private Diagnosis.Order getDiagnosisOrderFrom(Obs obs) {
+        String mapping = findMapping(obs.getValueCoded());
+        return Diagnosis.Order.parseConceptReferenceCode(mapping);
+
+    }
+
+    private String findMapping(Concept concept) {
+        for (ConceptMap conceptMap : concept.getConceptMappings()) {
+            ConceptReferenceTerm conceptReferenceTerm = conceptMap.getConceptReferenceTerm();
+            if (conceptReferenceTerm.getConceptSource().equals(emrConceptSource)) {
+                return conceptReferenceTerm.getCode();
+            }
+        }
+        return null;
+    }
+
+    private CodedOrFreeTextAnswer buildFrom(Obs codedObs, Obs nonCodedObs) {
+        if (codedObs != null) {
+            if (codedObs.getValueCodedName() != null) {
+                return new CodedOrFreeTextAnswer(codedObs.getValueCodedName());
+            } else {
+                return new CodedOrFreeTextAnswer(codedObs.getValueCoded());
+            }
+        } else {
+            return new CodedOrFreeTextAnswer(nonCodedObs.getValueText());
+        }
+    }
 }

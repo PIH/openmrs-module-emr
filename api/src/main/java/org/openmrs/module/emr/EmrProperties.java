@@ -26,7 +26,7 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.Role;
 import org.openmrs.VisitType;
-import org.openmrs.module.emr.consult.DiagnosisConceptSet;
+import org.openmrs.module.emr.consult.DiagnosisMetadata;
 import org.openmrs.module.emr.utils.ModuleProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -130,8 +130,8 @@ public class EmrProperties extends ModuleProperties {
         return getConceptByGlobalProperty(EmrConstants.PAYMENT_RECEIPT_NUMBER_CONCEPT);
     }
 
-    public DiagnosisConceptSet getDiagnosisConceptSet() {
-        return new DiagnosisConceptSet(conceptService);
+    public DiagnosisMetadata getDiagnosisMetadata() {
+        return new DiagnosisMetadata(conceptService, getEmrConceptSource());
     }
 
     protected Concept getEmrConceptByMapping(String code) {
