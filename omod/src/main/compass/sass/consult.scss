@@ -1,4 +1,5 @@
 @import "colors";
+@import "compass/css3";
 
 #entry-fields {
   display: inline-block;
@@ -14,6 +15,28 @@
   display: inline-block;
   width: 40%;
   vertical-align: top;
+  li {
+    .diagnosis {
+      display: inline-block;
+      background: lighten($text, 10%);
+      padding: 5px 10px;
+      width: 89.5%;
+      color: white;
+      @include border-radius(5px);
+    }
+    i {
+      background: #999;
+      color: white;
+      padding: 0;
+      margin: 0 0 0 -3px;
+      font-size: 1em;
+      line-height: 1.3em;
+      &:hover {
+        background: $error;
+        cursor: pointer;
+      }
+    }
+  }
 }
 
 #buttons {
@@ -26,6 +49,8 @@
 
 .code {
   float: right;
+  font-family: "OpenSansLight";
+  font-size: 0.9em;
 }
 
 .ui-menu .ui-menu-item {

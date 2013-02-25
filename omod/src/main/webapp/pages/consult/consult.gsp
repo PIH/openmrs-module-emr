@@ -67,10 +67,13 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             <div data-bind="visible: !primaryDiagnosis()">
                 ${ ui.message("emr.consult.primaryDiagnosis.notChosen") }
             </div>
-            <div data-bind="visible: primaryDiagnosis, html: formatChosenItem(primaryDiagnosis())"></div>
-            <button data-bind="visible: primaryDiagnosis, click: removePrimaryDiagnosis" tabindex="-1" class="icon-remove-circle"></button>
-            <input type="hidden" name="primaryDiagnosis" data-bind="value: valueToSubmit(primaryDiagnosis())">
-
+            <ul>
+                <li>
+                    <div class="diagnosis" data-bind="visible: primaryDiagnosis, html: formatChosenItem(primaryDiagnosis())"></div>
+                    <i data-bind="visible: primaryDiagnosis, click: removePrimaryDiagnosis" tabindex="-1" class="icon-remove small"></i>
+                    <input type="hidden" name="primaryDiagnosis" data-bind="value: valueToSubmit(primaryDiagnosis())">
+                </li>
+            </ul>
             <br/>
 
             <h3>${ ui.message("emr.consult.secondaryDiagnoses") }</h3>
