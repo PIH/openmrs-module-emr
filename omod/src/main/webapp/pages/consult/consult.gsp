@@ -49,7 +49,7 @@
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
 <div id="contentForm">
-    <h1>${ ui.message("emr.consult.title") }</h1>
+    <h2>${ ui.message("emr.consult.title") }</h2>
     <form id="consult-note" method="post">
         <div id="entry-fields">
             <p>

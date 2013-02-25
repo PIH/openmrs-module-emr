@@ -11,40 +11,42 @@
   }
 }
 
-#display-diagnoses {
-  display: inline-block;
-  width: 40%;
-  vertical-align: top;
-  font-size: 0.9em;
-  h3 {
-    border-bottom: 1px solid #CCC;
-    padding-bottom: 5px;
-  }
-  li {
-    margin-bottom: 10px;
-    .diagnosis {
-      display: inline-block;
-      background: lighten($text, 10%);
-      padding: 5px 10px;
-      width: 89.5%;
-      color: white;
-      @include border-radius(5px);
+#consult-note {
+
+  #display-diagnoses {
+    display: inline-block;
+    width: 40%;
+    vertical-align: top;
+    font-size: 0.9em;
+    h3 {
+      border-bottom: 1px solid #CCC;
+      padding-bottom: 5px;
     }
-    i {
-      background: #999;
-      color: white;
-      padding: 0;
-      margin: 0 0 0 -3px;
-      font-size: 1em;
-      line-height: 1.3em;
-      &:hover {
-        background: $error;
-        cursor: pointer;
+    li {
+      margin-bottom: 10px;
+      .diagnosis {
+        display: inline-block;
+        background: lighten($text, 10%);
+        padding: 5px 10px;
+        width: 89.5%;
+        color: white;
+        @include border-radius(5px);
+      }
+      i {
+        background: #999;
+        color: white;
+        padding: 0;
+        margin: 0 0 0 -3px;
+        font-size: 1em;
+        line-height: 1.3em;
+        &:hover {
+          background: $error;
+          cursor: pointer;
+        }
       }
     }
   }
 }
-
 #buttons {
   margin-top: 1em;
 }
@@ -55,6 +57,8 @@
 }
 .preferred-name {
   margin-top: 5px;
+  display: block;
+  font-family: "OpenSansLight";
 }
 
 .code {
