@@ -58,7 +58,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             </p>
             <p>
                 <label for="free-text-comments">${ ui.message("emr.consult.freeTextComments") }</label>
-                <textarea id="free-text-comments" rows="10" cols="55" name="freeTextComments"></textarea>
+                <textarea id="free-text-comments" rows="5" name="freeTextComments"></textarea>
             </p>
         </div>
 
@@ -82,8 +82,8 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             </div>
             <ul data-bind="foreach: secondaryDiagnoses">
                 <li>
-                    <span data-bind="html: formatChosenItem(\$data)"></span>
-                    <button data-bind="click: \$parent.removeDiagnosis" tabindex="-1" class="icon-remove-circle"></button>
+                    <div class="diagnosis" data-bind="html: formatChosenItem(\$data)"></div>
+                    <i data-bind="click: \$parent.removeDiagnosis" tabindex="-1" class="icon-remove"></i>
                     <input type="hidden" name="secondaryDiagnoses" data-bind="value: valueToSubmit(\$data)"/>
                 </li>
             </ul>
