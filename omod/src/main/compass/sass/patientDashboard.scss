@@ -48,7 +48,7 @@
 
     li {
       border-bottom: 1px solid white;
-      padding: 10px;
+      padding: 10px 10px 0px 10px;
       height: 55px;
       width: 215px;
       color: #666;
@@ -99,7 +99,7 @@
       }
 
       .visit-date {
-        display: inline;
+        display: block;
         font-size: 0.75em;
         border-bottom: 1px dotted #ccc;
         padding-bottom: 7px;
@@ -110,6 +110,7 @@
         display: block;
         font-size: 0.95em;
         padding-top: 7px;
+        font-family: "OpenSansBold";
       }
 
       .arrow-border {

@@ -172,6 +172,7 @@
                 <% } %>
             </span>
             <span class="visit-primary-diagnosis">
+                <i class="icon-stethoscope"></i>
                 <% if (primaryDiagnoses) { %>
                     ${ formatDiagnoses(primaryDiagnoses) }
                 <% } else { %>
