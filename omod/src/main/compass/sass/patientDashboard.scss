@@ -246,6 +246,7 @@
 
 
   .encounter-details {
+    overflow: hidden;
     font-size: 0.8em;
     display: inline-block;
     border: 1px solid #ccc;
@@ -253,7 +254,7 @@
     li {
       display: inline-block;
       vertical-align: top;
-      height: 30px;
+      height: 28px;
 
       &>div {
         border-right: 1px solid #ccc;
@@ -268,6 +269,7 @@
 
       &:last-child {
         &>div {
+          margin-left: -3px;
           border: none;
           background: #f9f9f9;
         }
@@ -276,7 +278,6 @@
 
     .encounter-type {
       border-left: 4px solid;
-      margin: 1px;
     
       strong {
         font-size: 1.2em;
