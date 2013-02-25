@@ -33,16 +33,7 @@
         @include border-radius(5px);
       }
       i {
-        background: #999;
-        color: white;
-        padding: 0;
-        margin: 0 0 0 -3px;
-        font-size: 1em;
-        line-height: 1.3em;
-        &:hover {
-          background: $error;
-          cursor: pointer;
-        }
+        display: inline;
       }
     }
   }

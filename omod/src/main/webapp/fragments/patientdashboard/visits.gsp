@@ -95,9 +95,7 @@
                 </ul>
                 {{ if (encounter.canDelete) { }}
                 <span>
-                    <a class="deleteEncounterId" href='#'>
-                        <i class="cancel icon-remove" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("emr.delete") }"></i>
-                    </a>
+                    <i class="deleteEncounterId delete-item icon-remove" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("emr.delete") }"></i>
                 </span>
                 {{  } }}
                 <div id="encounter-summary{{- i }}" class="collapse">

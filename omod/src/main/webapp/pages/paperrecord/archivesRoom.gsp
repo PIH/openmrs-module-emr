@@ -56,7 +56,7 @@
                             <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordsToBeCreated"><span data-bind="text: patientId"></span></td>
                             <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordsToBeCreated"><span data-bind="text: sendToLocation"></span></td>
                             <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordsToBeCreated"><span data-bind="text: timeRequested"></span></td>
-                            <td><i data-bind="click: \$root.cancelRequest" class="cancel icon-remove" title="${ui.message("emr.archivesRoom.cancel")}"></i></td>
+                            <td><i data-bind="click: \$root.cancelRequest" class="delete-item icon-remove" title="${ui.message("emr.archivesRoom.cancel")}"></i></td>
                         </tr>
                         </tbody>
                     </table>
@@ -95,7 +95,7 @@
                         <td><span data-bind="text: sendToLocation"></span></td>
                         <td><span data-bind="text: timeRequested"></span></td>
                         <td><button data-bind="click: \$root.printLabel" class="print" title="${ui.message("emr.archivesRoom.reprint")}"><i class="icon-print"></i> </button></td>
-                        <td><i data-bind="click: \$root.cancelRequest" class="cancel icon-remove" title="${ui.message("emr.archivesRoom.cancel")}"></i></td>
+                        <td><i data-bind="click: \$root.cancelRequest" class="delete-item icon-remove" title="${ui.message("emr.archivesRoom.cancel")}"></i></td>
                     </tr>
                     </tbody>
                 </table>
@@ -135,7 +135,7 @@
                             <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRequestToBePulled"><span data-bind="text: dossierNumber"></span></td>
                             <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRequestToBePulled"><span data-bind="text: sendToLocation"></span></td>
                             <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRequestToBePulled"><span data-bind="text: timeRequested"></span></td>
-                            <td><i data-bind="click: \$root.cancelRequest" class="cancel icon-remove" title="${ui.message("emr.archivesRoom.cancel")}"></i></td>
+                            <td><i data-bind="click: \$root.cancelRequest" class="delete-item icon-remove" title="${ui.message("emr.archivesRoom.cancel")}"></i></td>
                         </tr>
                         <tr data-bind="css:{attr:{'id': dossierNumber}, selected: selected(), hover: hovered() }">
                             <td colspan="5" data-bind="visible: locationLastSent" ><span data-bind="text: dossierNumber"></span> ${ ui.message("emr.archivesRoom.sentTo") } <span data-bind="text: locationLastSent"></span> ${ ui.message("emr.archivesRoom.at") } <span data-bind="text: dateLastSent"></span></td>
@@ -177,7 +177,7 @@
                             <td><span data-bind="text: sendToLocation"></span></td>
                             <td><span data-bind="text: timeRequested"></span></td>
                             <td><button data-bind="click: \$root.printLabel" class="print" title="${ui.message("emr.archivesRoom.reprint")}"><i class="icon-print"></i> </button></td>
-                            <td><i data-bind="click: \$root.cancelRequest" class="cancel icon-remove" title="${ui.message("emr.archivesRoom.cancel")}"></i></td>
+                            <td><i data-bind="click: \$root.cancelRequest" class="delete-item icon-remove" title="${ui.message("emr.archivesRoom.cancel")}"></i></td>
                         </tr>
                         <tr>
                             <td colspan="6" data-bind="visible: locationLastSent" ><span data-bind="text: dossierNumber"></span> ${ ui.message("emr.archivesRoom.sentTo") } <span data-bind="text: locationLastSent"></span> ${ ui.message("emr.archivesRoom.at") } <span data-bind="text: dateLastSent"></span></td>
