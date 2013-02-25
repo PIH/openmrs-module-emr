@@ -13,6 +13,14 @@
     jq(".collapse").collapse();
 </script>
 
+<script type="text/template" id="encounterDetailsTemplate">
+    {{ _.each(observations, function(observation) { }}
+        <span>{{- observation.question}}</span>
+        <span>{{- observation.answer}}</span>
+
+    {{ }); }}
+</script>
+
 <script type="text/template" id="visitDetailsTemplate">
     {{ if (stopDatetime) { }}
         <div class="visit-status">
@@ -77,7 +85,7 @@
                     </li>
                     <li>
                         <div>
-                            <a class="view-details collapsed" href='javascript:void(0)' data-toggle="collapse" data-target="#encounter-summary{{- i }}">
+                            <a name="show-encounter-details" class="view-details collapsed" href='javascript:void(0)' data-encounter-id="{{- encounter.encounterId }}" data-encounter-form="{{- encounter.form != null}}"  data-toggle="collapse" data-target="#encounter-summary{{- i }}">
                                 view details
                                 <i class="icon-caret-down"></i>
                                 <i class="icon-caret-up"></i>
@@ -96,7 +104,7 @@
                     <p>
                         Test
                     </p>
-                </div>
+		</div>
                 {{ i++; }}
             </li>
             {{  } }}
@@ -131,20 +139,61 @@
             }
         }
 
+        var encounterDetailsTemplate = _.template(jq('#encounterDetailsTemplate').html());
+
         var visitDetailsTemplate = _.template(jq('#visitDetailsTemplate').html());
         var visitsSection = jq("#visits-list");
+
         var visitDetailsSection = jq("#visit-details");
 
         //load first visit
         loadVisit(jq('.viewVisitDetails').first());
 
+
         jq('.viewVisitDetails').click(function() {
             loadVisit(jq(this));
             return false;
         });
+
+        jq(document).on("click",'a[name="show-encounter-details"]', function(event){
+            var encounterId = jq(event.target).attr("data-encounter-id");
+            var isHtmlForm = jq(event.target).attr("data-encounter-form");
+            var dataTarget = jq(event.target).attr("data-target");
+            getEncounterDetails(encounterId, isHtmlForm, dataTarget);
+
+        });
+
+        function getEncounterDetails(id, isHtmlForm, dataTarget){
+            var encounterDetailsSection = jq("#" + dataTarget);
+            if (isHtmlForm == "true"){
+
+                jq.getJSON(
+                    emr.fragmentActionLink("emr", "htmlform/viewEncounterWithHtmlForm", "getAsHtml", { encounterId: id })
+                ).success(function(data){
+                    encounterDetailsSection.html(data.html);
+                }).error(function(err){
+                    emr.errorAlert(err);
+                });
+
+            } else {
+
+                jq.getJSON(
+                    emr.fragmentActionLink("emr", "visit/visitDetails", "getEncounterDetails", { encounterId: id })
+                ).success(function(data){
+                    encounterDetailsSection.html(encounterDetailsTemplate(data));
+                }).error(function(err){
+                    emr.errorAlert(err);
+                });
+            }
+        }
+
+
+
     });
 
-  function getEncounterIcon(encounterType) {
+
+
+    function getEncounterIcon(encounterType) {
         var encounterIconMap = {
             "4fb47712-34a6-40d2-8ed3-e153abbd25b7": "icon-vitals",
             "55a0d3ea-a4d7-4e88-8f01-5aceb2d3c61b": "icon-check-in",

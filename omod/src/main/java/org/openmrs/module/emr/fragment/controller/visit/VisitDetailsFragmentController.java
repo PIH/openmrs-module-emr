@@ -2,10 +2,7 @@ package org.openmrs.module.emr.fragment.controller.visit;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.openmrs.Encounter;
-import org.openmrs.EncounterType;
-import org.openmrs.User;
-import org.openmrs.Visit;
+import org.openmrs.*;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
@@ -21,9 +18,7 @@ import org.openmrs.ui.framework.fragment.action.SuccessResult;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class VisitDetailsFragmentController {
 
@@ -53,7 +48,7 @@ public class VisitDetailsFragmentController {
         String[] datePatterns = { administrationService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATETIME_FORMAT) };
         for (Encounter e : visit.getEncounters()) {
             if (!e.getVoided()) {
-                SimpleObject simpleEncounter = SimpleObject.fromObject(e, uiUtils,  "encounterId", "encounterDatetime", "location", "encounterProviders.provider", "voided");
+                SimpleObject simpleEncounter = SimpleObject.fromObject(e, uiUtils,  "encounterId", "encounterDatetime", "location", "encounterProviders.provider", "voided", "form");
 
                 Date encounterDatetime = DateUtils.parseDate((String) simpleEncounter.get("encounterDatetime"), datePatterns);
                 simpleEncounter.put("encounterDate", DateFormatUtils.format(encounterDatetime, "dd MMM yyyy"));
@@ -69,6 +64,28 @@ public class VisitDetailsFragmentController {
         }
 
         return simpleObject;
+    }
+
+
+
+
+    public SimpleObject getEncounterDetails(@RequestParam("encounterId") Encounter encounter,
+                                            UiUtils uiUtils){
+        Set<Obs> obs = encounter.getObs();
+
+        Locale locale = uiUtils.getLocale();
+
+        List<SimpleObject> encounterDetails = new ArrayList<SimpleObject>();
+
+        for (Obs ob : obs) {
+            SimpleObject simpleObject = SimpleObject.fromObject(ob, uiUtils, "obsId");
+            simpleObject.put("question", ob.getConcept().getName(locale).getName());
+            simpleObject.put("answer", ob.getValueAsString(locale));
+
+            encounterDetails.add(simpleObject);
+        }
+
+        return SimpleObject.create("observations", encounterDetails);
     }
 
     public FragmentActionResult deleteEncounter(UiUtils ui,
@@ -89,3 +106,4 @@ public class VisitDetailsFragmentController {
        return new SuccessResult(ui.message("emr.patientDashBoard.deleteEncounter.successMessage"));
     }
 }
+

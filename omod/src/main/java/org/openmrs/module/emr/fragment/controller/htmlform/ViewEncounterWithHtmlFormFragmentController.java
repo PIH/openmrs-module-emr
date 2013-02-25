@@ -25,6 +25,7 @@ import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
 
@@ -44,8 +45,8 @@ public class ViewEncounterWithHtmlFormFragmentController {
     }
 
     public SimpleObject getAsHtml(@SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
-                                  @FragmentParam("encounterId") Encounter encounter,
-                                  @FragmentParam(value = "htmlFormId", required = false) HtmlForm hf,
+                                  @RequestParam("encounterId") Encounter encounter,
+                                  @RequestParam(value = "htmlFormId", required = false) HtmlForm hf,
                                   HttpSession httpSession) throws Exception {
         SimpleObject simpleObject = new SimpleObject();
         simpleObject.put("html", getFormHtml(htmlFormEntryService, encounter, hf, httpSession));
