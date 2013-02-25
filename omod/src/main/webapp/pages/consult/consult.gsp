@@ -111,7 +111,8 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
     </strong>
     {{ if (item.preferredName) { }}
         <span class="preferred-name">
-           &rarr; {{- item.concept.preferredName }}
+            <small>${ ui.message("emr.consult.synonymFor") }</small>
+            {{- item.concept.preferredName }}
         </span>
     {{ } }}
 </script>

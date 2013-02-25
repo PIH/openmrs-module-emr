@@ -59,6 +59,10 @@
   margin-top: 5px;
   display: block;
   font-family: "OpenSansLight";
+  small {
+    font-size: 1em;
+    color: $darkerGrey;
+  }
 }
 
 .code {
