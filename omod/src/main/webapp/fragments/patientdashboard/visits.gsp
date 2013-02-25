@@ -9,6 +9,8 @@
 
 <script type="text/javascript">
     breadcrumbs.push({ label: "${ui.message("emr.patientDashBoard.visits")}" , link:'${ui.pageLink("emr", "patient", [patientId: patient.id])}'});
+
+    jq(".collapse").collapse();
 </script>
 
 <script type="text/template" id="visitDetailsTemplate">
@@ -45,6 +47,7 @@
 
     <h4>${ ui.message("emr.patientDashBoard.encounters")} </h4>
     <ul id="encountersList">
+    {{ var i = 1;}}
         {{ _.each(encounters, function(encounter) { }}
             {{ if (!encounter.voided) { }}
             <li>
@@ -53,20 +56,38 @@
                     {{- encounter.encounterTime }}
                     {{- encounter.encounterDate }}
                 </div>
-                <div class="encounter-details">
-                    <span class="encounter-type"> 
-                        <strong>
-                            <i class="{{- getEncounterIcon(encounter.encounterType.uuid) }}"></i>
-                            <span class="encounter-name">{{- encounter.encounterType.name }}</span>
-                        </strong>
-                    </span>
-                    <span class="encounter-by-user">
-                        ${ ui.message("emr.by") }
-                        <strong>{{- encounter.encounterProviders[0] ? encounter.encounterProviders[0].provider : '' }}</strong>
-                        ${ ui.message("emr.in") }
-                        <strong>{{- encounter.location }}</strong>
-                    </span>
+                <ul class="encounter-details">
+                    <li> 
+                        <div class="encounter-type">
+                            <strong>
+                                <i class="{{- getEncounterIcon(encounter.encounterType.uuid) }}"></i>
+                                <span class="encounter-name">{{- encounter.encounterType.name }}</span>
+                            </strong>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            ${ ui.message("emr.by") }
+                            <strong>
+                                {{- encounter.encounterProviders[0] ? encounter.encounterProviders[0].provider : '' }}
+                            </strong>
+                            ${ ui.message("emr.in") }
+                            <strong>{{- encounter.location }}</strong>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            <a class="view-details" href='javascript:void(0)' data-toggle="collapse" data-target="#encounter-summary{{- i }}">
+                                view details
+                                <i class="icon-caret-down"></i>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+                <div id="encounter-summary{{- i }}" class="collapse">
+                    Test
                 </div>
+                {{ i++; }}
                 {{ if (encounter.canDelete) { }}
                     <span>
                         <a class="deleteEncounterId" href='#'>
