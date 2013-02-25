@@ -67,11 +67,13 @@
                         ${ ui.message("emr.in") }
                         <strong>{{- encounter.location }}</strong>
                     </span>
+                    {{ if (encounter.canDelete) { }}
                     <span>
                         <a class="deleteEncounterId" href='#'>
                             <i class="cancel icon-remove" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("emr.delete") }"></i>
                         </a>
                     </span>
+                    {{  } }}
                 </div>
             </li>
             {{  } }}
