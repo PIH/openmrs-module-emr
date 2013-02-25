@@ -77,9 +77,10 @@
                     </li>
                     <li>
                         <div>
-                            <a class="view-details" href='javascript:void(0)' data-toggle="collapse" data-target="#encounter-summary{{- i }}">
+                            <a class="view-details collapsed" href='javascript:void(0)' data-toggle="collapse" data-target="#encounter-summary{{- i }}">
                                 view details
                                 <i class="icon-caret-down"></i>
+                                <i class="icon-caret-up"></i>
                             </a>
                         </div>
                     </li>
@@ -92,7 +93,9 @@
                 </span>
                 {{  } }}
                 <div id="encounter-summary{{- i }}" class="collapse">
-                    Test
+                    <p>
+                        Test
+                    </p>
                 </div>
                 {{ i++; }}
             </li>

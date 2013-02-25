@@ -193,13 +193,7 @@
     h3 {
       margin-bottom: 0;
     }
-
-    p {
-      font-size: 0.9em;
-      padding: 5px 0;
-    }
   }
-
 }
 
 #encountersList {
@@ -275,6 +269,20 @@
     .view-details {
       background: #f9f9f9;
 
+      .icon-caret-down {
+        display: none;
+      }
+
+      &.collapsed {
+        .icon-caret-up {
+          display: none;
+        }
+
+        .icon-caret-down {
+          display: inline-block;
+        }
+      }
+
       i {
         font-size: 1.5em;
         padding: 0;
@@ -311,11 +319,8 @@ div {
   }
 }
 
-
-.collapse.in {
-  height: auto;
-}
 .collapse {
+  border: none;
   position: relative;
   height: 0;
   overflow: hidden;
@@ -323,8 +328,13 @@ div {
   -moz-transition: height 0.35s ease;
   -o-transition: height 0.35s ease;
   transition: height 0.35s ease;
-}
 
-.encounter-summary  {
-  border: 1px solid #666;
+  p {
+    padding: 10px;
+  }
+
+  &.in {
+    border: 1px solid #ccc;
+    height: auto;
+  }
 }
