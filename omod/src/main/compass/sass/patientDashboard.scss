@@ -308,6 +308,8 @@
   }
   
   .cancel {
+    position: relative;
+    top: 15px;
     text-decoration: none;
     color: $darkerGrey;
     font-size: 1em;
