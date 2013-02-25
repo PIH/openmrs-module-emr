@@ -5,6 +5,8 @@
 
     ui.includeJavascript("emr", "patient.js")
     ui.includeJavascript("emr", "custom/visits.js")
+    ui.includeJavascript("emr", "bootstrap-collapse.js")
+    ui.includeJavascript("emr", "bootstrap-transition.js")
 
     def tabs = [
         [ id: "visits", label: ui.message("emr.patientDashBoard.visits") ],

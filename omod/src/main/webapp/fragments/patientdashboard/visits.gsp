@@ -9,7 +9,6 @@
 
 <script type="text/javascript">
     breadcrumbs.push({ label: "${ui.message("emr.patientDashBoard.visits")}" , link:'${ui.pageLink("emr", "patient", [patientId: patient.id])}'});
-
 </script>
 
 <script type="text/template" id="visitDetailsTemplate">
@@ -67,14 +66,14 @@
                         ${ ui.message("emr.in") }
                         <strong>{{- encounter.location }}</strong>
                     </span>
-                    {{ if (encounter.canDelete) { }}
+                </div>
+                {{ if (encounter.canDelete) { }}
                     <span>
                         <a class="deleteEncounterId" href='#'>
                             <i class="cancel icon-remove" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("emr.delete") }"></i>
                         </a>
                     </span>
-                    {{  } }}
-                </div>
+                {{  } }}
             </li>
             {{  } }}
         {{ }); }}

@@ -128,6 +128,7 @@
       }
 
       .visit-primary-diagnosis {
+        line-height: 1em;
         display: block;
         font-size: 0.95em;
         padding-top: 7px;
@@ -263,15 +264,15 @@
       }
     }
     .encounter-by-user {
-      border-right: 1px solid #ccc;
       display: inline-block;
       padding: 5px 10px;
       margin: 1px;
     }
   }
   .cancel {
+    text-decoration: none;
     color: $darkerGrey;
-    font-size: 1.1em;
+    font-size: 1em;
     cursor: pointer;
     &:hover {
       color: $error;
@@ -309,3 +310,20 @@ div {
   }
 }
 
+
+.collapse.in {
+  height: auto;
+}
+.collapse {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  -webkit-transition: height 0.35s ease;
+  -moz-transition: height 0.35s ease;
+  -o-transition: height 0.35s ease;
+  transition: height 0.35s ease;
+}
+
+.encounter-summary  {
+  border: 1px solid #666;
+}
