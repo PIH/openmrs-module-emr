@@ -3,19 +3,23 @@ package org.openmrs.module.emr.fragment.controller;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.*;
+import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.PersonName;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.TestUiUtils;
-import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
+import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
+import org.openmrs.ui.framework.fragment.action.SuccessResult;
 
 import java.text.SimpleDateFormat;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 
 
@@ -52,8 +56,8 @@ public class EditPatientIdentifierFragmentControllerTest {
         patient.setBirthdate(new SimpleDateFormat("yyyy-MM-dd").parse("1961-08-04"));
         patient.addIdentifier(new PatientIdentifier("44", pit, null));
 
-        SimpleObject simpleObject = controller.editPatientIdentifier(ui, patient, pit, "12434", null, patientService);
-        assertEquals(simpleObject.get("message"),  ui.message("emr.patientDashBoard.editPatientIdentifier.successMessage"));
+        FragmentActionResult result = controller.editPatientIdentifier(ui, patient, pit, "12434", null, patientService);
+        assertThat(result, instanceOf(SuccessResult.class));
 
     }
 
@@ -73,10 +77,9 @@ public class EditPatientIdentifierFragmentControllerTest {
         patient.setGender("M");
         patient.setBirthdate(new SimpleDateFormat("yyyy-MM-dd").parse("1961-08-04"));
 
-        SimpleObject simpleObject = controller.editPatientIdentifier(ui, patient, pit, "12434", null, patientService);
-        assertEquals(simpleObject.get("message"),  ui.message("emr.patientDashBoard.editPatientIdentifier.successMessage"));
+        FragmentActionResult result = controller.editPatientIdentifier(ui, patient, pit, "12434", null, patientService);
+        assertThat(result, instanceOf(SuccessResult.class));
         assertEquals(patient.getPatientIdentifier(pit).getIdentifier(), "12434");
-
     }
 
 }

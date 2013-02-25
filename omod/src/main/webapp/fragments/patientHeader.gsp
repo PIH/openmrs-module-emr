@@ -9,6 +9,7 @@
 
 
 <script type="text/javascript">
+    var addMessage ="${ ui.message("emr.patient.identifier.add") }";
     jq(document).ready(function(){
         createEditPatientIdentifierDialog(${patient.id});
 

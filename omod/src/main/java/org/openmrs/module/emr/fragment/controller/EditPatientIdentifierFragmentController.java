@@ -6,9 +6,10 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.PatientService;
-import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
+import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
+import org.openmrs.ui.framework.fragment.action.SuccessResult;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -20,23 +21,27 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 public class EditPatientIdentifierFragmentController {
 
-    public SimpleObject editPatientIdentifier (UiUtils ui,
+    public FragmentActionResult editPatientIdentifier (UiUtils ui,
                                                @RequestParam("patientId") Patient patient,
                                                @RequestParam("identifierTypeId") PatientIdentifierType identifierType,
                                                @RequestParam(value="identifierValue", required = false) String identifierValue,
                                                @RequestParam(value="locationId", required = false) Location location,
                                                @SpringBean("patientService")PatientService service) {
 
-        if(patient!=null && StringUtils.isNotBlank(identifierValue) && identifierType!=null){
+        if(patient!=null && identifierType!=null){
             PatientIdentifier patientIdentifier = patient.getPatientIdentifier(identifierType);
-            if(patientIdentifier==null){
+            if(patientIdentifier==null && StringUtils.isNotBlank(identifierValue)){
                 patientIdentifier = new PatientIdentifier(identifierValue, identifierType, location);
             }else{
-                patientIdentifier.setIdentifier(identifierValue);
+                if(StringUtils.isNotBlank(identifierValue)){
+                    patientIdentifier.setIdentifier(identifierValue);
+                }else{
+                    patientIdentifier.setVoided(true);
+                }
             }
             patient.addIdentifier(patientIdentifier);
             service.savePatient(patient);
         }
-        return SimpleObject.create("message", ui.message("emr.patientDashBoard.editPatientIdentifier.successMessage"));
+        return new SuccessResult( ui.message("emr.patientDashBoard.editPatientIdentifier.successMessage"));
     }
 }
