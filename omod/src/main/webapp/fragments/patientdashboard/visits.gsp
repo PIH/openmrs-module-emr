@@ -101,7 +101,7 @@
                 </span>
                 {{  } }}
                 <div id="encounter-summary{{- i }}" class="collapse">
-
+                    <p></p>
 		        </div>
                 {{ i++; }}
             </li>
@@ -162,7 +162,7 @@
         });
 
         function getEncounterDetails(id, isHtmlForm, dataTarget){
-            var encounterDetailsSection = jq(dataTarget);
+            var encounterDetailsSection = jq(dataTarget + ' p');
             if (isHtmlForm == "true"){
 
                 jq.getJSON(
@@ -184,12 +184,7 @@
                 });
             }
         }
-
-
-
     });
-
-
 
     function getEncounterIcon(encounterType) {
         var encounterIconMap = {
