@@ -101,10 +101,8 @@
                 </span>
                 {{  } }}
                 <div id="encounter-summary{{- i }}" class="collapse">
-                    <p>
-                        Test
-                    </p>
-		</div>
+
+		        </div>
                 {{ i++; }}
             </li>
             {{  } }}
@@ -164,7 +162,7 @@
         });
 
         function getEncounterDetails(id, isHtmlForm, dataTarget){
-            var encounterDetailsSection = jq("#" + dataTarget);
+            var encounterDetailsSection = jq(dataTarget);
             if (isHtmlForm == "true"){
 
                 jq.getJSON(
