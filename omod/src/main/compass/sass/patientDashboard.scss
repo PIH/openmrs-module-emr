@@ -322,17 +322,13 @@ div {
 .collapse {
   border: none;
   position: relative;
-  height: 0;
+  height: auto;
   overflow: hidden;
   -webkit-transition: height 0.35s ease;
   -moz-transition: height 0.35s ease;
   -o-transition: height 0.35s ease;
   transition: height 0.35s ease;
-
-  p {
-    padding: 10px;
-    background: #f9f9f9;
-  }
+  background: #f9f9f9;
 
   &.in {
     border: 1px solid #ccc;
