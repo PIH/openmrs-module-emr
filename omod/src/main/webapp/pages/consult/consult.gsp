@@ -58,7 +58,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             </p>
             <p>
                 <label for="free-text-comments">${ ui.message("emr.consult.freeTextComments") }</label>
-                <textarea id="free-text-comments" rows="10" cols="55" name="freeTextComments"></textarea>
+                <textarea id="free-text-comments" rows="5" name="freeTextComments"></textarea>
             </p>
         </div>
 
@@ -67,10 +67,13 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             <div data-bind="visible: !primaryDiagnosis()">
                 ${ ui.message("emr.consult.primaryDiagnosis.notChosen") }
             </div>
-            <div data-bind="visible: primaryDiagnosis, html: formatChosenItem(primaryDiagnosis())"></div>
-            <button data-bind="visible: primaryDiagnosis, click: removePrimaryDiagnosis" tabindex="-1" class="icon-remove-circle"></button>
-            <input type="hidden" name="primaryDiagnosis" data-bind="value: valueToSubmit(primaryDiagnosis())">
-
+            <ul>
+                <li>
+                    <div class="diagnosis" data-bind="visible: primaryDiagnosis, html: formatChosenItem(primaryDiagnosis())"></div>
+                    <i data-bind="visible: primaryDiagnosis, click: removePrimaryDiagnosis" tabindex="-1" class="icon-remove small"></i>
+                    <input type="hidden" name="primaryDiagnosis" data-bind="value: valueToSubmit(primaryDiagnosis())">
+                </li>
+            </ul>
             <br/>
 
             <h3>${ ui.message("emr.consult.secondaryDiagnoses") }</h3>
@@ -79,8 +82,8 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             </div>
             <ul data-bind="foreach: secondaryDiagnoses">
                 <li>
-                    <span data-bind="html: formatChosenItem(\$data)"></span>
-                    <button data-bind="click: \$parent.removeDiagnosis" tabindex="-1" class="icon-remove-circle"></button>
+                    <div class="diagnosis" data-bind="html: formatChosenItem(\$data)"></div>
+                    <i data-bind="click: \$parent.removeDiagnosis" tabindex="-1" class="icon-remove"></i>
                     <input type="hidden" name="secondaryDiagnoses" data-bind="value: valueToSubmit(\$data)"/>
                 </li>
             </ul>

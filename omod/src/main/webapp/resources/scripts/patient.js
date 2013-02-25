@@ -45,7 +45,18 @@ function createEditPatientIdentifierDialog(patientId) {
                     , function(data) {
                         emr.successMessage(data.message);
                         editPatientIdentifierDialog.close();
-                        location.reload();
+                        var newValue= jq("#patientIdentifierValue").val();
+                        console.log("newValue=" + newValue);
+                        if(newValue.length>0){
+                            jq(".editPatientIdentifier").parents("span:first").removeClass('add-id');
+                            jq(".editPatientIdentifier").attr("data-patient-identifier-value", newValue);
+                            jq(".editPatientIdentifier").text(newValue);
+                        }else{
+                            jq(".editPatientIdentifier").parents("span:first").addClass('add-id');
+                            jq(".editPatientIdentifier").text(addMessage);
+                        }
+
+
                 });
             },
             cancel: function() {

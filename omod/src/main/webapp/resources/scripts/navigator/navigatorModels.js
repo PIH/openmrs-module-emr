@@ -28,11 +28,15 @@ function FieldModel(elem, parentQuestion, messagesContainer) {
     this.parentQuestion = parentQuestion;
     this.messagesContainer = messagesContainer;
     this.validators = [];
+    this.exitHandlers = [];
 
     var classes = this.element.attr("class");
     if(classes) {
         _.each(classes.split(' '), function(klass) {
             Validators[klass] && this.validators.push(Validators[klass]);
+        }, this);
+        _.each(classes.split(' '), function(klass) {
+            ExitHandlers[klass] && this.exitHandlers.push(ExitHandlers[klass]);
         }, this);
     }
 }
@@ -67,6 +71,15 @@ FieldModel.prototype.isValid = function() {
     }
     return true;
 }
+
+FieldModel.prototype.onExit = function ()  {
+    var exit = _.reduce(this.exitHandlers, function(memo, exitHandler) {
+        return memo && exitHandler.handleExit(this);
+    }, true, this);
+
+    return exit;
+}
+
 FieldModel.prototype.value = function() {
     var selectedOption = this.element.find('option:selected');
     if(selectedOption.length > 0) {

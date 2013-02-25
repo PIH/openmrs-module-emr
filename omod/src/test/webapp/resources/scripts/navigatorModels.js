@@ -58,6 +58,39 @@ describe("Test for simple form models", function() {
             expect(isValid).toBe(false);
         });
 
+        it("should call all exit handlers and return true", function() {
+            var firstExitHandler = jasmine.createSpyObj('firstExitHandler', ['handleExit']);
+            var secondExitHandler = jasmine.createSpyObj('secondExitHandler', ['handleExit']);
+            firstExitHandler.handleExit.andReturn(true);
+            secondExitHandler.handleExit.andReturn(true);
+
+            var fieldModel = new FieldModel();
+            fieldModel.exitHandlers = [firstExitHandler, secondExitHandler];
+
+            var exit = fieldModel.onExit();
+
+            expect(firstExitHandler.handleExit).toHaveBeenCalledWith(fieldModel);
+            expect(secondExitHandler.handleExit).toHaveBeenCalledWith(fieldModel);
+            expect(exit).toBe(true);
+        });
+
+        it("should call all exit handlers and return false if any handler returns false", function() {
+            var firstExitHandler = jasmine.createSpyObj('firstExitHandler', ['handleExit']);
+            var secondExitHandler = jasmine.createSpyObj('secondExitHandler', ['handleExit']);
+            firstExitHandler.handleExit.andReturn(true);
+            secondExitHandler.handleExit.andReturn(false);
+
+            var fieldModel = new FieldModel();
+            fieldModel.exitHandlers = [firstExitHandler, secondExitHandler];
+
+            var exit = fieldModel.onExit();
+
+            expect(firstExitHandler.handleExit).toHaveBeenCalledWith(fieldModel);
+            expect(secondExitHandler.handleExit).toHaveBeenCalledWith(fieldModel);
+            expect(exit).toBe(false);
+        });
+
+
     });
 
     describe("Unit tests for QuestionModel", function() {
