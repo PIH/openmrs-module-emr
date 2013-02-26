@@ -324,23 +324,23 @@ div {
   transition: height 0.35s ease;
   background: #f9f9f9;
 
-  fieldset {
-    border: 0;
-    padding: 0;
-    margin: 0;
-  }
-
-  small {
+  small, htmlform h3 {
     margin-right: 10px;
     color: #666;
   }
 
-  span {
+  span, htmlform p {
     color: $highlight;
     font-size: 0.95em;
   }
 
-  p {
+  fieldset {
+      border: 0;
+      padding: 0;
+      margin: 0;
+  }
+
+  p, htmlform fieldset {
     border-bottom: 1px solid #ddd;
     padding-bottom: 5px;
     margin-bottom: 3px;
@@ -363,5 +363,26 @@ div {
 
   &.in {
     height: auto;
+  }
+
+  htmlform {
+    h3 {
+      font-size: 0.8em;
+      font-weight: normal;
+      display: inline-block;
+    }
+
+    p {
+      display: inline-block;
+
+      span {
+        font-size: 1em;
+      }
+    }
+
+    .left {
+      float: none;
+      border: none;
+    }
   }
 }
