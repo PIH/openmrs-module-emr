@@ -15,7 +15,9 @@
 
 <script type="text/template" id="encounterDetailsTemplate">
     {{ _.each(observations, function(observation) { }}
-        <p><small>{{- observation.question}}</small><span>{{- observation.answer}}</span></p>
+        {{ if(observation.answer != null) {}}
+            <p><small>{{- observation.question}}</small><span>{{- observation.answer}}</span></p>
+        {{}}}
     {{ }); }}
 
     {{ _.each(orders, function(order) { }}
