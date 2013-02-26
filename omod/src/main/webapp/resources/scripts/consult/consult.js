@@ -51,9 +51,19 @@ function ConsultFormViewModel() {
 
     var api = {};
 
+    api.submitting = ko.observable(false);
+
     api.searchTerm = ko.observable();
     api.primaryDiagnosis = ko.observable();
     api.secondaryDiagnoses = ko.observableArray();
+
+    api.startSubmitting = function() {
+        api.submitting(true);
+    }
+
+    api.canSubmit = function() {
+        return api.isValid() && !api.submitting();
+    }
 
     api.isValid = function() {
         return api.primaryDiagnosis() != null;
@@ -118,16 +128,23 @@ ko.bindingHandlers.autocomplete = {
         $(element).autocomplete({
             source: emr.fragmentActionLink("emr", "diagnoses", "search"),
             response: function(event, ui) {
+                var query = event.target.value.toLowerCase();
                 var items = ui.content;
                 var selected = viewModel.selectedConceptIds();
-                // remove any already-selected concepts
+                // remove any already-selected concepts, and look for exact code matches
+                var exactCodeMatch = false;
                 for (var i = items.length - 1; i >= 0; --i) {
                     items[i] = ConceptSearchResult(items[i]);
+                    if (!exactCodeMatch && items[i].code && items[i].code.toLowerCase() == query) {
+                        exactCodeMatch = true;
+                    }
                     if (_.contains(selected, items[i].conceptId)) {
                         items.splice(i, 1);
                     }
                 }
-                items.push(FreeTextListItem($(element).val()))
+                if (!exactCodeMatch) {
+                    items.push(FreeTextListItem($(element).val()))
+                }
             },
             select: function( event, ui ) {
                 viewModel.addDiagnosis(ui.item);

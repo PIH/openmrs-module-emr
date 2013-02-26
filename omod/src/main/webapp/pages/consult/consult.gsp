@@ -41,7 +41,11 @@
         });
 
         jq('#consult-note').submit(function() {
-            return viewModel.isValid();
+            var valid = viewModel.isValid();
+            if (valid) {
+                viewModel.startSubmitting();
+            }
+            return valid;
         });
     });
 </script>
@@ -90,7 +94,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
         </div>
 
         <div id="buttons">
-            <button type="submit" class="confirm right" data-bind="css: { disabled: !isValid() }, enable: isValid()">${ ui.message("emr.save") }</button>
+            <button type="submit" class="confirm right" data-bind="css: { disabled: !canSubmit() }, enable: canSubmit()">${ ui.message("emr.save") }</button>
             <button type="button" class="cancel">${ ui.message("emr.cancel") }</button>
         </div>
     </form>
