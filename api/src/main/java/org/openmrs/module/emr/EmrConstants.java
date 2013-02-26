@@ -136,4 +136,5 @@ public class EmrConstants {
     public static final String CONCEPT_CODE_DIAGNOSIS_ORDER = "Diagnosis Order"; // e.g. Primary or Secondary
     public static final String CONCEPT_CODE_DIAGNOSIS_ORDER_PRIMARY = "Primary";
     public static final String CONCEPT_CODE_DIAGNOSIS_ORDER_SECONDARY = "Secondary";
+    public static final String CONSULTATION_TYPE_UUID = "92fd09b4-5335-4f7e-9f63-b2a663fd09a6";
 }

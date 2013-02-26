@@ -5,7 +5,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.openmrs.*;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.ui.framework.SimpleObject;
@@ -71,23 +70,55 @@ public class VisitDetailsFragmentController {
                                             UiUtils uiUtils){
         Locale locale = uiUtils.getLocale();
 
-        List<SimpleObject> observations = createSimpleObjectWithObservations(uiUtils, encounter.getObs(), locale);
+        List<SimpleObject> observations = createObservations(encounter, uiUtils, locale);
+
+        List<SimpleObject> orders = createSimpleObjectWithOrders(encounter, uiUtils);
 
 
+        return SimpleObject.create("observations", observations, "orders", orders);
+    }
+
+    private List<SimpleObject> createObservations(Encounter encounter, UiUtils uiUtils, Locale locale) {
+        List<SimpleObject> observations;
+
+        if (encounter.getEncounterType().getUuid().equals(EmrConstants.CONSULTATION_TYPE_UUID)){
+            observations = createSimpleObjectWithDiagnosis(encounter, uiUtils, locale);
+        } else {
+            observations = createSimpleObjectWithObservations(uiUtils, encounter.getObs(), locale);
+        }
+
+        return observations;
+    }
+
+    private List<SimpleObject> createSimpleObjectWithDiagnosis(Encounter encounter, UiUtils uiUtils, Locale locale) {
+        List<SimpleObject> observations = new ArrayList<SimpleObject>();
+
+        Set<Obs> groupedObservations = encounter.getObsAtTopLevel(false);
+
+        for (Obs observation : groupedObservations) {
+            SimpleObject simpleObject = SimpleObject.fromObject(observation, uiUtils, "obsId");
+            simpleObject.put("question", observation.getConcept().getName(locale).getName());
+            simpleObject.put("answer", observation.getValueAsString(locale));
+            observations.add(simpleObject);
+        }
+
+        return observations;
+    }
+
+    private List<SimpleObject> createSimpleObjectWithOrders(Encounter encounter, UiUtils uiUtils) {
         List<SimpleObject> orders = new ArrayList<SimpleObject>();
 
         for (Order order : encounter.getOrders()) {
             orders.add(SimpleObject.create("concept", uiUtils.format(order.getConcept())));
         }
-
-
-        return SimpleObject.create("observations", observations, "orders", orders);
+        return orders;
     }
 
     private List<SimpleObject> createSimpleObjectWithObservations(UiUtils uiUtils, Set<Obs> obs, Locale locale) {
         List<SimpleObject> encounterDetails = new ArrayList<SimpleObject>();
 
         for (Obs ob : obs) {
+
             SimpleObject simpleObject = SimpleObject.fromObject(ob, uiUtils, "obsId");
             simpleObject.put("question", ob.getConcept().getName(locale).getName());
             simpleObject.put("answer", ob.getValueAsString(locale));
