@@ -49,10 +49,11 @@
     li {
       border-bottom: 1px solid white;
       padding: 10px 10px 0px 10px;
-      height: 55px;
+      min-height: 55px;
       width: 215px;
       color: #666;
       background: #eee;
+      padding-bottom: 5px;
       position: relative;
       @include box-shadow(inset 0px -1px 0px #BBB);
 
