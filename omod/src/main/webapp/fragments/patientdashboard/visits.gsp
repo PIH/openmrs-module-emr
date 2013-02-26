@@ -15,16 +15,11 @@
 
 <script type="text/template" id="encounterDetailsTemplate">
     {{ _.each(observations, function(observation) { }}
-        <h3>{{- observation.question}}</h3>
-        <span>{{- observation.answer}}</span>
-
+        <p><small>{{- observation.question}}</small><span>{{- observation.answer}}</span></p>
     {{ }); }}
 
-    {{if (orders[0] != undefined) {}}
-        <h3>Studies</h3>
-    {{}}}
     {{ _.each(orders, function(order) { }}
-        <p>{{- order.concept }}</p>
+         <p><small>Order</small><span>{{- order.concept }}</span></p>
     {{ }); }}
 </script>
 
@@ -109,7 +104,7 @@
                 </span>
                 {{  } }}
                 <div id="encounter-summary{{- i }}" class="collapse">
-                    <p class="encounter-summary-container"></p>
+                    <div class="encounter-summary-container"></div>
 		        </div>
                 {{ i++; }}
             </li>
@@ -170,7 +165,7 @@
         });
 
         function getEncounterDetails(id, isHtmlForm, dataTarget){
-            var encounterDetailsSection = jq(dataTarget + ' p');
+            var encounterDetailsSection = jq(dataTarget + ' .encounter-summary-container');
             if (isHtmlForm == "true"){
 
                 jq.getJSON(
