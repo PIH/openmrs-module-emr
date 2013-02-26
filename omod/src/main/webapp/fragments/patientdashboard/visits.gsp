@@ -92,8 +92,7 @@
                         <div>
                             <a name="show-encounter-details" class="view-details collapsed" href='javascript:void(0)' data-encounter-id="{{- encounter.encounterId }}" data-encounter-form="{{- encounter.form != null}}"  data-toggle="collapse" data-target="#encounter-summary{{- i }}">
                                 view details
-                                <i class="icon-caret-down"></i>
-                                <i class="icon-caret-up"></i>
+                                <i class="icon-caret-right"></i>
                             </a>
                         </div>
                     </li>
