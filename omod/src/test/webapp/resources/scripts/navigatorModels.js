@@ -215,8 +215,12 @@ describe("Test for simple form models", function() {
     describe("Unit tests for ConfirmationSectionModel", function() {
        it("should select and unselect the confirmation section",function() {
            var menuElement = jasmine.createSpyObj('menu', ['append']);
-           var confirmationSectionModel = new ConfirmationSectionModel(null, menuElement);
-           confirmationSectionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass']);
+           var confirmationQuestionModel = jasmine.createSpyObj('confirmationQuestion', ['confirm', 'cancel']);
+           var confirmationSectionModel = new ConfirmationSectionModel( confirmationQuestionModel, menuElement);
+           confirmationSectionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass', 'find']);
+           var question =  jasmine.createSpyObj('question', ['confirm', 'unselect']);
+           question.confirm = jasmine.createSpyObj('confirm', ['disable']);
+           confirmationSectionModel.questions = [ question ];
 
            confirmationSectionModel.toggleSelection();
            expect(confirmationSectionModel.element.addClass).toHaveBeenCalledWith('focused');

@@ -42,7 +42,7 @@ ${ ui.includeFragment("emr", "htmlform/enterHtmlForm", [
 
 <script type="text/template" id="confirmation-template">
     <div id="confirmation">
-        <span class="title">${ ui.message("mirebalais.vitals.confirm.title") }</span>
+        <span class="title">${ ui.message("emr.simpleFormUi.confirm.title") }</span>
 
         <div id="confirmationQuestion" class="container half-width">
             <h3>${ ui.message("emr.simpleFormUi.confirm.question") }</h3>
@@ -57,6 +57,10 @@ ${ ui.includeFragment("emr", "htmlform/enterHtmlForm", [
             <p style="display: inline">
                 <input type="button" value="${ ui.message("emr.no") }" class="cancel" />
             </p>
+            <p style="display: inline">
+                <span id="emptyFormError">${ ui.message("emr.simpleFormUi.error.emptyForm") }</span>
+            </p>
+
         </div>
     </div>
 </script>

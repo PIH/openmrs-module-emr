@@ -17,6 +17,12 @@ SelectableModel.prototype = {
         this.isSelected = false;
         this.element.removeClass("focused");
         this.toggleSelection = this.select;
+    },
+    enable: function() {
+        this.element.removeAttr('disabled');
+    },
+    disable: function() {
+        this.element.attr('disabled', 'true');
     }
 }
 
@@ -51,6 +57,15 @@ FieldModel.prototype.unselect = function() {
     this.element.removeClass("error");
     this.element.blur();
 }
+
+FieldModel.prototype.enable = function() {
+    SelectableModel.prototype.enable.apply(this);
+}
+
+FieldModel.prototype.disable = function() {
+    SelectableModel.prototype.disable.apply(this);
+}
+
 FieldModel.prototype.isValid = function() {
     var validationMessages = _.reduce(this.validators, function(memo, validator) {
         var validationMessage = validator.validate(this);
@@ -144,9 +159,20 @@ QuestionModel.prototype.title = function() {
  */
 function ConfirmationQuestionModel(elem, section, titleListElem) {
     QuestionModel.apply(this, [elem, section, titleListElem]);
-    $(elem).find('input.cancel').click(function() {
-        section.sections[0].title.click();
+
+    this.confirm = _.find(this.fields, function (field) {
+        return field.element.hasClass('confirm');
     });
+    this.cancel =_.find(this.fields, function (field) {
+        return field.element.hasClass('cancel');
+    });
+
+    // return to beginning of form if user hits cancel
+    if (this.cancel) {
+        this.cancel.element.click(function() {
+            section.sections[0].title.click();
+        });
+    }
 }
 ConfirmationQuestionModel.prototype = new QuestionModel();
 ConfirmationQuestionModel.prototype.constructor = ConfirmationQuestionModel;
@@ -196,10 +222,7 @@ function ConfirmationSectionModel(elem, formMenuElem, regularSections) {
     formMenuElem.append(this.title);
     title.remove();
     this.dataCanvas = this.element.find('#dataCanvas');
-
-    this.questions = _.map(this.element.find("#confirmationQuestion"), function(questionElement) {
-        return new ConfirmationQuestionModel(questionElement, this);
-    }, this);
+    this.questions = [ new ConfirmationQuestionModel(this.element.find("#confirmationQuestion"), this) ];
 }
 ConfirmationSectionModel.prototype = new SelectableModel();
 ConfirmationSectionModel.prototype.constructor = ConfirmationSectionModel;
@@ -207,11 +230,33 @@ ConfirmationSectionModel.prototype.select = function() {
     SelectableModel.prototype.select.apply(this);
     this.title.addClass("doing");
 
+    // scan through the form and confirm that at least one of the fields has a value
+    var hasData =_.some(this.sections, function (section) {
+        return _.some(section.questions, function (question) {
+            return _.some(question.fields, function (field) {
+                return (field.value() && field.value().length > 0)
+            })
+        })
+    })
+
+    if (!hasData) {
+        this.questions[0].confirm.disable();
+        if (this.element.find("#emptyFormError")) {
+            this.element.find("#emptyFormError").show();
+        }
+    }
+    else {
+        this.questions[0].confirm.enable();
+        if (this.element.find("#emptyFormError")) {
+            this.element.find("#emptyFormError").hide();
+        }
+    }
+
     var listElement = $("<ul></ul>");
     this.dataCanvas.append(listElement);
     _.each(this.sections, function(section) {
         _.each(section.questions, function(question) {
-            listElement.append("<li><span class='label'>" + question.title().text() + ":</span> <strong>" + question.valueAsText + "</strong></li>");
+            listElement.append("<li><span class='label'>" + question.title().text() + ":</span> <strong>" + (question.valueAsText &&  !/^\s*$/.test(question.valueAsText) ? question.valueAsText : "--") + "</strong></li>");
         })
     });
 }
