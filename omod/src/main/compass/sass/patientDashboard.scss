@@ -324,7 +324,11 @@ div {
   transition: height 0.35s ease;
   background: #f9f9f9;
 
-  p {
+  fieldset {
+    border: 0;
+  }
+
+  .encounter-summary-container {
     padding: 10px;
   }
 

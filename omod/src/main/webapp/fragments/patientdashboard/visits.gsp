@@ -15,7 +15,7 @@
 
 <script type="text/template" id="encounterDetailsTemplate">
     {{ _.each(observations, function(observation) { }}
-        <span>{{- observation.question}}</span>
+        <h3>{{- observation.question}}</h3>
         <span>{{- observation.answer}}</span>
 
     {{ }); }}
@@ -102,7 +102,7 @@
                 </span>
                 {{  } }}
                 <div id="encounter-summary{{- i }}" class="collapse">
-                    <p></p>
+                    <p class="encounter-summary-container"></p>
 		        </div>
                 {{ i++; }}
             </li>
