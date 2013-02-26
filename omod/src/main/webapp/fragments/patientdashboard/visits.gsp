@@ -90,7 +90,7 @@
                     </li>
                     <li>
                         <div>
-                            <a name="show-encounter-details" class="view-details collapsed" href='javascript:void(0)' data-encounter-id="{{- encounter.encounterId }}" data-encounter-form="{{- encounter.form != null}}"  data-toggle="collapse" data-target="#encounter-summary{{- i }}">
+                            <a class="view-details collapsed" href='javascript:void(0);' data-encounter-id="{{- encounter.encounterId }}" data-encounter-form="{{- encounter.form != null}}" data-target="#encounter-summary{{- i }}" data-toggle="collapse" data-target="#encounter-summary{{- i }}">
                                 <span class="show-details">show details</span>
                                 <span class="hide-details">hide details</span>
                                 <i class="icon-caret-right"></i>
@@ -156,12 +156,11 @@
             return false;
         });
 
-        jq(document).on("click",'a[name="show-encounter-details"]', function(event){
-            var encounterId = jq(event.target).attr("data-encounter-id");
-            var isHtmlForm = jq(event.target).attr("data-encounter-form");
-            var dataTarget = jq(event.target).attr("data-target");
+        jq(document).on("click",'.view-details', function(event){
+            var encounterId = jq(event.currentTarget).attr("data-encounter-id");
+            var isHtmlForm = jq(event.currentTarget).attr("data-encounter-form");
+            var dataTarget = jq(event.currentTarget).attr("data-target");
             getEncounterDetails(encounterId, isHtmlForm, dataTarget);
-
         });
 
         function getEncounterDetails(id, isHtmlForm, dataTarget){
