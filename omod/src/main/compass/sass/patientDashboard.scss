@@ -275,13 +275,24 @@
     .view-details {
       background: #f9f9f9;
 
+      .hide-details {
+        display: none;
+      }
+
      &:not(.collapsed) {
+        .hide-details {
+          display: inline-block;
+        }
+
+        .show-details {
+          display: none;
+        }
+        
         .icon-caret-right {
             @include rotate(90deg); 
             @include transition-property(all);
             @include transition-duration(0.15s);
             @include transition-timing-function(ease-in-out);
-            
         }
       }
 
