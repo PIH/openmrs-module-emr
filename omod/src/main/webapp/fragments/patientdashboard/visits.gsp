@@ -20,6 +20,9 @@
 
     {{ }); }}
 
+    {{if (orders[0] != undefined) {}}
+        <h3>Studies</h3>
+    {{}}}
     {{ _.each(orders, function(order) { }}
         <p>{{- order.concept }}</p>
     {{ }); }}
