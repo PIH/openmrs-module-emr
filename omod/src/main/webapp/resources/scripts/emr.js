@@ -61,8 +61,8 @@ var emr = (function($) {
 
         getFragmentActionWithCallback: function(providerName, fragmentName, actionName, options, callback, errorCallback) {
             if (!errorCallback) {
-                errorCallback = function(err) {
-                    emr.errorMessage(err);
+                errorCallback = function(xhr) {
+                    emr.handleError(xhr);
                 };
             }
             var url = this.fragmentActionLink(providerName, fragmentName, actionName, options);

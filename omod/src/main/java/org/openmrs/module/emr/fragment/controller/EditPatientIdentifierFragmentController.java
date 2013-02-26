@@ -8,16 +8,12 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.PatientService;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
+import org.openmrs.ui.framework.fragment.action.FailureResult;
 import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 import org.openmrs.ui.framework.fragment.action.SuccessResult;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * Created with IntelliJ IDEA.
- * User: cospih
- * Date: 2/15/13
- * Time: 4:13 PM
- * To change this template use File | Settings | File Templates.
  */
 public class EditPatientIdentifierFragmentController {
 
@@ -40,7 +36,11 @@ public class EditPatientIdentifierFragmentController {
                 }
             }
             patient.addIdentifier(patientIdentifier);
-            service.savePatient(patient);
+            try{
+                service.savePatient(patient);
+            }catch (Exception e){
+                return new FailureResult(ui.message("emr.patientDashBoard.editPatientIdentifier.failureMessage"));
+            }
         }
         return new SuccessResult( ui.message("emr.patientDashBoard.editPatientIdentifier.successMessage"));
     }

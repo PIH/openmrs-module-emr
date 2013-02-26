@@ -21,10 +21,12 @@ function createPaperRecordDialog(patientId) {
         selector: '#request-paper-record-dialog',
         actions: {
             confirm: function() {
-                emr.getFragmentActionWithCallback('emr', 'paperrecord/requestPaperRecord', 'requestPaperRecord', { patientId: patientId, locationId: sessionLocationModel.id() }, function(data) {
-                    emr.successMessage(data.message);
-                    requestPaperRecordDialog.close();
-                });
+                emr.getFragmentActionWithCallback('emr', 'paperrecord/requestPaperRecord', 'requestPaperRecord'
+                    , { patientId: patientId, locationId: sessionLocationModel.id() }
+                    , function(data) {
+                        emr.successMessage(data.message);
+                        requestPaperRecordDialog.close();
+                    });
             },
             cancel: function() {
                 requestPaperRecordDialog.close();
@@ -46,7 +48,6 @@ function createEditPatientIdentifierDialog(patientId) {
                         emr.successMessage(data.message);
                         editPatientIdentifierDialog.close();
                         var newValue= jq("#patientIdentifierValue").val();
-                        console.log("newValue=" + newValue);
                         if(newValue.length>0){
                             jq(".editPatientIdentifier").parents("span:first").removeClass('add-id');
                             jq(".editPatientIdentifier").attr("data-patient-identifier-value", newValue);
@@ -55,9 +56,10 @@ function createEditPatientIdentifierDialog(patientId) {
                             jq(".editPatientIdentifier").parents("span:first").addClass('add-id');
                             jq(".editPatientIdentifier").text(addMessage);
                         }
-
-
-                });
+                    },function(err){
+                        emr.handleError(err);
+                        editPatientIdentifierDialog.close();
+                    });
             },
             cancel: function() {
                 editPatientIdentifierDialog.close();
