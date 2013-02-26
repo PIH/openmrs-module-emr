@@ -81,6 +81,10 @@ function createDeleteEncounterDialog(encounterId, deleteElement) {
                         if(encounterElement!=null && encounterElement!=undefined){
                             encounterElement.remove();
                         }
+
+                    },function(err){
+                        emr.handleError(err);
+                        deleteEncounterDialog.close();
                     });
             },
             cancel: function() {
