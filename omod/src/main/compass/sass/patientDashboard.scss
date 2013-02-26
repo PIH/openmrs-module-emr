@@ -316,7 +316,7 @@ div {
 .collapse {
   border: none;
   position: relative;
-  height: auto;
+  height: 0;
   overflow: hidden;
   -webkit-transition: height 0.35s ease;
   -moz-transition: height 0.35s ease;
@@ -326,14 +326,20 @@ div {
 
   fieldset {
     border: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  legend, #no-calculated-bmi, #calculated-bmi-wrapper, .title {
+    display: none;
   }
 
   .encounter-summary-container {
     padding: 10px;
+    border: 1px solid #ccc;
   }
 
   &.in {
-    border: 1px solid #ccc;
     height: auto;
   }
 }
