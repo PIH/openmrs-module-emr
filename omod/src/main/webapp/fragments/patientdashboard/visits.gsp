@@ -19,6 +19,10 @@
         <span>{{- observation.answer}}</span>
 
     {{ }); }}
+
+    {{ _.each(orders, function(order) { }}
+        <p>{{- order.concept }}</p>
+    {{ }); }}
 </script>
 
 <script type="text/template" id="visitDetailsTemplate">

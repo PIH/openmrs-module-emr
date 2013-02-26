@@ -67,14 +67,24 @@ public class VisitDetailsFragmentController {
     }
 
 
-
-
     public SimpleObject getEncounterDetails(@RequestParam("encounterId") Encounter encounter,
                                             UiUtils uiUtils){
-        Set<Obs> obs = encounter.getObs();
-
         Locale locale = uiUtils.getLocale();
 
+        List<SimpleObject> observations = createSimpleObjectWithObservations(uiUtils, encounter.getObs(), locale);
+
+
+        List<SimpleObject> orders = new ArrayList<SimpleObject>();
+
+        for (Order order : encounter.getOrders()) {
+            orders.add(SimpleObject.create("concept", uiUtils.format(order.getConcept())));
+        }
+
+
+        return SimpleObject.create("observations", observations, "orders", orders);
+    }
+
+    private List<SimpleObject> createSimpleObjectWithObservations(UiUtils uiUtils, Set<Obs> obs, Locale locale) {
         List<SimpleObject> encounterDetails = new ArrayList<SimpleObject>();
 
         for (Obs ob : obs) {
@@ -84,8 +94,7 @@ public class VisitDetailsFragmentController {
 
             encounterDetails.add(simpleObject);
         }
-
-        return SimpleObject.create("observations", encounterDetails);
+        return encounterDetails;
     }
 
     public FragmentActionResult deleteEncounter(UiUtils ui,
