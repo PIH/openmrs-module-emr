@@ -150,7 +150,9 @@ var emr = (function($) {
                 if (extraBreadcrumbs == null || extraBreadcrumbs.length == 0) {
                     var index = toUse.length - 1;
                     var modified = _.clone(toUse[index]);
-                    modified.link = null;
+                    if(modified.link !=null){
+                        modified.link = null;
+                    }
                     toUse[index] = modified;
                 }
                 _.each(extraBreadcrumbs, function(item) {
@@ -186,9 +188,11 @@ var emr = (function($) {
             element.hide();
             if (opts.actions) {
                 if (opts.actions.confirm) {
+                    element.find(".confirm").unbind('click');
                     element.find(".confirm").click(opts.actions.confirm);
                 }
                 if (opts.actions.cancel) {
+                    element.find(".cancel").unbind('click');
                     element.find(".cancel").click(opts.actions.cancel);
                 }
             }
@@ -206,7 +210,8 @@ var emr = (function($) {
             dialogApi.close = function() {
                 $.modal.close();
             };
-            return dialogApi;
+
+           return dialogApi;
         }
 
     };
