@@ -7,6 +7,10 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
+import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.consult.Diagnosis;
+import org.openmrs.module.emr.consult.DiagnosisMetadata;
+import org.openmrs.module.emr.visit.ParserEncounterIntoSimpleObjects;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.UiUtils;
@@ -67,66 +71,22 @@ public class VisitDetailsFragmentController {
 
 
     public SimpleObject getEncounterDetails(@RequestParam("encounterId") Encounter encounter,
+                                            @SpringBean("emrProperties") EmrProperties emrProperties,
                                             UiUtils uiUtils){
-        Locale locale = uiUtils.getLocale();
 
-        List<SimpleObject> observations = createObservations(encounter, uiUtils, locale);
+        ParserEncounterIntoSimpleObjects parserEncounter = new ParserEncounterIntoSimpleObjects(encounter, uiUtils, emrProperties);
 
-        List<SimpleObject> orders = createSimpleObjectWithOrders(encounter, uiUtils);
+        List<SimpleObject> observations = parserEncounter.parseObservations();
+
+        List<SimpleObject> diagnoses = parserEncounter.parseDiagnoses();
+
+        List<SimpleObject> orders = parserEncounter.parseOrders();
 
 
-        return SimpleObject.create("observations", observations, "orders", orders);
+        return SimpleObject.create("observations", observations, "orders", orders, "diagnoses", diagnoses);
     }
 
-    private List<SimpleObject> createObservations(Encounter encounter, UiUtils uiUtils, Locale locale) {
-        List<SimpleObject> observations;
 
-        if (encounter.getEncounterType().getUuid().equals(EmrConstants.CONSULTATION_TYPE_UUID)){
-            observations = createSimpleObjectWithDiagnosis(encounter, uiUtils, locale);
-        } else {
-            observations = createSimpleObjectWithObservations(uiUtils, encounter.getObs(), locale);
-        }
-
-        return observations;
-    }
-
-    private List<SimpleObject> createSimpleObjectWithDiagnosis(Encounter encounter, UiUtils uiUtils, Locale locale) {
-        List<SimpleObject> observations = new ArrayList<SimpleObject>();
-
-        Set<Obs> groupedObservations = encounter.getObsAtTopLevel(false);
-
-        for (Obs observation : groupedObservations) {
-            SimpleObject simpleObject = SimpleObject.fromObject(observation, uiUtils, "obsId");
-            simpleObject.put("question", observation.getConcept().getName(locale).getName());
-            simpleObject.put("answer", observation.getValueAsString(locale));
-            observations.add(simpleObject);
-        }
-
-        return observations;
-    }
-
-    private List<SimpleObject> createSimpleObjectWithOrders(Encounter encounter, UiUtils uiUtils) {
-        List<SimpleObject> orders = new ArrayList<SimpleObject>();
-
-        for (Order order : encounter.getOrders()) {
-            orders.add(SimpleObject.create("concept", uiUtils.format(order.getConcept())));
-        }
-        return orders;
-    }
-
-    private List<SimpleObject> createSimpleObjectWithObservations(UiUtils uiUtils, Set<Obs> obs, Locale locale) {
-        List<SimpleObject> encounterDetails = new ArrayList<SimpleObject>();
-
-        for (Obs ob : obs) {
-
-            SimpleObject simpleObject = SimpleObject.fromObject(ob, uiUtils, "obsId");
-            simpleObject.put("question", ob.getConcept().getName(locale).getName());
-            simpleObject.put("answer", ob.getValueAsString(locale));
-
-            encounterDetails.add(simpleObject);
-        }
-        return encounterDetails;
-    }
 
     public FragmentActionResult deleteEncounter(UiUtils ui,
                                         @RequestParam("encounterId")Encounter encounter,

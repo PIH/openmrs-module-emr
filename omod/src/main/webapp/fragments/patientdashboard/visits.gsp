@@ -20,6 +20,12 @@
         {{}}}
     {{ }); }}
 
+    {{ _.each(diagnoses, function(diagnosis) { }}
+        {{ if(diagnosis.answer != null) {}}
+            <p><small>{{- diagnosis.question}}</small><span>{{- diagnosis.answer}}</span></p>
+    {{}}}
+    {{ }); }}
+
     {{ _.each(orders, function(order) { }}
          <p><small>Order</small><span>{{- order.concept }}</span></p>
     {{ }); }}
@@ -122,22 +128,22 @@
             if (visitElement != null &&  localVisitId!= undefined) {
                 visitDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");
                 jq.getJSON(
-                    emr.fragmentActionLink("emr", "visit/visitDetails", "getVisitDetails", {
-                        visitId: localVisitId
-                    })
+                        emr.fragmentActionLink("emr", "visit/visitDetails", "getVisitDetails", {
+                            visitId: localVisitId
+                        })
                 ).success(function(data) {
-                    jq('.viewVisitDetails').removeClass('selected');
-                    visitElement.addClass('selected');
-                    visitDetailsSection.html(visitDetailsTemplate(data));
-                    visitDetailsSection.show();
-                    jq(".deleteEncounterId").click(function(event){
-                        var encounterId = jq(event.target).attr("data-encounter-id");
-                        createDeleteEncounterDialog(encounterId, jq(this));
-                        showDeleteEncounterDialog();
-                    });
-                }).error(function(err) {
-                    emr.errorMessage(err);
-                });
+                            jq('.viewVisitDetails').removeClass('selected');
+                            visitElement.addClass('selected');
+                            visitDetailsSection.html(visitDetailsTemplate(data));
+                            visitDetailsSection.show();
+                            jq(".deleteEncounterId").click(function(event){
+                                var encounterId = jq(event.target).attr("data-encounter-id");
+                                createDeleteEncounterDialog(encounterId, jq(this));
+                                showDeleteEncounterDialog();
+                            });
+                        }).error(function(err) {
+                            emr.errorMessage(err);
+                        });
 
             }
         }
@@ -170,22 +176,22 @@
             if (isHtmlForm == "true"){
 
                 jq.getJSON(
-                    emr.fragmentActionLink("emr", "htmlform/viewEncounterWithHtmlForm", "getAsHtml", { encounterId: id })
+                        emr.fragmentActionLink("emr", "htmlform/viewEncounterWithHtmlForm", "getAsHtml", { encounterId: id })
                 ).success(function(data){
-                    encounterDetailsSection.html(data.html);
-                }).error(function(err){
-                    emr.errorAlert(err);
-                });
+                            encounterDetailsSection.html(data.html);
+                        }).error(function(err){
+                            emr.errorAlert(err);
+                        });
 
             } else {
 
                 jq.getJSON(
-                    emr.fragmentActionLink("emr", "visit/visitDetails", "getEncounterDetails", { encounterId: id })
+                        emr.fragmentActionLink("emr", "visit/visitDetails", "getEncounterDetails", { encounterId: id })
                 ).success(function(data){
-                    encounterDetailsSection.html(encounterDetailsTemplate(data));
-                }).error(function(err){
-                    emr.errorAlert(err);
-                });
+                            encounterDetailsSection.html(encounterDetailsTemplate(data));
+                        }).error(function(err){
+                            emr.errorAlert(err);
+                        });
             }
         }
     });
