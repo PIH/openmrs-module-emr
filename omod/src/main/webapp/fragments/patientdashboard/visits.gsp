@@ -28,7 +28,7 @@
     {{ }); }}
 
     {{ _.each(orders, function(order) { }}
-         <p><small>Order</small><span>{{- order.concept }}</span></p>
+         <p><small>${ ui.message("emr.patientDashBoard.order")}</small><span>{{- order.concept }}</span></p>
     {{ }); }}
 </script>
 
@@ -100,8 +100,8 @@
                     <li>
                         <div>
                             <a class="view-details collapsed" href='javascript:void(0);' data-encounter-id="{{- encounter.encounterId }}" data-encounter-form="{{- encounter.form != null}}" data-target="#encounter-summary{{- i }}" data-toggle="collapse" data-target="#encounter-summary{{- i }}">
-                                <span class="show-details">show details</span>
-                                <span class="hide-details">hide details</span>
+                                <span class="show-details">${ ui.message("emr.patientDashBoard.showDetails")}</span>
+                                <span class="hide-details">${ ui.message("emr.patientDashBoard.hideDetails")}</span>
                                 <i class="icon-caret-right"></i>
                             </a>
                         </div>
