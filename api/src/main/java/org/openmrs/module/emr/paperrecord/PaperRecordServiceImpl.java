@@ -23,7 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.ComparatorUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -68,6 +67,8 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
     private PaperRecordLabelTemplate paperRecordLabelTemplate;
 
+    private IdCardLabelTemplate idCardLabelTemplate;
+
 
     public void setPaperRecordRequestDAO(PaperRecordRequestDAO paperRecordRequestDAO) {
         this.paperRecordRequestDAO = paperRecordRequestDAO;
@@ -99,6 +100,10 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
     public void setPaperRecordLabelTemplate(PaperRecordLabelTemplate paperRecordLabelTemplate) {
         this.paperRecordLabelTemplate = paperRecordLabelTemplate;
+    }
+
+    public void setIdCardLabelTemplate(IdCardLabelTemplate idCardLabelTemplate) {
+        this.idCardLabelTemplate = idCardLabelTemplate;
     }
 
     @Override
@@ -236,7 +241,7 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     // occur within the synchronized block
 
     @Override
-    public synchronized Map<String, List<String>> assignRequests(List<PaperRecordRequest> requests, Person assignee, Location location) throws UnableToPrintPaperRecordLabelException {
+    public synchronized Map<String, List<String>> assignRequests(List<PaperRecordRequest> requests, Person assignee, Location location) throws UnableToPrintLabelException {
 
         if (requests == null) {
             throw new IllegalArgumentException("Requests cannot be null");
@@ -255,8 +260,8 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
     // HACK; note that this method must be public in order for Spring to pick up the @Transactional annotation;
     // see PaperRecordService.assignRequestsInternal(...  for more information
-    @Transactional(rollbackFor = UnableToPrintPaperRecordLabelException.class)
-    public  Map<String, List<String>>  assignRequestsInternal(List<PaperRecordRequest> requests, Person assignee, Location location) throws UnableToPrintPaperRecordLabelException {
+    @Transactional(rollbackFor = UnableToPrintLabelException.class)
+    public  Map<String, List<String>>  assignRequestsInternal(List<PaperRecordRequest> requests, Person assignee, Location location) throws UnableToPrintLabelException {
 
         Map<String, List<String>> response = new HashMap<String, List<String>>();
         response.put("success", new LinkedList<String>());
@@ -276,13 +281,14 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
                     request.setIdentifier(identifier);
                     request.updateStatus(Status.ASSIGNED_TO_CREATE);
 
-                    // we print two labels if we are creating a new record
+                    // we print two paper record labels and an id card label if we are creating a new record
                     printPaperRecordLabels(request, location, 2);
+                    printIdCardLabel(request.getPatient(), location);
                 }
                 else {
                     request.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_PULL);
 
-                    // we print one label if we are pulling a record
+                    // we print one paper record label if we are pulling a record
                     printPaperRecordLabel(request, location);
                 }
 
@@ -415,25 +421,24 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     }
 
     @Override
-    public void printPaperRecordLabel(PaperRecordRequest request, Location location) throws UnableToPrintPaperRecordLabelException {
+    public void printPaperRecordLabel(PaperRecordRequest request, Location location) throws UnableToPrintLabelException {
        printPaperRecordLabels(request, location, 1);
     }
 
 
     @Override
-    public void printPaperRecordLabels(PaperRecordRequest request, Location location, Integer count) throws UnableToPrintPaperRecordLabelException {
+    public void printPaperRecordLabels(PaperRecordRequest request, Location location, Integer count) throws UnableToPrintLabelException {
       printPaperRecordLabels(request.getPatient(), request.getIdentifier(), location, count);
 
     }
 
     @Override
-    public void printPaperRecordLabels(Patient patient, Location location, Integer count) throws UnableToPrintPaperRecordLabelException {
+    public void printPaperRecordLabels(Patient patient, Location location, Integer count) throws UnableToPrintLabelException {
         PatientIdentifier paperRecordIdentifier = GeneralUtils.getPatientIdentifier(patient, emrProperties.getPaperRecordIdentifierType(), getMedicalRecordLocationAssociatedWith(location));
         printPaperRecordLabels(patient, paperRecordIdentifier != null ? paperRecordIdentifier.getIdentifier() : null, location, count);
     }
 
-
-    private void printPaperRecordLabels(Patient patient, String identifier, Location location, Integer count) throws UnableToPrintPaperRecordLabelException {
+    private void printPaperRecordLabels(Patient patient, String identifier, Location location, Integer count) throws UnableToPrintLabelException {
         if (count == null || count == 0) {
             return;  // just do nothing if we don't have a count
         }
@@ -454,9 +459,25 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
             printerService.printViaSocket(dataBuffer.toString(), Printer.Type.LABEL, location, encoding);
         }
         catch (Exception e) {
-            throw new UnableToPrintPaperRecordLabelException("Unable to print paper record label for patient " + patient, e);
+            throw new UnableToPrintLabelException("Unable to print paper record label for patient " + patient, e);
         }
     }
+
+    @Override
+    public void printIdCardLabel(Patient patient, Location location) throws UnableToPrintLabelException {
+
+        String data = idCardLabelTemplate.generateLabel(patient);
+        String encoding = idCardLabelTemplate.getEncoding();
+
+        try {
+            printerService.printViaSocket(data.toString(), Printer.Type.LABEL, location, encoding);
+        }
+        catch (Exception e) {
+            throw new UnableToPrintLabelException("Unable to print paper record label for patient " + patient, e);
+        }
+
+    }
+
 
     @Override
     @Transactional

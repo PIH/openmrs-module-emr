@@ -68,6 +68,12 @@
                         <property name="emrProperties" ref="emrProperties"/>
                     </bean>
                 </property>
+                <property name="idCardLabelTemplate">
+                    <bean class="org.openmrs.module.emr.paperrecord.DefaultZplIdCardLabelTemplate">
+                        <property name="messageSourceService" ref="messageSourceService"/>
+                        <property name="emrProperties" ref="emrProperties"/>
+                    </bean>
+                </property>
             </bean>
         </property>
         <property name="preInterceptors">

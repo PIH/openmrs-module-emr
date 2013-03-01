@@ -85,6 +85,8 @@ public class PaperRecordServiceTest {
 
     private PaperRecordLabelTemplate mockPaperRecordLabelTemplate;
 
+    private IdCardLabelTemplate mockIdCardLabelTemplate;
+
     private User authenticatedUser;
 
     private PatientIdentifierType paperRecordIdentifierType;
@@ -105,6 +107,7 @@ public class PaperRecordServiceTest {
         mockPrinterService = mock(PrinterService.class);
         mockEmrProperties = mock(EmrProperties.class);
         mockPaperRecordLabelTemplate = mock(PaperRecordLabelTemplate.class);
+        mockIdCardLabelTemplate = mock(IdCardLabelTemplate.class);
 
         paperRecordIdentifierType = new PatientIdentifierType();
         paperRecordIdentifierType.setId(2);
@@ -122,6 +125,7 @@ public class PaperRecordServiceTest {
         paperRecordService.setPrinterService(mockPrinterService);
         paperRecordService.setEmrProperties(mockEmrProperties);
         paperRecordService.setPaperRecordLabelTemplate(mockPaperRecordLabelTemplate);
+        paperRecordService.setIdCardLabelTemplate(mockIdCardLabelTemplate);
 
         // so we handle the hack in PaperRecordServiceImpl to make sure assignRequestsInternal is transactional
         when(Context.getService(PaperRecordService.class)).thenReturn(paperRecordService);
@@ -314,6 +318,9 @@ public class PaperRecordServiceTest {
 
     @Test
     public void testAssignRequestsWithoutIdentifiers() throws Exception {
+
+        when(mockIdCardLabelTemplate.generateLabel(any(Patient.class))).thenReturn("some data");
+
         Person assignTo = new Person(15);
 
         List<PaperRecordRequest> requests = new ArrayList<PaperRecordRequest>();
@@ -1035,6 +1042,26 @@ public class PaperRecordServiceTest {
         when(mockPaperRecordLabelTemplate.getEncoding()).thenReturn("UTF-8");
 
         paperRecordService.printPaperRecordLabels(patient, location, 1);
+
+        verify(mockPrinterService).printViaSocket("data\nlines\n", Printer.Type.LABEL, location, "UTF-8");
+    }
+
+    @Test
+    public void testPrintIdLabelByPatientShouldPrintSingleLabel() throws Exception {
+
+        Patient patient = new Patient(1);
+        Location location = new Location(1);
+
+        PatientIdentifier paperRecordIdentifier = new PatientIdentifier();
+        paperRecordIdentifier.setIdentifierType(paperRecordIdentifierType);
+        paperRecordIdentifier.setIdentifier("ABC");
+        paperRecordIdentifier.setLocation(location);
+        patient.addIdentifier(paperRecordIdentifier);
+
+        when(mockIdCardLabelTemplate.generateLabel(patient)).thenReturn("data\nlines\n");
+        when(mockIdCardLabelTemplate.getEncoding()).thenReturn("UTF-8");
+
+        paperRecordService.printIdCardLabel(patient, location);
 
         verify(mockPrinterService).printViaSocket("data\nlines\n", Printer.Type.LABEL, location, "UTF-8");
     }

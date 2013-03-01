@@ -14,19 +14,19 @@
 
 package org.openmrs.module.emr.paperrecord;
 
-public class UnableToPrintPaperRecordLabelException extends Exception {
+public class UnableToPrintLabelException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    public UnableToPrintPaperRecordLabelException() {
+    public UnableToPrintLabelException() {
         super();
     }
 
-    public UnableToPrintPaperRecordLabelException(String message) {
+    public UnableToPrintLabelException(String message) {
         super(message);
     }
 
-    public UnableToPrintPaperRecordLabelException(String message, Throwable throwable) {
+    public UnableToPrintLabelException(String message, Throwable throwable) {
         super(message, throwable);
     }
 }

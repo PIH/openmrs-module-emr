@@ -41,9 +41,9 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @PrepareForTest({Context.class})
 public class DefaultZplPaperRecordLabelTemplateTest {
 
-    DefaultZplPaperRecordLabelTemplate template;
+    private DefaultZplPaperRecordLabelTemplate template;
 
-    PatientIdentifierType primaryIdentifierType;
+    private PatientIdentifierType primaryIdentifierType;
 
     @Before
     public void setup() {
@@ -90,8 +90,7 @@ public class DefaultZplPaperRecordLabelTemplateTest {
         PersonName personName = new PersonName();
         patient.addName(personName);
 
-        String result = template.generateLabel(patient, "123");
-        Assert.assertTrue(result.contains("123"));
+        template.generateLabel(patient, "123");
     }
 
     @Test

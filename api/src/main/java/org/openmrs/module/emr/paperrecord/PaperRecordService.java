@@ -134,7 +134,7 @@ public interface PaperRecordService extends OpenmrsService {
      * @throws IllegalStateException if any of the requests are not in the OPEN status
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
-    Map<String, List<String>> assignRequests(List<PaperRecordRequest> requests, Person assignee, Location location) throws UnableToPrintPaperRecordLabelException;
+    Map<String, List<String>> assignRequests(List<PaperRecordRequest> requests, Person assignee, Location location) throws UnableToPrintLabelException;
 
     /**
      * This internal method should not be invoked directly!
@@ -144,7 +144,7 @@ public interface PaperRecordService extends OpenmrsService {
      * http://stackoverflow.com/questions/3423972/spring-transaction-method-call-by-the-method-within-the-same-class-does-not-wo
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
-    Map<String, List<String>>  assignRequestsInternal(List<PaperRecordRequest> requests, Person assignee, Location location) throws UnableToPrintPaperRecordLabelException;
+    Map<String, List<String>>  assignRequestsInternal(List<PaperRecordRequest> requests, Person assignee, Location location) throws UnableToPrintLabelException;
 
     /**
      * Retrieves all records that have been assigned and need to be pulled
@@ -226,7 +226,7 @@ public interface PaperRecordService extends OpenmrsService {
      * @param location
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS)
-    void printPaperRecordLabel(PaperRecordRequest request, Location location) throws UnableToPrintPaperRecordLabelException;
+    void printPaperRecordLabel(PaperRecordRequest request, Location location) throws UnableToPrintLabelException;
 
 
     /**
@@ -238,7 +238,7 @@ public interface PaperRecordService extends OpenmrsService {
      * @param count the number of labels to print
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS)
-    void printPaperRecordLabels(PaperRecordRequest request, Location location, Integer count) throws UnableToPrintPaperRecordLabelException;
+    void printPaperRecordLabels(PaperRecordRequest request, Location location, Integer count) throws UnableToPrintLabelException;
 
     /**
      * Prints x numbers of labels for the paper record associated with the patient
@@ -248,8 +248,18 @@ public interface PaperRecordService extends OpenmrsService {
      * @param count the of labels to print
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS)
-    void printPaperRecordLabels(Patient patient, Location location, Integer count) throws UnableToPrintPaperRecordLabelException;
+    void printPaperRecordLabels(Patient patient, Location location, Integer count) throws UnableToPrintLabelException;
 
+
+    /**
+     * Prints a label with the patient's paper record number(s), intended to be attached to the back of
+     * the patient's ID card
+     *
+     * @param patient
+     * @param location the location where the record should be printed
+     */
+    @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS)
+    void printIdCardLabel(Patient patient, Location location) throws UnableToPrintLabelException;
 
     /**
      * Creates a request to merge two paper records

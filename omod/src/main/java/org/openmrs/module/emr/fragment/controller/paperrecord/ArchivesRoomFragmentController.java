@@ -132,7 +132,7 @@ public class ArchivesRoomFragmentController {
             paperRecordService.assignRequests(requests, assignTo, emrContext.getSessionLocation());
             return new SuccessResult(ui.message("emr.archivesRoom.pullRequests.message"));
         }
-        catch (UnableToPrintPaperRecordLabelException ex) {
+        catch (UnableToPrintLabelException ex) {
             log.error(ex);
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToPrintLabel"));
         }
@@ -153,7 +153,7 @@ public class ArchivesRoomFragmentController {
             paperRecordService.assignRequests(requests, assignTo, emrContext.getSessionLocation());
             return new SuccessResult(ui.message("emr.archivesRoom.createRequests.message"));
         }
-        catch (UnableToPrintPaperRecordLabelException ex) {
+        catch (UnableToPrintLabelException ex) {
             log.error(ex);
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToPrintLabel"));
         }

@@ -303,7 +303,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     }
 
     @Test
-    public void testAssignRequest() throws UnableToPrintPaperRecordLabelException {
+    public void testAssignRequest() throws UnableToPrintLabelException {
 
         // all these are from the standard test dataset
         Patient patient = patientService.getPatient(2) ;
@@ -399,7 +399,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     }
 
     @Test
-    public void testRequestPaperRecordWhenDuplicateRequestThatHasAlreadyBeenAssigned() throws UnableToPrintPaperRecordLabelException {
+    public void testRequestPaperRecordWhenDuplicateRequestThatHasAlreadyBeenAssigned() throws UnableToPrintLabelException {
 
         // all these are from the standard test dataset
         Patient patient = patientService.getPatient(2) ;
@@ -510,7 +510,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     }
 
     @Test
-    public void testGetPendingRequestByIdentifierShouldReturnAssignedPullRequest() throws UnableToPrintPaperRecordLabelException {
+    public void testGetPendingRequestByIdentifierShouldReturnAssignedPullRequest() throws UnableToPrintLabelException {
 
         // all these are from the standard test dataset
         Patient patient = patientService.getPatient(2) ;
