@@ -37,10 +37,10 @@ public class VisitDetailsFragmentController {
         Date startDatetime = visit.getStartDatetime();
         Date stopDatetime = visit.getStopDatetime();
 
-        simpleObject.put("startDatetime", DateFormatUtils.format(startDatetime, "dd MMM yyyy hh:mm a"));
+        simpleObject.put("startDatetime", DateFormatUtils.format(startDatetime, "dd MMM yyyy hh:mm a", emrContext.getUserContext().getLocale()));
 
         if (stopDatetime!=null){
-            simpleObject.put("stopDatetime", DateFormatUtils.format(stopDatetime, "dd MMM yyyy hh:mm a"));
+            simpleObject.put("stopDatetime", DateFormatUtils.format(stopDatetime, "dd MMM yyyy hh:mm a", emrContext.getUserContext().getLocale()));
         } else {
             simpleObject.put("stopDatetime", null);
         }
@@ -51,11 +51,11 @@ public class VisitDetailsFragmentController {
         String[] datePatterns = { administrationService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATETIME_FORMAT) };
         for (Encounter e : visit.getEncounters()) {
             if (!e.getVoided()) {
-                SimpleObject simpleEncounter = SimpleObject.fromObject(e, uiUtils,  "encounterId", "encounterDatetime", "location", "encounterProviders.provider", "voided", "form");
+                SimpleObject simpleEncounter = SimpleObject.fromObject(e, uiUtils,  "encounterId", "location", "encounterProviders.provider", "voided", "form");
 
-                Date encounterDatetime = DateUtils.parseDate((String) simpleEncounter.get("encounterDatetime"), datePatterns);
-                simpleEncounter.put("encounterDate", DateFormatUtils.format(encounterDatetime, "dd MMM yyyy"));
-                simpleEncounter.put("encounterTime", DateFormatUtils.format(encounterDatetime, "hh:mm a"));
+                // manually set the dates so we can control how we format them
+                simpleEncounter.put("encounterDate", DateFormatUtils.format(e.getEncounterDatetime(), "dd MMM yyyy", emrContext.getUserContext().getLocale()));
+                simpleEncounter.put("encounterTime", DateFormatUtils.format(e.getEncounterDatetime(), "hh:mm a", emrContext.getUserContext().getLocale()));
 
                 EncounterType encounterType = e.getEncounterType();
                 simpleEncounter.put("encounterType", SimpleObject.create("uuid", encounterType.getUuid(), "name", uiUtils.format(encounterType)));
