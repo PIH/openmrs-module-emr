@@ -86,7 +86,3 @@ function getEncounterIcon(encounterType) {
 
     return encounterIconMap[encounterType] || "icon-time";
 };
-
-jq(function(){
-    loadTemplates();
-});
