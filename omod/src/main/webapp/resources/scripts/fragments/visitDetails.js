@@ -40,7 +40,7 @@ function loadTemplates () {
         return false;
     });
 
-    $(document).on("click",'.view-details', function(event){
+    $(document).on("click",'.view-details.collapsed', function(event){
         var encounterId = $(event.currentTarget).attr("data-encounter-id");
         var isHtmlForm = $(event.currentTarget).attr("data-encounter-form");
         var dataTarget = $(event.currentTarget).attr("data-target");
@@ -86,3 +86,7 @@ function getEncounterIcon(encounterType) {
 
     return encounterIconMap[encounterType] || "icon-time";
 };
+
+jq(function(){
+    loadTemplates();
+});

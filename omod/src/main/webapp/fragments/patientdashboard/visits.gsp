@@ -122,12 +122,6 @@
     </ul>
 </script>
 
-<script type="text/javascript">
-    jq(function(){
-        loadTemplates();
-    });
-</script>
-
 <ul id="visits-list">
     <% patient.allVisitsUsingWrappers.each { wrapper ->
         def primaryDiagnoses = wrapper.primaryDiagnoses
