@@ -51,9 +51,9 @@ public class VisitDetailsFragmentController {
         String[] datePatterns = { administrationService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATETIME_FORMAT) };
         for (Encounter e : visit.getEncounters()) {
             if (!e.getVoided()) {
-                SimpleObject simpleEncounter = SimpleObject.fromObject(e, uiUtils,  "encounterId", "location", "encounterProviders.provider", "voided", "form");
+                SimpleObject simpleEncounter = SimpleObject.fromObject(e, uiUtils,  "encounterId", "location", "encounterDatetime", "encounterProviders.provider", "voided", "form");
 
-                // manually set the dates so we can control how we format them
+                // manually set the date and time components so we can control how we format them
                 simpleEncounter.put("encounterDate", DateFormatUtils.format(e.getEncounterDatetime(), "dd MMM yyyy", emrContext.getUserContext().getLocale()));
                 simpleEncounter.put("encounterTime", DateFormatUtils.format(e.getEncounterDatetime(), "hh:mm a", emrContext.getUserContext().getLocale()));
 
