@@ -20,9 +20,11 @@ SelectableModel.prototype = {
     },
     enable: function() {
         this.element.removeAttr('disabled');
+        this.element.removeClass("disabled");
     },
     disable: function() {
         this.element.attr('disabled', 'true');
+        this.element.addClass("disabled");
     }
 }
 
@@ -231,6 +233,8 @@ ConfirmationSectionModel.prototype.select = function() {
     this.title.addClass("doing");
 
     // scan through the form and confirm that at least one of the fields has a value
+    // TODO: move all this out into a separate validator at some point? is the assumption that all forms must have data true?
+    // TODO: makes sure this works for select lists, radio buttons and checkboxes
     var hasData =_.some(this.sections, function (section) {
         return _.some(section.questions, function (question) {
             return _.some(question.fields, function (field) {
@@ -239,17 +243,14 @@ ConfirmationSectionModel.prototype.select = function() {
         })
     })
 
+    // TODO: update the navigator to skip disabled fields
     if (!hasData) {
         this.questions[0].confirm.disable();
-        if (this.element.find("#emptyFormError")) {
-            this.element.find("#emptyFormError").show();
-        }
+        this.element.find(".error").show();
     }
     else {
         this.questions[0].confirm.enable();
-        if (this.element.find("#emptyFormError")) {
-            this.element.find("#emptyFormError").hide();
-        }
+        this.element.find(".error").hide();
     }
 
     var listElement = $("<ul></ul>");

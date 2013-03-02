@@ -57,8 +57,8 @@ ${ ui.includeFragment("emr", "htmlform/enterHtmlForm", [
             <p style="display: inline">
                 <input type="button" value="${ ui.message("emr.no") }" class="cancel" />
             </p>
-            <p style="display: inline">
-                <span id="emptyFormError">${ ui.message("emr.simpleFormUi.error.emptyForm") }</span>
+            <p>
+                <span class="error field-error">${ ui.message("emr.simpleFormUi.error.emptyForm") }</span>
             </p>
 
         </div>
