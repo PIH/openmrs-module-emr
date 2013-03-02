@@ -217,7 +217,10 @@ describe("Test for simple form models", function() {
            var menuElement = jasmine.createSpyObj('menu', ['append']);
            var confirmationQuestionModel = jasmine.createSpyObj('confirmationQuestion', ['confirm', 'cancel']);
            var confirmationSectionModel = new ConfirmationSectionModel( confirmationQuestionModel, menuElement);
-           confirmationSectionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass', 'find']);
+           confirmationSectionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass']);
+           confirmationSectionModel.element.find = function () {  // stub out the find method to simply remove an empty jq call
+               return jq();
+           };
            var question =  jasmine.createSpyObj('question', ['confirm', 'unselect']);
            question.confirm = jasmine.createSpyObj('confirm', ['disable']);
            confirmationSectionModel.questions = [ question ];
