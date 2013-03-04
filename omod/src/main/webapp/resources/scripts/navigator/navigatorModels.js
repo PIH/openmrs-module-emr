@@ -234,7 +234,7 @@ ConfirmationSectionModel.prototype.select = function() {
 
     // scan through the form and confirm that at least one of the fields has a value
     // TODO: move all this out into a separate validator at some point? is the assumption that all forms must have data true?
-    // TODO: makes sure this works for select lists, radio buttons and checkboxes
+    // TODO: makes sure this works for radio buttons and checkboxes (once we add them)
     var hasData =_.some(this.sections, function (section) {
         return _.some(section.questions, function (question) {
             return _.some(question.fields, function (field) {
