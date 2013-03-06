@@ -49,6 +49,10 @@ import static org.openmrs.module.emr.paperrecord.PaperRecordRequest.Status;
 
 public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperRecordService {
 
+    private final static int NUMBER_OF_LABELS_TO_PRINT_WHEN_CREATING_NEW_RECORD = 4;
+
+    private final static int NUMBER_OF_LABELS_TO_PRINT_WHEN_PULLING_RECORD = 3;
+
     private PaperRecordRequestDAO paperRecordRequestDAO;
 
     private PaperRecordMergeRequestDAO paperRecordMergeRequestDAO;
@@ -280,16 +284,12 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
                             request.getRecordLocation());
                     request.setIdentifier(identifier);
                     request.updateStatus(Status.ASSIGNED_TO_CREATE);
-
-                    // we print two paper record labels and an id card label if we are creating a new record
-                    printPaperRecordLabels(request, location, 2);
+                    printPaperRecordLabels(request, location, NUMBER_OF_LABELS_TO_PRINT_WHEN_CREATING_NEW_RECORD);
                     printIdCardLabel(request.getPatient(), location);
                 }
                 else {
                     request.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_PULL);
-
-                    // we print one paper record label if we are pulling a record
-                    printPaperRecordLabel(request, location);
+                    printPaperRecordLabels(request, location, NUMBER_OF_LABELS_TO_PRINT_WHEN_PULLING_RECORD);
                 }
 
                 request.setAssignee(assignee);
