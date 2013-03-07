@@ -1,6 +1,8 @@
 package org.openmrs.module.emr.visit;
 
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Visit;
@@ -16,6 +18,8 @@ import java.util.Date;
 import java.util.List;
 
 public class VisitDomainWrapper {
+
+    private static final Log log = LogFactory.getLog(VisitDomainWrapper.class);
 
     @Autowired
     @Qualifier("emrProperties")
@@ -52,9 +56,13 @@ public class VisitDomainWrapper {
             if (!encounter.isVoided()) {
                 for (Obs obs : encounter.getObsAtTopLevel(false)) {
                     if (diagnosisMetadata.isDiagnosis(obs)) {
-                        Diagnosis diagnosis = diagnosisMetadata.toDiagnosis(obs);
-                        if (Diagnosis.Order.PRIMARY == diagnosis.getOrder()) {
-                            diagnoses.add(diagnosis);
+                        try {
+                            Diagnosis diagnosis = diagnosisMetadata.toDiagnosis(obs);
+                            if (Diagnosis.Order.PRIMARY == diagnosis.getOrder()) {
+                                diagnoses.add(diagnosis);
+                            }
+                        } catch (Exception ex) {
+                            log.warn("malformed diagnosis obs group with obsId " + obs.getObsId(), ex);
                         }
                     }
                 }
