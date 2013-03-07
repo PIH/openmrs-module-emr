@@ -26,8 +26,18 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
     jQuery(function() {
         jq('input.submitButton').hide();
         jq('form#htmlform').append(jq('#confirmation-template').html());
-
         KeyboardController(jq('#htmlform').first());
+
+        jq('input.confirm').click(function(){
+
+            if (!jq(this).attr("disabled")) {
+                jq(this).closest("form").submit();
+            }
+
+            jq(this).attr('disabled', 'disabled');
+            jq(this).addClass("disabled");
+
+        });
     });
 </script>
 
