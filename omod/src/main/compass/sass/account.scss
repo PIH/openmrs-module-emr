@@ -38,4 +38,8 @@ form fieldset {
 	width: 50%;
 	margin: 0;
 	margin-top: 20px;
+
+	th {
+		word-break: normal;
+	}
 }
