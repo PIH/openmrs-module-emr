@@ -9,6 +9,17 @@
 
 <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
     jQuery(function() {
+        jq('button.confirm').click(function(){
+
+            if (!jq(this).attr("disabled")) {
+                jq(this).closest("form").submit();
+            }
+
+            jq(this).attr('disabled', 'disabled');
+            jq(this).addClass("disabled");
+
+        });
+
         ko.applyBindings( new StudiesViewModel(${xrayOrderables}, ${portableLocations}), jq('#contentForm').get(0) );
 
         // Preventing form submission when pressing enter on study-search input field
