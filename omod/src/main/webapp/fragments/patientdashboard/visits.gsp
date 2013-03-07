@@ -3,7 +3,7 @@
     def timeFormat = new java.text.SimpleDateFormat("hh:mm a")
     def canDelete = context.hasPrivilege("Task: emr.patient.encounter.delete")
     def formatDiagnoses = {
-        it.collect{ it.diagnosis.formatWithoutSpecificAnswer(context.locale) } .join(", ")
+        it.collect{ ui.escapeHtml(it.diagnosis.formatWithoutSpecificAnswer(context.locale)) } .join(", ")
     }
     ui.includeJavascript("emr", "fragments/visitDetails.js")
 %>

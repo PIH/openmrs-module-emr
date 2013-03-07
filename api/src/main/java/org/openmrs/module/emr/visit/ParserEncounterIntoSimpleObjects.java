@@ -126,7 +126,7 @@ public class ParserEncounterIntoSimpleObjects {
 
         simpleObject.put("question", getDiagnosisQuestion(diagnosis.getOrder().name()));
 
-        String answer = diagnosis.getDiagnosis().format(uiUtils.getLocale());
+        String answer = diagnosis.getDiagnosis().formatWithCode(uiUtils.getLocale(), emrProperties.getConceptSourcesForDiagnosisSearch());
         simpleObject.put("answer", answer);
 
         simpleObject.put("order", diagnosis.getOrder().ordinal());

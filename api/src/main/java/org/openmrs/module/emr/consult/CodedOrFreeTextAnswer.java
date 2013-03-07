@@ -15,10 +15,15 @@
 package org.openmrs.module.emr.consult;
 
 import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
 import org.openmrs.ConceptName;
+import org.openmrs.ConceptReferenceTerm;
+import org.openmrs.ConceptSource;
 import org.openmrs.api.ConceptService;
+import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.util.OpenmrsUtil;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -124,7 +129,7 @@ public class CodedOrFreeTextAnswer {
      * <ul>
      *     <li>non-coded value</li>
      *     <li>coded value's preferred name in the current locale</li>
-     *     <li>specific coded value &rarr; coded value's preferred name in the current locale</li>
+     *     <li>specific coded value → coded value's preferred name in the current locale</li>
      * </ul>
      * @param locale
      * @return
@@ -144,9 +149,46 @@ public class CodedOrFreeTextAnswer {
             if (preferredName == null || preferredName.equals(specificCodedAnswer)) {
                 return specificCodedAnswer.getName();
             } else {
-                return specificCodedAnswer.getName() + " &rarr; " + preferredName.getName();
+                return specificCodedAnswer.getName() + " → " + preferredName.getName();
             }
         }
+    }
+
+    /**
+     * Like {link #format(Locale)} but if this is a concept, and is mapped to a term in the given fromSources, append that term's code
+     *
+     * @param locale
+     * @param codeFromSources
+     * @return
+     */
+    public String formatWithCode(Locale locale, List<ConceptSource> codeFromSources) {
+        if (codedAnswer == null) {
+            return format(locale);
+        } else {
+            String formatted = format(locale);
+            ConceptReferenceTerm mappedTerm = getBestMapping(codedAnswer, codeFromSources);
+            return mappedTerm == null ? formatted : formatted + " [" + mappedTerm.getCode() + "]";
+        }
+    }
+
+    /**
+     * Tries to get a SAME-AS mapping. If none exists, looks for a NARROWER-THAN.
+     * @param concept
+     * @param fromSources
+     * @return
+     */
+    private ConceptReferenceTerm getBestMapping(Concept concept, List<ConceptSource> fromSources) {
+        ConceptReferenceTerm nextBest = null;
+        for (ConceptMap candidate : concept.getConceptMappings()) {
+            if (fromSources.contains(candidate.getConceptReferenceTerm().getConceptSource())) {
+                if (candidate.getConceptMapType().getUuid().equals(EmrConstants.SAME_AS_CONCEPT_MAP_TYPE_UUID)) {
+                    return candidate.getConceptReferenceTerm();
+                } else if (candidate.getConceptMapType().getUuid().equals(EmrConstants.NARROWER_THAN_CONCEPT_MAP_TYPE_UUID)) {
+                    nextBest = candidate.getConceptReferenceTerm();
+                }
+            }
+        }
+        return nextBest;
     }
 
 }

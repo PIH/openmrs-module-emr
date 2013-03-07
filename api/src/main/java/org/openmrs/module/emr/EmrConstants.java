@@ -137,4 +137,9 @@ public class EmrConstants {
     public static final String CONCEPT_CODE_DIAGNOSIS_ORDER_PRIMARY = "Primary";
     public static final String CONCEPT_CODE_DIAGNOSIS_ORDER_SECONDARY = "Secondary";
     public static final String CONSULTATION_TYPE_UUID = "92fd09b4-5335-4f7e-9f63-b2a663fd09a6";
+
+    // these should be constants in OpenMRS core
+    public static final String SAME_AS_CONCEPT_MAP_TYPE_UUID = "35543629-7d8c-11e1-909d-c80aa9edcf4e";
+    public static final String NARROWER_THAN_CONCEPT_MAP_TYPE_UUID = "43ac5109-7d8c-11e1-909d-c80aa9edcf4e";
+
 }
