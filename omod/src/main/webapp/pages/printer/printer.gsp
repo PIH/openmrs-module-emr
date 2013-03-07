@@ -21,6 +21,20 @@
         { label: "${ ui.message("emr.printer.managePrinters")}" , link: '${ui.pageLink("emr", "printer/managePrinters")}' },
         { label: "${ ui.message("emr.printer.add")}" }
     ];
+
+    jq(function(){
+        jq('input.confirm').click(function(){
+
+            if (!jq(this).attr("disabled")) {
+                jq(this).closest("form").submit();
+            }
+
+            jq(this).attr('disabled', 'disabled');
+            jq(this).addClass("disabled");
+
+        });
+    });
+
 </script>
 
 <form method="post" action="printer.page">

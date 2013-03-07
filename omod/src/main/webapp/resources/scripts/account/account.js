@@ -12,6 +12,9 @@ function emr_createUserAccount(){
     }
 
 jq(function() {
+
+    jq("input.confirm").removeAttr("disabled");
+
     jq('#unlock-button').click(function(e) {
 
         jq.post(emr.fragmentActionLink("emr", "account/account", "unlock", { personId: jq(this).val() }), function (data) {
@@ -20,6 +23,17 @@ jq(function() {
         }, 'json').error(function(xhr) {
             emr.handleError(xhr);
 }       );
+    });
+
+    jq('input.confirm').click(function(){
+
+        if (!jq(this).attr("disabled")) {
+            jq(this).closest("form").submit();
+        }
+
+        jq(this).attr('disabled', 'disabled');
+        jq(this).addClass("disabled");
+
     });
 });
 
