@@ -46,6 +46,7 @@
             
         </div>
 
+
         <div class="visit-actions">
 
             <%
@@ -61,7 +62,7 @@
                 <i class="${task.getIconUrl(emrContext)}"></i> ${ task.getLabel(emrContext) }
             </a>
 
-             <% } %>
+            <% } %>
         </div>
    {{  } }}
 

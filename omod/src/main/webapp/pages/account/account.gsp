@@ -6,8 +6,8 @@
 
     def createAccount = (account.person.personId == null ? true : false);
 
-    def genderOptions = [ [label: ui.message("Person.gender.male"), value: 'M'],
-                          [label: ui.message("Person.gender.female"), value: 'F'] ]
+    def genderOptions = [ [label: ui.message("emr.gender.M"), value: 'M'],
+                          [label: ui.message("emr.gender.F"), value: 'F'] ]
 
     def privilegeLevelOptions = []
     privilegeLevels.each {
@@ -74,7 +74,7 @@
         ])}
 
         ${ ui.includeFragment("emr", "field/radioButtons", [ 
-            label: ui.message("Person.gender"), 
+            label: ui.message("emr.gender"),
             formFieldName: "gender", 
             initialValue: (account.gender ?: 'M'), 
             options: genderOptions 
