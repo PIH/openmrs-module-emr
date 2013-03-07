@@ -23,6 +23,7 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.api.EmrService;
+import org.openmrs.module.emr.comparator.ByFormattedObjectComparator;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -57,12 +58,7 @@ public class OrderXrayPageController {
         List<Location> locations = emrService.getLoginLocations(); // TODO: is login locations really the right thing here?
 
         // sort objects by localized name
-        Collections.sort(locations, new Comparator<Location>() {
-            @Override
-            public int compare(Location location1, Location location2) {
-                return ui.format(location1).compareTo(ui.format(location2));
-            }
-        });
+        Collections.sort(locations, new ByFormattedObjectComparator(ui));
 
         for (Location location: locations) {
             SimpleObject item = new SimpleObject();
