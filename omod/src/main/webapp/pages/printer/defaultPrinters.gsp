@@ -70,9 +70,9 @@
     </tr>
 
 
-    <% locationsToPrintersMap.sort { it.key.name }.each {   %>
+    <% locationsToPrintersMap.sort { ui.format(it.key) }.each {   %>
             <tr>
-                <td>${ ui.format(it.key.name) }</td>
+                <td>${ ui.format(it.key) }</td>
 
                 <td>
                     ${ ui.includeFragment("emr", "field/dropDown", [ id: "ID_CARD-" + it.key.id, formFieldName: "ID_CARD-" + it.key.id, emptyOptionLabel: ui.message("emr.printer.defaultPrinterTable.emptyOption.label"), initialValue: it.value.idCardPrinter?.id ?: '', options: idCardPrinterOptions ])}
