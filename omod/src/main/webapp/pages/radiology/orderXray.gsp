@@ -59,7 +59,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             <p>
                 <input type="checkbox" class="field-value" value="portable" data-bind="checked: portable"/>
                 <span>${ ui.message("emr.yes") }</span>
-                <select name="examLocation" data-bind="enable:portable, options:locations, optionsText:'name', optionsValue:'id', optionsCaption:'${ ui.message("emr.orderXray.examLocationQuestion") }', value:portableLocation">
+                <select name="examLocation" data-bind="enable:portable, options:locations, optionsText:'name', optionsValue:'id', optionsCaption:'${ ui.escapeJs(ui.message("emr.orderXray.examLocationQuestion")) }', value:portableLocation">
                 </select>
             </p>
         </div>
