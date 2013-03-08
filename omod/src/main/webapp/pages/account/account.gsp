@@ -157,7 +157,7 @@
 	
 	<fieldset>
 		<legend>${ ui.message("emr.provider.details") }</legend>
-		<div class="emr_providerDetails" ${ (!account.provider) ? "style='display: none'" : "" }>
+		<div class="emr_providerDetails">
             <p>
                 ${ ui.includeFragment("emr", "field/dropDown", [
                         label: ui.message("emr.account.providerRole.label"),
@@ -170,11 +170,15 @@
 
 
         </div>
+        <!-- TODO: put this back in (and hide the emr_providers div if !account.provider) once we make providers optional again -->
+        <!--
 		<div class="emr_providerDetails">
 		<% if(!account.provider) { %>
 			<button id="createProviderAccountButton" type="button" onclick="javascript:emr_createProviderAccount()">${ ui.message("emr.provider.createProviderAccount") }</button>
 		<% } %>
 		</div>
+		-->
+
 	</fieldset>
 
     <div>

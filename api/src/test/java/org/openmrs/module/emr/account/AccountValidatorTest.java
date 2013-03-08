@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.openmrs.Person;
 import org.openmrs.PersonName;
+import org.openmrs.Provider;
 import org.openmrs.Role;
 import org.openmrs.api.PasswordException;
 import org.openmrs.api.PersonService;
@@ -13,6 +14,7 @@ import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.providermanagement.ProviderRole;
 import org.openmrs.module.providermanagement.api.ProviderManagementService;
 import org.openmrs.util.OpenmrsUtil;
 import org.powermock.api.mockito.PowerMockito;
@@ -60,6 +62,8 @@ public class AccountValidatorTest {
 
     private Set<Role> someCapabilitySet;
 
+    private ProviderRole someProviderRole;
+
     @Before
 	public void setValidator() {
 
@@ -84,6 +88,9 @@ public class AccountValidatorTest {
 
         Person person = new Person();
         person.addName(new PersonName());
+
+        someProviderRole = new ProviderRole();
+
         account = new AccountDomainWrapper(person, accountService, userService, providerService,
                 providerManagementService, personService, providerIdentifierGenerator);
 	}
@@ -231,7 +238,7 @@ public class AccountValidatorTest {
 	 * @verifies pass for a valid account
 	 */
 	@Test
-	public void validate_shouldPassForAValidAccount() throws Exception {
+	public void validate_shouldFailIfNoProviderRoleSpecified() throws Exception {
 		account.setUsername("username");
 		account.setGivenName("give name");
 		account.setFamilyName("family name");
@@ -243,8 +250,30 @@ public class AccountValidatorTest {
 		
 		Errors errors = new BindException(account, "account");
 		validator.validate(account, errors);
-		assertFalse(errors.hasErrors());
+		assertTrue(errors.hasFieldErrors("providerRole"));
 	}
+
+
+    /**
+     * @see AccountValidator#validate(Object,Errors)
+     * @verifies pass for a valid account
+     */
+    @Test
+    public void validate_shouldPassForAValidAccount() throws Exception {
+        account.setUsername("username");
+        account.setGivenName("give name");
+        account.setFamilyName("family name");
+        account.setGender("M");
+        account.setPassword("Password123");
+        account.setConfirmPassword("Password123");
+        account.setPrivilegeLevel(fullPrivileges);
+        account.setCapabilities(someCapabilitySet);
+        account.setProviderRole(someProviderRole);
+
+        Errors errors = new BindException(account, "account");
+        validator.validate(account, errors);
+        assertFalse(errors.hasErrors());
+    }
 
 	/**
 	 * @see AccountValidator#validate(Object,Errors)
@@ -417,5 +446,6 @@ public class AccountValidatorTest {
         account.setPrivilegeLevel(fullPrivileges);
         account.getUser().setSystemId("systemId");
         account.setCapabilities(someCapabilitySet);
+        account.setProviderRole(someProviderRole);
     }
 }

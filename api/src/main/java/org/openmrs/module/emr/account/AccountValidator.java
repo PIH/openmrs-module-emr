@@ -81,7 +81,10 @@ public class AccountValidator implements Validator {
 
         checkIfGivenAndFamilyNameAreNotNull(errors, account);
         checkIfGenderIsNull(errors, account);
-        checkIfUserAndProviderRoleAreNull(errors, account);
+
+        // TODO: we are (probably just temporarily) insisting that all accounts have an associated provider
+        //checkIfUserAndProviderRoleAreNull(errors, account);
+        checkIfProviderRoleIsNull(errors, account);
 
         if (account.getUser() != null) {
             checkIfUserNameIsCorrect(errors, account.getUsername());
@@ -193,6 +196,13 @@ public class AccountValidator implements Validator {
     private void checkIfUserAndProviderRoleAreNull(Errors errors, AccountDomainWrapper accountDomainWrapper) {
         if (accountDomainWrapper.getUser() == null && accountDomainWrapper.getProviderRole() == null) {
             errors.reject("emr.account.requiredFields");
+        }
+    }
+
+    private void checkIfProviderRoleIsNull(Errors errors, AccountDomainWrapper accountDomainWrapper) {
+        if (accountDomainWrapper.getProviderRole() == null) {
+            errors.rejectValue("providerRole", "error.required",
+                    new Object[] { messageSourceService.getMessage("emr.account.providerRole.label") }, null);
         }
     }
 }
