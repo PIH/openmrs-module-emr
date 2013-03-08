@@ -132,7 +132,7 @@ var emr = (function($) {
         },
 
         handleError: function(xhr) {
-            if (!emr.redirectOnAuthenicationFailure) {
+            if (!emr.redirectOnAuthenticationFailure(xhr)) {
                 emr.errorAlert(jq.parseJSON(xhr.responseText).globalErrors[0]);
             }
         },

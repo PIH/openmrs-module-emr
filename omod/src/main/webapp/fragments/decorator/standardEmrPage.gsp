@@ -47,6 +47,6 @@ ${ ui.includeFragment("emr", "header") }
 
     // global error handler
     jq(document).ajaxError(function(event, jqxhr) {
-        emr.redirectOnAuthenicationFailure(jqxhr);
+        emr.redirectOnAuthenticationFailure(jqxhr);
     });
 </script>
