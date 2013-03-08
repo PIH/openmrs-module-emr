@@ -132,12 +132,17 @@ var emr = (function($) {
         },
 
         handleError: function(xhr) {
-            if (xhr.status == 403) {
-                window.location = '/' + OPENMRS_CONTEXT_PATH;
-            }
-            else {
+            if (!emr.redirectOnAuthenicationFailure) {
                 emr.errorAlert(jq.parseJSON(xhr.responseText).globalErrors[0]);
             }
+        },
+
+        redirectOnAuthenticationFailure: function (xhr) {
+            if (xhr.status == 403) {
+                window.location = '/' + OPENMRS_CONTEXT_PATH;
+                return true;
+            }
+            return false;
         },
 
         updateBreadcrumbs: function(extraBreadcrumbs) {

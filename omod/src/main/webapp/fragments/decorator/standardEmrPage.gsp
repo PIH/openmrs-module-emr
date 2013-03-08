@@ -44,4 +44,9 @@ ${ ui.includeFragment("emr", "header") }
     jq(function() {
         emr.updateBreadcrumbs();
     });
+
+    // global error handler
+    jq(document).ajaxError(function(event, jqxhr) {
+        emr.redirectOnAuthenicationFailure(jqxhr);
+    });
 </script>
