@@ -50,7 +50,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertEquals;
@@ -172,16 +171,17 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
         ConceptClass diagnosis = conceptService.getConceptClassByName("Diagnosis");
 
         List<ConceptSearchResult> searchResults = service.conceptSearch("malaria", Locale.ENGLISH, Collections.singleton(diagnosis), null, null);
-        ConceptSearchResult firstResult = searchResults.get(0);
-        List<ConceptSearchResult> otherResults = searchResults.subList(1, searchResults.size());
 
-        assertThat(searchResults.size(), is(3));
+        assertThat(searchResults.size(), is(2));
+
+        ConceptSearchResult firstResult = searchResults.get(0);
+        ConceptSearchResult otherResult = searchResults.get(1);
+
         assertThat(firstResult.getConcept(), is(concepts.get("malaria")));
         assertThat(firstResult.getConceptName().getName(), is("Malaria"));
 
-        assertThat(otherResults, containsInAnyOrder(
-                searchResultMatcher(concepts.get("malaria"), "Clinical Malaria"),
-                searchResultMatcher(concepts.get("cerebral malaria"), "Cerebral Malaria")));
+        assertThat(otherResult.getConcept(), is(concepts.get("cerebral malaria")));
+        assertThat(otherResult.getConceptName().getName(), is("Cerebral Malaria"));
     }
 
     @Test
