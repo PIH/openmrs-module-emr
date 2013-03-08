@@ -19,6 +19,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.openmrs.Concept;
 import org.openmrs.ConceptClass;
 import org.openmrs.ConceptMap;
 import org.openmrs.ConceptName;
@@ -38,8 +39,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class HibernateEmrDAO implements EmrDAO {
 
@@ -122,8 +126,20 @@ public class HibernateEmrDAO implements EmrDAO {
                 criteria.add(Restrictions.ilike("name", word, MatchMode.ANYWHERE));
             }
 
+            Set<Concept> conceptsMatchedByPreferredName = new HashSet<Concept>();
             for (ConceptName matchedName : (List<ConceptName>) criteria.list()) {
                 results.add(new ConceptSearchResult(null, matchedName.getConcept(), matchedName, calculateMatchScore(query, uniqueWords, matchedName)));
+                if (matchedName.isLocalePreferred()) {
+                    conceptsMatchedByPreferredName.add(matchedName.getConcept());
+                }
+            }
+
+            // don't display synonym matches if the preferred name matches too
+            for (Iterator<ConceptSearchResult> i = results.iterator(); i.hasNext(); ) {
+                ConceptSearchResult candidate = i.next();
+                if (!candidate.getConceptName().isLocalePreferred() && conceptsMatchedByPreferredName.contains(candidate.getConcept())) {
+                    i.remove();
+                }
             }
         }
 
@@ -168,7 +184,7 @@ public class HibernateEmrDAO implements EmrDAO {
 
     private Double calculateMatchScore(String query, List<String> uniqueWords, ConceptName matchedName) {
         double score = 0d;
-        if (query.equals(matchedName)) {
+        if (query.equalsIgnoreCase(matchedName.getName())) {
             score += 1000d;
         }
         if (matchedName.isLocalePreferred()) {
