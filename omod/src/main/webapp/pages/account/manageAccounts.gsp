@@ -19,9 +19,10 @@
 <table id="list-accounts" width="50%" border="1" cellspacing="0" cellpadding="2">
 	<thead>
 		<tr>
-			<th>Name</th>
-			<th>Login</th>
-			<th>Gender</th>
+			<th>${ ui.message("emr.person.name")}</th>
+			<th>${ ui.message("emr.user.username") }</th>
+			<th>${ ui.message("emr.gender") }</th>
+            <th>${ ui.message("emr.account.providerRole.label") }</th>
 			<th></th>
 		</tr>
 	</thead>
@@ -37,8 +38,11 @@
 				<% } %>
 			</td>
 			<td>
-				${ ui.format(it.person.gender)}
+				${ ui.format(it.person.gender) }
 			</td>
+            <td>
+                ${ ui.format(it.providerRole) }
+            </td>
 			<td>
 	            <a href="/${ contextPath }/emr/account/account.page?personId=${ it.person.personId }">
 	                <button>${ ui.message("emr.edit") }</button>
