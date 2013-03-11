@@ -92,8 +92,9 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
 
 <div id="quick-visit-creation-dialog" class="dialog">
     <div class="dialog-header">
-        <i class="icon-folder-open"></i>
-        <h3>${ ui.message("emr.visit.createQuickVisit.title") }</h3>
+        <h3>
+            <i class="icon-folder-open"></i>
+            ${ ui.message("emr.visit.createQuickVisit.title") }</h3>
     </div>
     <div class="dialog-content">
         <p class="dialog-instructions">Are you sure you want to start a visit for ${ui.format(patient.patient)} now?</p>
