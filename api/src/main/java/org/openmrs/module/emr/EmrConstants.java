@@ -43,7 +43,7 @@ public class EmrConstants {
 
     public static final String GP_EXTRA_PATIENT_IDENTIFIER_TYPES = "emr.extraPatientIdentifierTypes";
 
-    public static final String GP_DIAGNOSIS_CONCEPT_CLASS = "emr.conceptClass.diagnosis";
+    public static final String GP_DIAGNOSIS_SET_OF_SETS = "emr.concept.diagnosisSetOfSets";
 
     public static final String GP_XRAY_ORDERABLES_CONCEPT = "emr.xrayOrderablesConcept";
 

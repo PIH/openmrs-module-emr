@@ -16,7 +16,6 @@ package org.openmrs.module.emr.fragment.controller;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.openmrs.Concept;
-import org.openmrs.ConceptClass;
 import org.openmrs.ConceptName;
 import org.openmrs.ConceptSearchResult;
 import org.openmrs.ConceptSource;
@@ -29,7 +28,7 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -46,12 +45,12 @@ public class DiagnosesFragmentController {
                                      @RequestParam(value = "start", defaultValue = "0") Integer start,
                                      @RequestParam(value = "size", defaultValue = "50") Integer size) throws Exception {
 
-        ConceptClass diagnosisClass = emrProperties.getDiagnosisConceptClass();
+        Collection<Concept> diagnosisSets = emrProperties.getDiagnosisSets();
         Locale locale = context.getUserContext().getLocale();
 
         List<ConceptSource> sources = emrProperties.getConceptSourcesForDiagnosisSearch();
 
-        List<ConceptSearchResult> hits = emrService.conceptSearch(query, locale, Collections.singleton(diagnosisClass), sources, null);
+        List<ConceptSearchResult> hits = emrService.conceptSearch(query, locale, null, diagnosisSets, sources, null);
         List<SimpleObject> ret = new ArrayList<SimpleObject>();
         for (ConceptSearchResult hit : hits) {
             ret.add(simplify(hit, ui, locale));
