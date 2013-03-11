@@ -176,6 +176,10 @@ public class EmrProperties extends ModuleProperties {
         if (paperRecordIdentifierType != null) {
             types.add(paperRecordIdentifierType);
         }
+        List<PatientIdentifierType> extraPatientIdentifierTypes = getExtraPatientIdentifierTypes();
+        if(extraPatientIdentifierTypes!=null && extraPatientIdentifierTypes.size()>0){
+            types.addAll(extraPatientIdentifierTypes);
+        }
         return types;
     }
 
