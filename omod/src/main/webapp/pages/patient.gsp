@@ -27,6 +27,7 @@
         ko.applyBindings( sessionLocationModel, jq('#request-paper-record-dialog').get(0) );
     });
 
+    var patient = { id: ${ patient.id } };
 </script>
 
 

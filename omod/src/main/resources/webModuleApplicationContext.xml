@@ -34,6 +34,14 @@
 
 
     <!-- Tasks -->
+    <bean id="emrPrintLabelsOnPatientDashboard" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
+        <property name="id" value="emr.printLabels"/>
+        <property name="labelCode" value="emr.task.printLabels.label"/>
+        <property name="javascript" value="printLabels()"/>
+        <property name="priority" value="-10.0"/>
+        <property name="extensionPoint" value="patient.globalActions"/>
+        <property name="iconUrl" value="icon-print"/>
+    </bean>
     <bean id="emrRequestChartOnPatientDashboard" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
         <property name="id" value="emr.requestPaperRecord"/>
         <property name="labelCode" value="emr.task.requestPaperRecord.label"/>

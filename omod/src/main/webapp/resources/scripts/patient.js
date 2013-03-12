@@ -34,6 +34,18 @@ function createPaperRecordDialog(patientId) {
         }
     });
 }
+function printLabels() {
+    emr.getFragmentActionWithCallback('emr', 'paperrecord/requestPaperRecord', 'printLabels'
+        , { patientId: patient.id, locationId: sessionLocationModel.id() }
+        , function(data) {
+            if(data.success) {
+                emr.successMessage(data.message);
+            } else {
+                emr.errorMessage(data.message);
+            }
+        }
+    );   
+}
 function createEditPatientIdentifierDialog(patientId) {
     editPatientIdentifierDialog = emr.setupConfirmationDialog({
         selector: '#edit-patient-identifier-dialog',
