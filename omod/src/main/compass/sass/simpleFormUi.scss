@@ -141,7 +141,7 @@ section, #confirmation {
     select, input {
       display: inline;
       &:focus {
-        border: 2px solid $link;
+        outline: 2px solid $link;
 
       }
       &.error {
