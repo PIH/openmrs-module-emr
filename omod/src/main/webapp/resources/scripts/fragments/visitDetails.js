@@ -8,19 +8,18 @@ function loadTemplates () {
                     visitId: localVisitId
                 })
             ).success(function(data) {
-                    $('.viewVisitDetails').removeClass('selected');
-                    visitElement.addClass('selected');
-                    visitDetailsSection.html(visitDetailsTemplate(data));
-                    visitDetailsSection.show();
-                    $(".deleteEncounterId").click(function(event){
-                        var encounterId = $(event.target).attr("data-encounter-id");
-                        createDeleteEncounterDialog(encounterId, $(this));
-                        showDeleteEncounterDialog();
-                    });
-                }).error(function(err) {
-                    emr.errorMessage(err);
+                $('.viewVisitDetails').removeClass('selected');
+                visitElement.addClass('selected');
+                visitDetailsSection.html(visitDetailsTemplate(data));
+                visitDetailsSection.show();
+                $(".deleteEncounterId").click(function(event){
+                    var encounterId = $(event.target).attr("data-encounter-id");
+                    createDeleteEncounterDialog(encounterId, $(this));
+                    showDeleteEncounterDialog();
                 });
-
+            }).error(function(err) {
+                emr.errorMessage(err);
+            });
         }
     }
 
@@ -50,24 +49,21 @@ function loadTemplates () {
     function getEncounterDetails(id, isHtmlForm, dataTarget){
         var encounterDetailsSection = $(dataTarget + ' .encounter-summary-container');
         if (isHtmlForm == "true"){
-
             $.getJSON(
                 emr.fragmentActionLink("emr", "htmlform/viewEncounterWithHtmlForm", "getAsHtml", { encounterId: id })
             ).success(function(data){
-                    encounterDetailsSection.html(data.html);
-                }).error(function(err){
-                    emr.errorAlert(err);
-                });
-
+                encounterDetailsSection.html(data.html);
+            }).error(function(err){
+                emr.errorAlert(err);
+            });
         } else {
-
             $.getJSON(
                 emr.fragmentActionLink("emr", "visit/visitDetails", "getEncounterDetails", { encounterId: id })
             ).success(function(data){
-                    encounterDetailsSection.html(encounterDetailsTemplate(data));
-                }).error(function(err){
-                    emr.errorAlert(err);
-                });
+                encounterDetailsSection.html(encounterDetailsTemplate(data));
+            }).error(function(err){
+                emr.errorAlert(err);
+            });
         }
     }
 };

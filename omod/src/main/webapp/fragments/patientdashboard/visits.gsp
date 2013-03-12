@@ -45,23 +45,15 @@
             ${ ui.message("emr.activeVisit.time", '{{- startDatetime }}')}
             
         </div>
-
-
         <div class="visit-actions">
-
-            <%
-                activeVisitTasks.each{task ->
-                    def url = task.getUrl(emrContext)
-
-                    if (!url.startsWith("javascript:")) {
-                        url = "/" + contextPath + "/" + url
-                    }
+            <% activeVisitTasks.each{task -> def url = task.getUrl(emrContext)
+                if (!url.startsWith("javascript:")) {
+                    url = "/" + contextPath + "/" + url
+                }
             %>
-
             <a href="${ url }" class="button task">
                 <i class="${task.getIconUrl(emrContext)}"></i> ${ task.getLabel(emrContext) }
             </a>
-
             <% } %>
         </div>
    {{  } }}
@@ -98,6 +90,7 @@
                             <strong>{{- encounter.location }}</strong>
                         </div>
                     </li>
+                    {{ if (encounter.encounterType.uuid != "873f968a-73a8-4f9c-ac78-9f4778b751b6") {}}
                     <li>
                         <div>
                             <a class="view-details collapsed" href='javascript:void(0);' data-encounter-id="{{- encounter.encounterId }}" data-encounter-form="{{- encounter.form != null}}" data-target="#encounter-summary{{- i }}" data-toggle="collapse" data-target="#encounter-summary{{- i }}">
@@ -105,8 +98,10 @@
                                 <span class="hide-details">${ ui.message("emr.patientDashBoard.hideDetails")}</span>
                                 <i class="icon-caret-right"></i>
                             </a>
+                            
                         </div>
                     </li>
+                    {{}}}
                 </ul>
                 {{ if (${ canDelete } ) { }}
                 <span>
