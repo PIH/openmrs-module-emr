@@ -15,7 +15,6 @@
 package org.openmrs.module.emr;
 
 import org.openmrs.Concept;
-import org.openmrs.ConceptClass;
 import org.openmrs.ConceptSource;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
@@ -33,6 +32,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static org.openmrs.module.emr.EmrConstants.LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD;
@@ -187,19 +187,6 @@ public class EmrProperties extends ModuleProperties {
         return conceptService.getConceptSourceByName(EmrConstants.EMR_CONCEPT_SOURCE_NAME);
     }
 
-    public ConceptClass getDiagnosisConceptClass() {
-        String gp = getGlobalProperty(EmrConstants.GP_DIAGNOSIS_CONCEPT_CLASS, false);
-        if (StringUtils.hasText(gp)) {
-            ConceptClass conceptClass = conceptService.getConceptClassByUuid(gp);
-            if (conceptClass == null) {
-                throw new IllegalStateException("Configuration required: " + EmrConstants.GP_DIAGNOSIS_CONCEPT_CLASS);
-            }
-            return conceptClass;
-        } else {
-            return conceptService.getConceptClassByName("Diagnosis");
-        }
-    }
-
     public List<ConceptSource> getConceptSourcesForDiagnosisSearch() {
         ConceptSource icd10 = conceptService.getConceptSourceByName("ICD-10-WHO");
         if (icd10 != null) {
@@ -209,4 +196,21 @@ public class EmrProperties extends ModuleProperties {
         }
     }
 
+    /**
+     * Expects there to be a GP configured to point to a concept set, which is a set of other concept sets.
+     * E.g. "HUM Diagnosis Sets" contains "HUM Outpatient Diagnosis Set", "HUM ER Diagnosis Set", etc.
+     * @return
+     */
+    public Collection<Concept> getDiagnosisSets() {
+        String gp = getGlobalProperty(EmrConstants.GP_DIAGNOSIS_SET_OF_SETS, false);
+        if (StringUtils.hasText(gp)) {
+            Concept setOfSets = conceptService.getConceptByUuid(gp);
+            if (setOfSets == null) {
+                throw new IllegalStateException("Configuration required: " + EmrConstants.GP_DIAGNOSIS_SET_OF_SETS);
+            }
+            return setOfSets.getSetMembers();
+        } else {
+            return null;
+        }
+    }
 }

@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.emr.api.impl;
 
+import org.openmrs.Concept;
 import org.openmrs.ConceptClass;
 import org.openmrs.ConceptSearchResult;
 import org.openmrs.ConceptSource;
@@ -117,10 +118,10 @@ public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
     }
 
     @Override
-    public List<ConceptSearchResult> conceptSearch(String query, Locale locale, Collection<ConceptClass> classes, Collection<ConceptSource> sources, Integer limit) {
+    public List<ConceptSearchResult> conceptSearch(String query, Locale locale, Collection<ConceptClass> classes, Collection<Concept> inSets, Collection<ConceptSource> sources, Integer limit) {
         if (limit == null) {
             limit = 100;
         }
-        return dao.conceptSearch(query, locale, classes, sources, limit);
+        return dao.conceptSearch(query, locale, classes, inSets, sources, limit);
     }
 }

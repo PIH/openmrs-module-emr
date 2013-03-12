@@ -23,6 +23,7 @@
 			<th>${ ui.message("emr.user.username") }</th>
 			<th>${ ui.message("emr.gender") }</th>
             <th>${ ui.message("emr.account.providerRole.label") }</th>
+            <th>${ ui.message("emr.account.providerIdentifier.label") }</th>
 			<th></th>
 		</tr>
 	</thead>
@@ -42,6 +43,9 @@
 			</td>
             <td>
                 ${ ui.format(it.providerRole) }
+            </td>
+            <td>
+                ${ ui.format(it.provider?.identifier) }
             </td>
 			<td>
 	            <a href="/${ contextPath }/emr/account/account.page?personId=${ it.person.personId }">

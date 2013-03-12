@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.emr.api.db;
 
+import org.openmrs.Concept;
 import org.openmrs.ConceptClass;
 import org.openmrs.ConceptSearchResult;
 import org.openmrs.ConceptSource;
@@ -27,6 +28,6 @@ public interface EmrDAO {
 
     List<Patient> findPatients(String query, Location checkedInAt, Integer start, Integer length);
 
-    List<ConceptSearchResult> conceptSearch(String query, Locale locale, Collection<ConceptClass> classes, Collection<ConceptSource> sources, Integer limit);
+    List<ConceptSearchResult> conceptSearch(String query, Locale locale, Collection<ConceptClass> classes, Collection<Concept> inSets, Collection<ConceptSource> sources, Integer limit);
 
 }

@@ -16,14 +16,18 @@ package org.openmrs.module.emr.api.db.hibernate;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.openmrs.Concept;
 import org.openmrs.ConceptClass;
 import org.openmrs.ConceptMap;
 import org.openmrs.ConceptName;
 import org.openmrs.ConceptSearchResult;
+import org.openmrs.ConceptSet;
 import org.openmrs.ConceptSource;
 import org.openmrs.ConceptWord;
 import org.openmrs.Location;
@@ -101,7 +105,7 @@ public class HibernateEmrDAO implements EmrDAO {
 
     @Override
     @Transactional(readOnly=true)
-    public List<ConceptSearchResult> conceptSearch(String query, Locale locale, Collection<ConceptClass> classes, Collection<ConceptSource> sources, Integer limit) {
+    public List<ConceptSearchResult> conceptSearch(String query, Locale locale, Collection<ConceptClass> classes, Collection<Concept> inSets, Collection<ConceptSource> sources, Integer limit) {
         List<String> uniqueWords = ConceptWord.getUniqueWords(query, locale);
         if (uniqueWords.size() == 0) {
             return Collections.emptyList();
@@ -111,7 +115,7 @@ public class HibernateEmrDAO implements EmrDAO {
 
         // find matches based on name
         {
-            Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ConceptName.class);
+            Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ConceptName.class, "cn");
             criteria.add(Restrictions.eq("voided", false));
             criteria.add(Restrictions.eq("locale", locale));
             criteria.setMaxResults(limit);
@@ -120,6 +124,12 @@ public class HibernateEmrDAO implements EmrDAO {
             conceptCriteria.add(Restrictions.eq("retired", false));
             if (classes != null) {
                 conceptCriteria.add(Restrictions.in("conceptClass", classes));
+            }
+            if (inSets != null) {
+                DetachedCriteria allowedSetMembers = DetachedCriteria.forClass(ConceptSet.class);
+                allowedSetMembers.add(Restrictions.in("conceptSet", inSets));
+                allowedSetMembers.setProjection(Projections.property("concept"));
+                criteria.add(Subqueries.propertyIn("concept", allowedSetMembers));
             }
 
             for (String word : uniqueWords) {

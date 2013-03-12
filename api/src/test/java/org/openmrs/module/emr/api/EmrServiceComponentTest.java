@@ -170,7 +170,7 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
         Map<String, Concept> concepts = setupConcepts();
         ConceptClass diagnosis = conceptService.getConceptClassByName("Diagnosis");
 
-        List<ConceptSearchResult> searchResults = service.conceptSearch("malaria", Locale.ENGLISH, Collections.singleton(diagnosis), null, null);
+        List<ConceptSearchResult> searchResults = service.conceptSearch("malaria", Locale.ENGLISH, Collections.singleton(diagnosis), null, null, null);
 
         assertThat(searchResults.size(), is(2));
 
@@ -189,7 +189,7 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
         Map<String, Concept> concepts = setupConcepts();
         ConceptClass diagnosis = conceptService.getConceptClassByName("Diagnosis");
 
-        List<ConceptSearchResult> searchResults = service.conceptSearch("malaria", Locale.FRENCH, Collections.singleton(diagnosis), null, null);
+        List<ConceptSearchResult> searchResults = service.conceptSearch("malaria", Locale.FRENCH, Collections.singleton(diagnosis), null, null, null);
         ConceptSearchResult firstResult = searchResults.get(0);
 
         assertThat(searchResults.size(), is(1));
@@ -204,12 +204,27 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
 
         Map<String, Concept> concepts = setupConcepts();
 
-        List<ConceptSearchResult> searchResults = service.conceptSearch("E11.9", Locale.ENGLISH, Collections.singleton(diagnosis), Collections.singleton(icd10), null);
+        List<ConceptSearchResult> searchResults = service.conceptSearch("E11.9", Locale.ENGLISH, Collections.singleton(diagnosis), null, Collections.singleton(icd10), null);
         ConceptSearchResult firstResult = searchResults.get(0);
 
         assertThat(searchResults.size(), is(1));
         assertThat(firstResult.getConcept(), is(concepts.get("diabetes")));
         assertThat(firstResult.getConceptName(), nullValue());
+    }
+
+    @Test
+    public void testConceptSearchForSetMembers() throws Exception {
+        Map<String, Concept> concepts = setupConcepts();
+
+        List<ConceptSearchResult> searchResults = service.conceptSearch("malar", Locale.ENGLISH, null, Collections.singleton(concepts.get("allowedDiagnoses")), null, null);
+        assertThat(searchResults.size(), is(1));
+        ConceptSearchResult firstResult = searchResults.get(0);
+        assertThat(firstResult.getConcept(), is(concepts.get("malaria")));
+
+        searchResults = service.conceptSearch("diab", Locale.ENGLISH, null, Collections.singleton(concepts.get("allowedDiagnoses")), null, null);
+        assertThat(searchResults.size(), is(1));
+        firstResult = searchResults.get(0);
+        assertThat(firstResult.getConcept(), is(concepts.get("diabetes")));
     }
 
     private Map<String, Concept> setupConcepts() {
@@ -220,6 +235,7 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
 
         ConceptDatatype na = conceptService.getConceptDatatypeByName("N/A");
         ConceptClass diagnosis = conceptService.getConceptClassByName("Diagnosis");
+        ConceptClass convSet = conceptService.getConceptClassByName("ConvSet");
 
         concepts.put("malaria", conceptService.saveConcept(new ConceptBuilder(na, diagnosis)
                 .add(new ConceptName("Malaria", Locale.ENGLISH))
@@ -236,6 +252,11 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
                 .add(new ConceptName("Diabetes Mellitus, Type II", Locale.ENGLISH))
                 .addVoidedName(new ConceptName("Malaria", Locale.ENGLISH))
                 .addMapping(sameAs, icd10, "E11.9").get()));
+
+        concepts.put("allowedDiagnoses", conceptService.saveConcept(new ConceptBuilder(na, convSet)
+                .add(new ConceptName("Allowed Diagnoses", Locale.ENGLISH))
+                .addSetMember(concepts.get("malaria"))
+                .addSetMember(concepts.get("diabetes")).get()));
 
         return concepts;
     }
@@ -284,6 +305,11 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
         public ConceptBuilder addVoidedName(ConceptName voidedName) {
             voidedName.setVoided(true);
             return add(voidedName);
+        }
+
+        public ConceptBuilder addSetMember(Concept setMember) {
+            concept.addSetMember(setMember);
+            return this;
         }
     }
 }
