@@ -108,7 +108,7 @@
       }
 
       .visit-primary-diagnosis {
-        line-height: 1em;
+        line-height: 1.3em;
         display: block;
         font-size: 0.95em;
         padding-top: 7px;
@@ -240,6 +240,7 @@
       &>div {
         border-right: 1px solid #ccc;
         padding: 15px 10px;
+        max-width: 334px;
       }
 
       &:first-child {
