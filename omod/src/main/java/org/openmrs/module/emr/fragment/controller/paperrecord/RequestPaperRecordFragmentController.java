@@ -48,6 +48,7 @@ public class RequestPaperRecordFragmentController {
 
         try {
             service.printPaperRecordLabels(patient, location, 3);
+            service.printIdCardLabel(patient, location);
             Printer printer = printerService.getDefaultPrinter(location, Printer.Type.LABEL);
 
             return SimpleObject.create("success", true, "message", ui.message("emr.patientDashBoard.printLabels.successMessage") + " " + printer.getPhysicalLocation().getName());
