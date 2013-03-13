@@ -190,10 +190,11 @@ public class EmrActivator implements ModuleActivator {
 	}
 
     /**
+     * (public so that it can be used in tests, but you shouldn't use this in production code)
      * Creates a single ConceptSource which we will use to tag concepts relevant to this module
      * @param conceptService
      */
-    private void createConceptSources(ConceptService conceptService) {
+    public ConceptSource createConceptSources(ConceptService conceptService) {
         ConceptSource conceptSource = conceptService.getConceptSourceByName(EmrConstants.EMR_CONCEPT_SOURCE_NAME);
         if (conceptSource == null) {
             conceptSource = new ConceptSource();
@@ -202,6 +203,7 @@ public class EmrActivator implements ModuleActivator {
             conceptSource.setUuid(EmrConstants.EMR_CONCEPT_SOURCE_UUID);
             conceptService.saveConceptSource(conceptSource);
         }
+        return conceptSource;
     }
 
     private void createGlobalProperties(AdministrationService administrationService) {

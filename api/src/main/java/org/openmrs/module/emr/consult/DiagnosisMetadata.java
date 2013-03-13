@@ -211,6 +211,17 @@ public class DiagnosisMetadata {
         return diagnosis;
     }
 
+    /**
+     * @param order
+     * @return the Concept representing this diagnosis order
+     */
+    public Concept getConceptFor(Diagnosis.Order order) {
+        if (order == null) {
+            return null;
+        }
+        return findAnswer(getDiagnosisOrderConcept(), order.getCodeInEmrConceptSource());
+    }
+
     private Diagnosis.Order getDiagnosisOrderFrom(Obs obs) {
         String mapping = findMapping(obs.getValueCoded());
         return Diagnosis.Order.parseConceptReferenceCode(mapping);

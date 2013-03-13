@@ -21,10 +21,8 @@ import org.mockito.ArgumentMatcher;
 import org.openmrs.Concept;
 import org.openmrs.ConceptClass;
 import org.openmrs.ConceptDatatype;
-import org.openmrs.ConceptMap;
 import org.openmrs.ConceptMapType;
 import org.openmrs.ConceptName;
-import org.openmrs.ConceptReferenceTerm;
 import org.openmrs.ConceptSearchResult;
 import org.openmrs.ConceptSource;
 import org.openmrs.Location;
@@ -33,13 +31,13 @@ import org.openmrs.Patient;
 import org.openmrs.Privilege;
 import org.openmrs.Role;
 import org.openmrs.api.AdministrationService;
-import org.openmrs.api.ConceptNameType;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emr.test.builder.ConceptBuilder;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -237,23 +235,23 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
         ConceptClass diagnosis = conceptService.getConceptClassByName("Diagnosis");
         ConceptClass convSet = conceptService.getConceptClassByName("ConvSet");
 
-        concepts.put("malaria", conceptService.saveConcept(new ConceptBuilder(na, diagnosis)
+        concepts.put("malaria", conceptService.saveConcept(new ConceptBuilder(conceptService, na, diagnosis)
                 .add(new ConceptName("Malaria", Locale.ENGLISH))
                 .add(new ConceptName("Clinical Malaria", Locale.ENGLISH))
                 .add(new ConceptName("Paludisme", Locale.FRENCH))
                 .addMapping(sameAs, icd10, "B54").get()));
 
-        concepts.put("cerebral malaria", conceptService.saveConcept(new ConceptBuilder(na, diagnosis)
+        concepts.put("cerebral malaria", conceptService.saveConcept(new ConceptBuilder(conceptService, na, diagnosis)
                 .add(new ConceptName("Cerebral Malaria", Locale.ENGLISH))
                 .add(new ConceptName("Malaria célébrale", Locale.FRENCH))
                 .addMapping(sameAs, icd10, "B50.0").get()));
 
-        concepts.put("diabetes", conceptService.saveConcept(new ConceptBuilder(na, diagnosis)
+        concepts.put("diabetes", conceptService.saveConcept(new ConceptBuilder(conceptService, na, diagnosis)
                 .add(new ConceptName("Diabetes Mellitus, Type II", Locale.ENGLISH))
                 .addVoidedName(new ConceptName("Malaria", Locale.ENGLISH))
                 .addMapping(sameAs, icd10, "E11.9").get()));
 
-        concepts.put("allowedDiagnoses", conceptService.saveConcept(new ConceptBuilder(na, convSet)
+        concepts.put("allowedDiagnoses", conceptService.saveConcept(new ConceptBuilder(conceptService, na, convSet)
                 .add(new ConceptName("Allowed Diagnoses", Locale.ENGLISH))
                 .addSetMember(concepts.get("malaria"))
                 .addSetMember(concepts.get("diabetes")).get()));
@@ -271,45 +269,4 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
         };
     }
 
-    class ConceptBuilder {
-
-        private Concept concept;
-
-        public ConceptBuilder(ConceptDatatype datatype, ConceptClass conceptClass) {
-            concept = new Concept();
-            concept.setDatatype(datatype);
-            concept.setConceptClass(conceptClass);
-        }
-
-        public Concept get() {
-            return concept;
-        }
-
-        public ConceptBuilder add(ConceptName conceptName) {
-            if (concept.getNames().size() == 0) {
-                conceptName.setLocalePreferred(true);
-                conceptName.setConceptNameType(ConceptNameType.FULLY_SPECIFIED);
-            }
-            concept.addName(conceptName);
-            return this;
-        }
-
-        public ConceptBuilder addMapping(ConceptMapType mapType, ConceptSource source, String code) {
-            ConceptReferenceTerm term = new ConceptReferenceTerm(source, code, null);
-            conceptService.saveConceptReferenceTerm(term);
-            ConceptMap conceptMap = new ConceptMap(term, mapType);
-            concept.addConceptMapping(conceptMap);
-            return this;
-        }
-
-        public ConceptBuilder addVoidedName(ConceptName voidedName) {
-            voidedName.setVoided(true);
-            return add(voidedName);
-        }
-
-        public ConceptBuilder addSetMember(Concept setMember) {
-            concept.addSetMember(setMember);
-            return this;
-        }
-    }
 }
