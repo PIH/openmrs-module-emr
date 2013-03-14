@@ -24,9 +24,10 @@
             if (item.primaryIdentifiers[0]) {
                 id = item.primaryIdentifiers[0].identifier;
             }
-            return id + ' - ' + item.preferredName.fullName
+            return  item.preferredName.fullName
                     + ' - ' + item.gender
-                    + ' - ' + item.age;
+                    + ' - ' + item.age
+                    + ' - ' + id ;
         }
         return false;
     }

@@ -9,16 +9,38 @@
 
 <script type="text/javascript">
     jq(function() {
-        var xhr=null;
+        var KEYCODE_ENTER = 13;
+        var xhr=null;//used to track active ajax requests
 
         function setSearchValue(objectItem){
-
             jq('#${ config.id }-value').val(objectItem.${ config.itemValueProperty });
             if (${ config.itemLabelFunction }(objectItem)) {
                 jq('#${ config.id }-search').val(${ config.itemLabelFunction }(objectItem));
             }
-
         };
+
+        function handleEnterKey(){
+            var patientId = jq('#${ config.id }-value').val();
+            if(xhr){
+                //ajax request in progress
+                setTimeout(function(){
+                    handleEnterKey();
+                }, 300)
+            }else{
+                if(parseInt(patientId, 10) > 0){
+                    navigateToPatient(patientId);
+                }
+            }
+        }
+
+        jq('#${ config.id }-search').keyup(function(event){
+            if(event.keyCode == KEYCODE_ENTER){
+                //allow ajax autocomplete to start
+                setTimeout(function(){
+                    handleEnterKey();
+                }, 400)
+            }
+        });
 
         jq('#${ config.id }-search').autocomplete({
             source: function(request, response) {
@@ -47,10 +69,15 @@
                      console.log("error on searching for patients");
                 });
             },
-            autoFocus: true,
+            autoFocus: false,
             minLength: 2,
             delay: 300,
             select: function(event, ui) {
+                //setSearchValue(ui.item);
+                findPatientNavigateFunction(ui.item);
+                return false;
+            },
+            focus: function(event, ui){
                 setSearchValue(ui.item);
                 return false;
             }
@@ -66,13 +93,13 @@
         jq('#${ config.id }-search').data('autocomplete')._renderMenu = function(ul, items){
             var self= this;
             var fieldId =  '${ config.id }';
-
-            if (items.length == 1 && (items[0].patientId == 0)) {
+            if (items.length == 1 && (items[0].patientId > 0)) {
                 setSearchValue(items[0]);
+            }else{
+                jq.each( items , function(i, item) {
+                    self._renderItem(ul, item);
+                });
             }
-            jq.each( items , function(i, item) {
-                self._renderItem(ul, item);
-            });
 
         };
     });
