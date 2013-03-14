@@ -1,5 +1,20 @@
 var emr = (function($) {
 
+    var accentMap = {
+        "ä": "a", "á": "a", "à": "a", "â": "a", "ã": "a",
+        "Ä": "A", "Á": "A", "À": "A", "Â": "A", "Ã": "A",
+        "é": "e", "è": "e", "ê": "e", "ë": "e", "œ": "e","æ":"e",
+        "É": "E", "È": "E", "Ê": "E", "Ë": "E",
+        "ï": "i", "ì": "i", "í": "i", "î": "i",
+        "Ï": "I", "Ì": "I", "Í": "I", "Î": "I",
+        "ö": "o", "ó": "o", "ò": "o", "ô": "o", "õ": "o",
+        "Ö": "O", "Ó": "O", "Ò": "O", "Ô": "O", "Õ": "O",
+        "ü": "u", "ú": "u", "ù": "u", "û": "u",
+        "Ü": "U", "Ú": "U", "Ù": "U", "Û": "U",
+        "ÿ": "y", "Ÿ": "Y", "ñ": "n", "Ñ": "N",
+        "ç": "c", "Ç": "C", "ß": "s"
+    };
+
     var toQueryString = function(options) {
         var ret = "?";
         if (options) {
@@ -217,8 +232,15 @@ var emr = (function($) {
             };
 
            return dialogApi;
-        }
+        },
 
+        stripAccents: function(term) {
+            var ret = "";
+            for ( var i = 0; i < term.length; i++ ) {
+                ret += accentMap[ term.charAt(i) ] || term.charAt(i);
+            }
+            return ret;
+        }
     };
 
 })(jQuery);

@@ -62,7 +62,11 @@ ko.bindingHandlers.autocomplete = {
     init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         $(element).autocomplete({
             source: function( request, response ) {
-                response($.ui.autocomplete.filter(allBindingsAccessor().search(), request.term));
+                var matcher = new RegExp( $.ui.autocomplete.escapeRegex( request.term ), "i" );
+                response($.grep(allBindingsAccessor().search(), function (value) {
+                    value = value.label || value.value || value;
+                    return matcher.test(value) || matcher.test(emr.stripAccents(value));
+                } ))
             },
             focus: function( event, ui ) {
                 $(this).val(ui.item.label);
