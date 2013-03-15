@@ -15,6 +15,7 @@
 package org.openmrs.module.emr.test;
 
 import org.mockito.ArgumentMatcher;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.query.IdSet;
 
 import java.util.Set;
@@ -32,6 +33,16 @@ public class ReportingMatchers {
             public boolean matches(Object o) {
                 Set<Integer> actual = ((IdSet<?>) o).getMemberIds();
                 return (actual.size() == expectedMemberIds.length) && containsInAnyOrder(expectedMemberIds).matches(actual);
+            }
+        };
+    }
+
+    public static ArgumentMatcher<Parameter> parameterNamed(final String expectedName) {
+        return new ArgumentMatcher<Parameter>() {
+            @Override
+            public boolean matches(Object actual) {
+                Parameter parameter = (Parameter) actual;
+                return ((Parameter) actual).getName().equals(expectedName);
             }
         };
     }
