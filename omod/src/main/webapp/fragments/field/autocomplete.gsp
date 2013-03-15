@@ -45,6 +45,7 @@
         jq('#${ config.id }-search').autocomplete({
             source: function(request, response) {
                 var ajaxUrl = '${ ui.actionLink(fragmentProvider, config.fragment, config.action)}';
+                jq('#${ config.id }-value').val(0);
                 if(xhr){
                     xhr.abort();
                     xhr = null;
@@ -94,12 +95,12 @@
             var self= this;
             var fieldId =  '${ config.id }';
             if (items.length == 1 && (items[0].patientId > 0)) {
-                setSearchValue(items[0]);
-            }else{
-                jq.each( items , function(i, item) {
-                    self._renderItem(ul, item);
-                });
+                jq('#${ config.id }-value').val(items[0].patientId);
             }
+            jq.each( items , function(i, item) {
+                self._renderItem(ul, item);
+            });
+
 
         };
     });
