@@ -36,6 +36,9 @@ public class BasicDimensionLibrary extends BaseDefinitionLibrary<Dimension> {
     @Autowired
     CohortDefinitionService cohortDefinitionService;
 
+    public BasicDimensionLibrary() {
+    }
+
     /**
      * Used for tests
      * @param cohortDefinitionService
