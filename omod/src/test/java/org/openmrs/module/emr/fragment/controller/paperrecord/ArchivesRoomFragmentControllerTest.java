@@ -100,7 +100,7 @@ public class ArchivesRoomFragmentControllerTest {
     @Test
     public void testControllerShouldReturnFailureResultIfNoMatchingRequestFound() throws Exception {
 
-        when(paperRecordService.getPendingPaperRecordRequestByIdentifier(eq("123"))).thenReturn(null);
+        when(paperRecordService.getAssignedPaperRecordRequestByIdentifier(eq("123"))).thenReturn(null);
         when(paperRecordService.getSentPaperRecordRequestByIdentifier(eq("123"))).thenReturn(null);
 
         FragmentActionResult result = controller.markPaperRecordRequestAsSent("123", paperRecordService, ui);
@@ -120,7 +120,7 @@ public class ArchivesRoomFragmentControllerTest {
         request.setRequestLocation(location);
         request.setIdentifier("123");
 
-        when(paperRecordService.getPendingPaperRecordRequestByIdentifier(eq("123"))).thenReturn(null);
+        when(paperRecordService.getAssignedPaperRecordRequestByIdentifier(eq("123"))).thenReturn(null);
         when(paperRecordService.getSentPaperRecordRequestByIdentifier(eq("123"))).thenReturn(Collections.singletonList(request));
 
         FragmentActionResult result = controller.markPaperRecordRequestAsSent("123", paperRecordService, ui);
@@ -142,7 +142,7 @@ public class ArchivesRoomFragmentControllerTest {
         request.setDateCreated(new Date());
         request.updateStatus(PaperRecordRequest.Status.ASSIGNED_TO_PULL);
 
-        when(paperRecordService.getPendingPaperRecordRequestByIdentifier(eq("123"))).thenReturn(request);
+        when(paperRecordService.getAssignedPaperRecordRequestByIdentifier(eq("123"))).thenReturn(request);
 
         FragmentActionResult result = controller.markPaperRecordRequestAsSent("123", paperRecordService, ui);
 

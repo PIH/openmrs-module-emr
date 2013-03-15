@@ -172,7 +172,7 @@ public interface PaperRecordService extends OpenmrsService {
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
     // TODO: once we have multiple medical record locations, we will need to add location as a criteria (see paperRecordExistsWithIdentifier)
-    PaperRecordRequest getPendingPaperRecordRequestByIdentifier(String identifier);
+    PaperRecordRequest getAssignedPaperRecordRequestByIdentifier(String identifier);
 
 
     /**

@@ -44,6 +44,7 @@ import org.openmrs.module.emr.utils.GeneralUtils;
 import org.openmrs.module.idgen.service.IdentifierSourceService;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.openmrs.module.emr.paperrecord.PaperRecordRequest.ASSIGNED_STATUSES;
 import static org.openmrs.module.emr.paperrecord.PaperRecordRequest.PENDING_STATUSES;
 import static org.openmrs.module.emr.paperrecord.PaperRecordRequest.Status;
 
@@ -331,9 +332,9 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
 
     @Override
     @Transactional(readOnly = true)
-    public PaperRecordRequest getPendingPaperRecordRequestByIdentifier(String identifier) {
+    public PaperRecordRequest getAssignedPaperRecordRequestByIdentifier(String identifier) {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
-        List<PaperRecordRequest> requests = getPaperRecordRequestByIdentifierAndStatus(identifier, PENDING_STATUSES);
+        List<PaperRecordRequest> requests = getPaperRecordRequestByIdentifierAndStatus(identifier, ASSIGNED_STATUSES);
 
         if (requests == null || requests.size() == 0) {
             return null;

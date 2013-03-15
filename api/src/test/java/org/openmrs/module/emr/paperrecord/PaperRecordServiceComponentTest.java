@@ -489,7 +489,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     }
 
     @Test
-    public void testGetPendingRequestByIdentifierShouldReturnOpenRequest() {
+    public void testGetAssignedRequestByIdentifierShouldNotReturnOpenRequest() {
 
         // all these are from the standard test dataset
         Patient patient = patientService.getPatient(2) ;
@@ -498,19 +498,12 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
         paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
 
-        PaperRecordRequest request = paperRecordService.getPendingPaperRecordRequestByIdentifier("101");
-
-        Assert.assertEquals(new Integer(2), request.getPatient().getId());
-        Assert.assertEquals(new Integer(1), request.getRecordLocation().getId());
-        Assert.assertEquals(new Integer(3), request.getRequestLocation().getId());
-        Assert.assertEquals("101", request.getIdentifier());
-        Assert.assertEquals(PaperRecordRequest.Status.OPEN, request.getStatus());
-        Assert.assertNull(request.getAssignee());
-
+        PaperRecordRequest request = paperRecordService.getAssignedPaperRecordRequestByIdentifier("101");
+        Assert.assertNull(request);
     }
 
     @Test
-    public void testGetPendingRequestByIdentifierShouldReturnAssignedPullRequest() throws UnableToPrintLabelException {
+    public void testGetAssignedRequestByIdentifierShouldReturnAssignedPullRequest() throws UnableToPrintLabelException {
 
         // all these are from the standard test dataset
         Patient patient = patientService.getPatient(2) ;
@@ -532,7 +525,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
         Person person = personService.getPerson(7);
         paperRecordService.assignRequests(paperRecordRequests, person, null);
 
-        PaperRecordRequest request = paperRecordService.getPendingPaperRecordRequestByIdentifier("101");
+        PaperRecordRequest request = paperRecordService.getAssignedPaperRecordRequestByIdentifier("101");
 
         Assert.assertEquals(PaperRecordRequest.Status.ASSIGNED_TO_PULL, request.getStatus());
         Assert.assertEquals(new Integer(7), request.getAssignee().getId());
@@ -541,7 +534,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
     }
 
     @Test
-    public void testGetPendingRequestByIdentifierShouldReturnOpenRequestWhenReferencedByPatientIdentifier() {
+    public void testGetAssignedRequestByIdentifierShouldNotReturnOpenRequestWhenReferencedByPatientIdentifier() {
 
         // all these are from the standard test dataset
         Patient patient = patientService.getPatient(2) ;
@@ -550,21 +543,14 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
         paperRecordService.requestPaperRecord(patient, medicalRecordLocation, requestLocation);
 
-        PaperRecordRequest request = paperRecordService.getPendingPaperRecordRequestByIdentifier("101-6");
-
-        Assert.assertEquals(new Integer(2), request.getPatient().getId());
-        Assert.assertEquals(new Integer(1), request.getRecordLocation().getId());
-        Assert.assertEquals(new Integer(3), request.getRequestLocation().getId());
-        Assert.assertEquals("101", request.getIdentifier());
-        Assert.assertEquals(PaperRecordRequest.Status.OPEN, request.getStatus());
-        Assert.assertNull(request.getAssignee());
-
+        PaperRecordRequest request = paperRecordService.getAssignedPaperRecordRequestByIdentifier("101-6");
+        Assert.assertNull(request);
     }
 
     @Test
-    public void testGetPendingRequestByIdentifierShouldReturnNullIfNoActiveRequests() {
+    public void testGetAssignedRequestByIdentifierShouldReturnNullIfNoActiveRequests() {
         // there is a paper record request in the sample database with this identifier, but it is marked as SENT
-        Assert.assertNull(paperRecordService.getPendingPaperRecordRequestByIdentifier("CATBALL"));
+        Assert.assertNull(paperRecordService.getAssignedPaperRecordRequestByIdentifier("CATBALL"));
     }
 
     @Test
@@ -649,7 +635,7 @@ public class PaperRecordServiceComponentTest extends BaseModuleContextSensitiveT
 
     @Test
     public void testGetSentRequestByIdentifierShouldReturnNullIfNoSentRequests() {
-        Assert.assertNull(paperRecordService.getPendingPaperRecordRequestByIdentifier("101"));
+        Assert.assertNull(paperRecordService.getAssignedPaperRecordRequestByIdentifier("101"));
     }
 
     @Test

@@ -86,6 +86,8 @@ public class PaperRecordRequest extends BaseOpenmrsObject {
 
     public static List<Status> PENDING_STATUSES = Arrays.asList(Status.OPEN, Status.ASSIGNED_TO_PULL, Status.ASSIGNED_TO_CREATE);
 
+    public static List<Status> ASSIGNED_STATUSES = Arrays.asList(Status.ASSIGNED_TO_PULL, Status.ASSIGNED_TO_CREATE);
+
     private Integer requestId;
 
     private Patient patient;

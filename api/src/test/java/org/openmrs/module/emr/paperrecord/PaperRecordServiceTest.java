@@ -62,6 +62,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.openmrs.module.emr.paperrecord.PaperRecordRequest.ASSIGNED_STATUSES;
 import static org.openmrs.module.emr.paperrecord.PaperRecordRequest.PENDING_STATUSES;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
@@ -468,7 +469,7 @@ public class PaperRecordServiceTest {
     }
 
     @Test
-    public void getPendingPaperRecordRequestByIdentifierShouldRetrieveRequestByPaperRecordIdentifier() {
+    public void getAssignedPaperRecordRequestByIdentifierShouldRetrieveRequestByPaperRecordIdentifier() {
 
         Patient patient = new Patient();
         patient.setId(15);
@@ -482,18 +483,19 @@ public class PaperRecordServiceTest {
         request.setId(10);
         request.setRequestLocation(requestLocation);
         request.setDateCreated(new Date());
+        request.updateStatus(Status.ASSIGNED_TO_PULL);
 
-        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(PENDING_STATUSES)),
+        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(ASSIGNED_STATUSES)),
                 argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier), argThat(new NullBoolean()))).thenReturn(Collections.singletonList(request));
         IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(request);
 
-        PaperRecordRequest returnedRequest = paperRecordService.getPendingPaperRecordRequestByIdentifier(identifier);
+        PaperRecordRequest returnedRequest = paperRecordService.getAssignedPaperRecordRequestByIdentifier(identifier);
         expectedRequestMatcher.matches(returnedRequest);
 
     }
 
     @Test
-    public void getPendingPaperRecordRequestByIdentifierShouldRetrieveRequestByPatientIdentifier() {
+    public void getAssignedPaperRecordRequestByIdentifierShouldRetrieveRequestByPatientIdentifier() {
 
         Location medicalRecordLocation = createMedicalRecordLocation();
         Location requestLocation = createLocation(4, "Outpatient Clinic");
@@ -513,27 +515,28 @@ public class PaperRecordServiceTest {
         request.setId(10);
         request.setRequestLocation(requestLocation);
         request.setDateCreated(new Date());
+        request.updateStatus(Status.ASSIGNED_TO_PULL);
 
         when(mockPatientService.getPatients(null, "Patient_ID", Collections.singletonList(primaryIdentifierType), true)).thenReturn(Collections.singletonList(patient));
-        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(PENDING_STATUSES)),
+        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(ASSIGNED_STATUSES)),
                 eq(patient), argThat(new NullLocation()), argThat(new NullString()), argThat(new NullBoolean()))).thenReturn(Collections.singletonList(request));
         IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(request);
 
-        PaperRecordRequest returnedRequest = paperRecordService.getPendingPaperRecordRequestByIdentifier("Patient_ID");
+        PaperRecordRequest returnedRequest = paperRecordService.getAssignedPaperRecordRequestByIdentifier("Patient_ID");
         expectedRequestMatcher.matches(returnedRequest);
 
     }
 
     @Test
-    public void getPendingPaperRecordRequestByIdentifierShouldReturnNullIfNoActiveRequestWithThatIdentifier() {
+    public void getAssignedPaperRecordRequestByIdentifierShouldReturnNullIfNoActiveRequestWithThatIdentifier() {
         String identifier = "ABC123";
-        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(PENDING_STATUSES)),
+        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(ASSIGNED_STATUSES)),
                 argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier),  argThat(new NullBoolean()))).thenReturn(null);
-        assertNull(paperRecordService.getPendingPaperRecordRequestByIdentifier(identifier));
+        assertNull(paperRecordService.getAssignedPaperRecordRequestByIdentifier(identifier));
     }
 
     @Test
-    public void getPendingPaperRecordRequestByIdentifierShouldReturnNullIfBlankIdentifierPassed() {
+    public void getAssignedPaperRecordRequestByIdentifierShouldReturnNullIfBlankIdentifierPassed() {
 
         Patient patient = new Patient();
         patient.setId(15);
@@ -548,17 +551,15 @@ public class PaperRecordServiceTest {
         request.setRequestLocation(requestLocation);
         request.setDateCreated(new Date());
 
-        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(PENDING_STATUSES)),
+        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(ASSIGNED_STATUSES)),
                 argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier), argThat(new NullBoolean()))).thenReturn(Collections.singletonList(request));
-        IsExpectedRequest expectedRequestMatcher = new IsExpectedRequest(request);
 
-        PaperRecordRequest returnedRequest = paperRecordService.getPendingPaperRecordRequestByIdentifier(identifier);
-
+        PaperRecordRequest returnedRequest = paperRecordService.getAssignedPaperRecordRequestByIdentifier(identifier);
         assertNull(returnedRequest);
     }
 
     @Test(expected = IllegalStateException.class)
-    public void getPendingPaperRecordRequestByIdentifierShouldThrowIllegalStateExceptionIfMultipleActiveRequestsFound() {
+    public void getAssignedPaperRecordRequestByIdentifierShouldThrowIllegalStateExceptionIfMultipleActiveRequestsFound() {
 
         Patient patient = new Patient();
         patient.setId(15);
@@ -578,10 +579,10 @@ public class PaperRecordServiceTest {
         request.setRequestLocation(requestLocation);
         request.setDateCreated(new Date());
 
-        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(PENDING_STATUSES)),
+        when(mockPaperRecordDAO.findPaperRecordRequests(argThat(new StatusListOf(ASSIGNED_STATUSES)),
                 argThat(new NullPatient()), argThat(new NullLocation()), eq(identifier),  argThat(new NullBoolean())))
                 .thenReturn(Arrays.asList(request, anotherRequest));
-        paperRecordService.getPendingPaperRecordRequestByIdentifier(identifier);
+        paperRecordService.getAssignedPaperRecordRequestByIdentifier(identifier);
     }
 
     @Test
