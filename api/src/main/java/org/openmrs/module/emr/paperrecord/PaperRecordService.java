@@ -163,11 +163,11 @@ public interface PaperRecordService extends OpenmrsService {
     List<PaperRecordRequest> getAssignedPaperRecordRequestsToCreate();
 
     /**
-     * Returns the pending (ie, open or assigned) paper record request (if any) for the record with the specified identifier
+     * Returns the assigned paper record request (if any) for the record with the specified identifier
      * (there should only be one pending request per identifier & *location*)
      *
      * @param identifier the paper record identifier OR the patient identifier associated with the request
-     * @return the pending (ie, open or assigned) paper record request with the specified identifier (returns null if no request found)
+     * @return the assigned paper record request with the specified identifier (returns null if no request found)
      * @throws IllegalStateException if more than one request is found
      */
     @Authorized(EmrConstants.PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS)
