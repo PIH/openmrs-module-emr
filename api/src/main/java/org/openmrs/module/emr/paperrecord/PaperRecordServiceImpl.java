@@ -355,6 +355,10 @@ public class PaperRecordServiceImpl extends BaseOpenmrsService implements PaperR
     private List<PaperRecordRequest> getPaperRecordRequestByIdentifierAndStatus(String identifier, List<Status> statusList) {
         // TODO: once we have multiple medical record locations, we will need to add location as a criteria
 
+        if (StringUtils.isBlank(identifier)) {
+            return new ArrayList<PaperRecordRequest>();
+        }
+
         // first see if we find any requests by paper record identifier
         List<PaperRecordRequest> requests = paperRecordRequestDAO.findPaperRecordRequests(
                 statusList, null, null, identifier, null);
