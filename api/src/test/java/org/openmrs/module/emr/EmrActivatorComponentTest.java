@@ -56,10 +56,6 @@ public class EmrActivatorComponentTest extends BaseModuleContextSensitiveTest {
     private HtmlFormEntryService htmlFormEntryService;
 
     @Autowired
-    @Qualifier("consultService")
-    private ConsultService consultService;
-
-    @Autowired
     @Qualifier("emrProperties")
     private EmrProperties emrProperties;
 

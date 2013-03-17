@@ -38,6 +38,7 @@ import java.util.List;
 
 import static org.openmrs.module.emr.EmrConstants.LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD;
 import static org.openmrs.module.emr.EmrConstants.TELEPHONE_ATTRIBUTE_TYPE_NAME;
+import static org.openmrs.module.emr.EmrConstants.TEST_PATIENT_ATTRIBUTE_UUID;
 import static org.openmrs.module.emr.EmrConstants.UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME;
 
 @Component("emrProperties")
@@ -148,6 +149,15 @@ public class EmrProperties extends ModuleProperties {
         type = personService.getPersonAttributeTypeByName(UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME);
         if (type == null) {
             throw new IllegalStateException("Configuration required: " + UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME);
+        }
+        return type;
+    }
+
+    public PersonAttributeType getTestPatientPersonAttributeType() {
+        PersonAttributeType type = null;
+        type = personService.getPersonAttributeTypeByUuid(TEST_PATIENT_ATTRIBUTE_UUID);
+        if (type == null) {
+            throw new IllegalStateException("Configuration required: Test Patient Attribute UUID");
         }
         return type;
     }

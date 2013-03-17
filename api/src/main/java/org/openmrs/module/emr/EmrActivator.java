@@ -20,11 +20,14 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.ConceptSource;
 import org.openmrs.GlobalProperty;
 import org.openmrs.LocationAttributeType;
+import org.openmrs.PersonAttribute;
+import org.openmrs.PersonAttributeType;
 import org.openmrs.Privilege;
 import org.openmrs.Role;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
+import org.openmrs.api.PersonService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.customdatatype.datatype.FreeTextDatatype;
@@ -53,6 +56,7 @@ import java.util.Set;
 import static org.openmrs.module.emr.EmrConstants.EMR_MODULE_ID;
 import static org.openmrs.module.emr.EmrConstants.LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER;
 import static org.openmrs.module.emr.EmrConstants.LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD;
+import static org.openmrs.module.emr.EmrConstants.TEST_PATIENT_ATTRIBUTE_UUID;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
@@ -60,8 +64,9 @@ import static org.openmrs.module.emr.EmrConstants.LOCATION_ATTRIBUTE_TYPE_NAME_T
 public class EmrActivator implements ModuleActivator {
 
     protected Log log = LogFactory.getLog(getClass());
-	
-	/**
+    private PersonService personService;
+
+    /**
 	 * @see ModuleActivator#willRefreshContext()
 	 */
 	public void willRefreshContext() {
@@ -162,6 +167,17 @@ public class EmrActivator implements ModuleActivator {
 	public void willStart() {
 		log.info("Starting EMR Module");
 	}
+
+    private PersonAttributeType buildTestPersonAttributeType(){
+        PersonAttributeType personAttributeType = new PersonAttributeType();
+        personAttributeType.setName("Test Patient");
+        personAttributeType.setDescription("Flag to describe if the patient was created to a test or not");
+        personAttributeType.setUuid(TEST_PATIENT_ATTRIBUTE_UUID);
+        personAttributeType.setFormat("java.lang.Boolean");
+
+
+        return personAttributeType;
+    }
 	
 	/**
 	 * @see ModuleActivator#started()
@@ -173,6 +189,9 @@ public class EmrActivator implements ModuleActivator {
             AdministrationService administrationService = Context.getAdministrationService();
             HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
             ConceptService conceptService = Context.getConceptService();
+            personService = Context.getPersonService();
+
+            saveTestPatientAttribute();
 
             createGlobalProperties(administrationService);
             createLocationAttributeTypes(locationService);
@@ -188,6 +207,14 @@ public class EmrActivator implements ModuleActivator {
 
         log.info("EMR Module started");
 	}
+
+    private void saveTestPatientAttribute() {
+        PersonAttributeType personAttributeTypeByUuid = personService.getPersonAttributeTypeByUuid(TEST_PATIENT_ATTRIBUTE_UUID);
+
+        if (personAttributeTypeByUuid == null) {
+            personService.savePersonAttributeType(buildTestPersonAttributeType());
+        }
+    }
 
     /**
      * (public so that it can be used in tests, but you shouldn't use this in production code)

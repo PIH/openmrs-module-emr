@@ -241,4 +241,16 @@ public class PatientDomainWrapper {
         }
         return null;
     }
+
+    public boolean isTestPatient() {
+        boolean testPatient = false;
+        PersonAttributeType testPatientPersonAttributeType = emrProperties.getTestPatientPersonAttributeType();
+        if(patient!=null){
+            PersonAttribute att = patient.getAttribute(testPatientPersonAttributeType);
+            if (att != null && "true".equals(att.getValue())) {
+                testPatient = true;
+            }
+        }
+        return testPatient;
+    }
 }

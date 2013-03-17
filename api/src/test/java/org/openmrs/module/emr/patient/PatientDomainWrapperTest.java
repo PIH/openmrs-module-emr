@@ -19,6 +19,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.openmrs.module.emr.EmrConstants.TEST_PATIENT_ATTRIBUTE_UUID;
 
 public class PatientDomainWrapperTest {
 
@@ -50,6 +51,44 @@ public class PatientDomainWrapperTest {
         when(emrProperties.getUnknownPatientPersonAttributeType()).thenReturn(personAttributeType);
 
         assertTrue(patientDomainWrapper.isUnknownPatient());
+
+    }
+
+    @Test
+    public void shouldVerifyIfPatientIsATest(){
+
+        PersonAttributeType personAttributeType = new PersonAttributeType();
+        personAttributeType.setPersonAttributeTypeId(11);
+        personAttributeType.setName("Test Patient");
+        personAttributeType.setFormat("java.lang.Boolean");
+        personAttributeType.setUuid(TEST_PATIENT_ATTRIBUTE_UUID);
+
+        PersonAttribute newAttribute = new PersonAttribute(personAttributeType, "true");
+
+        patient.addAttribute(newAttribute);
+
+        when(emrProperties.getTestPatientPersonAttributeType()).thenReturn(personAttributeType);
+
+        assertTrue(patientDomainWrapper.isTestPatient());
+
+    }
+
+    @Test
+    public void shouldVerifyIfPatientIsNotATest(){
+
+        PersonAttributeType personAttributeType = new PersonAttributeType();
+        personAttributeType.setPersonAttributeTypeId(11);
+        personAttributeType.setName("Test Patient");
+        personAttributeType.setFormat("java.lang.Boolean");
+        personAttributeType.setUuid(TEST_PATIENT_ATTRIBUTE_UUID);
+
+        PersonAttribute newAttribute = new PersonAttribute(personAttributeType, "false");
+
+        patient.addAttribute(newAttribute);
+
+        when(emrProperties.getTestPatientPersonAttributeType()).thenReturn(personAttributeType);
+
+        assertFalse(patientDomainWrapper.isTestPatient());
 
     }
 
