@@ -36,4 +36,10 @@
             ${ ui.message("emr.mergePatients") }
         </div>
     </a>
+    <a class="button big" href="${ ui.pageLink("mirebalais/patientRegistration", "appRouter", [ "task": "patientRegistration", "testPatient" : true ]) }">
+        <div class="task">
+            <i class="icon-register"></i>
+            ${ ui.message("emr.testPatient.registration") }
+        </div>
+    </a>
 </div>
