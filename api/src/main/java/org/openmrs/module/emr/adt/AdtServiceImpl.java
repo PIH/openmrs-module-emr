@@ -383,13 +383,19 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
 		
 		List<VisitSummary> active = new ArrayList<VisitSummary>();
 		for (Visit candidate : candidates) {
-			if (isActive(candidate)) {
+			if (isActive(candidate) && itBelongsToARealPatient(candidate)) {
 				active.add(new VisitSummary(candidate, emrProperties));
 			}
 		}
 		
 		return active;
 	}
+
+    private boolean itBelongsToARealPatient(Visit candidate) {
+        Patient patient = candidate.getPatient();
+        PatientDomainWrapper domainWrapper = new PatientDomainWrapper(patient, emrProperties, null, null, null);
+        return !domainWrapper.isTestPatient();
+    }
 
     @Override
     public Encounter getLastEncounter(Patient patient) {
