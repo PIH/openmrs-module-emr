@@ -15,6 +15,7 @@
 package org.openmrs.module.emr;
 
 import org.openmrs.Concept;
+import org.openmrs.ConceptMapType;
 import org.openmrs.ConceptSource;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
@@ -213,4 +214,13 @@ public class EmrProperties extends ModuleProperties {
             return null;
         }
     }
+
+    public ConceptMapType getSameAsConceptMapType() {
+        return conceptService.getConceptMapTypeByUuid(EmrConstants.SAME_AS_CONCEPT_MAP_TYPE_UUID);
+    }
+
+    public ConceptMapType getNarrowerThanConceptMapType() {
+        return conceptService.getConceptMapTypeByUuid(EmrConstants.NARROWER_THAN_CONCEPT_MAP_TYPE_UUID);
+    }
+
 }

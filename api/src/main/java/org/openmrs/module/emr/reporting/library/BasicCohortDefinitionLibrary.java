@@ -14,15 +14,18 @@
 
 package org.openmrs.module.emr.reporting.library;
 
+import org.openmrs.Concept;
 import org.openmrs.annotation.Handler;
 import org.openmrs.module.emr.reporting.BaseDefinitionLibrary;
 import org.openmrs.module.emr.reporting.DocumentedDefinition;
+import org.openmrs.module.emr.reporting.cohort.definition.DiagnosisCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -74,4 +77,12 @@ public class BasicCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDe
         return cd;
     }
 
+    @DocumentedDefinition(value = "specific coded diagnoses between dates", definition = "Patients with any diagnosis of $codedDiagnoses between $onOrAfter and $onOrBefore")
+    public DiagnosisCohortDefinition getSpecificCodedDiagnosesBetweenDates() {
+        DiagnosisCohortDefinition cd = new DiagnosisCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "On or after date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "On or before date", Date.class));
+        cd.addParameter(new Parameter("codedDiagnoses", "Which coded diagnoses", Concept.class, List.class, null));
+        return cd;
+    }
 }

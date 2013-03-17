@@ -23,6 +23,7 @@ import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -130,6 +131,13 @@ public abstract class BaseDefinitionLibrary<T extends Definition> implements Def
             mappings = ""; // probably not necessary, just to be safe
         }
         return new Mapped<T>(parameterizable, ParameterizableUtil.createParameterMappings(mappings));
+    }
+
+    protected <T extends Parameterizable> Mapped<T> noMappings(T parameterizable) {
+        if (parameterizable == null) {
+            throw new NullPointerException("Programming error: missing parameterizable");
+        }
+        return new Mapped<T>(parameterizable, Collections.<String, Object>emptyMap());
     }
 
 }

@@ -55,8 +55,8 @@ public class BasicDimensionLibrary extends BaseDefinitionLibrary<Dimension> {
     @DocumentedDefinition(value = "gender", definition = "males | females")
     public CohortDefinitionDimension getGenderDimension() {
         CohortDefinitionDimension gender = new CohortDefinitionDimension();
-        gender.addCohortDefinition("female", map(cohortDefinitionService.getDefinitionByUuid(BasicCohortDefinitionLibrary.PREFIX + "females"), ""));
-        gender.addCohortDefinition("male", map(cohortDefinitionService.getDefinitionByUuid(BasicCohortDefinitionLibrary.PREFIX + "males"), ""));
+        gender.addCohortDefinition("female", noMappings(cohortDefinitionService.getDefinitionByUuid(BasicCohortDefinitionLibrary.PREFIX + "females")));
+        gender.addCohortDefinition("male", noMappings(cohortDefinitionService.getDefinitionByUuid(BasicCohortDefinitionLibrary.PREFIX + "males")));
         return gender;
     }
 
