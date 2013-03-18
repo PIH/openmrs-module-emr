@@ -51,7 +51,7 @@
       border-bottom: 1px solid white;
       padding: 10px 10px 0px 10px;
       min-height: 55px;
-      width: 220px;
+      width: 180px;
       color: #666;
       background: #eee;
       padding-bottom: 5px;
@@ -149,7 +149,7 @@
     vertical-align: top;
     padding-left: 25px;
     border-top: 1px solid #ccc;
-    width: 72.5%;
+    width: 76.6%;
     margin-left: -6px;
 
     .visit-status {
@@ -203,6 +203,8 @@
     margin-bottom: 20px;
     .delete-item {
       top: 15px;
+      padding: 0;
+      margin: 0;
     }
   }
 
@@ -240,7 +242,7 @@
       &>div {
         border-right: 1px solid #ccc;
         padding: 15px 10px;
-        max-width: 334px;
+        max-width: 321px;
       }
 
       &:first-child {
@@ -254,6 +256,10 @@
           margin-left: -3px;
           border: none;
           background: #f9f9f9;
+        }
+
+        & > .details-action {
+          max-width: 144px;
         }
       }
     }
@@ -284,7 +290,7 @@
 
      &:not(.collapsed) {
         .hide-details {
-          display: inline-block;
+          display: inline;
         }
 
         .show-details {

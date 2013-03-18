@@ -92,7 +92,7 @@
                     </li>
                     {{ if (encounter.encounterType.uuid != "873f968a-73a8-4f9c-ac78-9f4778b751b6") {}}
                     <li>
-                        <div>
+                        <div class="details-action">
                             <a class="view-details collapsed" href='javascript:void(0);' data-encounter-id="{{- encounter.encounterId }}" data-encounter-form="{{- encounter.form != null}}" data-target="#encounter-summary{{- i }}" data-toggle="collapse" data-target="#encounter-summary{{- i }}">
                                 <span class="show-details">${ ui.message("emr.patientDashBoard.showDetails")}</span>
                                 <span class="hide-details">${ ui.message("emr.patientDashBoard.hideDetails")}</span>
