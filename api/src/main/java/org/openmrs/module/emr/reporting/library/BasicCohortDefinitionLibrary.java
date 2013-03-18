@@ -16,14 +16,19 @@ package org.openmrs.module.emr.reporting.library;
 
 import org.openmrs.Concept;
 import org.openmrs.annotation.Handler;
+import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.reporting.BaseDefinitionLibrary;
 import org.openmrs.module.emr.reporting.DocumentedDefinition;
 import org.openmrs.module.emr.reporting.cohort.definition.DiagnosisCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.PersonAttributeCohortDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +39,9 @@ import java.util.List;
 public class BasicCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefinition> {
 
     public static final String PREFIX = "emr.cohortDefinition.";
+
+    @Autowired
+    EmrProperties emrProperties;
 
     @Override
     public String getUuidPrefix() {
@@ -84,5 +92,18 @@ public class BasicCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDe
         cd.addParameter(new Parameter("onOrBefore", "On or before date", Date.class));
         cd.addParameter(new Parameter("codedDiagnoses", "Which coded diagnoses", Concept.class, List.class, null));
         return cd;
+    }
+
+    @DocumentedDefinition(value = "exclude test patients")
+    public CohortDefinition getExcludeTestPatients() {
+        PersonAttributeCohortDefinition personAttributeCohortDefinition = new PersonAttributeCohortDefinition();
+        personAttributeCohortDefinition.setAttributeType(emrProperties.getTestPatientPersonAttributeType());
+        //the method add value has a bug, using set values for now
+        personAttributeCohortDefinition.setValues(Arrays.asList("true"));
+
+        CompositionCohortDefinition excludeTestPatientsCohortDefinition = new CompositionCohortDefinition();
+        excludeTestPatientsCohortDefinition.addSearch("test", map((CohortDefinition) personAttributeCohortDefinition, ""));
+        excludeTestPatientsCohortDefinition.setCompositionString("NOT test");
+        return excludeTestPatientsCohortDefinition;
     }
 }
