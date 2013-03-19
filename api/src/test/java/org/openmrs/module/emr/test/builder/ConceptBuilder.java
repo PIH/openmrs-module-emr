@@ -57,6 +57,9 @@ public class ConceptBuilder {
     }
 
     public ConceptBuilder addMapping(ConceptMapType mapType, ConceptSource source, String code) {
+        if (mapType == null || source == null || code == null) {
+            throw new IllegalArgumentException("mapType, source, and code are all required");
+        }
         ConceptReferenceTerm term = new ConceptReferenceTerm(source, code, null);
         conceptService.saveConceptReferenceTerm(term);
         ConceptMap conceptMap = new ConceptMap(term, mapType);

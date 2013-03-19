@@ -41,6 +41,9 @@ public class EmrConceptServiceImpl extends BaseOpenmrsService implements EmrConc
 
     @Override
     public List<Concept> getConceptsSameOrNarrowerThan(ConceptReferenceTerm term) {
+        if (term == null) {
+            throw new IllegalArgumentException("term is required");
+        }
         return dao.getConceptsMappedTo(Arrays.asList(emrProperties.getSameAsConceptMapType(), emrProperties.getNarrowerThanConceptMapType()), term);
     }
 
