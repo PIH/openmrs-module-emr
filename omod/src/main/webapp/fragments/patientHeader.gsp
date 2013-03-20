@@ -44,9 +44,14 @@
         </h1>
         <div class="gender-age">
             <span>${ ui.message("emr.gender." + patient.gender) }</span>
-
             <% if (patient.birthdate) { %>
-            <span>${ ui.message("emr.ageYears", patient.age) }</span>
+                <% if (patient.age > 0) { %>
+                    <span>${ ui.message("emr.ageYears", patient.age) }</span>
+                <% } else if (patient.ageInMonths > 0) { %>
+                    <span>${ ui.message("emr.ageMonths", patient.ageInMonths) }</span>
+                <% } else { %>
+                    <span>${ ui.message("emr.ageDays", patient.ageInDays) }</span>
+                <% } %>
             <% } else { %>
             <span>${ ui.message("emr.unknownAge") }</span>
             <% } %>

@@ -10,6 +10,7 @@ import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.adt.AdtService;
 import org.openmrs.module.emr.visit.VisitDomainWrapper;
 
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -163,6 +164,34 @@ public class PatientDomainWrapperTest {
 
         assertNotNull(returnedName);
 
+    }
+
+    @Test
+    public void shouldCalculateCorrectAgeInMonthsForDeceasedPatient() {
+        patient.setDead(true);
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(2012, 11, 4);
+        patient.setBirthdate(cal.getTime());
+
+        cal.set(2013, 2, 1);
+        patient.setDeathDate(cal.getTime());
+
+        assertThat(patientDomainWrapper.getAgeInMonths(), is(2));
+    }
+
+    @Test
+    public void shouldCalculateCorrectAgeInDaysForDeceasedPatient() {
+        patient.setDead(true);
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(2013, 1, 26);
+        patient.setBirthdate(cal.getTime());
+
+        cal.set(2013, 2, 1);
+        patient.setDeathDate(cal.getTime());
+
+        assertThat(patientDomainWrapper.getAgeInDays(), is(3));
     }
 
     private PersonName createPreferredPersonName(String givenName, String familyName) {

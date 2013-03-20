@@ -14,6 +14,9 @@
 
 package org.openmrs.module.emr.patient;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.Months;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -90,6 +93,26 @@ public class PatientDomainWrapper {
 
     public Integer getAge() {
         return patient.getAge();
+    }
+
+    public Integer getAgeInMonths() {
+
+        if (patient.getBirthdate() == null) {
+            return null;
+        }
+
+        Date endDate = patient.isDead() ? patient.getDeathDate() : new Date();
+        return Months.monthsBetween(new DateTime(patient.getBirthdate()), new DateTime(endDate)).getMonths();
+    }
+
+    public Integer getAgeInDays() {
+
+        if (patient.getBirthdate() == null) {
+            return null;
+        }
+
+        Date endDate = patient.isDead() ? patient.getDeathDate() : new Date();
+        return Days.daysBetween(new DateTime(patient.getBirthdate()), new DateTime(endDate)).getDays();
     }
 
     public Boolean getBirthdateEstimated() {
