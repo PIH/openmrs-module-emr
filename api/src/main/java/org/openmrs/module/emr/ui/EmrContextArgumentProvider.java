@@ -26,6 +26,7 @@ import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.adt.AdtService;
 import org.openmrs.module.emr.adt.VisitSummary;
+import org.openmrs.module.emr.utils.FeatureToggleProperties;
 import org.openmrs.ui.framework.fragment.FragmentContext;
 import org.openmrs.ui.framework.fragment.FragmentModelConfigurator;
 import org.openmrs.ui.framework.fragment.PossibleFragmentActionArgumentProvider;
@@ -65,6 +66,10 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
     EmrProperties emrProperties;
 
     @Autowired
+    @Qualifier("featureToggles")
+    FeatureToggleProperties featureToggle;
+
+    @Autowired
     @Qualifier("providerService")
     ProviderService providerService;
 
@@ -75,6 +80,7 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
         EmrContext emrContext = buildEmrContext(request);
         pageContext.getModel().addAttribute("emrContext", emrContext);
         pageContext.getModel().addAttribute("emrProperties", emrProperties);
+        pageContext.getModel().addAttribute("featureToggles", featureToggle);
     }
 
     @Override
