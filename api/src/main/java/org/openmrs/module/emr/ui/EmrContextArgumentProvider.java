@@ -90,6 +90,7 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
         EmrContext emrContext = (EmrContext) pageModel.get("emrContext");
         fragmentContext.getModel().addAttribute("emrContext", emrContext);
         fragmentContext.getModel().addAttribute("emrProperties", emrProperties);
+        fragmentContext.getModel().addAttribute("featureToggles", featureToggle);
     }
 
     @Override
