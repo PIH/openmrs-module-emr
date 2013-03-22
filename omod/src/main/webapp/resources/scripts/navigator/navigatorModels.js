@@ -129,7 +129,7 @@ function QuestionModel(elem, section, titleListElem) {
         return new FieldModel($(container).find("input, select").first(), this, $(container).find("span.field-error").first());
     }, this);
     this.questionLegend = this.element.find('legend').first();
-    this.questionLi = $('<li><span>' + this.questionLegend.text() + '</span></li>');
+    this.questionLi = $('<li class="question-legend"><i class="icon-ok"></i><span>' + this.questionLegend.text() + '</span></li>');
     this.questionLi.appendTo(titleListElem);
     this.fieldSeparator = this.element.attr('field-separator') ? this.element.attr('field-separator') : ' ';
 }
