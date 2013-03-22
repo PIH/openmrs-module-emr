@@ -54,6 +54,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
      <div class="left-column">
         <label for="study-search"><strong>${ ui.message("emr.orderXray.studySearchInstructions") }</strong></label><br/>
         <input id="study-search" type="text"
+               autofocus="autofocus"
                data-bind="autocomplete:searchTerm, search:convertedStudies, select:selectStudy, clearValue:function() { return true; }"
                placeholder="${ ui.message("emr.orderXray.studySearchPlaceholder") }"/>
     </div>
