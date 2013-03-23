@@ -49,4 +49,11 @@ ${ ui.includeFragment("emr", "header") }
     jq(document).ajaxError(function(event, jqxhr) {
         emr.redirectOnAuthenticationFailure(jqxhr);
     });
+
+    var featureToggles = {};
+
+    <% featureToggles.getToggleMap().each { %>
+        featureToggles["${it.key}"] = "${it.value}";
+    <% } %>
+
 </script>

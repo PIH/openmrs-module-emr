@@ -240,6 +240,10 @@ var emr = (function($) {
                 ret += accentMap[ term.charAt(i) ] || term.charAt(i);
             }
             return ret;
+        },
+
+        getToggle: function(key) {
+            return /^true$/i.test(featureToggles[key]);
         }
     };
 

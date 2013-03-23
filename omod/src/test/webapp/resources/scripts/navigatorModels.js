@@ -1,5 +1,12 @@
 describe("Test for simple form models", function() {
 
+    // override feature toggling so that every feature is on
+    beforeEach(function() {
+        emr.getToggle = function() {
+            return true;
+        }
+    });
+
     describe("Unit tests for FieldModel", function() {
 
         it("should select and unselect the field", function() {
@@ -116,6 +123,122 @@ describe("Test for simple form models", function() {
             expect(questionModel.isSelected).toBe(false);
             expect(firstField.unselect).toHaveBeenCalled();
             expect(secondField.unselect).toHaveBeenCalled();
+        });
+
+        it("should mark question has done if first field has value", function() {
+            var questionModel = new QuestionModel();
+            var firstField = jasmine.createSpyObj('firstField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
+            var secondField = jasmine.createSpyObj('secondField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
+            firstField.value.andReturn("1");
+            secondField.value.andReturn("");
+            questionModel.fields = [firstField, secondField];
+            questionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass']);
+            spyOn(questionModel.questionLi, 'addClass');
+            spyOn(questionModel.questionLi, 'removeClass');
+
+            // select the question
+            questionModel.toggleSelection();
+
+            // unselect the question
+            questionModel.toggleSelection();
+            expect(questionModel.questionLi.addClass).toHaveBeenCalledWith("done");
+        });
+
+        it("should mark question has done if second field has value", function() {
+            var questionModel = new QuestionModel();
+            var firstField = jasmine.createSpyObj('firstField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
+            var secondField = jasmine.createSpyObj('secondField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
+            firstField.value.andReturn("");
+            secondField.value.andReturn("1");
+            questionModel.fields = [firstField, secondField];
+            questionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass']);
+            spyOn(questionModel.questionLi, 'addClass');
+            spyOn(questionModel.questionLi, 'removeClass');
+
+            // select the question
+            questionModel.toggleSelection();
+
+            // unselect the question
+            questionModel.toggleSelection();
+            expect(questionModel.questionLi.addClass).toHaveBeenCalledWith("done");
+        });
+
+        it("should mark question has done if both fields have value", function() {
+            var questionModel = new QuestionModel();
+            var firstField = jasmine.createSpyObj('firstField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
+            var secondField = jasmine.createSpyObj('secondField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
+            firstField.value.andReturn("1");
+            secondField.value.andReturn("1");
+            questionModel.fields = [firstField, secondField];
+            questionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass']);
+            spyOn(questionModel.questionLi, 'addClass');
+            spyOn(questionModel.questionLi, 'removeClass');
+
+            // select the question
+            questionModel.toggleSelection();
+
+            // unselect the question
+            questionModel.toggleSelection();
+            expect(questionModel.questionLi.addClass).toHaveBeenCalledWith("done");
+        });
+
+        it("should not mark question has done if neither fields have value", function() {
+            var questionModel = new QuestionModel();
+            var firstField = jasmine.createSpyObj('firstField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
+            var secondField = jasmine.createSpyObj('secondField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
+            firstField.value.andReturn("");
+            secondField.value.andReturn("");
+            questionModel.fields = [firstField, secondField];
+            questionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass']);
+            spyOn(questionModel.questionLi, 'addClass');
+            spyOn(questionModel.questionLi, 'removeClass');
+
+            // select the question
+            questionModel.toggleSelection();
+
+            // unselect the question
+            questionModel.toggleSelection();
+            expect(questionModel.questionLi.removeClass).toHaveBeenCalledWith("done");
+        });
+
+        it("should not mark question as done if expected field does not have value", function() {
+            var questionModel = new QuestionModel();
+            var firstField = jasmine.createSpyObj('firstField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
+            var secondField = jasmine.createSpyObj('secondField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
+            firstField.value.andReturn("1");
+            secondField.expected = true;
+            secondField.value.andReturn("");
+            questionModel.fields = [firstField, secondField];
+            questionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass']);
+            spyOn(questionModel.questionLi, 'addClass');
+            spyOn(questionModel.questionLi, 'removeClass');
+
+            // select the question
+            questionModel.toggleSelection();
+
+            // unselect the question
+            questionModel.toggleSelection();
+            expect(questionModel.questionLi.removeClass).toHaveBeenCalledWith("done");
+        });
+
+        it("should mark question as done if expected field has value", function() {
+            var questionModel = new QuestionModel();
+            var firstField = jasmine.createSpyObj('firstField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
+            var secondField = jasmine.createSpyObj('secondField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
+            firstField.value.andReturn("");
+            secondField.expected = true;
+            secondField.value.andReturn("1");
+            questionModel.fields = [firstField, secondField];
+            questionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass']);
+            spyOn(questionModel.questionLi, 'addClass');
+            spyOn(questionModel.questionLi, 'removeClass');
+
+            // select the question
+            questionModel.toggleSelection();
+
+            // unselect the question
+            questionModel.toggleSelection();
+            expect(questionModel.questionLi.addClass).toHaveBeenCalledWith("done");
         });
 
         it("should state the question is valid", function() {

@@ -20,7 +20,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 @Component("featureToggles")
 public class FeatureToggleProperties {
@@ -35,8 +37,12 @@ public class FeatureToggleProperties {
 
     public boolean getToggle(String key) {
         Properties toggles = loadToggles();
-
         return Boolean.parseBoolean(toggles.getProperty(key, "false"));
+    }
+
+    public Set<Map.Entry<Object,Object>> getToggleMap() {
+        Properties toggles = loadToggles();
+        return toggles.entrySet();
     }
 
     private Properties loadToggles() {

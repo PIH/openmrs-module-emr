@@ -37,14 +37,14 @@ function FieldModel(elem, parentQuestion, messagesContainer) {
     this.messagesContainer = messagesContainer;
     this.validators = [];
     this.exitHandlers = [];
+    this.expected = false;  // whether or not this field is "expected" to have a value (less strict than required)
 
     var classes = this.element.attr("class");
     if(classes) {
         _.each(classes.split(' '), function(klass) {
             Validators[klass] && this.validators.push(Validators[klass]);
-        }, this);
-        _.each(classes.split(' '), function(klass) {
             ExitHandlers[klass] && this.exitHandlers.push(ExitHandlers[klass]);
+            if (klass == "expected") { this.expected = true; }
         }, this);
     }
 }
@@ -143,9 +143,28 @@ QuestionModel.prototype.select = function() {
 }
 QuestionModel.prototype.unselect = function() {
     SelectableModel.prototype.unselect.apply(this);
+
     this.valueAsText = _.map(this.fields, function(field) { return field.displayValue() }, this).join(this.fieldSeparator);
+
     _.each(this.fields, function(field) { field.unselect(); });
+
     this.questionLi.removeClass("focused");
+
+    // see if any of the fields for this question have a value
+    var anyFieldHasValue =  _.any(this.fields, function(field) {
+        return field.value() ? true : false;
+    })
+
+    // see if any fields marked as expected are missing a value
+    var expectedFieldMissingValue = _.any(this.fields, function(field) {
+        return field.expected ? (!field.value() ? true : false) : false;
+    })
+
+    if (emr.getToggle("navigatorQuestionCheckmarks")) {
+        // mark the question as done at least one of the fields has a value, and all the expected fields have a value
+        anyFieldHasValue && !expectedFieldMissingValue ? this.questionLi.addClass("done") :
+              this.questionLi.removeClass("done");
+    }
 }
 QuestionModel.prototype.isValid = function() {
     return _.reduce(this.fields, function(memo, field) {
