@@ -53,6 +53,13 @@ public interface AdtService extends OpenmrsService {
     Visit getActiveVisit(Patient patient, Location department);
 
     /**
+     * Close the patient's active visit at the given location
+     * @param visit
+     * @return
+     */
+    void closeAndSaveVisit(Visit visit);
+
+    /**
      * Like #getActiveVisit, but if the patient has no active visit, one is created (and persisted).
      * (This has the same side-effects as #getActiveVisit.)
      * The visit's location will be a valid visit location per our business logic.

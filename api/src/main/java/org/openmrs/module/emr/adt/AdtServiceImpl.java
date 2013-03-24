@@ -194,7 +194,9 @@ public class AdtServiceImpl extends BaseOpenmrsService implements AdtService {
         return ret;
     }
 
-    private void closeAndSaveVisit(Visit visit) {
+    @Override
+    @Transactional
+    public void closeAndSaveVisit(Visit visit) {
         visit.setStopDatetime(guessVisitStopDatetime(visit));
         visitService.saveVisit(visit);
     }
