@@ -242,7 +242,7 @@ var emr = (function($) {
             return ret;
         },
 
-        getToggle: function(key) {
+        isFeatureEnabled: function(key) {
             return /^true$/i.test(featureToggles[key]);
         }
     };

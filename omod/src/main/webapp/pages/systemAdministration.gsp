@@ -36,7 +36,7 @@
             ${ ui.message("emr.mergePatients") }
         </div>
     </a>
-    <% if(featureToggles.getToggle('registerTestPatient')) { %>
+    <% if(featureToggles.isFeatureEnabled('registerTestPatient')) { %>
     <a class="button big" href="${ ui.pageLink("mirebalais/patientRegistration", "appRouter", [ "task": "patientRegistration", "testPatient" : true ]) }">
         <div class="task">
             <i class="icon-register"></i>

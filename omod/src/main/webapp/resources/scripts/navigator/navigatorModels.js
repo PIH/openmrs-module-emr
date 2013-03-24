@@ -160,7 +160,7 @@ QuestionModel.prototype.unselect = function() {
         return field.expected ? (!field.value() ? true : false) : false;
     })
 
-    if (emr.getToggle("navigatorQuestionCheckmarks")) {
+    if (emr.isFeatureEnabled("navigatorQuestionCheckmarks")) {
         // mark the question as done at least one of the fields has a value, and all the expected fields have a value
         anyFieldHasValue && !expectedFieldMissingValue ? this.questionLi.addClass("done") :
               this.questionLi.removeClass("done");

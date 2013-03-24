@@ -2,7 +2,7 @@ describe("Test for simple form models", function() {
 
     // override feature toggling so that every feature is on
     beforeEach(function() {
-        emr.getToggle = function() {
+        emr.isFeatureEnabled= function() {
             return true;
         }
     });

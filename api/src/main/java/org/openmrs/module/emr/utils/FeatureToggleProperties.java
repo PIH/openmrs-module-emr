@@ -35,7 +35,7 @@ public class FeatureToggleProperties {
         propertiesFile = System.getenv(FEATURE_TOGGLE_PROPERTIES_FILE);
     }
 
-    public boolean getToggle(String key) {
+    public boolean isFeatureEnabled(String key) {
         Properties toggles = loadToggles();
         return Boolean.parseBoolean(toggles.getProperty(key, "false"));
     }

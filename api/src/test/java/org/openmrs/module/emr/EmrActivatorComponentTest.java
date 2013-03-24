@@ -19,7 +19,6 @@ import org.openmrs.LocationAttributeType;
 import org.openmrs.Role;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.UserService;
-import org.openmrs.module.emr.consult.ConsultService;
 import org.openmrs.module.emr.printer.Printer;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.scheduler.SchedulerService;
