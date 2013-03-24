@@ -243,7 +243,7 @@ var emr = (function($) {
         },
 
         isFeatureEnabled: function(key) {
-            return /^true$/i.test(featureToggles[key]);
+            return featureToggles[key];
         }
     };
 

@@ -53,7 +53,7 @@ ${ ui.includeFragment("emr", "header") }
     var featureToggles = {};
 
     <% featureToggles.getToggleMap().each { %>
-        featureToggles["${it.key}"] = "${it.value}";
+        featureToggles["${it.key}"] = ${ Boolean.parseBoolean(it.value)};
     <% } %>
 
 </script>
