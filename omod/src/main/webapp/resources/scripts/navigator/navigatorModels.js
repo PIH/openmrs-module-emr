@@ -37,14 +37,12 @@ function FieldModel(elem, parentQuestion, messagesContainer) {
     this.messagesContainer = messagesContainer;
     this.validators = [];
     this.exitHandlers = [];
-    this.expected = false;  // whether or not this field is "expected" to have a value (less strict than required)
 
     var classes = this.element.attr("class");
     if(classes) {
         _.each(classes.split(' '), function(klass) {
             Validators[klass] && this.validators.push(Validators[klass]);
             ExitHandlers[klass] && this.exitHandlers.push(ExitHandlers[klass]);
-            if (klass == "expected") { this.expected = true; }
         }, this);
     }
 }
@@ -157,7 +155,7 @@ QuestionModel.prototype.unselect = function() {
 
     // see if any fields marked as expected are missing a value
     var expectedFieldMissingValue = _.any(this.fields, function(field) {
-        return field.expected ? (!field.value() ? true : false) : false;
+        return field.element.hasClass("expected") ? (!field.value() ? true : false) : false;
     })
 
     if (emr.isFeatureEnabled("navigatorQuestionCheckmarks")) {
@@ -276,7 +274,8 @@ ConfirmationSectionModel.prototype.select = function() {
     this.dataCanvas.append(listElement);
     _.each(this.sections, function(section) {
         _.each(section.questions, function(question) {
-            listElement.append("<li><span class='label'>" + question.title().text() + ":</span> <strong>" + (question.valueAsText &&  !/^\s*$/.test(question.valueAsText) ? question.valueAsText : "--") + "</strong></li>");
+            listElement.append("<li><span class='label'>" + question.title().text() + ":</span> <strong>"
+                + (question.valueAsText &&  !/^\s*$/.test(question.valueAsText) ? question.valueAsText : "--") + "</strong></li>");
         })
     });
 }

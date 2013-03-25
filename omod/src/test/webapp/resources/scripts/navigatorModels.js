@@ -101,15 +101,25 @@ describe("Test for simple form models", function() {
     });
 
     describe("Unit tests for QuestionModel", function() {
-        it("should select and unselect the question", function() {
-            var questionModel = new QuestionModel();
-            var firstField = jasmine.createSpyObj('firstField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
-            var secondField = jasmine.createSpyObj('secondField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
+
+        var questionModel;
+        var firstField;
+        var secondField;
+
+        beforeEach(function() {
+            questionModel = new QuestionModel();
+            firstField = jasmine.createSpyObj('firstField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
+            secondField = jasmine.createSpyObj('secondField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
+            firstField.element = jasmine.createSpyObj('element', ['addClass', 'removeClass', 'hasClass']);
+            secondField.element  = jasmine.createSpyObj('element', ['addClass', 'removeClass', 'hasClass']);
             questionModel.fields = [firstField, secondField];
             questionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass']);
             spyOn(questionModel.questionLi, 'addClass');
             spyOn(questionModel.questionLi, 'removeClass');
+        });
 
+
+        it("should select and unselect the question", function() {
             questionModel.toggleSelection();
             expect(questionModel.element.addClass).toHaveBeenCalledWith("focused");
             expect(questionModel.questionLi.addClass).toHaveBeenCalledWith("focused");
@@ -126,15 +136,8 @@ describe("Test for simple form models", function() {
         });
 
         it("should mark question has done if first field has value", function() {
-            var questionModel = new QuestionModel();
-            var firstField = jasmine.createSpyObj('firstField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
-            var secondField = jasmine.createSpyObj('secondField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
             firstField.value.andReturn("1");
             secondField.value.andReturn("");
-            questionModel.fields = [firstField, secondField];
-            questionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass']);
-            spyOn(questionModel.questionLi, 'addClass');
-            spyOn(questionModel.questionLi, 'removeClass');
 
             // select the question
             questionModel.toggleSelection();
@@ -145,15 +148,8 @@ describe("Test for simple form models", function() {
         });
 
         it("should mark question has done if second field has value", function() {
-            var questionModel = new QuestionModel();
-            var firstField = jasmine.createSpyObj('firstField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
-            var secondField = jasmine.createSpyObj('secondField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
             firstField.value.andReturn("");
             secondField.value.andReturn("1");
-            questionModel.fields = [firstField, secondField];
-            questionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass']);
-            spyOn(questionModel.questionLi, 'addClass');
-            spyOn(questionModel.questionLi, 'removeClass');
 
             // select the question
             questionModel.toggleSelection();
@@ -164,15 +160,8 @@ describe("Test for simple form models", function() {
         });
 
         it("should mark question has done if both fields have value", function() {
-            var questionModel = new QuestionModel();
-            var firstField = jasmine.createSpyObj('firstField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
-            var secondField = jasmine.createSpyObj('secondField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
             firstField.value.andReturn("1");
             secondField.value.andReturn("1");
-            questionModel.fields = [firstField, secondField];
-            questionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass']);
-            spyOn(questionModel.questionLi, 'addClass');
-            spyOn(questionModel.questionLi, 'removeClass');
 
             // select the question
             questionModel.toggleSelection();
@@ -183,15 +172,9 @@ describe("Test for simple form models", function() {
         });
 
         it("should not mark question has done if neither fields have value", function() {
-            var questionModel = new QuestionModel();
-            var firstField = jasmine.createSpyObj('firstField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
-            var secondField = jasmine.createSpyObj('secondField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
             firstField.value.andReturn("");
             secondField.value.andReturn("");
             questionModel.fields = [firstField, secondField];
-            questionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass']);
-            spyOn(questionModel.questionLi, 'addClass');
-            spyOn(questionModel.questionLi, 'removeClass');
 
             // select the question
             questionModel.toggleSelection();
@@ -202,42 +185,30 @@ describe("Test for simple form models", function() {
         });
 
         it("should not mark question as done if expected field does not have value", function() {
-            var questionModel = new QuestionModel();
-            var firstField = jasmine.createSpyObj('firstField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
-            var secondField = jasmine.createSpyObj('secondField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
             firstField.value.andReturn("1");
-            secondField.expected = true;
+            secondField.element.hasClass.andReturn('true');
             secondField.value.andReturn("");
-            questionModel.fields = [firstField, secondField];
-            questionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass']);
-            spyOn(questionModel.questionLi, 'addClass');
-            spyOn(questionModel.questionLi, 'removeClass');
 
             // select the question
             questionModel.toggleSelection();
 
             // unselect the question
             questionModel.toggleSelection();
-            expect(questionModel.questionLi.removeClass).toHaveBeenCalledWith("done");
+            expect(secondField.element.hasClass).toHaveBeenCalledWith('expected');
+            expect(questionModel.questionLi.removeClass).toHaveBeenCalledWith('done');
         });
 
         it("should mark question as done if expected field has value", function() {
-            var questionModel = new QuestionModel();
-            var firstField = jasmine.createSpyObj('firstField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
-            var secondField = jasmine.createSpyObj('secondField', ['unselect', 'resetErrorMessages', 'value', 'displayValue']);
             firstField.value.andReturn("");
-            secondField.expected = true;
+            secondField.element.hasClass.andReturn('true');
             secondField.value.andReturn("1");
-            questionModel.fields = [firstField, secondField];
-            questionModel.element = jasmine.createSpyObj('element', ['addClass', 'removeClass']);
-            spyOn(questionModel.questionLi, 'addClass');
-            spyOn(questionModel.questionLi, 'removeClass');
 
             // select the question
             questionModel.toggleSelection();
 
             // unselect the question
             questionModel.toggleSelection();
+            expect(secondField.element.hasClass).toHaveBeenCalledWith('expected');
             expect(questionModel.questionLi.addClass).toHaveBeenCalledWith("done");
         });
 
