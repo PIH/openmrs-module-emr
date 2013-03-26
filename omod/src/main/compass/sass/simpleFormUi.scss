@@ -42,7 +42,7 @@ ul#formBreadcrumb {
 
         li {
           span {
-            padding-left: 20px;
+            padding-left: 32px;
             font-weight: normal;
             font-family: "OpenSans";
           }
@@ -62,9 +62,9 @@ ul#formBreadcrumb {
           display: none;
           font-size: 0.7em;
           border: 2px solid;
-          color: #bbb;
+          color: rgb(40, 201, 0);
           padding: 3px 3px;
-          margin-left: 20px;
+          margin-left: 6px;
         }
 
         &.done {
@@ -126,6 +126,7 @@ section, #confirmation {
   p {
     margin: 0 5px;
     text-align: left;
+    line-height: 35px;
 
     label {
       font-size: 1.2em;
