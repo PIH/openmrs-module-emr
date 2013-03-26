@@ -15,7 +15,7 @@
     <a class="button big" href="${ ui.pageLink("emr", "account/changePassword") }">
         <div class="task">
             <i class="icon-book"></i>
-            ${ ui.message("emr.task.changePassword.label") }
+            ${ ui.message("emr.task.myAccount.changePassword.label") }
         </div>
     </a>
 </div>
