@@ -20,6 +20,12 @@ function ConceptSearchResult(item) {
         preferredName: item.conceptName && item.conceptName.name != item.concept.preferredName ? item.concept.preferredName : null,
         code: findConceptMapping(item.concept, "ICD-10-WHO"),
         conceptId: item.concept.id,
+        exactlyMatchesQuery: function(query) {
+            query = emr.stripAccents(query.toLowerCase());
+            return (api.code && api.code.toLowerCase() == query) ||
+                (api.preferredName && emr.stripAccents(api.preferredName.toLowerCase()) == query) ||
+                (api.matchedName && emr.stripAccents(api.matchedName.toLowerCase()) == query);
+        },
         valueToSubmit: function() {
             return item.conceptName ? "ConceptName:" + item.conceptName.id : "Concept:" + item.concept.id;
         }
@@ -131,18 +137,18 @@ ko.bindingHandlers.autocomplete = {
                 var query = event.target.value.toLowerCase();
                 var items = ui.content;
                 var selected = viewModel.selectedConceptIds();
-                // remove any already-selected concepts, and look for exact code matches
-                var exactCodeMatch = false;
+                // remove any already-selected concepts, and look for exact matches by name/code
+                var exactMatch = false;
                 for (var i = items.length - 1; i >= 0; --i) {
                     items[i] = ConceptSearchResult(items[i]);
-                    if (!exactCodeMatch && items[i].code && items[i].code.toLowerCase() == query) {
-                        exactCodeMatch = true;
+                    if (!exactMatch && items[i].exactlyMatchesQuery(query)) {
+                        exactMatch = true;
                     }
                     if (_.contains(selected, items[i].conceptId)) {
                         items.splice(i, 1);
                     }
                 }
-                if (!exactCodeMatch) {
+                if (!exactMatch) {
                     items.push(FreeTextListItem($(element).val()))
                 }
             },
