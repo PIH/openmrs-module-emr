@@ -32,6 +32,14 @@
         <property name="order" value="2" />
     </bean>
 
+    <bean id="myAccount" class="org.openmrs.module.appframework.SimpleAppDescriptor">
+        <property name="id" value="mirebalais.myAccount" />
+        <property name="labelCode" value="emr.app.system.administration.myAccount.label"/>
+        <property name="homepageUrl" value="emr/account/myAccount.page"/>
+        <property name="iconUrl" value="icon-cog"/>
+        <property name="requiredPrivilegeName" value="Allowed for everyone"/>
+    </bean>
+
 
     <!-- Tasks -->
     <bean id="emrPrintLabelsOnPatientDashboard" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">

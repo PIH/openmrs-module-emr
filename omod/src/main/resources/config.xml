@@ -222,6 +222,10 @@
         <name>Printers - Manage Printers</name>
         <description>Gives API-level access within the Printer service to manage and update printer information</description>
     </privilege>
+    <privilege>
+        <name>Allowed for everyone</name>
+        <description>Gives basic permission to users who want change their own information (e.g. password)</description>
+    </privilege>
 
 </module>
 
