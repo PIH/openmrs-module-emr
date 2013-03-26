@@ -11,7 +11,7 @@
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
         { label: "${ ui.message("emr.app.system.administration.myAccount.label")}", link: '${ui.pageLink("emr", "account/myAccount")}' },
-        { label: "${ ui.message("emr.task.changePassword.label")}" }
+        { label: "${ ui.message("emr.task.myAccount.changePassword.label")}" }
 
     ];
 

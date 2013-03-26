@@ -40,9 +40,10 @@ $(function() {
     });
 
     function confirmPasswordAction() {
-        var confirmPassword = $("#confirmPassword").val();
         var newPassword = $("#newPassword").val();
-        if (!confirmPassword || (newPassword != confirmPassword)) {
+        var confirmPassword = $("#confirmPassword").val();
+
+        if (confirmPassword.length >= 1 && (newPassword != confirmPassword)) {
             $("#confirmPasswordSection .field-error").text(errorMessageNewAndConfirmPassword);
             $("#confirmPasswordSection .field-error").show();
             disableSubmitButton();
