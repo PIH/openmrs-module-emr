@@ -103,4 +103,32 @@ public class RadiologyServiceComponentTest extends BaseModuleContextSensitiveTes
 
     }
 
+    @Test
+    public void shouldRetrieveOrderByAccessionNumber() {
+
+        Patient patient = patientService.getPatient(6);
+
+        EmrContext emrContext = mock(EmrContext.class);
+        when(emrContext.getSessionLocation()).thenReturn(locationService.getLocation(1));
+        when(emrContext.getActiveVisitSummary()).thenReturn(null);
+
+        RadiologyRequisition requisition = new RadiologyRequisition();
+
+        requisition.setPatient(patient);
+        requisition.setStudies(Collections.singleton(conceptService.getConcept(18)));
+        requisition.setUrgency(Order.Urgency.STAT);
+
+        radiologyService.placeRadiologyRequisition(emrContext, requisition);
+
+        List<Encounter> encounters = encounterService.getEncountersByPatient(patient);
+        Set<Order> orders = encounters.get(0).getOrders();
+
+        String accessionNumber = orders.iterator().next().getAccessionNumber();
+
+        RadiologyOrder radiologyOrder = radiologyService.getRadiologyOrderByAccessionNumber(accessionNumber);
+        Assert.assertNotNull(radiologyOrder);
+        Assert.assertEquals(conceptService.getConcept(18), radiologyOrder.getConcept());
+        Assert.assertEquals(Order.Urgency.STAT, radiologyOrder.getUrgency());
+    }
+
 }

@@ -65,10 +65,8 @@ public class EmrOrderServiceTest {
      * Checks that the accession number is in the proper format
      */
     private static void verifyAccessionNumberFormat(String accessionNumber, Integer orderId) {
-
-        // the length of the accession number should be one character longer than the order id (to account for the check digit)
-        assertThat(accessionNumber.length(), is(orderId.toString().length() + 1));
-        Assert.assertTrue(accessionNumber.startsWith(orderId.toString()));
+        assertThat(accessionNumber.length(), is(10));
+        Assert.assertTrue(accessionNumber.contains(orderId.toString()));
     }
 
 

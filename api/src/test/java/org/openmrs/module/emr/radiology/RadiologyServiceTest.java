@@ -23,6 +23,8 @@ import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.TestUtils;
 import org.openmrs.module.emr.adt.VisitSummary;
+import org.openmrs.module.emr.order.EmrOrderService;
+import org.openmrs.module.emr.radiology.db.RadiologyOrderDAO;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -45,6 +47,8 @@ public class RadiologyServiceTest {
     private RadiologyServiceImpl radiologyService;
     private EmrProperties emrProperties;
     private EncounterService encounterService;
+    private RadiologyOrderDAO radiologyOrderDAO;
+    private EmrOrderService emrOrderService;
     private EmrContext emrContext;
     private OrderType orderType;
     private Patient patient;
@@ -76,12 +80,16 @@ public class RadiologyServiceTest {
         radiologyService = new RadiologyServiceImpl();
         radiologyService.setEmrProperties(emrProperties);
         radiologyService.setEncounterService(encounterService);
+        radiologyService.setEmrOrderService(emrOrderService);
+        radiologyService.setRadiologyOrderDAO(radiologyOrderDAO);
     }
 
     private void prepareMocks() {
         emrProperties = mock(EmrProperties.class);
         encounterService = mock(EncounterService.class);
         emrContext = mock(EmrContext.class);
+        emrOrderService = mock(EmrOrderService.class);
+        radiologyOrderDAO = mock(RadiologyOrderDAO.class);
 
         VisitSummary currentVisitSummary = new VisitSummary(currentVisit, null);
         when(emrContext.getActiveVisitSummary()).thenReturn(currentVisitSummary);

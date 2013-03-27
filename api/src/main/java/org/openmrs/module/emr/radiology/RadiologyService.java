@@ -7,4 +7,8 @@ import org.openmrs.module.emr.EmrContext;
 public interface RadiologyService extends OpenmrsService {
 
     Encounter placeRadiologyRequisition(EmrContext emrContext, RadiologyRequisition requisition);
+
+    RadiologyOrder getRadiologyOrderByAccessionNumber(String accessionNumber);
+
+
 }

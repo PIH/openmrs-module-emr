@@ -14,6 +14,7 @@
 
 package org.openmrs.module.emr.order;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Order;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.idgen.validator.LuhnMod10IdentifierValidator;
@@ -23,7 +24,9 @@ public class EmrOrderServiceImpl extends BaseOpenmrsService implements EmrOrderS
 	@Override
 	public void ensureAccessionNumberAssignedTo(Order order) {
 		if (order.getAccessionNumber() == null) {
-			order.setAccessionNumber(new LuhnMod10IdentifierValidator().getValidIdentifier(order.getOrderId().toString()));
+            String accessionNumber = new LuhnMod10IdentifierValidator().getValidIdentifier(order.getOrderId().toString());
+            accessionNumber = StringUtils.leftPad(accessionNumber, 10, "0"); // pad the accession number to 10 digits
+			order.setAccessionNumber(accessionNumber);
 		}
 	}
 	
