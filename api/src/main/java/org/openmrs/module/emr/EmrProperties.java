@@ -68,8 +68,20 @@ public class EmrProperties extends ModuleProperties {
         return getConceptByGlobalProperty(EmrConstants.GP_XRAY_ORDERABLES_CONCEPT);
     }
 
+    public Concept getRadiologyStudyConcept() {
+        return getConceptByGlobalProperty(EmrConstants.GP_RADIOLOGY_STUDY_CONCEPT);
+    }
+
     public EncounterType getRadiologyOrderEncounterType() {
         return getEncounterTypeByGlobalProperty(EmrConstants.GP_RADIOLOGY_ORDER_ENCOUNTER_TYPE);
+    }
+
+    public EncounterType getRadiologyStudyEncounterType() {
+        return getEncounterTypeByGlobalProperty(EmrConstants.GP_RADIOLOGY_STUDY_ENCOUNTER_TYPE);
+    }
+
+    public EncounterRole getRadiologyTechnicianEncounterRole() {
+        return getEncounterRoleByGlobalProperty(EmrConstants.GP_RADIOLOGY_TECHNICIAN_ENCOUNTER_ROLE);
     }
 
     public EncounterType getCheckInEncounterType() {

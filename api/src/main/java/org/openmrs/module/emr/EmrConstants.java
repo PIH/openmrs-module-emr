@@ -23,6 +23,12 @@ public class EmrConstants {
 
     public final static String GP_RADIOLOGY_ORDER_ENCOUNTER_TYPE = "emr.radiologyOrderEncounterType";
 
+    public final static String GP_RADIOLOGY_STUDY_ENCOUNTER_TYPE = "emr.radiologyStudyEncounterType";
+
+    public final static String GP_RADIOLOGY_TECHNICIAN_ENCOUNTER_ROLE = "emr.radiologyTechnicianEncounterRole";
+
+    public final static String GP_RADIOLOGY_STUDY_CONCEPT = "emr.radiologyStudyConcept";
+
     public static final String GP_CHECK_IN_ENCOUNTER_TYPE = "emr.checkInEncounterType";
 
     public static final String GP_TRIAGE_ENCOUNTER_TYPE = "emr.triageEncounterType";
