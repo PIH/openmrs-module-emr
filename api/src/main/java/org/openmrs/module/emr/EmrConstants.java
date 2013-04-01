@@ -25,7 +25,11 @@ public class EmrConstants {
 
     public final static String GP_RADIOLOGY_STUDY_ENCOUNTER_TYPE = "emr.radiologyStudyEncounterType";
 
+    public final static String GP_RADIOLOGY_REPORT_ENCOUNTER_TYPE = "emr.radiologyReportEncounterType";
+
     public final static String GP_RADIOLOGY_TECHNICIAN_ENCOUNTER_ROLE = "emr.radiologyTechnicianEncounterRole";
+
+    public static final String GP_PRIMARY_RESULTS_INTERPRETER_ENCOUNTER_ROLE = "emr.primaryResultsInterpreterEncounterRole";
 
     public final static String GP_RADIOLOGY_STUDY_CONCEPT = "emr.radiologyStudyConcept";
 

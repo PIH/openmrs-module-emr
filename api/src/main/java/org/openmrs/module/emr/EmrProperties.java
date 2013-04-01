@@ -80,8 +80,16 @@ public class EmrProperties extends ModuleProperties {
         return getEncounterTypeByGlobalProperty(EmrConstants.GP_RADIOLOGY_STUDY_ENCOUNTER_TYPE);
     }
 
+    public EncounterType getRadiologyReportEncounterType() {
+        return getEncounterTypeByGlobalProperty(EmrConstants.GP_RADIOLOGY_REPORT_ENCOUNTER_TYPE);
+    }
+
     public EncounterRole getRadiologyTechnicianEncounterRole() {
         return getEncounterRoleByGlobalProperty(EmrConstants.GP_RADIOLOGY_TECHNICIAN_ENCOUNTER_ROLE);
+    }
+
+    public EncounterRole getPrimaryResultsInterpreterEncounterRole() {
+        return getEncounterRoleByGlobalProperty(EmrConstants.GP_PRIMARY_RESULTS_INTERPRETER_ENCOUNTER_ROLE);
     }
 
     public EncounterType getCheckInEncounterType() {
