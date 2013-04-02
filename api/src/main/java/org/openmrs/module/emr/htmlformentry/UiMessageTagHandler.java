@@ -14,7 +14,7 @@
 
 package org.openmrs.module.emr.htmlformentry;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.htmlformentry.BadFormDesignException;
