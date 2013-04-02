@@ -21,6 +21,9 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
+import org.openmrs.module.htmlformentry.FormEntrySession;
+import org.openmrs.module.htmlformentry.Translator;
+import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -32,8 +35,11 @@ import java.util.Map;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -51,6 +57,10 @@ public class UiMessageTagHandlerTest {
     private String englishMessageWithArg = "Translated Message {0}";
     private String frenchMessageWithNoArg = "Message traduit";
     private String frenchMessageWithArg = "Message traduit {0}";
+
+    FormEntrySession formEntrySession;
+    FormEntryContext formEntryContext;
+    Translator translator;
 
     UiMessageTagHandler tagHandler;
 
@@ -84,6 +94,15 @@ public class UiMessageTagHandlerTest {
         });
 
         tagHandler = new UiMessageTagHandler(messageSourceService);
+
+        formEntrySession = mock(FormEntrySession.class);
+        formEntryContext = mock(FormEntryContext.class);
+        translator = mock(Translator.class);
+        when(formEntrySession.getContext()).thenReturn(formEntryContext);
+        when(formEntryContext.getTranslator()).thenReturn(translator);
+
+        when(translator.translate(Locale.ENGLISH.toString(), messageCodeWithNoArg)).thenReturn(englishMessageWithNoArg);
+        when(translator.translate(Locale.FRENCH.toString(), messageCodeWithNoArg)).thenReturn(frenchMessageWithNoArg);
     }
 
     @Test
@@ -91,9 +110,10 @@ public class UiMessageTagHandlerTest {
         Map<String, String> args = new HashMap<String, String>();
         args.put("code", messageCodeWithNoArg);
 
-        String substitution = tagHandler.getSubstitution(null, null, args);
+        String substitution = tagHandler.getSubstitution(formEntrySession, null, args);
 
         assertThat(substitution, is(englishMessageWithNoArg));
+        verify(messageSourceService, never()).getMessage(anyString(), any(Object[].class), eq(Locale.ENGLISH));
     }
 
     @Test
@@ -104,22 +124,41 @@ public class UiMessageTagHandlerTest {
         args.put("code", messageCodeWithArg);
         args.put("arg0", argValue);
 
-        String substitution = tagHandler.getSubstitution(null, null, args);
+        String substitution = tagHandler.getSubstitution(formEntrySession, null, args);
 
         String expected = englishMessageWithArg.replace("{0}", argValue);
         assertThat(substitution, is(expected));
     }
 
     @Test
-    public void testGetSubstitutionInDifferentLocaleThanTagHandlerWasInstantiatedIn()throws Exception {
+    public void testGetSubstitutionInDifferentLocaleThanTagHandlerWasInstantiatedIn() throws Exception {
         currentLocale = Locale.FRENCH;
 
         Map<String, String> args = new HashMap<String, String>();
         args.put("code", messageCodeWithNoArg);
 
-        String substitution = tagHandler.getSubstitution(null, null, args);
+        String substitution = tagHandler.getSubstitution(formEntrySession, null, args);
 
         assertThat(substitution, is(frenchMessageWithNoArg));
+        verify(messageSourceService, never()).getMessage(anyString(), any(Object[].class), eq(Locale.FRENCH));
     }
+
+    @Test
+    public void testGetSubstitutionWithArgumentsInDifferentLocaleThanTagHandlerWasInstantiedIn() throws Exception {
+
+        currentLocale = Locale.FRENCH;
+
+        String argValue = "Arg Value";
+
+        Map<String, String> args = new HashMap<String, String>();
+        args.put("code", messageCodeWithArg);
+        args.put("arg0", argValue);
+
+        String substitution = tagHandler.getSubstitution(formEntrySession, null, args);
+
+        String expected = frenchMessageWithArg.replace("{0}", argValue);
+        assertThat(substitution, is(expected));
+    }
+
 
 }

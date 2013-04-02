@@ -14,6 +14,7 @@
 
 package org.openmrs.module.emr.htmlformentry;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.htmlformentry.BadFormDesignException;
@@ -61,6 +62,20 @@ public class UiMessageTagHandler extends SubstitutionTagHandler {
         Object[] args = argList.isEmpty() ? null : argList.toArray();
 
         Locale locale = Context.getLocale();
-        return messageSourceService.getMessage(codeParam, args, locale);
+
+        // defer to the HFE translator if args = 0 (otherwise go directly to the message source since the HFE translator doesn't support arguments)
+        // the HFE translator first checks any translations defined by the <translations> tag, and otherwise defers to the message source service
+
+       String message = null;
+
+       if (args == null || args.length == 0) {
+            message = session.getContext().getTranslator().translate(locale.toString(), codeParam);
+       }
+
+       if (StringUtils.isBlank(message)) {
+            message = messageSourceService.getMessage(codeParam, args, locale);
+       }
+
+        return  message;
     }
 }
