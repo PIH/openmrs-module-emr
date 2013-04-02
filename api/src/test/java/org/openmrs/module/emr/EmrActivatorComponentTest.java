@@ -16,9 +16,7 @@ package org.openmrs.module.emr;
 
 import org.junit.Test;
 import org.openmrs.LocationAttributeType;
-import org.openmrs.Role;
 import org.openmrs.api.LocationService;
-import org.openmrs.api.UserService;
 import org.openmrs.module.emr.printer.Printer;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.scheduler.SchedulerService;
@@ -37,10 +35,6 @@ import static org.junit.Assert.assertTrue;
  *
  */
 public class EmrActivatorComponentTest extends BaseModuleContextSensitiveTest {
-
-    @Autowired
-    @Qualifier("userService")
-    private UserService userService;
 
     @Autowired
     @Qualifier("schedulerService")
@@ -67,11 +61,6 @@ public class EmrActivatorComponentTest extends BaseModuleContextSensitiveTest {
     @Test
     public void testContextRefreshed() throws Exception {
         new EmrActivator().contextRefreshed();
-
-        // ensure Privilege Level: Full role
-        Role fullPrivsRole = userService.getRole(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
-        assertThat(fullPrivsRole, is(notNullValue()));
-        assertThat(fullPrivsRole.getUuid(), is(EmrConstants.PRIVILEGE_LEVEL_FULL_UUID));
 
         // verify scheduled task is started
         TaskDefinition closeStaleVisitsTask = schedulerService.getTaskByName(EmrConstants.TASK_CLOSE_STALE_VISITS_NAME);

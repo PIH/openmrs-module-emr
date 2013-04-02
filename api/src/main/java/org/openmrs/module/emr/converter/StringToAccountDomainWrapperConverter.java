@@ -14,8 +14,8 @@
 package org.openmrs.module.emr.converter;
 
 import org.apache.commons.lang.StringUtils;
-import org.openmrs.module.emr.account.AccountDomainWrapper;
-import org.openmrs.module.emr.account.AccountService;
+import org.openmrs.module.emrapi.account.AccountDomainWrapper;
+import org.openmrs.module.emrapi.account.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
@@ -25,17 +25,17 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class StringToAccountDomainWrapperConverter implements Converter<String, AccountDomainWrapper> {
-	
-	@Autowired
-	private AccountService accountService;
-	
-	/**
-	 * @see org.springframework.core.convert.converter.Converter#convert(Object)
-	 */
-	@Override
-	public AccountDomainWrapper convert(String personId) {
-		if (StringUtils.isNotBlank(personId))
-			return accountService.getAccount(Integer.valueOf(personId));
-		return null;
-	}
+
+    @Autowired
+    private AccountService accountService;
+
+    /**
+     * @see org.springframework.core.convert.converter.Converter#convert(Object)
+     */
+    @Override
+    public AccountDomainWrapper convert(String personId) {
+        if (StringUtils.isNotBlank(personId))
+            return accountService.getAccount(Integer.valueOf(personId));
+        return null;
+    }
 }

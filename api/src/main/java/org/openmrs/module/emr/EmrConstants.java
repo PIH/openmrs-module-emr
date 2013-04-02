@@ -65,24 +65,32 @@ public class EmrConstants {
 
     public static final String LOCATION_TAG_MEDICAL_RECORD_LOCATION = "Medical Record Location";
 
+    // copied to emrapi
     public static final String ROLE_PREFIX_CAPABILITY = "Application Role: ";
 
+    // copied to emrapi
     public static final String ROLE_PREFIX_PRIVILEGE_LEVEL = "Privilege Level: ";
 
-    public static final String PRIVILEGE_LEVEL_FULL_ROLE = ROLE_PREFIX_PRIVILEGE_LEVEL+"Full";
+    // copied to emrapi
+    public static final String PRIVILEGE_LEVEL_FULL_ROLE = ROLE_PREFIX_PRIVILEGE_LEVEL + "Full";
 
+    // copied to emrapi
     public static final String PRIVILEGE_LEVEL_FULL_DESCRIPTION = "A role that has all API privileges";
 
+    // copied to emrapi
     public static final String PRIVILEGE_LEVEL_FULL_UUID = "ab2160f6-0941-430c-9752-6714353fbd3c";
 
+    // copied to emrapi
     public static final String PRIVILEGE_PREFIX_APP = "App: ";
 
+    // copied to emrapi
     public static final String PRIVILEGE_PREFIX_TASK = "Task: ";
 
-    public static final String PRIVILEGE_DELETE_ENCOUNTER="Task: emr.patient.encounter.delete";
+    public static final String PRIVILEGE_DELETE_ENCOUNTER = "Task: emr.patient.encounter.delete";
 
     public static final String PRIMARY_IDENTIFIER_TYPE = "emr.primaryIdentifierType";
 
+    // copied to emrapi
     public static final String DAEMON_USER_UUID = "A4F30A1B-5EB9-11DF-A648-37A07F9C90FB";
 
     public static final String COOKIE_NAME_LAST_SESSION_LOCATION = "emr.lastSessionLocation";
@@ -103,9 +111,9 @@ public class EmrConstants {
 
     public static final String TASK_CLOSE_STALE_PULL_REQUESTS_DESCRIPTION = "Closes any pending pull record requests older than a specified date";
 
-    public static final String UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME="Unknown patient";
+    public static final String UNKNOWN_PATIENT_PERSON_ATTRIBUTE_TYPE_NAME = "Unknown patient";
 
-    public static final String TELEPHONE_ATTRIBUTE_TYPE_NAME="Telephone Number";
+    public static final String TELEPHONE_ATTRIBUTE_TYPE_NAME = "Telephone Number";
 
     public static final String LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD = "a5fb5770-409a-11e2-a25f-0800200c9a66";
 

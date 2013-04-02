@@ -19,15 +19,18 @@ import org.openmrs.ConceptMapType;
 import org.openmrs.ConceptSource;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
+import org.openmrs.Location;
 import org.openmrs.LocationAttributeType;
 import org.openmrs.LocationTag;
 import org.openmrs.OrderType;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttributeType;
-import org.openmrs.Role;
 import org.openmrs.VisitType;
+import org.openmrs.module.emr.api.EmrService;
 import org.openmrs.module.emr.consult.DiagnosisMetadata;
-import org.openmrs.module.emr.utils.ModuleProperties;
+import org.openmrs.module.emrapi.utils.ModuleProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -43,6 +46,19 @@ import static org.openmrs.module.emr.EmrConstants.UNKNOWN_PATIENT_PERSON_ATTRIBU
 
 @Component("emrProperties")
 public class EmrProperties extends ModuleProperties {
+
+    @Autowired
+    @Qualifier("emrService")
+    protected EmrService emrService;
+
+    /**
+     * For testing. In production this will be autowired
+     *
+     * @param emrService
+     */
+    public void setEmrService(EmrService emrService) {
+        this.emrService = emrService;
+    }
 
     public int getVisitExpireHours() {
         return 12;
@@ -79,10 +95,6 @@ public class EmrProperties extends ModuleProperties {
     public EncounterRole getCheckInClerkEncounterRole() {
         return getEncounterRoleByGlobalProperty(EmrConstants.GP_CHECK_IN_CLERK_ENCOUNTER_ROLE);
     }
-
-	public Role getFullPrivilegeLevel() {
-		return userService.getRole(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
-	}
 
     public OrderType getRadiologyTestOrderType() {
         return getOrderTypeByGlobalProperty(EmrConstants.GP_RADIOLOGY_TEST_ORDER_TYPE);
@@ -188,7 +200,7 @@ public class EmrProperties extends ModuleProperties {
             types.add(paperRecordIdentifierType);
         }
         List<PatientIdentifierType> extraPatientIdentifierTypes = getExtraPatientIdentifierTypes();
-        if(extraPatientIdentifierTypes!=null && extraPatientIdentifierTypes.size()>0){
+        if (extraPatientIdentifierTypes != null && extraPatientIdentifierTypes.size() > 0) {
             types.addAll(extraPatientIdentifierTypes);
         }
         return types;
@@ -210,6 +222,7 @@ public class EmrProperties extends ModuleProperties {
     /**
      * Expects there to be a GP configured to point to a concept set, which is a set of other concept sets.
      * E.g. "HUM Diagnosis Sets" contains "HUM Outpatient Diagnosis Set", "HUM ER Diagnosis Set", etc.
+     *
      * @return
      */
     public Collection<Concept> getDiagnosisSets() {
@@ -231,6 +244,10 @@ public class EmrProperties extends ModuleProperties {
 
     public ConceptMapType getNarrowerThanConceptMapType() {
         return conceptService.getConceptMapTypeByUuid(EmrConstants.NARROWER_THAN_CONCEPT_MAP_TYPE_UUID);
+    }
+
+    public List<Location> getAllAvailableLocations() {
+        return emrService.getLoginLocations();
     }
 
 }

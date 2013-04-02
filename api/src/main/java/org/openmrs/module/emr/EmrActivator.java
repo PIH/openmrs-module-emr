@@ -20,21 +20,16 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.ConceptSource;
 import org.openmrs.GlobalProperty;
 import org.openmrs.LocationAttributeType;
-import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
-import org.openmrs.Privilege;
-import org.openmrs.Role;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PersonService;
-import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.customdatatype.datatype.FreeTextDatatype;
 import org.openmrs.module.Module;
 import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.ModuleFactory;
-import org.openmrs.module.emr.account.AccountService;
 import org.openmrs.module.emr.adt.EmrVisitAssignmentHandler;
 import org.openmrs.module.emr.htmlformentry.UiMessageTagHandler;
 import org.openmrs.module.emr.printer.PrinterDatatype;
@@ -67,16 +62,16 @@ public class EmrActivator implements ModuleActivator {
     private PersonService personService;
 
     /**
-	 * @see ModuleActivator#willRefreshContext()
-	 */
-	public void willRefreshContext() {
-		log.info("Refreshing EMR Module");
-	}
-	
-	/**
-	 * @see ModuleActivator#contextRefreshed()
-	 */
-	public void contextRefreshed() {
+     * @see ModuleActivator#willRefreshContext()
+     */
+    public void willRefreshContext() {
+        log.info("Refreshing EMR Module");
+    }
+
+    /**
+     * @see ModuleActivator#contextRefreshed()
+     */
+    public void contextRefreshed() {
         TaskService taskService = Context.getService(TaskService.class);
 
         List<TaskDescriptor> allTasks = new ArrayList<TaskDescriptor>();
@@ -100,10 +95,8 @@ public class EmrActivator implements ModuleActivator {
 
         log.info("EMR Module refreshed. " + allTasks.size() + " tasks and " + allTaskFactories.size() + " task factories available.");
 
-        ensurePrivilegeLevelRoles();
-
         ensureScheduledTasks();
-	}
+    }
 
     private void ensureScheduledTasks() {
         SchedulerService schedulerService = Context.getSchedulerService();
@@ -121,8 +114,7 @@ public class EmrActivator implements ModuleActivator {
             } catch (SchedulerException e) {
                 throw new RuntimeException("Failed to schedule close stale visits task", e);
             }
-        }
-        else {
+        } else {
             if (!task.getStarted()) {
                 task.setStarted(true);
                 try {
@@ -135,40 +127,13 @@ public class EmrActivator implements ModuleActivator {
     }
 
     /**
-	 * Creates role "Privilege Level: Full" if does not exist
-	 * 
-	 * @return
-	 */
-	private void ensurePrivilegeLevelRoles() {
-		UserService userService = Context.getUserService();
-        AccountService accountService = Context.getService(AccountService.class);
-		EmrProperties emrProperties = Context.getRegisteredComponents(EmrProperties.class).iterator().next();
+     * @see ModuleActivator#willStart()
+     */
+    public void willStart() {
+        log.info("Starting EMR Module");
+    }
 
-		Role fullPrivilegeLevel = emrProperties.getFullPrivilegeLevel();
-		if (fullPrivilegeLevel == null) {
-			fullPrivilegeLevel = new Role();
-			fullPrivilegeLevel.setRole(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
-			fullPrivilegeLevel.setDescription(EmrConstants.PRIVILEGE_LEVEL_FULL_DESCRIPTION);
-            fullPrivilegeLevel.setUuid(EmrConstants.PRIVILEGE_LEVEL_FULL_UUID);
-			userService.saveRole(fullPrivilegeLevel);
-		}
-
-        for (Privilege candidate : accountService.getApiPrivileges()) {
-            if (!fullPrivilegeLevel.hasPrivilege(candidate.getName())) {
-                fullPrivilegeLevel.addPrivilege(candidate);
-            }
-        }
-        userService.saveRole(fullPrivilegeLevel);
-	}
-
-	/**
-	 * @see ModuleActivator#willStart()
-	 */
-	public void willStart() {
-		log.info("Starting EMR Module");
-	}
-
-    private PersonAttributeType buildTestPersonAttributeType(){
+    private PersonAttributeType buildTestPersonAttributeType() {
         PersonAttributeType personAttributeType = new PersonAttributeType();
         personAttributeType.setName("Test Patient");
         personAttributeType.setDescription("Flag to describe if the patient was created to a test or not");
@@ -178,11 +143,11 @@ public class EmrActivator implements ModuleActivator {
 
         return personAttributeType;
     }
-	
-	/**
-	 * @see ModuleActivator#started()
-	 */
-	public void started() {
+
+    /**
+     * @see ModuleActivator#started()
+     */
+    public void started() {
 
         try {
             LocationService locationService = Context.getLocationService();
@@ -198,15 +163,14 @@ public class EmrActivator implements ModuleActivator {
             createConceptSources(conceptService);
 
             htmlFormEntryService.addHandler(EmrConstants.HTMLFORMENTRY_UI_MESSAGE_TAG_NAME, new UiMessageTagHandler());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Module mod = ModuleFactory.getModuleById(EMR_MODULE_ID);
             ModuleFactory.stopModule(mod);
             throw new RuntimeException("failed to setup the EMR modules", e);
         }
 
         log.info("EMR Module started");
-	}
+    }
 
     private void saveTestPatientAttribute() {
         PersonAttributeType personAttributeTypeByUuid = personService.getPersonAttributeTypeByUuid(TEST_PATIENT_ATTRIBUTE_UUID);
@@ -219,6 +183,7 @@ public class EmrActivator implements ModuleActivator {
     /**
      * (public so that it can be used in tests, but you shouldn't use this in production code)
      * Creates a single ConceptSource which we will use to tag concepts relevant to this module
+     *
      * @param conceptService
      */
     public ConceptSource createConceptSources(ConceptService conceptService) {
@@ -294,17 +259,17 @@ public class EmrActivator implements ModuleActivator {
         }
     }
 
-	/**
-	 * @see ModuleActivator#willStop()
-	 */
-	public void willStop() {
-		log.info("Stopping EMR Module");
-	}
-	
-	/**
-	 * @see ModuleActivator#stopped()
-	 */
-	public void stopped() {
+    /**
+     * @see ModuleActivator#willStop()
+     */
+    public void willStop() {
+        log.info("Stopping EMR Module");
+    }
+
+    /**
+     * @see ModuleActivator#stopped()
+     */
+    public void stopped() {
         HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
         try {
             htmlFormEntryService.getHandlers().remove(EmrConstants.HTMLFORMENTRY_UI_MESSAGE_TAG_NAME);
@@ -312,6 +277,6 @@ public class EmrActivator implements ModuleActivator {
             // pass
         }
         log.info("EMR Module stopped");
-	}
-		
+    }
+
 }

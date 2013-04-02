@@ -2,21 +2,22 @@
 
 <module configVersion="1.2">
 
-	<!-- Module Properties -->
-	<id>${project.parent.artifactId}</id>
-	<name>${project.parent.name}</name>
-	<version>${project.parent.version}</version>
-	<package>${project.parent.groupId}.${project.parent.artifactId}</package>
-	<author>Partners In Health</author>
-	<description>
-		${project.parent.description} - Build: ${buildNumber}
-	</description>
-	<updateURL>https://dev.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
-	<!--<require_version>${openMRSVersion}</require_version>-->
+    <!-- Module Properties -->
+    <id>${project.parent.artifactId}</id>
+    <name>${project.parent.name}</name>
+    <version>${project.parent.version}</version>
+    <package>${project.parent.groupId}.${project.parent.artifactId}</package>
+    <author>Partners In Health</author>
+    <description>
+        ${project.parent.description} - Build: ${buildNumber}
+    </description>
+    <updateURL>https://dev.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
+    <!--<require_version>${openMRSVersion}</require_version>-->
     <require_version>1.9.2</require_version>
-	<!-- / Module Properties -->
+    <!-- / Module Properties -->
 
     <require_modules>
+        <require_module version="${emrapiVersion}">org.openmrs.module.emrapi</require_module>
         <require_module version="${uiframeworkVersion}">org.openmrs.module.uiframework</require_module>
         <require_module version="${appframeworkVersion}">org.openmrs.module.appframework</require_module>
         <require_module version="${htmlformentryVersion}">org.openmrs.module.htmlformentry</require_module>
@@ -24,25 +25,25 @@
         <require_module version="${idgenVersion}">org.openmrs.module.idgen</require_module>
         <require_module version="${reportingVersion}">org.openmrs.module.reporting</require_module>
     </require_modules>
-	
-	<!-- Module Activator -->
-	<activator>${project.parent.groupId}.${project.parent.artifactId}.EmrActivator</activator>
-	
-	
-	<!-- Maps hibernate file's, if present -->
-	<mappingFiles>
-	    PaperRecordRequest.hbm.xml
+
+    <!-- Module Activator -->
+    <activator>${project.parent.groupId}.${project.parent.artifactId}.EmrActivator</activator>
+
+
+    <!-- Maps hibernate file's, if present -->
+    <mappingFiles>
+        PaperRecordRequest.hbm.xml
         PaperRecordMergeRequest.hbm.xml
         RadiologyOrder.hbm.xml
         Printer.hbm.xml
-	</mappingFiles>
+    </mappingFiles>
 
-	<!-- Internationalization -->
-	<!-- All message codes should start with ${project.parent.artifactId}. -->
-	<messages>
-		<lang>en</lang>
-		<file>messages.properties</file>
-	</messages>
+    <!-- Internationalization -->
+    <!-- All message codes should start with ${project.parent.artifactId}. -->
+    <messages>
+        <lang>en</lang>
+        <file>messages.properties</file>
+    </messages>
     <messages>
         <lang>fr</lang>
         <file>messages_fr.properties</file>
@@ -51,7 +52,7 @@
         <lang>ht</lang>
         <file>messages_ht.properties</file>
     </messages>
-	<!-- /Internationalization -->
+    <!-- /Internationalization -->
 
     <!-- Global Properties -->
     <globalProperty>
@@ -93,8 +94,8 @@
             UUID of the encounter role that represents the provider ordering the order associated with the encounter
         </description>
     </globalProperty>
-    
- 	<globalProperty>
+
+    <globalProperty>
         <property>emr.checkInClerkEncounterRole</property>
         <defaultValue></defaultValue>
         <description>
@@ -208,7 +209,8 @@
     <!-- Privileges -->
     <privilege>
         <name>Paper Records - Manage Requests</name>
-        <description>Gives API-level access within the Paper Record service to fetch and assign paper rcord requests</description>
+        <description>Gives API-level access within the Paper Record service to fetch and assign paper rcord requests
+        </description>
     </privilege>
     <privilege>
         <name>Paper Records - Request Records</name>
@@ -220,7 +222,8 @@
     </privilege>
     <privilege>
         <name>Printers - Manage Printers</name>
-        <description>Gives API-level access within the Printer service to manage and update printer information</description>
+        <description>Gives API-level access within the Printer service to manage and update printer information
+        </description>
     </privilege>
     <privilege>
         <name>Allowed for everyone</name>

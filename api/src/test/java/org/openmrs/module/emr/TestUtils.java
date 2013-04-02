@@ -37,30 +37,30 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Various utils to help with testing
+ * This class has been copied to the emrapi module except for the setupDiagnosisMetadata method
  */
 public class TestUtils {
 
-	/**
-	 * To test things like: assertContainsElementWithProperty(listOfPatients, "patientId", 2)
-	 * 
-	 * @param collection
-	 * @param property
-	 * @param value
-	 */
-	public static void assertContainsElementWithProperty(Collection<?> collection, String property, Object value) {
-		for (Object o : collection) {
-			try {
-				if (OpenmrsUtil.nullSafeEquals(value, PropertyUtils.getProperty(o, property))) {
-					return;
-				}
-			}
-			catch (Exception ex) {
-				// pass
-			}
-		}
-		Assert.fail("Collection does not contain an element with " + property + " = " + value + ". Collection: "
-		        + collection);
-	}
+    /**
+     * To test things like: assertContainsElementWithProperty(listOfPatients, "patientId", 2)
+     *
+     * @param collection
+     * @param property
+     * @param value
+     */
+    public static void assertContainsElementWithProperty(Collection<?> collection, String property, Object value) {
+        for (Object o : collection) {
+            try {
+                if (OpenmrsUtil.nullSafeEquals(value, PropertyUtils.getProperty(o, property))) {
+                    return;
+                }
+            } catch (Exception ex) {
+                // pass
+            }
+        }
+        Assert.fail("Collection does not contain an element with " + property + " = " + value + ". Collection: "
+                + collection);
+    }
 
     public static <T> ArgumentMatcher<T> containsElementsWithProperties(final String property, final T... expectedPropertyValues) {
         return new ArgumentMatcher<T>() {
@@ -172,28 +172,28 @@ public class TestUtils {
             }
         };
     }
-	
-	/**
-	 * Creates an argument matcher that tests equality based on the equals method, the developer
-	 * doesn't have to type cast the returned argument when pass it to
-	 * {@link Mockito#argThat(Matcher)} as it would be the case if we used {@link Equals} matcher
-	 * 
-	 * @param object
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> Matcher<T> equalsMatcher(final T object) {
-		return new ArgumentMatcher<T>() {
-			
-			/**
-			 * @see org.mockito.ArgumentMatcher#matches(java.lang.Object)
-			 */
-			@Override
-			public boolean matches(Object arg) {
-				return OpenmrsUtil.nullSafeEquals(object, (T) arg);
-			}
-		};
-	}
+
+    /**
+     * Creates an argument matcher that tests equality based on the equals method, the developer
+     * doesn't have to type cast the returned argument when pass it to
+     * {@link Mockito#argThat(Matcher)} as it would be the case if we used {@link Equals} matcher
+     *
+     * @param object
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Matcher<T> equalsMatcher(final T object) {
+        return new ArgumentMatcher<T>() {
+
+            /**
+             * @see org.mockito.ArgumentMatcher#matches(java.lang.Object)
+             */
+            @Override
+            public boolean matches(Object arg) {
+                return OpenmrsUtil.nullSafeEquals(object, (T) arg);
+            }
+        };
+    }
 
     public static String join(Iterable<?> iter, String separator) {
         StringBuilder ret = new StringBuilder();

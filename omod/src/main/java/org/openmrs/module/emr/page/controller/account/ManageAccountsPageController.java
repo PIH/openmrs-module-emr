@@ -1,13 +1,13 @@
 package org.openmrs.module.emr.page.controller.account;
 
-import org.openmrs.module.emr.account.AccountService;
+import org.openmrs.module.emrapi.account.AccountService;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 
 public class ManageAccountsPageController {
-	
-	public void get(PageModel model, @SpringBean("accountService") AccountService accountService) {
-		model.addAttribute("accounts", accountService.getAllAccounts());
-	}
-	
+
+    public void get(PageModel model, @SpringBean("accountService") AccountService accountService) {
+        model.addAttribute("accounts", accountService.getAllAccounts());
+    }
+
 }

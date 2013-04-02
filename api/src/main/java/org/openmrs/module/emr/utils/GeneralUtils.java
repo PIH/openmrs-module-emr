@@ -27,7 +27,6 @@ import org.openmrs.ProgramWorkflow;
 import org.openmrs.ProgramWorkflowState;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
-import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.util.OpenmrsConstants;
 import org.openmrs.web.WebUtil;
@@ -40,9 +39,8 @@ import java.util.Locale;
 
 public class GeneralUtils {
 
-	
-	
-    /***
+
+    /**
      * Get the concept by id, the id can either be 1)an integer id like 5090 or 2)mapping type id
      * like "XYZ:HT" or 3)uuid like "a3e12268-74bf-11df-9768-17cfc9833272"
      *
@@ -67,8 +65,7 @@ public class GeneralUtils {
                 if (cpt != null) {
                     return cpt;
                 }
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 //do nothing
             }
 
@@ -85,7 +82,7 @@ public class GeneralUtils {
             }
 
             //handle uuid id: "a3e1302b-74bf-11df-9768-17cfc9833272", if the id matches a uuid format
-            if (isValidUuidFormat(id)) {
+            if (org.openmrs.module.emrapi.utils.GeneralUtils.isValidUuidFormat(id)) {
                 cpt = Context.getConceptService().getConceptByUuid(id);
             }
         }
@@ -93,7 +90,7 @@ public class GeneralUtils {
         return cpt;
     }
 
-    /***
+    /**
      * Get the location by: 1)an integer id like 5090 or 2) uuid like
      * "a3e12268-74bf-11df-9768-17cfc9833272" or 3) location name like "Boston" or 4) an id/name
      * pair like "501 - Boston" (this format is used when saving a location on a obs as a value
@@ -140,13 +137,12 @@ public class GeneralUtils {
                 if (location != null) {
                     return location;
                 }
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 //do nothing
             }
 
             // handle uuid id: "a3e1302b-74bf-11df-9768-17cfc9833272" if id matches a uuid format
-            if (isValidUuidFormat(id)) {
+            if (org.openmrs.module.emrapi.utils.GeneralUtils.isValidUuidFormat(id)) {
                 location = Context.getLocationService().getLocationByUuid(id);
 
                 if (location != null) {
@@ -171,8 +167,7 @@ public class GeneralUtils {
                     if (location != null) {
                         return location;
                     }
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     //do nothing
                 }
             }
@@ -182,7 +177,7 @@ public class GeneralUtils {
         return null;
     }
 
-    /***
+    /**
      * Get the program by: 1)an integer id like 5090 or 2) uuid like
      * "a3e12268-74bf-11df-9768-17cfc9833272" or 3) name of *associated concept* (not name of
      * program), like "MDR-TB Program"
@@ -208,13 +203,12 @@ public class GeneralUtils {
                 if (program != null) {
                     return program;
                 }
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 //do nothing
             }
 
             //handle uuid id: "a3e1302b-74bf-11df-9768-17cfc9833272", if id matches uuid format
-            if (isValidUuidFormat(id)) {
+            if (org.openmrs.module.emrapi.utils.GeneralUtils.isValidUuidFormat(id)) {
                 program = Context.getProgramWorkflowService().getProgramByUuid(id);
 
                 if (program != null) {
@@ -230,7 +224,7 @@ public class GeneralUtils {
         return program;
     }
 
-    /***
+    /**
      * Get the person by: 1)an integer id like 5090 or 2) uuid like
      * "a3e12268-74bf-11df-9768-17cfc9833272" or 3) a username like "mgoodrich" or 4) an id/name
      * pair like "5090 - Bob Jones" (this format is used when saving a person on a obs as a value
@@ -257,13 +251,12 @@ public class GeneralUtils {
                 if (person != null) {
                     return person;
                 }
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 //do nothing
             }
 
             // handle uuid id: "a3e1302b-74bf-11df-9768-17cfc9833272", if id matches uuid format
-            if (isValidUuidFormat(id)) {
+            if (org.openmrs.module.emrapi.utils.GeneralUtils.isValidUuidFormat(id)) {
                 person = Context.getPersonService().getPersonByUuid(id);
 
                 if (person != null) {
@@ -287,8 +280,7 @@ public class GeneralUtils {
                     if (person != null) {
                         return person;
                     }
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     //do nothing
                 }
             }
@@ -296,57 +288,6 @@ public class GeneralUtils {
 
         // no match found, so return null
         return null;
-    }
-
-    public static PatientIdentifierType getPatientIdentifierType(String id) {
-        return getPatientIdentifierType(id, Context.getPatientService());
-    }
-
-    /***
-     * Get the patient identifier type by: 1)an integer id like 5090 or 2) uuid like
-     * "a3e12268-74bf-11df-9768-17cfc9833272" or 3) a name like "Temporary Identifier"
-     *
-     * @param id
-     * @param patientService
-     * @return the identifier type if exist, else null
-     * @should find an identifier type by its id
-     * @should find an identifier type by its uuid
-     * @should find an identifier type by its name
-     * @should return null otherwise
-     */
-    public static PatientIdentifierType getPatientIdentifierType(String id, PatientService patientService) {
-        PatientIdentifierType identifierType = null;
-
-        if (id != null) {
-
-            // see if this is parseable int; if so, try looking up by id
-            try { //handle integer: id
-                int identifierTypeId = Integer.parseInt(id);
-                identifierType = patientService.getPatientIdentifierType(identifierTypeId);
-
-                if (identifierType != null) {
-                    return identifierType;
-                }
-            }
-            catch (Exception ex) {
-                //do nothing
-            }
-
-            //handle uuid id: "a3e1302b-74bf-11df-9768-17cfc9833272", if id matches uuid format
-            if (isValidUuidFormat(id)) {
-                identifierType = patientService.getPatientIdentifierTypeByUuid(id);
-
-                if (identifierType != null) {
-                    return identifierType;
-                }
-            }
-            // handle name
-            else {
-                // if it's neither a uuid or id, try identifier type name
-                identifierType = patientService.getPatientIdentifierTypeByName(id);
-            }
-        }
-        return identifierType;
     }
 
     /**
@@ -365,11 +306,11 @@ public class GeneralUtils {
                 if (workflow != null) {
                     return workflow;
                 }
+            } catch (NumberFormatException e) {
             }
-            catch (NumberFormatException e) {}
 
             // if not, try to fetch by uuid
-            if (isValidUuidFormat(identifier)) {
+            if (org.openmrs.module.emrapi.utils.GeneralUtils.isValidUuidFormat(identifier)) {
                 workflow = Context.getProgramWorkflowService().getWorkflowByUuid(identifier);
 
                 if (workflow != null) {
@@ -506,10 +447,10 @@ public class GeneralUtils {
                 if (state != null) {
                     return state;
                 }
+            } catch (NumberFormatException e) {
             }
-            catch (NumberFormatException e) {}
 
-            if (isValidUuidFormat(identifier)) {
+            if (org.openmrs.module.emrapi.utils.GeneralUtils.isValidUuidFormat(identifier)) {
                 state = Context.getProgramWorkflowService().getStateByUuid(identifier);
 
                 if (state != null) {
@@ -522,7 +463,7 @@ public class GeneralUtils {
 
     /**
      * Utility method to fetch the patient identifier for a patient of a certain type at a certain location
-     *
+     * <p/>
      * Returns null if no identifiers found for that patient of that type at that location
      * If the patient has multiple identifiers for that type/location, it returns the first preferred one
      * If no preferred identifiers, returns first non-preferred one
@@ -557,21 +498,6 @@ public class GeneralUtils {
         return null;
     }
 
-    /***
-     * Determines if the passed string is in valid uuid format By OpenMRS standards, a uuid must be
-     * 36 characters in length and not contain whitespace, but we do not enforce that a uuid be in
-     * the "canonical" form, with alphanumerics seperated by dashes, since the MVP dictionary does
-     * not use this format (We also are being slightly lenient and accepting uuids that are 37 or 38
-     * characters in length, since the uuid data field is 38 characters long)
-     */
-    public static boolean isValidUuidFormat(String uuid) {
-        if (uuid.length() < 36 || uuid.length() > 38 || uuid.contains(" ")) {
-            return false;
-        }
-
-        return true;
-    }
-
     /**
      * Gets the specified property (referenced by string) off of a person address
      * Returns null if the underlying property is null
@@ -580,10 +506,9 @@ public class GeneralUtils {
         try {
             Class<?> personAddressClass = Context.loadClass("org.openmrs.PersonAddress");
             Method getPersonAddressProperty;
-            getPersonAddressProperty = personAddressClass.getMethod("get" + property.substring(0,1).toUpperCase() + property.substring(1));
+            getPersonAddressProperty = personAddressClass.getMethod("get" + property.substring(0, 1).toUpperCase() + property.substring(1));
             return (String) getPersonAddressProperty.invoke(address);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new APIException("Invalid property name " + property + " passed to getPersonAddressProperty");
         }
     }
@@ -594,24 +519,24 @@ public class GeneralUtils {
         try {
             Class<?> svcClass = Context.loadClass("org.openmrs.module.addresshierarchy.service.AddressHierarchyService");
             Object svc = Context.getService(svcClass);
-            List<Object> levels = (List<Object>)svcClass.getMethod("getOrderedAddressHierarchyLevels", Boolean.class, Boolean.class).invoke(svc, true, true);
+            List<Object> levels = (List<Object>) svcClass.getMethod("getOrderedAddressHierarchyLevels", Boolean.class, Boolean.class).invoke(svc, true, true);
             Class<?> levelClass = Context.loadClass("org.openmrs.module.addresshierarchy.AddressHierarchyLevel");
             Class<?> fieldClass = Context.loadClass("org.openmrs.module.addresshierarchy.AddressField");
             for (Object o : levels) {
                 Object addressField = levelClass.getMethod("getAddressField").invoke(o);
-                String fieldName = (String)fieldClass.getMethod("getName").invoke(addressField);
+                String fieldName = (String) fieldClass.getMethod("getName").invoke(addressField);
                 l.add(fieldName);
             }
-            if(l.size()>1){
+            if (l.size() > 1) {
                 Collections.reverse(l);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new APIException("Error obtaining address hierarchy levels", e);
         }
 
         return l;
     }
+
     /**
      * Given a user, returns the default locale (if any) for that user
      * Returns null if no default locate

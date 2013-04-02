@@ -2,15 +2,11 @@ package org.openmrs.module.emr.page.controller.account;
 
 
 import org.apache.commons.lang.StringUtils;
-import org.openmrs.User;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
-import org.openmrs.api.context.UserContext;
 import org.openmrs.api.db.DAOException;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrConstants;
-import org.openmrs.module.emr.EmrContext;
-import org.openmrs.module.emr.account.AccountValidator;
 import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.annotation.MethodParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -27,7 +23,7 @@ public class ChangePasswordPageController {
 
     public ChangePassword getChangePassword(@RequestParam(value = "oldPassword", required = false) String oldPassword,
                                             @RequestParam(value = "newPassword", required = false) String newPassword,
-                                            @RequestParam(value = "confirmPassword", required = false) String confirmPassword){
+                                            @RequestParam(value = "confirmPassword", required = false) String confirmPassword) {
         return new ChangePassword(oldPassword, newPassword, confirmPassword);
     }
 
@@ -38,12 +34,12 @@ public class ChangePasswordPageController {
                        @SpringBean("messageSourceService") MessageSourceService messageSourceService,
                        @SpringBean("messageSource") MessageSource messageSource,
                        HttpServletRequest request,
-                       PageModel model){
+                       PageModel model) {
 
         validatePasswords(changePassword, errors, messageSourceService);
 
-        if (errors.hasErrors()){
-            sendErrorMessage(errors, messageSource,  request);
+        if (errors.hasErrors()) {
+            sendErrorMessage(errors, messageSource, request);
             model.addAttribute("errors", errors);
             return "account/changePassword";
         } else {
@@ -53,14 +49,14 @@ public class ChangePasswordPageController {
     }
 
     private String changePasswords(ChangePassword changePassword, UserService userService, MessageSourceService messageSourceService, HttpServletRequest request) {
-        try{
+        try {
             userService.changePassword(changePassword.getOldPassword(), changePassword.getNewPassword());
             request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
                     messageSourceService.getMessage("emr.account.changePassword.success", null, Context.getLocale()));
             request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
-        } catch (DAOException e){
+        } catch (DAOException e) {
             request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE,
-                    messageSourceService.getMessage("emr.account.changePassword.fail", new Object[]{ e.getMessage() }, Context.getLocale()));
+                    messageSourceService.getMessage("emr.account.changePassword.fail", new Object[]{e.getMessage()}, Context.getLocale()));
             return "account/changePassword";
         }
 
@@ -81,7 +77,7 @@ public class ChangePasswordPageController {
         }
     }
 
-    public String get(){
+    public String get() {
         return "account/changePassword";
     }
 
@@ -93,7 +89,7 @@ public class ChangePasswordPageController {
     }
 
     private String getMessageErrors(MessageSource messageSource, List<ObjectError> allErrors) {
-        String message="";
+        String message = "";
         for (ObjectError error : allErrors) {
             Object[] arguments = error.getArguments();
             String errorMessage = messageSource.getMessage(error.getCode(), arguments, Context.getLocale());
@@ -102,9 +98,9 @@ public class ChangePasswordPageController {
         return message;
     }
 
-    private String replaceArguments(String message, Object[] arguments){
+    private String replaceArguments(String message, Object[] arguments) {
         if (arguments != null) {
-            for (int i = 0 ; i < arguments.length ; i++){
+            for (int i = 0; i < arguments.length; i++) {
                 String argument = (String) arguments[i];
                 message = message.replaceAll("\\{" + i + "\\}", argument);
             }
