@@ -158,11 +158,10 @@ QuestionModel.prototype.unselect = function() {
         return field.element.hasClass("expected") ? (!field.value() ? true : false) : false;
     })
 
-    if (emr.isFeatureEnabled("navigatorQuestionCheckmarks")) {
-        // mark the question as done at least one of the fields has a value, and all the expected fields have a value
-        anyFieldHasValue && !expectedFieldMissingValue ? this.questionLi.addClass("done") :
-              this.questionLi.removeClass("done");
-    }
+    // mark the question as done if at least one of the fields has a value, and all the expected fields have a value
+    anyFieldHasValue && !expectedFieldMissingValue ? this.questionLi.addClass("done") :
+          this.questionLi.removeClass("done");
+
 }
 QuestionModel.prototype.isValid = function() {
     return _.reduce(this.fields, function(memo, field) {
