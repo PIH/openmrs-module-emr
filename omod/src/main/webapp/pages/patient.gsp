@@ -37,7 +37,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
     <div class="dashboard-container">
         <div class="actions">
             <% if (!emrContext.activeVisitSummary) { %>
-                <div><a href="javascript:visit.showQuickVisitCreationDialog()"><i class="icon-check-in"></i>Start visit</a></div>
+                <div><a href="javascript:visit.showQuickVisitCreationDialog()"><i class="icon-check-in"></i>${ ui.message("emr.task.startVisit.label") }</a></div>
             <% } %>
 
             <% availableTasks.each {
@@ -98,7 +98,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
             ${ ui.message("emr.visit.createQuickVisit.title") }</h3>
     </div>
     <div class="dialog-content">
-        <p class="dialog-instructions">Are you sure you want to start a visit for ${ui.format(patient.patient)} now?</p>
+        <p class="dialog-instructions">${ ui.message("emr.task.startVisit.message", ui.format(patient.patient)) }</p>
 
         <button class="confirm right">${ ui.message("emr.confirm") }</button>
         <button class="cancel">${ ui.message("emr.cancel") }</button>
