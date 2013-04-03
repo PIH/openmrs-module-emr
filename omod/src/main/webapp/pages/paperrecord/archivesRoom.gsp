@@ -62,7 +62,7 @@
                     </table>
                 </div>
                 <div class="box-align btn">
-                    <button id="assign-to-create-button" data-bind="css: { disabled: !isValid() }, enable: isValid()">
+                    <button id="assign-to-create-button" class="arrow" data-bind="css: { disabled: !isValid() }, enable: isValid()">
                         <i class="icon-print"></i> <span>${ ui.message("emr.archivesRoom.printSelected") }</span>
                         <span id="arrow-border-button"></span>
                         <span id="arrow-button"></span>
@@ -144,7 +144,7 @@
                     </table>
                 </div>
                 <div class="box-align btn">
-                    <button id="assign-to-pull-button" class="print" data-bind="css: { disabled: !isValid() }, enable: isValid()">
+                    <button id="assign-to-pull-button" class="arrow" data-bind="css: { disabled: !isValid() }, enable: isValid()">
                         <i class="icon-folder-open"></i> <span>${ ui.message("emr.archivesRoom.pullSelected") }</span>
                         <span id="arrow-border-button"></span>
                         <span id="arrow-button"></span>
