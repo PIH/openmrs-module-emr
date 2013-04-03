@@ -15,6 +15,8 @@
 package org.openmrs.module.emr.radiology;
 
 import org.openmrs.Concept;
+import org.openmrs.Location;
+import org.openmrs.Patient;
 import org.openmrs.Provider;
 
 import java.util.Date;
@@ -25,9 +27,15 @@ public class RadiologyReport {
 
     private RadiologyOrder associatedRadiologyOrder;
 
+    private String accessionNumber;
+
     private Provider principalResultsInterpreter;
 
+    private Patient patient;
+
     private Concept procedure;
+
+    private Location reportLocation;
 
     private Type reportType;
 
@@ -44,6 +52,14 @@ public class RadiologyReport {
         this.associatedRadiologyOrder = associatedRadiologyOrder;
     }
 
+    public String getAccessionNumber() {
+        return accessionNumber;
+    }
+
+    public void setAccessionNumber(String accessionNumber) {
+        this.accessionNumber = accessionNumber;
+    }
+
     public Provider getPrincipalResultsInterpreter() {
         return principalResultsInterpreter;
     }
@@ -52,12 +68,28 @@ public class RadiologyReport {
         this.principalResultsInterpreter = principalResultsInterpreter;
     }
 
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+    }
+
     public Concept getProcedure() {
         return procedure;
     }
 
     public void setProcedure(Concept procedure) {
         this.procedure = procedure;
+    }
+
+    public Location getReportLocation() {
+        return reportLocation;
+    }
+
+    public void setReportLocation(Location reportLocation) {
+        this.reportLocation = reportLocation;
     }
 
     public Type getReportType() {

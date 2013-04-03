@@ -68,6 +68,11 @@ public class RadiologyServiceImpl extends BaseOpenmrsService implements Radiolog
     }
 
     @Override
+    public void saveRadiologyReport(RadiologyReport radiologyReport) {
+        // TODO: implement
+    }
+
+    @Override
     public RadiologyOrder getRadiologyOrderByAccessionNumber(String accessionNumber) {
         return radiologyOrderDAO.getRadiologyOrderByAccessionNumber(accessionNumber);
     }

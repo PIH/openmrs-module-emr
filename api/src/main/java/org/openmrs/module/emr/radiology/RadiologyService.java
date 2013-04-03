@@ -8,6 +8,8 @@ public interface RadiologyService extends OpenmrsService {
 
     Encounter placeRadiologyRequisition(EmrContext emrContext, RadiologyRequisition requisition);
 
+    void saveRadiologyReport(RadiologyReport radiologyReport);
+
     RadiologyOrder getRadiologyOrderByAccessionNumber(String accessionNumber);
 
 
