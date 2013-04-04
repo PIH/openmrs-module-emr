@@ -24,6 +24,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.api.EmrService;
 import org.openmrs.module.emr.comparator.ByFormattedObjectComparator;
+import org.openmrs.module.emr.radiology.RadiologyProperties;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -40,7 +41,7 @@ import java.util.Locale;
 public class OrderXrayPageController {
 
     public void controller(@RequestParam("patientId") Patient patient,
-                           @SpringBean("emrProperties") EmrProperties emrProperties,
+                           @SpringBean("radiologyProperties") RadiologyProperties radiologyProperties,
                            @SpringBean("emrService") EmrService emrService,
                            UiUtils ui,
                            PageModel model) {
@@ -48,7 +49,7 @@ public class OrderXrayPageController {
         Collection<Provider> providers = Context.getProviderService().getProvidersByPerson(Context.getAuthenticatedUser().getPerson());
         model.addAttribute("currentProvider", providers.iterator().next());
 
-        model.addAttribute("xrayOrderables", ui.toJson(getXrayOrderables(emrProperties, Context.getLocale())));
+        model.addAttribute("xrayOrderables", ui.toJson(getXrayOrderables(radiologyProperties, Context.getLocale())));
         model.addAttribute("portableLocations", ui.toJson(getPortableLocations(emrService, ui)));
         model.addAttribute("patient", patient);
     }
@@ -70,9 +71,9 @@ public class OrderXrayPageController {
 
     }
 
-    private List<SimpleObject> getXrayOrderables(EmrProperties emrProperties, Locale locale) {
+    private List<SimpleObject> getXrayOrderables(RadiologyProperties radiologyProperties, Locale locale) {
         List<SimpleObject> items = new ArrayList<SimpleObject>();
-        Concept xrayOrderable = emrProperties.getXrayOrderablesConcept();
+        Concept xrayOrderable = radiologyProperties.getXrayOrderablesConcept();
         for (Concept concept : xrayOrderable.getSetMembers()) {
             SimpleObject item = new SimpleObject();
             item.put("value", concept.getId());
