@@ -28,6 +28,7 @@ import org.openmrs.PersonAttributeType;
 import org.openmrs.VisitType;
 import org.openmrs.module.emr.api.EmrService;
 import org.openmrs.module.emr.consult.DiagnosisMetadata;
+import org.openmrs.module.emr.radiology.RadiologyConstants;
 import org.openmrs.module.emrapi.utils.ModuleProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -64,34 +65,6 @@ public class EmrProperties extends ModuleProperties {
         return 12;
     }
 
-    public Concept getXrayOrderablesConcept() {
-        return getConceptByGlobalProperty(EmrConstants.GP_XRAY_ORDERABLES_CONCEPT);
-    }
-
-    public Concept getRadiologyStudyConcept() {
-        return getConceptByGlobalProperty(EmrConstants.GP_RADIOLOGY_STUDY_CONCEPT);
-    }
-
-    public EncounterType getRadiologyOrderEncounterType() {
-        return getEncounterTypeByGlobalProperty(EmrConstants.GP_RADIOLOGY_ORDER_ENCOUNTER_TYPE);
-    }
-
-    public EncounterType getRadiologyStudyEncounterType() {
-        return getEncounterTypeByGlobalProperty(EmrConstants.GP_RADIOLOGY_STUDY_ENCOUNTER_TYPE);
-    }
-
-    public EncounterType getRadiologyReportEncounterType() {
-        return getEncounterTypeByGlobalProperty(EmrConstants.GP_RADIOLOGY_REPORT_ENCOUNTER_TYPE);
-    }
-
-    public EncounterRole getRadiologyTechnicianEncounterRole() {
-        return getEncounterRoleByGlobalProperty(EmrConstants.GP_RADIOLOGY_TECHNICIAN_ENCOUNTER_ROLE);
-    }
-
-    public EncounterRole getPrimaryResultsInterpreterEncounterRole() {
-        return getEncounterRoleByGlobalProperty(EmrConstants.GP_PRIMARY_RESULTS_INTERPRETER_ENCOUNTER_ROLE);
-    }
-
     public EncounterType getCheckInEncounterType() {
         return getEncounterTypeByGlobalProperty(EmrConstants.GP_CHECK_IN_ENCOUNTER_TYPE);
     }
@@ -114,10 +87,6 @@ public class EmrProperties extends ModuleProperties {
 
     public EncounterRole getCheckInClerkEncounterRole() {
         return getEncounterRoleByGlobalProperty(EmrConstants.GP_CHECK_IN_CLERK_ENCOUNTER_ROLE);
-    }
-
-    public OrderType getRadiologyTestOrderType() {
-        return getOrderTypeByGlobalProperty(EmrConstants.GP_RADIOLOGY_TEST_ORDER_TYPE);
     }
 
     public VisitType getAtFacilityVisitType() {

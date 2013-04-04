@@ -10,6 +10,8 @@ public interface RadiologyService extends OpenmrsService {
 
     void saveRadiologyReport(RadiologyReport radiologyReport);
 
+    void saveRadiologyStudy(RadiologyStudy radiologyStudy);
+
     RadiologyOrder getRadiologyOrderByAccessionNumber(String accessionNumber);
 
 

@@ -20,6 +20,8 @@ public class RadiologyServiceImpl extends BaseOpenmrsService implements Radiolog
 
     private EmrProperties emrProperties;
 
+    private RadiologyProperties radiologyProperties;
+
     private EmrOrderService emrOrderService;
 
     private EncounterService encounterService;
@@ -30,7 +32,7 @@ public class RadiologyServiceImpl extends BaseOpenmrsService implements Radiolog
     @Override
     public Encounter placeRadiologyRequisition(EmrContext emrContext, RadiologyRequisition requisition) {
         Encounter encounter = new Encounter();
-        encounter.setEncounterType(emrProperties.getRadiologyOrderEncounterType());
+        encounter.setEncounterType(radiologyProperties.getRadiologyOrderEncounterType());
         encounter.setProvider(emrProperties.getOrderingProviderEncounterRole(), requisition.getRequestedBy());
         encounter.setPatient(requisition.getPatient());
         encounter.setLocation(emrContext.getSessionLocation());
@@ -50,7 +52,7 @@ public class RadiologyServiceImpl extends BaseOpenmrsService implements Radiolog
             order.setConcept(study);
             order.setUrgency(requisition.getUrgency());
             order.setStartDate(new Date());
-            order.setOrderType(emrProperties.getRadiologyTestOrderType());
+            order.setOrderType(radiologyProperties.getRadiologyTestOrderType());
             order.setPatient(requisition.getPatient());
             encounter.addOrder(order);
         }
@@ -73,12 +75,21 @@ public class RadiologyServiceImpl extends BaseOpenmrsService implements Radiolog
     }
 
     @Override
+    public void saveRadiologyStudy(RadiologyStudy radiologyStudy) {
+        // TODO: implement
+    }
+
+    @Override
     public RadiologyOrder getRadiologyOrderByAccessionNumber(String accessionNumber) {
         return radiologyOrderDAO.getRadiologyOrderByAccessionNumber(accessionNumber);
     }
 
     public void setEmrProperties(EmrProperties emrProperties) {
         this.emrProperties = emrProperties;
+    }
+
+    public void setRadiologyProperties(RadiologyProperties radiologyProperties) {
+        this.radiologyProperties = radiologyProperties;
     }
 
     public void setEncounterService(EncounterService encounterService) {

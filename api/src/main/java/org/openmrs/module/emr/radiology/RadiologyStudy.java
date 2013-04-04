@@ -14,5 +14,81 @@
 
 package org.openmrs.module.emr.radiology;
 
+import org.openmrs.Concept;
+import org.openmrs.Patient;
+import org.openmrs.Provider;
+
+import java.util.Date;
+
 public class RadiologyStudy {
+
+    private RadiologyOrder associatedRadiologyOrder;
+
+    private String accessionNumber;
+
+    private Concept procedure;
+
+    private Patient patient;
+
+    private Provider technician;
+
+    private Date datePerformed;
+
+    private Boolean imagesAvailable;
+
+    public RadiologyOrder getAssociatedRadiologyOrder() {
+        return associatedRadiologyOrder;
+    }
+
+    public void setAssociatedRadiologyOrder(RadiologyOrder associatedRadiologyOrder) {
+        this.associatedRadiologyOrder = associatedRadiologyOrder;
+    }
+
+    public String getAccessionNumber() {
+        return accessionNumber;
+    }
+
+    public void setAccessionNumber(String accessionNumber) {
+        this.accessionNumber = accessionNumber;
+    }
+
+    public Concept getProcedure() {
+        return procedure;
+    }
+
+    public void setProcedure(Concept procedure) {
+        this.procedure = procedure;
+    }
+
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+    }
+
+    public Provider getTechnician() {
+        return technician;
+    }
+
+    public void setTechnician(Provider technician) {
+        this.technician = technician;
+    }
+
+    public Date getDatePerformed() {
+        return datePerformed;
+    }
+
+    public void setDatePerformed(Date datePerformed) {
+        this.datePerformed = datePerformed;
+    }
+
+    public Boolean isImagesAvailable() {
+        return imagesAvailable;
+    }
+
+    public void setImagesAvailable(Boolean imagesAvailable) {
+        this.imagesAvailable = imagesAvailable;
+    }
 }

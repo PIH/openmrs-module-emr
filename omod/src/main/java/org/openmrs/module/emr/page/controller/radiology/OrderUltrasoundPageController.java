@@ -5,7 +5,7 @@ import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.emr.radiology.RadiologyConstants;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -33,7 +33,7 @@ public class OrderUltrasoundPageController {
 
     private List<SimpleObject> getUltrasoundOrderables(ConceptService conceptService, Locale locale) {
         List<SimpleObject> items = new ArrayList<SimpleObject>();
-        Concept ultrasoundOrderables = conceptService.getConceptByUuid(Context.getAdministrationService().getGlobalProperty(EmrConstants.GP_ULTRASOUND_ORDERABLES_CONCEPT));
+        Concept ultrasoundOrderables = conceptService.getConceptByUuid(Context.getAdministrationService().getGlobalProperty(RadiologyConstants.GP_ULTRASOUND_ORDERABLES_CONCEPT));
         if( ultrasoundOrderables != null ) {
             for (Concept concept : ultrasoundOrderables.getSetMembers()) {
                 SimpleObject item = new SimpleObject();

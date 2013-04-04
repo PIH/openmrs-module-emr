@@ -46,6 +46,7 @@ public class RadiologyServiceTest {
 
     private RadiologyServiceImpl radiologyService;
     private EmrProperties emrProperties;
+    private RadiologyProperties radiologyProperties;
     private EncounterService encounterService;
     private RadiologyOrderDAO radiologyOrderDAO;
     private EmrOrderService emrOrderService;
@@ -79,6 +80,7 @@ public class RadiologyServiceTest {
 
         radiologyService = new RadiologyServiceImpl();
         radiologyService.setEmrProperties(emrProperties);
+        radiologyService.setRadiologyProperties(radiologyProperties);
         radiologyService.setEncounterService(encounterService);
         radiologyService.setEmrOrderService(emrOrderService);
         radiologyService.setRadiologyOrderDAO(radiologyOrderDAO);
@@ -86,6 +88,7 @@ public class RadiologyServiceTest {
 
     private void prepareMocks() {
         emrProperties = mock(EmrProperties.class);
+        radiologyProperties = mock(RadiologyProperties.class);
         encounterService = mock(EncounterService.class);
         emrContext = mock(EmrContext.class);
         emrOrderService = mock(EmrOrderService.class);
@@ -93,10 +96,10 @@ public class RadiologyServiceTest {
 
         VisitSummary currentVisitSummary = new VisitSummary(currentVisit, null);
         when(emrContext.getActiveVisitSummary()).thenReturn(currentVisitSummary);
-        when(emrProperties.getRadiologyOrderEncounterType()).thenReturn(placeOrdersEncounterType);
+        when(radiologyProperties.getRadiologyOrderEncounterType()).thenReturn(placeOrdersEncounterType);
         when(emrProperties.getOrderingProviderEncounterRole()).thenReturn(clinicianEncounterRole);
         when(emrContext.getSessionLocation()).thenReturn(currentLocation);
-        when(emrProperties.getRadiologyTestOrderType()).thenReturn(orderType);
+        when(radiologyProperties.getRadiologyTestOrderType()).thenReturn(orderType);
         when(encounterService.saveEncounter(isA(Encounter.class))).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {

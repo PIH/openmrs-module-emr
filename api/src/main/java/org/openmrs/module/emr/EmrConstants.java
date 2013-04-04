@@ -21,18 +21,6 @@ public class EmrConstants {
 
     public static final String EMR_MODULE_ID = "emr";
 
-    public final static String GP_RADIOLOGY_ORDER_ENCOUNTER_TYPE = "emr.radiologyOrderEncounterType";
-
-    public final static String GP_RADIOLOGY_STUDY_ENCOUNTER_TYPE = "emr.radiologyStudyEncounterType";
-
-    public final static String GP_RADIOLOGY_REPORT_ENCOUNTER_TYPE = "emr.radiologyReportEncounterType";
-
-    public final static String GP_RADIOLOGY_TECHNICIAN_ENCOUNTER_ROLE = "emr.radiologyTechnicianEncounterRole";
-
-    public static final String GP_PRIMARY_RESULTS_INTERPRETER_ENCOUNTER_ROLE = "emr.primaryResultsInterpreterEncounterRole";
-
-    public final static String GP_RADIOLOGY_STUDY_CONCEPT = "emr.radiologyStudyConcept";
-
     public static final String GP_CHECK_IN_ENCOUNTER_TYPE = "emr.checkInEncounterType";
 
     public static final String GP_TRIAGE_ENCOUNTER_TYPE = "emr.triageEncounterType";
@@ -47,19 +35,11 @@ public class EmrConstants {
 
     public static final String GP_CHECK_IN_CLERK_ENCOUNTER_ROLE = "emr.checkInClerkEncounterRole";
 
-    public static final String GP_RADIOLOGY_TEST_ORDER_TYPE = "emr.radiologyTestOrderType";
-
     public static final String GP_PAPER_RECORD_IDENTIFIER_TYPE = "emr.paperRecordIdentifierType";
 
     public static final String GP_EXTRA_PATIENT_IDENTIFIER_TYPES = "emr.extraPatientIdentifierTypes";
 
     public static final String GP_DIAGNOSIS_SET_OF_SETS = "emr.concept.diagnosisSetOfSets";
-
-    public static final String GP_XRAY_ORDERABLES_CONCEPT = "emr.xrayOrderablesConcept";
-
-    public static final String GP_CT_SCAN_ORDERABLES_CONCEPT = "emr.ctScanOrderablesConcept";
-
-    public static final String GP_ULTRASOUND_ORDERABLES_CONCEPT = "emr.ultrasoundOrderablesConcept";
 
     public static final String PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS = "Paper Records - Manage Requests";
 

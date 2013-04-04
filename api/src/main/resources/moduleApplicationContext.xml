@@ -223,6 +223,7 @@
         <property name="target">
             <bean class="${project.parent.groupId}.${project.parent.artifactId}.radiology.RadiologyServiceImpl">
                 <property name="emrProperties" ref="emrProperties"/>
+                <property name="radiologyProperties" ref="radiologyProperties"/>
                 <property name="encounterService" ref="encounterService"/>
                 <property name="emrOrderService" ref="emrOrderService"/>
                 <property name="radiologyOrderDAO">
