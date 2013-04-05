@@ -16,6 +16,7 @@ package org.openmrs.module.emr.radiology;
 
 public class RadiologyConstants {
     // radiology global properties (will be most likely to be refactored into radiology module)
+
     public final static String GP_RADIOLOGY_ORDER_ENCOUNTER_TYPE = "emr.radiologyOrderEncounterType";
 
     public final static String GP_RADIOLOGY_STUDY_ENCOUNTER_TYPE = "emr.radiologyStudyEncounterType";
@@ -26,9 +27,20 @@ public class RadiologyConstants {
 
     public static final String GP_PRIMARY_RESULTS_INTERPRETER_ENCOUNTER_ROLE = "emr.primaryResultsInterpreterEncounterRole";
 
-
     public static final String GP_XRAY_ORDERABLES_CONCEPT = "emr.xrayOrderablesConcept";
+
     public static final String GP_CT_SCAN_ORDERABLES_CONCEPT = "emr.ctScanOrderablesConcept";
+
     public static final String GP_ULTRASOUND_ORDERABLES_CONCEPT = "emr.ultrasoundOrderablesConcept";
+
     public static final String GP_RADIOLOGY_TEST_ORDER_TYPE = "emr.radiologyTestOrderType";
+
+    public static final String CONCEPT_CODE_RADIOLOGY_STUDY_SET = "Radiology Study Set";
+
+    public static final String CONCEPT_CODE_RADIOLOGY_PROCEDURE = "Radiology Procedure";
+
+    public static final String CONCEPT_CODE_RADIOLOGY_ACCESSION_NUMBER = "Accession Number";
+
+    public static final String CONCEPT_CODE_IMAGES_AVAILABLE = "Images Available";
+
 }

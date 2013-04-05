@@ -206,6 +206,47 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>emr.ultrasoundOrderablesConcept</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the concept whose set members are the orderable ultrasound studies
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>emr.radiologyStudyEncounterType</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the the Radiology Study encounter type
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>emr.radiologyReportEncounterType</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the the Radiology Report encounter type
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>emr.radiologyTechnicianEncounterRole</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the the Radiology Technician encounter role
+        </description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>emr.primaryResultsInterpreterEncounterRole</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the the Radiology primary results interpreter encounter role
+        </description>
+    </globalProperty>
+
+
     <!-- Privileges -->
     <privilege>
         <name>Paper Records - Manage Requests</name>

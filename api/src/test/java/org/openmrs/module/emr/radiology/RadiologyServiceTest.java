@@ -7,6 +7,11 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
+import org.openmrs.ConceptMapType;
+import org.openmrs.ConceptName;
+import org.openmrs.ConceptReferenceTerm;
+import org.openmrs.ConceptSource;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
@@ -17,8 +22,10 @@ import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.Visit;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.TestUtils;
@@ -29,6 +36,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.util.Date;
+import java.util.Locale;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -36,8 +45,10 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
@@ -50,15 +61,23 @@ public class RadiologyServiceTest {
     private EncounterService encounterService;
     private RadiologyOrderDAO radiologyOrderDAO;
     private EmrOrderService emrOrderService;
+    private ConceptService conceptService;
     private EmrContext emrContext;
     private OrderType orderType;
     private Patient patient;
     private String clinicalHistory;
     private EncounterRole clinicianEncounterRole;
+    private EncounterRole radiologyTechnicianEncounterRole;
     private EncounterType placeOrdersEncounterType;
+    private EncounterType radiologyStudyEncounterType;
     private Visit currentVisit;
     private Provider provider;
     private Location currentLocation;
+    private Location unknownLocation;
+    private Provider unknownProvider;
+    private ConceptSource emrConceptSource;
+    private ConceptMapType sameAs;
+    private Date currentDate = new Date();
 
     @Before
     public void setup() {
@@ -66,15 +85,23 @@ public class RadiologyServiceTest {
         User authenticatedUser = new User();
         PowerMockito.when(Context.getAuthenticatedUser()).thenReturn(authenticatedUser);
 
+        sameAs = new ConceptMapType();
+        emrConceptSource = new ConceptSource();
+        emrConceptSource.setName(EmrConstants.EMR_CONCEPT_SOURCE_NAME);
+
         patient = new Patient();
         orderType = new OrderType();
         clinicalHistory = "Patient fell from a building";
         provider = new Provider();
         currentLocation = new Location();
+        unknownLocation = new Location();
+        unknownProvider = new Provider();
 
         currentVisit = new Visit();
         placeOrdersEncounterType = new EncounterType();
+        radiologyStudyEncounterType = new EncounterType();
         clinicianEncounterRole = new EncounterRole();
+        radiologyTechnicianEncounterRole = new EncounterRole();
 
         prepareMocks();
 
@@ -84,6 +111,7 @@ public class RadiologyServiceTest {
         radiologyService.setEncounterService(encounterService);
         radiologyService.setEmrOrderService(emrOrderService);
         radiologyService.setRadiologyOrderDAO(radiologyOrderDAO);
+        radiologyService.setConceptService(conceptService);
     }
 
     private void prepareMocks() {
@@ -92,12 +120,17 @@ public class RadiologyServiceTest {
         encounterService = mock(EncounterService.class);
         emrContext = mock(EmrContext.class);
         emrOrderService = mock(EmrOrderService.class);
+        conceptService = mock(ConceptService.class);
         radiologyOrderDAO = mock(RadiologyOrderDAO.class);
 
         VisitSummary currentVisitSummary = new VisitSummary(currentVisit, null);
         when(emrContext.getActiveVisitSummary()).thenReturn(currentVisitSummary);
         when(radiologyProperties.getRadiologyOrderEncounterType()).thenReturn(placeOrdersEncounterType);
+        when(radiologyProperties.getRadiologyStudyEncounterType()).thenReturn(radiologyStudyEncounterType);
+        when(radiologyProperties.getRadiologyTechnicianEncounterRole()).thenReturn(radiologyTechnicianEncounterRole);
         when(emrProperties.getOrderingProviderEncounterRole()).thenReturn(clinicianEncounterRole);
+        when(emrProperties.getUnknownLocation()).thenReturn(unknownLocation);
+        when(emrProperties.getUnknownProvider()).thenReturn(unknownProvider);
         when(emrContext.getSessionLocation()).thenReturn(currentLocation);
         when(radiologyProperties.getRadiologyTestOrderType()).thenReturn(orderType);
         when(encounterService.saveEncounter(isA(Encounter.class))).thenAnswer(new Answer<Object>() {
@@ -121,7 +154,7 @@ public class RadiologyServiceTest {
 
         Encounter encounter = radiologyService.placeRadiologyRequisition(emrContext, radiologyRequisition);
 
-        assertThat(encounter, is(new IsExpectedEncounter(null, study)));
+        assertThat(encounter, is(new IsExpectedRadiologyOrderEncounter(null, study)));
     }
 
     @Test
@@ -141,7 +174,7 @@ public class RadiologyServiceTest {
 
         Encounter encounter = radiologyService.placeRadiologyRequisition(emrContext, radiologyRequisition);
 
-        assertThat(encounter, new IsExpectedEncounter(examLocation, study, secondStudy));
+        assertThat(encounter, new IsExpectedRadiologyOrderEncounter(examLocation, study, secondStudy));
     }
 
     @Test
@@ -154,6 +187,52 @@ public class RadiologyServiceTest {
         Encounter encounter = radiologyService.placeRadiologyRequisition(emrContext, radiologyRequisition);
 
         assertThat(encounter.getVisit(), is(nullValue()));
+    }
+
+    @Test
+    public void shouldCreateRadiologyStudyEncounter() {
+
+        Concept radiologyStudySetConcept = setupConcept(conceptService, "Radiology Study Set", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_STUDY_SET);
+        Concept accessionNumberConcept = setupConcept(conceptService, "Accession Number", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_ACCESSION_NUMBER);
+        Concept imagesAvailableConcept = setupConcept(conceptService, "Images Available", RadiologyConstants.CONCEPT_CODE_IMAGES_AVAILABLE);
+        Concept procedureConcept = setupConcept(conceptService, "Procedure", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_PROCEDURE);
+
+        radiologyStudySetConcept.addSetMember(accessionNumberConcept);
+        radiologyStudySetConcept.addSetMember(imagesAvailableConcept);
+        radiologyStudySetConcept.addSetMember(procedureConcept);
+
+        RadiologyStudy study = new RadiologyStudy();
+        study.setPatient(patient);
+        study.setDatePerformed(currentDate);
+        study.setStudyLocation(currentLocation);
+        study.setTechnician(provider);
+
+        radiologyService.saveRadiologyStudy(study);
+
+        verify(encounterService).saveEncounter(argThat(new IsExpectedRadiologyStudyEncounter(currentLocation, provider)));
+    }
+
+    @Test
+    public void shouldNotFailIfTechnicianAndLocationNotSpecified() {
+
+        Concept radiologyStudySetConcept = setupConcept(conceptService, "Radiology Study Set", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_STUDY_SET);
+        Concept accessionNumberConcept = setupConcept(conceptService, "Accession Number", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_ACCESSION_NUMBER);
+        Concept imagesAvailableConcept = setupConcept(conceptService, "Images Available", RadiologyConstants.CONCEPT_CODE_IMAGES_AVAILABLE);
+        Concept procedureConcept = setupConcept(conceptService, "Procedure", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_PROCEDURE);
+
+        radiologyStudySetConcept.addSetMember(accessionNumberConcept);
+        radiologyStudySetConcept.addSetMember(imagesAvailableConcept);
+        radiologyStudySetConcept.addSetMember(procedureConcept);
+
+        RadiologyStudy study = new RadiologyStudy();
+        study.setPatient(patient);
+        study.setDatePerformed(currentDate);
+        study.setStudyLocation(null);
+        study.setTechnician(null);
+
+        radiologyService.saveRadiologyStudy(study);
+
+        verify(encounterService).saveEncounter(argThat(new IsExpectedRadiologyStudyEncounter(unknownLocation, unknownProvider)));
     }
 
     private class IsExpectedOrder extends ArgumentMatcher<Order> {
@@ -184,11 +263,11 @@ public class RadiologyServiceTest {
         }
     }
 
-    private class IsExpectedEncounter extends ArgumentMatcher<Encounter> {
+    private class IsExpectedRadiologyOrderEncounter extends ArgumentMatcher<Encounter> {
         private Location expectedLocation;
         private Concept[] expectedStudies;
 
-        public IsExpectedEncounter(Location expectedLocation, Concept... expectedStudies) {
+        public IsExpectedRadiologyOrderEncounter(Location expectedLocation, Concept... expectedStudies) {
             this.expectedLocation = expectedLocation;
             this.expectedStudies = expectedStudies;
         }
@@ -213,5 +292,43 @@ public class RadiologyServiceTest {
 
             return true;
         }
+    }
+
+    private class IsExpectedRadiologyStudyEncounter extends ArgumentMatcher<Encounter> {
+
+        Location expectedLocation;
+
+        Provider expectedTechnician;
+
+        public IsExpectedRadiologyStudyEncounter(Location expectedLocation, Provider expectedTechnician) {
+            this.expectedLocation = expectedLocation;
+            this.expectedTechnician = expectedTechnician;
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            Encounter encounter = (Encounter) o;
+
+            assertThat(encounter.getEncounterType(), is(radiologyStudyEncounterType));
+            assertThat(encounter.getPatient(), is(patient));
+            assertThat(encounter.getEncounterDatetime(), is(currentDate));
+            assertThat(encounter.getLocation(), is(expectedLocation));
+            assertThat(encounter.getProvidersByRole(radiologyTechnicianEncounterRole).size(), is(1));
+            assertThat(encounter.getProvidersByRole(radiologyTechnicianEncounterRole).iterator().next(), is(expectedTechnician));
+
+            // just test that the obs are there (we test that the obs group is packaged correctly in RadiologyStudyConceptSetTest)
+            assertThat(encounter.getObsAtTopLevel(false).size(), is(1));
+            assertThat(encounter.getObsAtTopLevel(false).iterator().next().getGroupMembers().size(), is(3));
+            return true;
+        }
+
+    }
+
+    private Concept setupConcept(ConceptService mockConceptService, String name, String mappingCode) {
+        Concept concept = new Concept();
+        concept.addName(new ConceptName(name, Locale.ENGLISH));
+        concept.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(emrConceptSource, mappingCode, null), sameAs));
+        when(mockConceptService.getConceptByMapping(mappingCode, emrConceptSource.getName())).thenReturn(concept);
+        return concept;
     }
 }

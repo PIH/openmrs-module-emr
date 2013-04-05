@@ -41,6 +41,10 @@ public class EmrConstants {
 
     public static final String GP_DIAGNOSIS_SET_OF_SETS = "emr.concept.diagnosisSetOfSets";
 
+    public static final String GP_UNKNOWN_LOCATION = "emr.unknownLocation";
+
+    public static final String GP_UNKNOWN_PROVIDER = "emr.unknownProvider";
+
     public static final String PRIVILEGE_PAPER_RECORDS_MANAGE_REQUESTS = "Paper Records - Manage Requests";
 
     public static final String PRIVILEGE_PAPER_RECORDS_REQUEST_RECORDS = "Paper Records - Request Records";

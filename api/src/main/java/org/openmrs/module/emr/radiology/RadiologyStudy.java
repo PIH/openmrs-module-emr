@@ -15,6 +15,7 @@
 package org.openmrs.module.emr.radiology;
 
 import org.openmrs.Concept;
+import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 
@@ -33,6 +34,8 @@ public class RadiologyStudy {
     private Provider technician;
 
     private Date datePerformed;
+
+    private Location studyLocation;
 
     private Boolean imagesAvailable;
 
@@ -82,6 +85,14 @@ public class RadiologyStudy {
 
     public void setDatePerformed(Date datePerformed) {
         this.datePerformed = datePerformed;
+    }
+
+    public Location getStudyLocation() {
+        return studyLocation;
+    }
+
+    public void setStudyLocation(Location studyLocation) {
+        this.studyLocation = studyLocation;
     }
 
     public Boolean isImagesAvailable() {

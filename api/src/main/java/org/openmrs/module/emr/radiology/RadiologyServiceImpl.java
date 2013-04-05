@@ -3,6 +3,7 @@ package org.openmrs.module.emr.radiology;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Order;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.OrderService;
 import org.openmrs.api.impl.BaseOpenmrsService;
@@ -25,6 +26,8 @@ public class RadiologyServiceImpl extends BaseOpenmrsService implements Radiolog
     private EmrOrderService emrOrderService;
 
     private EncounterService encounterService;
+
+    private ConceptService conceptService;
 
     private RadiologyOrderDAO radiologyOrderDAO;
 
@@ -71,12 +74,27 @@ public class RadiologyServiceImpl extends BaseOpenmrsService implements Radiolog
 
     @Override
     public void saveRadiologyReport(RadiologyReport radiologyReport) {
-        // TODO: implement
+
     }
 
     @Override
-    public void saveRadiologyStudy(RadiologyStudy radiologyStudy) {
-        // TODO: implement
+    public Encounter saveRadiologyStudy(RadiologyStudy radiologyStudy) {
+
+        // TODO: add a validator?
+
+        Encounter encounter = new Encounter();
+        encounter.setEncounterType(radiologyProperties.getRadiologyStudyEncounterType());
+        encounter.setEncounterDatetime(radiologyStudy.getDatePerformed());
+        encounter.setLocation(radiologyStudy.getStudyLocation() != null ?
+                radiologyStudy.getStudyLocation() : emrProperties.getUnknownLocation());
+        encounter.setPatient(radiologyStudy.getPatient());
+        encounter.addProvider(radiologyProperties.getRadiologyTechnicianEncounterRole(),
+                radiologyStudy.getTechnician() != null ? radiologyStudy.getTechnician() : emrProperties.getUnknownProvider());
+
+        RadiologyStudyConceptSet radiologyStudyConceptSet = new RadiologyStudyConceptSet(conceptService);
+        encounter.addObs(radiologyStudyConceptSet.buildRadiologyStudyObsGroup(radiologyStudy));
+
+        return encounterService.saveEncounter(encounter);
     }
 
     @Override
@@ -98,6 +116,10 @@ public class RadiologyServiceImpl extends BaseOpenmrsService implements Radiolog
 
     public void setEmrOrderService(EmrOrderService emrOrderService) {
         this.emrOrderService = emrOrderService;
+    }
+
+    public void setConceptService(ConceptService conceptService) {
+        this.conceptService = conceptService;
     }
 
     public void setRadiologyOrderDAO(RadiologyOrderDAO radiologyOrderDAO) {

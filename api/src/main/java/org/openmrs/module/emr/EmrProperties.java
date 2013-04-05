@@ -25,6 +25,7 @@ import org.openmrs.LocationTag;
 import org.openmrs.OrderType;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttributeType;
+import org.openmrs.Provider;
 import org.openmrs.VisitType;
 import org.openmrs.module.emr.api.EmrService;
 import org.openmrs.module.emr.consult.DiagnosisMetadata;
@@ -103,6 +104,14 @@ public class EmrProperties extends ModuleProperties {
 
     public LocationTag getMedicalRecordLocationLocationTag() {
         return locationService.getLocationTagByName(EmrConstants.LOCATION_TAG_MEDICAL_RECORD_LOCATION);
+    }
+
+    public Location getUnknownLocation() {
+        return getLocationByGlobalProperty(EmrConstants.GP_UNKNOWN_LOCATION);
+    }
+
+    public Provider getUnknownProvider() {
+        return getProviderByGlobalProperty(EmrConstants.GP_UNKNOWN_PROVIDER);
     }
 
     public PatientIdentifierType getPrimaryIdentifierType() {

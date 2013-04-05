@@ -17,7 +17,9 @@ package org.openmrs.module.emr.radiology;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.Concept;
 import org.openmrs.Encounter;
+import org.openmrs.Obs;
 import org.openmrs.Order;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
@@ -27,16 +29,22 @@ import org.openmrs.api.OrderService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrContext;
+import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class RadiologyServiceComponentTest extends BaseModuleContextSensitiveTest {
 
@@ -63,6 +71,14 @@ public class RadiologyServiceComponentTest extends BaseModuleContextSensitiveTes
     @Autowired
     @Qualifier("encounterService")
     private EncounterService encounterService;
+
+    @Autowired
+    @Qualifier("emrProperties")
+    private EmrProperties emrProperties;
+
+    @Autowired
+    @Qualifier("radiologyProperties")
+    private RadiologyProperties radiologyProperties;
 
     @Before
     public void beforeAllTests() throws Exception {
@@ -129,6 +145,70 @@ public class RadiologyServiceComponentTest extends BaseModuleContextSensitiveTes
         Assert.assertNotNull(radiologyOrder);
         Assert.assertEquals(conceptService.getConcept(18), radiologyOrder.getConcept());
         Assert.assertEquals(Order.Urgency.STAT, radiologyOrder.getUrgency());
+    }
+
+    @Test
+    public void shouldSaveARadiologyStudy() {
+
+        Date timeOfStudy = new Date();
+
+        // use patient demo database
+        Patient patient = patientService.getPatient(6);
+
+        // from radiologyServiceComponentTestDataset.xml
+        Concept procedure = conceptService.getConcept(1001);
+        RadiologyOrder radiologyOrder = radiologyService.getRadiologyOrderByAccessionNumber("12345");
+
+        RadiologyStudy radiologyStudy = new RadiologyStudy();
+        radiologyStudy.setPatient(patient);
+        radiologyStudy.setProcedure(procedure);
+        radiologyStudy.setImagesAvailable(true);
+        radiologyStudy.setAccessionNumber("12345");
+        radiologyStudy.setAssociatedRadiologyOrder(radiologyOrder);
+        radiologyStudy.setDatePerformed(timeOfStudy);
+
+        Encounter encounter = radiologyService.saveRadiologyStudy(radiologyStudy);
+
+        assertThat(encounter.getPatient(), is(patient));
+        assertThat(encounter.getEncounterType(), is(radiologyProperties.getRadiologyStudyEncounterType()));
+        assertThat(encounter.getEncounterDatetime(), is(timeOfStudy));
+        assertThat(encounter.getLocation(), is(emrProperties.getUnknownLocation()));
+        assertThat(encounter.getProvidersByRole(radiologyProperties.getRadiologyTechnicianEncounterRole()).size(), is(1));
+        assertThat(encounter.getProvidersByRole(radiologyProperties.getRadiologyTechnicianEncounterRole()).iterator().next(), is(emrProperties.getUnknownProvider()));
+
+        assertThat(encounter.getObsAtTopLevel(false).size(), is(1));
+
+        Obs radiologyStudyObsSet = encounter.getObsAtTopLevel(false).iterator().next();
+
+
+        assertThat(radiologyStudyObsSet.getGroupMembers().size(), is(3));
+        assertThat(radiologyStudyObsSet.getOrder().getAccessionNumber(), is("12345"));
+
+        Obs accessionNumberObs = null;
+        Obs procedureObs = null;
+        Obs imagesAvailableObs = null;
+
+        // hack, just reference the concepts by their ids in the test dataset
+        for (Obs obs : radiologyStudyObsSet.getGroupMembers()) {
+            if (obs.getConcept().getId() == 1004) {
+                accessionNumberObs = obs;
+            }
+            if (obs.getConcept().getId() == 1003) {
+                procedureObs  = obs;
+            }
+            if (obs.getConcept().getId() == 1005) {
+                imagesAvailableObs = obs;
+            }
+        }
+
+        assertNotNull(accessionNumberObs);
+        assertNotNull(procedureObs);
+        assertNotNull(imagesAvailableObs);
+
+        assertThat(accessionNumberObs.getValueText(), is("12345"));
+        assertThat(procedureObs.getValueCoded(), is(procedure));
+        assertThat(imagesAvailableObs.getValueAsBoolean(), is(true));
+
     }
 
 }
