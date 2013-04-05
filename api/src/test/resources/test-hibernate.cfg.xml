@@ -14,5 +14,7 @@
 
         <mapping resource="Provider.hbm.xml" />
         <mapping resource="ProviderRole.hbm.xml" />
+
+        <mapping resource="ImportedPackage.hbm.xml" />
     </session-factory>
 </hibernate-configuration>
