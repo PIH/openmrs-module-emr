@@ -159,6 +159,9 @@ var clickedSectionHandler = function(sections, section, event) {
         }
     }
 
+    // call exit handler if validation has passed
+    shouldSelectClickedSection = shouldSelectClickedSection && currentSection.onExit();
+
     if(!shouldSelectClickedSection) {
         var selectedQuestion = selectedModel(currentSection.questions);
         var selectedField = selectedModel(selectedQuestion.fields);
@@ -196,6 +199,9 @@ var clickedQuestionHandler = function(questions, question, event) {
         }
     }
 
+    // call exit handler if validation has passed
+    shouldSelectClickedQuestion = shouldSelectClickedQuestion && currentQuestion.onExit();
+
     if(!shouldSelectClickedQuestion) {
         var selectedField = selectedModel(currentQuestion.fields);
         selectedField && selectedField.select();
@@ -230,6 +236,9 @@ var clickedFieldHandler = function(fields, field, event) {
             shouldSelectClickedField = fields[i].isValid() && shouldSelectClickedField;
         }
     }
+
+    // call exit handler if validation has passed
+    shouldSelectClickedField = shouldSelectClickedField && currentField.onExit();
 
     if(!shouldSelectClickedField) {
         currentField.select();

@@ -168,6 +168,13 @@ QuestionModel.prototype.isValid = function() {
         return field.isValid() && memo;
     }, true);
 }
+
+QuestionModel.prototype.onExit = function() {
+    return _.reduce(this.fields, function(memo, field) {
+        return field.onExit() && memo;
+    }, true);
+}
+
 QuestionModel.prototype.title = function() {
     return this.questionLegend;
 }
@@ -227,6 +234,12 @@ SectionModel.prototype.unselect = function() {
 SectionModel.prototype.isValid = function() {
     return _.reduce(this.questions, function(memo, question) {
         return question.isValid() && memo;
+    }, true);
+}
+
+SectionModel.prototype.onExit = function() {
+    return _.reduce(this.questions, function(memo, question) {
+        return question.onExit() && memo;
     }, true);
 }
 

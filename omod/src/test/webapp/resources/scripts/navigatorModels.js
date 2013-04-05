@@ -243,6 +243,38 @@ describe("Test for simple form models", function() {
             expect(secondField.isValid).toHaveBeenCalled();
             expect(isValid).toBe(false);
         });
+
+        it("should call exit handlers for question and return true if all handlers return true", function() {
+            var firstField = jasmine.createSpyObj('firstField', ['onExit']);
+            var secondField = jasmine.createSpyObj('firstField', ['onExit']);
+            firstField.onExit.andReturn(true);
+            secondField.onExit.andReturn(true);
+
+            var questionModel = new QuestionModel();
+            questionModel.fields = [firstField, secondField];
+
+            var onExit = questionModel.onExit();
+
+            expect(firstField.onExit).toHaveBeenCalled();
+            expect(secondField.onExit).toHaveBeenCalled();
+            expect(onExit).toBe(true);
+        })
+
+        it("should call exit handlers for question and return false if any handler returns false", function() {
+            var firstField = jasmine.createSpyObj('firstField', ['onExit']);
+            var secondField = jasmine.createSpyObj('firstField', ['onExit']);
+            firstField.onExit.andReturn(true);
+            secondField.onExit.andReturn(false);
+
+            var questionModel = new QuestionModel();
+            questionModel.fields = [firstField, secondField];
+
+            var onExit = questionModel.onExit();
+
+            expect(firstField.onExit).toHaveBeenCalled();
+            expect(secondField.onExit).toHaveBeenCalled();
+            expect(onExit).toBe(false);
+        })
     });
 
     describe("Unit tests for SectionModel", function() {
@@ -304,7 +336,46 @@ describe("Test for simple form models", function() {
             expect(isValid).toBe(false);
 
         });
+
+        it(" should call exit handlers for question and return true if all handlers return true", function() {
+            var menuElement = jasmine.createSpyObj('menu', ['append']);
+            var firstQuestion = jasmine.createSpyObj('firstQuestion', ['onExit']);
+            var secondQuestion = jasmine.createSpyObj('secondQuestion', ['onExit']);
+            firstQuestion.onExit.andReturn(true);
+            secondQuestion.onExit.andReturn(true);
+
+            var sectionModel = new SectionModel(null, menuElement);
+            sectionModel.questions = [firstQuestion, secondQuestion];
+
+            var onExit = sectionModel.onExit();
+
+            expect(firstQuestion.onExit).toHaveBeenCalled();
+            expect(secondQuestion.onExit).toHaveBeenCalled();
+            expect(onExit).toBe(true);
+
+        });
+
+        it(" should call exit handlers for question and return false if any handler returns false", function() {
+            var menuElement = jasmine.createSpyObj('menu', ['append']);
+            var firstQuestion = jasmine.createSpyObj('firstQuestion', ['onExit']);
+            var secondQuestion = jasmine.createSpyObj('secondQuestion', ['onExit']);
+            firstQuestion.onExit.andReturn(true);
+            secondQuestion.onExit.andReturn(false);
+
+            var sectionModel = new SectionModel(null, menuElement);
+            sectionModel.questions = [firstQuestion, secondQuestion];
+
+            var onExit = sectionModel.onExit();
+
+            expect(firstQuestion.onExit).toHaveBeenCalled();
+            expect(secondQuestion.onExit).toHaveBeenCalled();
+            expect(onExit).toBe(false);
+
+        });
     });
+
+
+
 
     describe("Unit tests for ConfirmationSectionModel", function() {
        it("should select and unselect the confirmation section",function() {
