@@ -73,12 +73,12 @@
         <% } %>
         <% if (patient.paperRecordIdentifier) { %>
             <br />
-            <em>${ ui.format(emrProperties.paperRecordIdentifierType) }</em>
+            <em>${ ui.format(emrApiProperties.paperRecordIdentifierType) }</em>
             <span>${patient.paperRecordIdentifier.identifier }</span>
         <% } %>
         <br />
-        <% if (emrProperties.extraPatientIdentifierTypes) { %>
-            <% emrProperties.extraPatientIdentifierTypes.each{ %>
+        <% if (emrApiProperties.extraPatientIdentifierTypes) { %>
+            <% emrApiProperties.extraPatientIdentifierTypes.each{ %>
                 <em>${ ui.format(it) }</em>
                 <% def extraPatientIdentifier = patient.patient.getPatientIdentifier(it)
                    if (extraPatientIdentifier) { %>

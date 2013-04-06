@@ -1,16 +1,16 @@
 package org.openmrs.module.emr.fragment.controller.visit;
 
 import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.commons.lang.time.DateUtils;
-import org.openmrs.*;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
+import org.openmrs.User;
+import org.openmrs.Visit;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
-import org.openmrs.module.emr.EmrProperties;
-import org.openmrs.module.emr.consult.Diagnosis;
-import org.openmrs.module.emr.consult.DiagnosisMetadata;
 import org.openmrs.module.emr.visit.ParserEncounterIntoSimpleObjects;
+import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.UiUtils;
@@ -21,7 +21,9 @@ import org.openmrs.ui.framework.fragment.action.SuccessResult;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class VisitDetailsFragmentController {
 
@@ -71,10 +73,10 @@ public class VisitDetailsFragmentController {
 
 
     public SimpleObject getEncounterDetails(@RequestParam("encounterId") Encounter encounter,
-                                            @SpringBean("emrProperties") EmrProperties emrProperties,
+                                            @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
                                             UiUtils uiUtils){
 
-        ParserEncounterIntoSimpleObjects parserEncounter = new ParserEncounterIntoSimpleObjects(encounter, uiUtils, emrProperties);
+        ParserEncounterIntoSimpleObjects parserEncounter = new ParserEncounterIntoSimpleObjects(encounter, uiUtils, emrApiProperties);
 
         List<SimpleObject> observations = parserEncounter.parseObservations();
 

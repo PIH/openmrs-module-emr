@@ -16,8 +16,8 @@ package org.openmrs.module.emr.page.controller.printer;
 
 import org.openmrs.Location;
 import org.openmrs.module.emr.api.EmrService;
-import org.openmrs.module.emr.printer.Printer;
-import org.openmrs.module.emr.printer.PrinterService;
+import org.openmrs.module.emrapi.printer.Printer;
+import org.openmrs.module.emrapi.printer.PrinterService;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 

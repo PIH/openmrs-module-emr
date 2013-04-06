@@ -25,10 +25,10 @@ import org.openmrs.PersonName;
 import org.openmrs.User;
 import org.openmrs.api.context.UserContext;
 import org.openmrs.module.emr.EmrContext;
-import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.TestUiUtils;
-import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
-import org.openmrs.module.emr.paperrecord.PaperRecordService;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.paperrecord.PaperRecordRequest;
+import org.openmrs.module.paperrecord.PaperRecordService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.fragment.action.FailureResult;
@@ -61,7 +61,7 @@ public class ArchivesRoomFragmentControllerTest {
 
     private PaperRecordService paperRecordService;
 
-    private EmrProperties emrProperties;
+    private EmrApiProperties emrApiProperties;
 
     private EmrContext emrContext;
 
@@ -82,7 +82,7 @@ public class ArchivesRoomFragmentControllerTest {
         ui = new TestUiUtils();
 
         paperRecordService = mock(PaperRecordService.class);
-        emrProperties = mock(EmrProperties.class);
+        emrApiProperties = mock(EmrApiProperties.class);
         emrContext = mock(EmrContext.class);
         userContext = mock(UserContext.class);
 
@@ -197,9 +197,9 @@ public class ArchivesRoomFragmentControllerTest {
 
         when(paperRecordService.getOpenPaperRecordRequestsToPull()).thenReturn(requests);
         when(paperRecordService.getMostRecentSentPaperRecordRequestByIdentifier("123")).thenReturn(createSampleSentRequest());
-        when(emrProperties.getPrimaryIdentifierType()).thenReturn(patientIdentifierType);
+        when(emrApiProperties.getPrimaryIdentifierType()).thenReturn(patientIdentifierType);
 
-        List<SimpleObject> results = controller.getOpenRecordsToPull(paperRecordService, emrProperties, ui);
+        List<SimpleObject> results = controller.getOpenRecordsToPull(paperRecordService, emrApiProperties, ui);
 
         assertProperPullResultsList(results);
     }
@@ -210,9 +210,9 @@ public class ArchivesRoomFragmentControllerTest {
         List<PaperRecordRequest> requests = createSampleCreatePaperRecordRequestList();
 
         when(paperRecordService.getOpenPaperRecordRequestsToCreate()).thenReturn(requests);
-        when(emrProperties.getPrimaryIdentifierType()).thenReturn(patientIdentifierType);
+        when(emrApiProperties.getPrimaryIdentifierType()).thenReturn(patientIdentifierType);
 
-        List<SimpleObject> results = controller.getOpenRecordsToCreate(paperRecordService, emrProperties, ui);
+        List<SimpleObject> results = controller.getOpenRecordsToCreate(paperRecordService, emrApiProperties, ui);
 
         assertProperCreateResultsList(results);
     }
@@ -224,9 +224,9 @@ public class ArchivesRoomFragmentControllerTest {
 
         when(paperRecordService.getAssignedPaperRecordRequestsToPull()).thenReturn(requests);
         when(paperRecordService.getMostRecentSentPaperRecordRequestByIdentifier("123")).thenReturn(createSampleSentRequest());
-        when(emrProperties.getPrimaryIdentifierType()).thenReturn(patientIdentifierType);
+        when(emrApiProperties.getPrimaryIdentifierType()).thenReturn(patientIdentifierType);
 
-        List<SimpleObject> results = controller.getAssignedRecordsToPull(paperRecordService, emrProperties, ui);
+        List<SimpleObject> results = controller.getAssignedRecordsToPull(paperRecordService, emrApiProperties, ui);
 
         assertProperPullResultsList(results);
     }
@@ -237,9 +237,9 @@ public class ArchivesRoomFragmentControllerTest {
         List<PaperRecordRequest> requests = createSampleCreatePaperRecordRequestList();
 
         when(paperRecordService.getAssignedPaperRecordRequestsToCreate()).thenReturn(requests);
-        when(emrProperties.getPrimaryIdentifierType()).thenReturn(patientIdentifierType);
+        when(emrApiProperties.getPrimaryIdentifierType()).thenReturn(patientIdentifierType);
 
-        List<SimpleObject> results = controller.getAssignedRecordsToCreate(paperRecordService, emrProperties, ui);
+        List<SimpleObject> results = controller.getAssignedRecordsToCreate(paperRecordService, emrApiProperties, ui);
 
         assertProperCreateResultsList(results);
     }

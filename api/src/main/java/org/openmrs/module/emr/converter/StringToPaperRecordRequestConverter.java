@@ -14,14 +14,14 @@
 
 package org.openmrs.module.emr.converter;
 
-import org.openmrs.module.emr.paperrecord.PaperRecordRequest;
-import org.openmrs.module.emr.paperrecord.PaperRecordService;
+import org.openmrs.module.paperrecord.PaperRecordRequest;
+import org.openmrs.module.paperrecord.PaperRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 /**
- * Convert from {@link String} to {@link org.openmrs.module.emr.paperrecord.PaperRecordRequest}, interpreting it as id
+ * Convert from {@link String} to {@link org.openmrs.module.paperrecord.PaperRecordRequest}, interpreting it as id
  */
 @Component
 public class StringToPaperRecordRequestConverter implements Converter<String, PaperRecordRequest> {

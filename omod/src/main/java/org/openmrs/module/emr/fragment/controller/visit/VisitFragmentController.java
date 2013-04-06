@@ -5,16 +5,14 @@ import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
-import org.openmrs.module.emr.visit.VisitDomainWrapper;
 import org.openmrs.module.emr.visit.VisitDomainWrapperFactory;
 import org.openmrs.module.emr.visit.VisitDomainWrapperRepository;
-import org.openmrs.module.emr.adt.AdtService;
+import org.openmrs.module.emrapi.adt.AdtService;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 import org.openmrs.ui.framework.fragment.action.SuccessResult;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 

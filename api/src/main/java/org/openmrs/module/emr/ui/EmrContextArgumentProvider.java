@@ -24,9 +24,10 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
-import org.openmrs.module.emr.adt.AdtService;
-import org.openmrs.module.emr.adt.VisitSummary;
 import org.openmrs.module.emr.utils.FeatureToggleProperties;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.adt.AdtService;
+import org.openmrs.module.emrapi.adt.VisitSummary;
 import org.openmrs.ui.framework.fragment.FragmentContext;
 import org.openmrs.ui.framework.fragment.FragmentModelConfigurator;
 import org.openmrs.ui.framework.fragment.PossibleFragmentActionArgumentProvider;
@@ -62,6 +63,10 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
     AdtService adtService;
 
     @Autowired
+    @Qualifier("emrApiProperties")
+    EmrApiProperties emrApiProperties;
+
+    @Autowired
     @Qualifier("emrProperties")
     EmrProperties emrProperties;
 
@@ -80,6 +85,7 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
         EmrContext emrContext = buildEmrContext(request);
         pageContext.getModel().addAttribute("emrContext", emrContext);
         pageContext.getModel().addAttribute("emrProperties", emrProperties);
+        pageContext.getModel().addAttribute("emrApiProperties", emrApiProperties);
         pageContext.getModel().addAttribute("featureToggles", featureToggle);
     }
 
@@ -90,6 +96,7 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
         EmrContext emrContext = (EmrContext) pageModel.get("emrContext");
         fragmentContext.getModel().addAttribute("emrContext", emrContext);
         fragmentContext.getModel().addAttribute("emrProperties", emrProperties);
+        fragmentContext.getModel().addAttribute("emrApiProperties", emrApiProperties);
         fragmentContext.getModel().addAttribute("featureToggles", featureToggle);
     }
 
@@ -100,6 +107,7 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
         EmrContext emrContext = (EmrContext) pageModel.get("emrContext");
         possibleArguments.put(EmrContext.class, emrContext);
         possibleArguments.put(EmrProperties.class, emrProperties);
+        possibleArguments.put(EmrApiProperties.class, emrApiProperties);
     }
 
     @Override
@@ -147,7 +155,7 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
                     Location visitLocation = adtService.getLocationThatSupportsVisits(emrContext.getSessionLocation());
                     Visit activeVisit = adtService.getActiveVisit(patient, visitLocation);
                     if (activeVisit != null) {
-                        emrContext.setActiveVisitSummary(new VisitSummary(activeVisit, emrProperties));
+                        emrContext.setActiveVisitSummary(new VisitSummary(activeVisit, emrApiProperties));
                     }
                 }
             } catch (Exception ex) {

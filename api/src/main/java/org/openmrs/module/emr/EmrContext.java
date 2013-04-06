@@ -20,7 +20,7 @@ import org.openmrs.Provider;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
-import org.openmrs.module.emr.adt.VisitSummary;
+import org.openmrs.module.emrapi.adt.VisitSummary;
 
 import javax.servlet.http.HttpSession;
 

@@ -81,7 +81,7 @@
             <img src="${ui.resourceLink("mirebalais", "images/spinner.gif")}">
         </div>
         <ul class="select">
-            <% emrProperties.allAvailableLocations.sort { ui.format(it) }.each {
+            <% emrApiProperties.allAvailableLocations.sort { ui.format(it) }.each {
                 def selected = (it==emrContext.sessionLocation) ? "selected" : ""
             %>
             <li class="${selected}" locationId="${it.id}" locationName="${ui.format(it)}">${ui.format(it)}</li>

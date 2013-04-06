@@ -11,7 +11,7 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
-import org.openmrs.module.emr.adt.AdtService;
+import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -65,7 +65,9 @@ public class RetrospectiveCheckinPageController {
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(checkinDateYear, checkinDateMonth-1, checkinDateDay, checkinDateHour, checkinDateMinutes);
-        adtService.createCheckinInRetrospective(patient, location, provider, paymentReason, paymentAmount, paymentReceipt, calendar.getTime());
+        // COMMENTED THIS OUT SINCE IT WAS NOT REFACTORED INTO THE EMRAPI MODULE, BUT THIS MEANS THIS WON'T WORK!
+        // (THAT SAID, THE FEATURE WASN'T COMPLETE ANYWAY.)
+        //adtService.createCheckinInRetrospective(patient, location, provider, paymentReason, paymentAmount, paymentReceipt, calendar.getTime());
 
         request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, "emr.retrospectiveCheckin.success");
         request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");

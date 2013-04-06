@@ -15,7 +15,7 @@
 package org.openmrs.module.emr.reporting.cohort.definition;
 
 import org.openmrs.Concept;
-import org.openmrs.module.emr.consult.Diagnosis;
+import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.reporting.cohort.definition.BaseCohortDefinition;
 import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
 
@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Searches for patients who have diagnoses, represented as Obs groups following best-practice arrangement of concepts
  * @see {@link Diagnosis}
- * @see {@link org.openmrs.module.emr.consult.DiagnosisMetadata}
+ * @see {@link org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata}
  */
 public class DiagnosisCohortDefinition extends BaseCohortDefinition {
 

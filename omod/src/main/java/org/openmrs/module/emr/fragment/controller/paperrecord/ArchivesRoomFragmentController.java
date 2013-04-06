@@ -19,9 +19,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Person;
 import org.openmrs.module.emr.EmrContext;
-import org.openmrs.module.emr.EmrProperties;
-import org.openmrs.module.emr.paperrecord.*;
-import org.openmrs.module.emr.patient.PatientDomainWrapper;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
+import org.openmrs.module.paperrecord.PaperRecordMergeRequest;
+import org.openmrs.module.paperrecord.PaperRecordRequest;
+import org.openmrs.module.paperrecord.PaperRecordService;
+import org.openmrs.module.paperrecord.UnableToPrintLabelException;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -49,7 +52,7 @@ public class ArchivesRoomFragmentController {
     private DateFormat dateAndTimeFormat = new SimpleDateFormat("dd/MM HH:mm");
 
     public List<SimpleObject> getOpenRecordsToPull(@SpringBean("paperRecordService") PaperRecordService paperRecordService,
-                                                   @SpringBean("emrProperties") EmrProperties emrProperties,
+                                                   @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
                                                    UiUtils ui) {
 
         // TODO: when we have multiple archives rooms this method will have to operate by location as well
@@ -57,14 +60,14 @@ public class ArchivesRoomFragmentController {
         List<SimpleObject> results = new ArrayList<SimpleObject>();
 
         if (requests != null && requests.size() > 0) {
-            results = convertPaperRecordRequestsToSimpleObjects(requests, paperRecordService, emrProperties, ui);
+            results = convertPaperRecordRequestsToSimpleObjects(requests, paperRecordService, emrApiProperties, ui);
         }
 
         return results;
     }
 
     public List<SimpleObject> getOpenRecordsToCreate(@SpringBean("paperRecordService") PaperRecordService paperRecordService,
-                                                        @SpringBean("emrProperties") EmrProperties emrProperties,
+                                                        @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
                                                         UiUtils ui) {
 
         // TODO: when we have multiple archives rooms this method will have to operate by location as well
@@ -72,28 +75,27 @@ public class ArchivesRoomFragmentController {
         List<SimpleObject> results = new ArrayList<SimpleObject>();
 
         if (requests != null && requests.size() > 0) {
-            results = convertPaperRecordRequestsToSimpleObjects(requests, paperRecordService, emrProperties, ui);
+            results = convertPaperRecordRequestsToSimpleObjects(requests, paperRecordService, emrApiProperties, ui);
         }
 
         return results;
     }
 
     public List<SimpleObject> getOpenRecordsToMerge(@SpringBean("paperRecordService") PaperRecordService paperRecordService,
-                                                     @SpringBean("emrProperties") EmrProperties emrProperties,
                                                      UiUtils ui) {
 
         List<PaperRecordMergeRequest> requests = paperRecordService.getOpenPaperRecordMergeRequests();
         List<SimpleObject> results = new ArrayList<SimpleObject>();
 
         if (requests != null && requests.size() > 0) {
-            results = convertPaperRecordMergeRequestsToSimpleObjects(requests, emrProperties, ui);
+            results = convertPaperRecordMergeRequestsToSimpleObjects(requests, ui);
         }
 
         return results;
     }
 
     public List<SimpleObject> getAssignedRecordsToPull(@SpringBean("paperRecordService") PaperRecordService paperRecordService,
-                                                       @SpringBean("emrProperties") EmrProperties emrProperties,
+                                                       @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
                                                        UiUtils ui) {
 
         // TODO: when we have multiple archives rooms this method will have to operate by location as well
@@ -101,14 +103,14 @@ public class ArchivesRoomFragmentController {
         List<SimpleObject> results = new ArrayList<SimpleObject>();
 
         if (requests != null && requests.size() > 0) {
-            results = convertPaperRecordRequestsToSimpleObjects(requests, paperRecordService, emrProperties, ui);
+            results = convertPaperRecordRequestsToSimpleObjects(requests, paperRecordService, emrApiProperties, ui);
         }
 
         return results;
     }
 
     public List<SimpleObject> getAssignedRecordsToCreate(@SpringBean("paperRecordService") PaperRecordService paperRecordService,
-                                                         @SpringBean("emrProperties") EmrProperties emrProperties,
+                                                         @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
                                                          UiUtils ui) {
 
         // TODO: when we have multiple archives rooms this method will have to operate by location as well
@@ -116,7 +118,7 @@ public class ArchivesRoomFragmentController {
         List<SimpleObject> results = new ArrayList<SimpleObject>();
 
         if (requests != null && requests.size() > 0) {
-            results = convertPaperRecordRequestsToSimpleObjects(requests, paperRecordService, emrProperties, ui);
+            results = convertPaperRecordRequestsToSimpleObjects(requests, paperRecordService, emrApiProperties, ui);
         }
 
         return results;
@@ -292,7 +294,7 @@ public class ArchivesRoomFragmentController {
 
     private List<SimpleObject> convertPaperRecordRequestsToSimpleObjects(List<PaperRecordRequest> requests,
                                                                          PaperRecordService paperRecordService,
-                                                                         EmrProperties emrProperties, UiUtils ui) {
+                                                                         EmrApiProperties emrApiProperties, UiUtils ui) {
 
         List<SimpleObject> results = new ArrayList<SimpleObject>();
 
@@ -302,7 +304,7 @@ public class ArchivesRoomFragmentController {
             // manually add the date and patient identifier
             result.put("dateCreated", timeAndDateFormat.format(request.getDateCreated()));
             result.put("dateCreatedSortable", request.getDateCreated()) ;
-            result.put("patientIdentifier", ui.format(request.getPatient().getPatientIdentifier(emrProperties.getPrimaryIdentifierType()).getIdentifier()));
+            result.put("patientIdentifier", ui.format(request.getPatient().getPatientIdentifier(emrApiProperties.getPrimaryIdentifierType()).getIdentifier()));
 
             // add the last sent and last sent date to any pending pull requests
             if (request.getStatus().equals(PaperRecordRequest.Status.ASSIGNED_TO_PULL)
@@ -324,7 +326,7 @@ public class ArchivesRoomFragmentController {
     }
 
 
-    private List<SimpleObject> convertPaperRecordMergeRequestsToSimpleObjects(List<PaperRecordMergeRequest> requests, EmrProperties emrProperties, UiUtils ui) {
+    private List<SimpleObject> convertPaperRecordMergeRequestsToSimpleObjects(List<PaperRecordMergeRequest> requests, UiUtils ui) {
         List<SimpleObject> results = new ArrayList<SimpleObject>();
 
         for (PaperRecordMergeRequest request : requests) {

@@ -2,8 +2,8 @@ package org.openmrs.module.emr.radiology.db;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-import org.openmrs.module.emr.api.db.hibernate.HibernateSingleClassDAO;
 import org.openmrs.module.emr.radiology.RadiologyOrder;
+import org.openmrs.module.emrapi.db.HibernateSingleClassDAO;
 
 public class HibernateRadiologyOrderDAO extends HibernateSingleClassDAO<RadiologyOrder> implements RadiologyOrderDAO {
 

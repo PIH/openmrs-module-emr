@@ -25,10 +25,10 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.impl.BaseOpenmrsService;
-import org.openmrs.module.emr.EmrProperties;
-import org.openmrs.module.emr.adt.AdtService;
 import org.openmrs.module.emr.api.EmrService;
 import org.openmrs.module.emr.api.db.EmrDAO;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.adt.AdtService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
 
     private EmrDAO dao;
 
-    private EmrProperties emrProperties;
+    private EmrApiProperties emrApiProperties;
 
     private EncounterService encounterService;
 
@@ -54,8 +54,8 @@ public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
         this.dao = dao;
     }
 
-    public void setEmrProperties(EmrProperties emrProperties) {
-        this.emrProperties = emrProperties;
+    public void setEmrApiProperties(EmrApiProperties emrApiProperties) {
+        this.emrApiProperties = emrApiProperties;
     }
 
     public void setEncounterService(EncounterService encounterService) {
@@ -85,7 +85,7 @@ public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
     @Override
     @Transactional(readOnly = true)
     public List<Location> getLoginLocations() {
-        List<Location> locations = locationService.getLocationsByTag(emrProperties.getSupportsLoginLocationTag());
+        List<Location> locations = locationService.getLocationsByTag(emrApiProperties.getSupportsLoginLocationTag());
         if (locations.size() == 0) {
             locations = locationService.getAllLocations(false);
         }
@@ -98,7 +98,7 @@ public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
             throw new IllegalArgumentException("primary ID should not be null");
         }
 
-        PatientIdentifierType primaryIdentifierType = emrProperties.getPrimaryIdentifierType();
+        PatientIdentifierType primaryIdentifierType = emrApiProperties.getPrimaryIdentifierType();
 
         if(primaryIdentifierType==null){
             throw new RuntimeException("primary identifier is not configured");

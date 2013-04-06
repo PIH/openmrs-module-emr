@@ -20,8 +20,8 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonName;
-import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.TestUiUtils;
+import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.ui.framework.SimpleObject;
 
 import java.text.SimpleDateFormat;
@@ -52,11 +52,11 @@ public class FindPatientFragmentControllerTest {
         patient.setBirthdate(new SimpleDateFormat("yyyy-MM-dd").parse("1961-08-04"));
         patient.addIdentifier(new PatientIdentifier("44", pit, new Location()));
 
-        EmrProperties emrProperties = mock(EmrProperties.class);
-        when(emrProperties.getPrimaryIdentifierType()).thenReturn(pit);
+        EmrApiProperties emrApiProperties = mock(EmrApiProperties.class);
+        when(emrApiProperties.getPrimaryIdentifierType()).thenReturn(pit);
 
         TestUiUtils ui = new TestUiUtils();
-        SimpleObject o = new FindPatientFragmentController().simplify(ui, emrProperties, patient);
+        SimpleObject o = new FindPatientFragmentController().simplify(ui, emrApiProperties, patient);
 
         assertEquals("Barack", PropertyUtils.getProperty(o, "preferredName.givenName"));
         assertNull(PropertyUtils.getProperty(o, "preferredName.middleName"));

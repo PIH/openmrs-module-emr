@@ -23,9 +23,9 @@ import org.hibernate.criterion.Subqueries;
 import org.openmrs.Cohort;
 import org.openmrs.Obs;
 import org.openmrs.annotation.Handler;
-import org.openmrs.module.emr.EmrProperties;
-import org.openmrs.module.emr.consult.DiagnosisMetadata;
 import org.openmrs.module.emr.reporting.cohort.definition.DiagnosisCohortDefinition;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.module.reporting.cohort.EvaluatedCohort;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.evaluator.CohortDefinitionEvaluator;
@@ -43,14 +43,14 @@ import java.util.List;
 public class DiagnosisCohortDefinitionEvaluator implements CohortDefinitionEvaluator {
 
     @Autowired
-    SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
     @Autowired
-    EmrProperties emrProperties;
+    private EmrApiProperties emrApiProperties;
 
     @Override
     public EvaluatedCohort evaluate(CohortDefinition cohortDefinition, EvaluationContext context) throws EvaluationException {
-        DiagnosisMetadata dmd = emrProperties.getDiagnosisMetadata();
+        DiagnosisMetadata dmd = emrApiProperties.getDiagnosisMetadata();
 
         DiagnosisCohortDefinition cd = (DiagnosisCohortDefinition) cohortDefinition;
 

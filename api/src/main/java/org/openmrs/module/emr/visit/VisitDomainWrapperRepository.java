@@ -1,6 +1,7 @@
 package org.openmrs.module.emr.visit;
 
 import org.openmrs.api.db.VisitDAO;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class VisitDomainWrapperRepository {

@@ -2,13 +2,18 @@ package org.openmrs.module.emr.patient;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.*;
+import org.openmrs.Patient;
+import org.openmrs.PersonAttribute;
+import org.openmrs.PersonAttributeType;
+import org.openmrs.PersonName;
+import org.openmrs.Visit;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.emr.EmrConstants;
-import org.openmrs.module.emr.EmrProperties;
-import org.openmrs.module.emr.adt.AdtService;
-import org.openmrs.module.emr.visit.VisitDomainWrapper;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.adt.AdtService;
+import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 
 import java.util.Calendar;
 import java.util.HashSet;
@@ -17,7 +22,11 @@ import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.openmrs.module.emr.EmrConstants.TEST_PATIENT_ATTRIBUTE_UUID;
@@ -25,16 +34,16 @@ import static org.openmrs.module.emr.EmrConstants.TEST_PATIENT_ATTRIBUTE_UUID;
 public class PatientDomainWrapperTest {
 
     private PatientDomainWrapper patientDomainWrapper;
-    private EmrProperties emrProperties;
+    private EmrApiProperties emrApiProperties;
     private Patient patient;
     private VisitService visitService;
 
     @Before
     public void setUp() throws Exception {
         patient = new Patient();
-        emrProperties = mock(EmrProperties.class);
+        emrApiProperties = mock(EmrApiProperties.class);
         visitService = mock(VisitService.class);
-        patientDomainWrapper = new PatientDomainWrapper(patient, emrProperties, mock(AdtService.class),
+        patientDomainWrapper = new PatientDomainWrapper(patient, emrApiProperties, mock(AdtService.class),
                 visitService, mock(EncounterService.class) );
     }
 
@@ -49,7 +58,7 @@ public class PatientDomainWrapperTest {
         PersonAttribute newAttribute = new PersonAttribute(personAttributeType, "true");
         patient.addAttribute(newAttribute);
 
-        when(emrProperties.getUnknownPatientPersonAttributeType()).thenReturn(personAttributeType);
+        when(emrApiProperties.getUnknownPatientPersonAttributeType()).thenReturn(personAttributeType);
 
         assertTrue(patientDomainWrapper.isUnknownPatient());
 
@@ -68,7 +77,7 @@ public class PatientDomainWrapperTest {
 
         patient.addAttribute(newAttribute);
 
-        when(emrProperties.getTestPatientPersonAttributeType()).thenReturn(personAttributeType);
+        when(emrApiProperties.getTestPatientPersonAttributeType()).thenReturn(personAttributeType);
 
         assertTrue(patientDomainWrapper.isTestPatient());
 
@@ -87,7 +96,7 @@ public class PatientDomainWrapperTest {
 
         patient.addAttribute(newAttribute);
 
-        when(emrProperties.getTestPatientPersonAttributeType()).thenReturn(personAttributeType);
+        when(emrApiProperties.getTestPatientPersonAttributeType()).thenReturn(personAttributeType);
 
         assertFalse(patientDomainWrapper.isTestPatient());
 
@@ -106,7 +115,7 @@ public class PatientDomainWrapperTest {
     public void shouldReturnFormattedName(){
         patient = mock(Patient.class);
 
-        patientDomainWrapper =  new PatientDomainWrapper(patient, emrProperties, mock(AdtService.class),
+        patientDomainWrapper =  new PatientDomainWrapper(patient, emrApiProperties, mock(AdtService.class),
                 visitService, mock(EncounterService.class) );
 
         Set<PersonName> personNames = new HashSet<PersonName>();
@@ -126,7 +135,7 @@ public class PatientDomainWrapperTest {
     public void shouldReturnPersonNameWhenThereAreTwoNamesAndOneOfThemIsPreferred(){
         patient = mock(Patient.class);
 
-        patientDomainWrapper =  new PatientDomainWrapper(patient, emrProperties, mock(AdtService.class),
+        patientDomainWrapper =  new PatientDomainWrapper(patient, emrApiProperties, mock(AdtService.class),
                 visitService, mock(EncounterService.class) );
 
         Set<PersonName> personNames = new HashSet<PersonName>();
@@ -148,7 +157,7 @@ public class PatientDomainWrapperTest {
     public void shouldReturnPersonNameWhenThereAreTwoNamesAndNoneOfThemIsPreferred(){
         patient = mock(Patient.class);
 
-        patientDomainWrapper =  new PatientDomainWrapper(patient, emrProperties, mock(AdtService.class),
+        patientDomainWrapper =  new PatientDomainWrapper(patient, emrApiProperties, mock(AdtService.class),
                 visitService, mock(EncounterService.class) );
 
         Set<PersonName> personNames = new HashSet<PersonName>();

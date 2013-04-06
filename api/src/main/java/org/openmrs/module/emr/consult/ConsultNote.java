@@ -17,6 +17,7 @@ package org.openmrs.module.emr.consult;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
+import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -16,10 +16,10 @@ package org.openmrs.module.emr.reporting.library;
 
 import org.openmrs.Concept;
 import org.openmrs.annotation.Handler;
-import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.reporting.BaseDefinitionLibrary;
 import org.openmrs.module.emr.reporting.DocumentedDefinition;
 import org.openmrs.module.emr.reporting.cohort.definition.DiagnosisCohortDefinition;
+import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
@@ -41,7 +41,7 @@ public class BasicCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDe
     public static final String PREFIX = "emr.cohortDefinition.";
 
     @Autowired
-    EmrProperties emrProperties;
+    private EmrApiProperties emrApiProperties;
 
     @Override
     public String getUuidPrefix() {
@@ -97,7 +97,7 @@ public class BasicCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDe
     @DocumentedDefinition(value = "exclude test patients")
     public CohortDefinition getExcludeTestPatients() {
         PersonAttributeCohortDefinition personAttributeCohortDefinition = new PersonAttributeCohortDefinition();
-        personAttributeCohortDefinition.setAttributeType(emrProperties.getTestPatientPersonAttributeType());
+        personAttributeCohortDefinition.setAttributeType(emrApiProperties.getTestPatientPersonAttributeType());
         //the method add value has a bug, using set values for now
         personAttributeCohortDefinition.setValues(Arrays.asList("true"));
 

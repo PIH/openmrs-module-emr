@@ -18,21 +18,15 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.ConceptSource;
-import org.openmrs.GlobalProperty;
-import org.openmrs.LocationAttributeType;
 import org.openmrs.PersonAttributeType;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.context.Context;
-import org.openmrs.customdatatype.datatype.FreeTextDatatype;
 import org.openmrs.module.Module;
 import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.ModuleFactory;
-import org.openmrs.module.emr.adt.EmrVisitAssignmentHandler;
 import org.openmrs.module.emr.htmlformentry.UiMessageTagHandler;
-import org.openmrs.module.emr.printer.PrinterDatatype;
 import org.openmrs.module.emr.task.TaskDescriptor;
 import org.openmrs.module.emr.task.TaskFactory;
 import org.openmrs.module.emr.task.TaskService;
@@ -40,7 +34,6 @@ import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.scheduler.SchedulerException;
 import org.openmrs.scheduler.SchedulerService;
 import org.openmrs.scheduler.TaskDefinition;
-import org.openmrs.util.OpenmrsConstants;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,8 +42,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.openmrs.module.emr.EmrConstants.EMR_MODULE_ID;
-import static org.openmrs.module.emr.EmrConstants.LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER;
-import static org.openmrs.module.emr.EmrConstants.LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD;
 import static org.openmrs.module.emr.EmrConstants.TEST_PATIENT_ATTRIBUTE_UUID;
 
 /**
@@ -105,7 +96,7 @@ public class EmrActivator implements ModuleActivator {
             task = new TaskDefinition();
             task.setName(EmrConstants.TASK_CLOSE_STALE_VISITS_NAME);
             task.setDescription(EmrConstants.TASK_CLOSE_STALE_VISITS_DESCRIPTION);
-            task.setTaskClass("org.openmrs.module.emr.adt.CloseStaleVisitsTask");
+            task.setTaskClass("org.openmrs.module.emrapi.adt.CloseStaleVisitsTask");
             task.setStartTime(DateUtils.addMinutes(new Date(), 5));
             task.setRepeatInterval(EmrConstants.TASK_CLOSE_STALE_VISITS_REPEAT_INTERVAL);
             task.setStartOnStartup(true);
@@ -151,15 +142,12 @@ public class EmrActivator implements ModuleActivator {
 
         try {
             LocationService locationService = Context.getLocationService();
-            AdministrationService administrationService = Context.getAdministrationService();
             HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
             ConceptService conceptService = Context.getConceptService();
             personService = Context.getPersonService();
 
             saveTestPatientAttribute();
 
-            createGlobalProperties(administrationService);
-            createLocationAttributeTypes(locationService);
             createConceptSources(conceptService);
 
             htmlFormEntryService.addHandler(EmrConstants.HTMLFORMENTRY_UI_MESSAGE_TAG_NAME, new UiMessageTagHandler());
@@ -196,67 +184,6 @@ public class EmrActivator implements ModuleActivator {
             conceptService.saveConceptSource(conceptSource);
         }
         return conceptSource;
-    }
-
-    private void createGlobalProperties(AdministrationService administrationService) {
-
-        // When https://tickets.openmrs.org/browse/TRUNK-3773 is resolved, refactor this
-        GlobalProperty gp = administrationService.getGlobalPropertyObject(OpenmrsConstants.GP_VISIT_ASSIGNMENT_HANDLER);
-        if (gp == null) {
-            gp = new GlobalProperty();
-            gp.setProperty(OpenmrsConstants.GP_VISIT_ASSIGNMENT_HANDLER);
-        }
-        gp.setPropertyValue(EmrVisitAssignmentHandler.class.getName());
-        administrationService.saveGlobalProperty(gp);
-    }
-
-    private void createLocationAttributeTypes(LocationService locationService) {
-        LocationAttributeType defaultLabelPrinterAttributeType =
-                locationService.getLocationAttributeTypeByUuid(LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER.get("LABEL"));
-
-        if (defaultLabelPrinterAttributeType == null) {
-            defaultLabelPrinterAttributeType = new LocationAttributeType();
-            defaultLabelPrinterAttributeType.setUuid(LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER.get("LABEL"));
-            defaultLabelPrinterAttributeType.setDatatypeClassname(PrinterDatatype.class.getName());
-            defaultLabelPrinterAttributeType.setDatatypeConfig("LABEL");
-            defaultLabelPrinterAttributeType.setMaxOccurs(1);
-            defaultLabelPrinterAttributeType.setMinOccurs(0);
-            defaultLabelPrinterAttributeType.setName("Default Label Printer");
-            defaultLabelPrinterAttributeType.setDescription("The default label printer for this location");
-
-            locationService.saveLocationAttributeType(defaultLabelPrinterAttributeType);
-        }
-
-        LocationAttributeType defaultIdCardPrinterAttributeType =
-                locationService.getLocationAttributeTypeByUuid(LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER.get("ID_CARD"));
-
-        if (defaultIdCardPrinterAttributeType == null) {
-            defaultIdCardPrinterAttributeType = new LocationAttributeType();
-            defaultIdCardPrinterAttributeType.setUuid(LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER.get("ID_CARD"));
-            defaultIdCardPrinterAttributeType.setDatatypeClassname(PrinterDatatype.class.getName());
-            defaultIdCardPrinterAttributeType.setDatatypeConfig("ID_CARD");
-            defaultIdCardPrinterAttributeType.setMaxOccurs(1);
-            defaultIdCardPrinterAttributeType.setMinOccurs(0);
-            defaultIdCardPrinterAttributeType.setName("Default ID card Printer");
-            defaultIdCardPrinterAttributeType.setDescription("The default id card printer for this location");
-
-            locationService.saveLocationAttributeType(defaultIdCardPrinterAttributeType);
-        }
-
-        LocationAttributeType nameToPrintOnIdCardAttributeType =
-                locationService.getLocationAttributeTypeByUuid(LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD);
-
-        if (nameToPrintOnIdCardAttributeType == null) {
-            nameToPrintOnIdCardAttributeType = new LocationAttributeType();
-            nameToPrintOnIdCardAttributeType.setUuid(LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD);
-            nameToPrintOnIdCardAttributeType.setDatatypeClassname(FreeTextDatatype.class.getName());
-            nameToPrintOnIdCardAttributeType.setMaxOccurs(1);
-            nameToPrintOnIdCardAttributeType.setMinOccurs(0);
-            nameToPrintOnIdCardAttributeType.setName("Name to print on ID card");
-            nameToPrintOnIdCardAttributeType.setDescription("The name to use when printing a location on an id card");
-
-            locationService.saveLocationAttributeType(nameToPrintOnIdCardAttributeType);
-        }
     }
 
     /**

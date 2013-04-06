@@ -22,12 +22,14 @@ import org.openmrs.LocationAttribute;
 import org.openmrs.LocationAttributeType;
 import org.openmrs.api.APIException;
 import org.openmrs.api.LocationService;
+import org.openmrs.module.emrapi.printer.Printer;
+import org.openmrs.module.emrapi.printer.PrinterService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static org.openmrs.module.emr.EmrConstants.LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER;
+import static org.openmrs.module.emrapi.EmrApiConstants.LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER;
 
 public class PrinterServiceComponentTest extends BaseModuleContextSensitiveTest {
 

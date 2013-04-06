@@ -5,9 +5,9 @@ import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Order;
 import org.openmrs.module.emr.EmrConstants;
-import org.openmrs.module.emr.EmrProperties;
-import org.openmrs.module.emr.consult.Diagnosis;
-import org.openmrs.module.emr.consult.DiagnosisMetadata;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.diagnosis.Diagnosis;
+import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 
@@ -23,12 +23,12 @@ public class ParserEncounterIntoSimpleObjects {
 
     private Encounter encounter;
     private UiUtils uiUtils;
-    private EmrProperties emrProperties;
+    private EmrApiProperties emrApiProperties;
 
-    public ParserEncounterIntoSimpleObjects(Encounter encounter, UiUtils uiUtils, EmrProperties emrProperties){
+    public ParserEncounterIntoSimpleObjects(Encounter encounter, UiUtils uiUtils, EmrApiProperties emrApiProperties){
         this.encounter = encounter;
         this.uiUtils = uiUtils;
-        this.emrProperties = emrProperties;
+        this.emrApiProperties = emrApiProperties;
     }
 
     public List<SimpleObject> parseOrders() {
@@ -69,7 +69,7 @@ public class ParserEncounterIntoSimpleObjects {
 
         if (encounter.getEncounterType().getUuid().equals(EmrConstants.CONSULTATION_TYPE_UUID)){
 
-            diagnoses =  parseDiagnosesInformation(emrProperties.getDiagnosisMetadata());
+            diagnoses =  parseDiagnosesInformation(emrApiProperties.getDiagnosisMetadata());
 
         }
         return diagnoses;
@@ -126,7 +126,7 @@ public class ParserEncounterIntoSimpleObjects {
 
         simpleObject.put("question", getDiagnosisQuestion(diagnosis.getOrder().name()));
 
-        String answer = diagnosis.getDiagnosis().formatWithCode(uiUtils.getLocale(), emrProperties.getConceptSourcesForDiagnosisSearch());
+        String answer = diagnosis.getDiagnosis().formatWithCode(uiUtils.getLocale(), emrApiProperties.getConceptSourcesForDiagnosisSearch());
         simpleObject.put("answer", answer);
 
         simpleObject.put("order", diagnosis.getOrder().ordinal());

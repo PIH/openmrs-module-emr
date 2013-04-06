@@ -15,7 +15,7 @@
 package org.openmrs.module.emr.fragment.controller;
 
 import org.openmrs.Patient;
-import org.openmrs.module.emr.patient.PatientDomainWrapper;
+import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;

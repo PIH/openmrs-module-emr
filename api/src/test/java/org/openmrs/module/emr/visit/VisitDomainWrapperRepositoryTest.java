@@ -8,6 +8,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.openmrs.Visit;
 import org.openmrs.api.db.VisitDAO;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;

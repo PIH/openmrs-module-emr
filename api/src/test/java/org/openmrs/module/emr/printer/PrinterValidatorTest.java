@@ -18,6 +18,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Person;
 import org.openmrs.messagesource.MessageSourceService;
+import org.openmrs.module.emrapi.printer.Printer;
+import org.openmrs.module.emrapi.printer.PrinterService;
+import org.openmrs.module.emrapi.printer.PrinterValidator;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 

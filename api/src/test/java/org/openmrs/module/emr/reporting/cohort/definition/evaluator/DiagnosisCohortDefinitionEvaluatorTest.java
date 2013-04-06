@@ -20,12 +20,12 @@ import org.openmrs.Concept;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.PatientService;
-import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.TestUtils;
-import org.openmrs.module.emr.consult.Diagnosis;
-import org.openmrs.module.emr.consult.DiagnosisMetadata;
 import org.openmrs.module.emr.reporting.cohort.definition.DiagnosisCohortDefinition;
 import org.openmrs.module.emr.test.builder.ObsBuilder;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.diagnosis.Diagnosis;
+import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.module.reporting.cohort.EvaluatedCohort;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
@@ -44,7 +44,7 @@ import static org.openmrs.module.emr.test.ReportingMatchers.hasExactlyIds;
 public class DiagnosisCohortDefinitionEvaluatorTest extends BaseModuleContextSensitiveTest {
 
     @Autowired
-    EmrProperties emrProperties;
+    EmrApiProperties emrApiProperties;
 
     @Autowired
     ConceptService conceptService;
@@ -59,7 +59,7 @@ public class DiagnosisCohortDefinitionEvaluatorTest extends BaseModuleContextSen
 
     @Before
     public void setUp() throws Exception {
-        dmd = TestUtils.setupDiagnosisMetadata(conceptService, emrProperties);
+        dmd = TestUtils.setupDiagnosisMetadata(conceptService, emrApiProperties);
     }
 
     @Test

@@ -15,9 +15,8 @@
 package org.openmrs.module.emr;
 
 import org.junit.Test;
-import org.openmrs.LocationAttributeType;
 import org.openmrs.api.LocationService;
-import org.openmrs.module.emr.printer.Printer;
+import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.scheduler.SchedulerService;
 import org.openmrs.scheduler.TaskDefinition;
@@ -49,13 +48,13 @@ public class EmrActivatorComponentTest extends BaseModuleContextSensitiveTest {
     private HtmlFormEntryService htmlFormEntryService;
 
     @Autowired
-    @Qualifier("emrProperties")
-    private EmrProperties emrProperties;
+    @Qualifier("emrApiProperties")
+    private EmrApiProperties emrApiProperties;
 
     @Test
     public void testStarted() throws Exception {
         new EmrActivator().started();
-        assertThat(emrProperties.getEmrConceptSource().getName(), is(EmrConstants.EMR_CONCEPT_SOURCE_NAME));
+        assertThat(emrApiProperties.getEmrApiConceptSource().getName(), is(EmrConstants.EMR_CONCEPT_SOURCE_NAME));
     }
 
     @Test
@@ -81,17 +80,4 @@ public class EmrActivatorComponentTest extends BaseModuleContextSensitiveTest {
         assertThat(htmlFormEntryService.getHandlerByTagName(EmrConstants.HTMLFORMENTRY_UI_MESSAGE_TAG_NAME), is(nullValue()));
     }
 
-    @Test
-    public void confirmThatLocationAttributeTypesHaveBeenCreated() {
-
-        new EmrActivator().started();
-
-        LocationAttributeType defaultIdCardPrinter = locationService.getLocationAttributeTypeByUuid(EmrConstants.LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER.get(Printer.Type.ID_CARD.name()));
-        LocationAttributeType defaultLabelPrinter = locationService.getLocationAttributeTypeByUuid(EmrConstants.LOCATION_ATTRIBUTE_TYPE_DEFAULT_PRINTER.get(Printer.Type.LABEL.name()));
-        LocationAttributeType nameToPrintOnIdCard = locationService.getLocationAttributeTypeByUuid(EmrConstants.LOCATION_ATTRIBUTE_TYPE_NAME_TO_PRINT_ON_ID_CARD);
-
-        assertThat(defaultIdCardPrinter, is(notNullValue()));
-        assertThat(defaultLabelPrinter, is(notNullValue()));
-        assertThat(nameToPrintOnIdCard, is(notNullValue()));
-    }
 }

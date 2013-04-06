@@ -1,8 +1,8 @@
 package org.openmrs.module.emr.converter;
 
 
-import org.openmrs.module.emr.paperrecord.PaperRecordMergeRequest;
-import org.openmrs.module.emr.paperrecord.PaperRecordService;
+import org.openmrs.module.paperrecord.PaperRecordMergeRequest;
+import org.openmrs.module.paperrecord.PaperRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.converter.Converter;

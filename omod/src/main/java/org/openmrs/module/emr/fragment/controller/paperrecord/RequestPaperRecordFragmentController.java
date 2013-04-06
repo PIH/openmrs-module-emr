@@ -16,10 +16,10 @@ package org.openmrs.module.emr.fragment.controller.paperrecord;
 
 import org.openmrs.Location;
 import org.openmrs.Patient;
-import org.openmrs.module.emr.paperrecord.PaperRecordService;
-import org.openmrs.module.emr.paperrecord.UnableToPrintLabelException;
-import org.openmrs.module.emr.printer.Printer;
-import org.openmrs.module.emr.printer.PrinterService;
+import org.openmrs.module.emrapi.printer.Printer;
+import org.openmrs.module.emrapi.printer.PrinterService;
+import org.openmrs.module.paperrecord.PaperRecordService;
+import org.openmrs.module.paperrecord.UnableToPrintLabelException;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;

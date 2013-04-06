@@ -3,7 +3,7 @@ package org.openmrs.module.emr.page.controller;
 import org.openmrs.Location;
 import org.openmrs.api.LocationService;
 import org.openmrs.module.emr.EmrContext;
-import org.openmrs.module.emr.adt.AdtService;
+import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 

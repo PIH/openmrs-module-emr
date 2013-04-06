@@ -35,8 +35,8 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Visit;
 import org.openmrs.api.db.hibernate.PatientSearchCriteria;
-import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.api.db.EmrDAO;
+import org.openmrs.module.emrapi.EmrApiProperties;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -52,14 +52,14 @@ import java.util.Set;
 public class HibernateEmrDAO implements EmrDAO {
 
     private SessionFactory sessionFactory;
-    private EmrProperties emrProperties;
+    private EmrApiProperties emrApiProperties;
 
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
-    public void setEmrProperties(EmrProperties emrProperties) {
-        this.emrProperties = emrProperties;
+    public void setEmrApiProperties(EmrApiProperties emrApiProperties) {
+        this.emrApiProperties = emrApiProperties;
     }
 
     @Override
@@ -96,7 +96,7 @@ public class HibernateEmrDAO implements EmrDAO {
     private Criteria buildCriteria(String query, Criteria criteria) {
         if (query.matches(".*\\d.*")) {
             // has at least one digit, so treat as an identifier
-            return new PatientSearchCriteria(sessionFactory, criteria).prepareCriteria(null, query, emrProperties.getIdentifierTypesToSearch(), true, true);
+            return new PatientSearchCriteria(sessionFactory, criteria).prepareCriteria(null, query, emrApiProperties.getIdentifierTypesToSearch(), true, true);
         } else {
             // no digits, so treat as a name
             return new PatientSearchCriteria(sessionFactory, criteria).prepareCriteria(query, null, new ArrayList<PatientIdentifierType>(), true, true);

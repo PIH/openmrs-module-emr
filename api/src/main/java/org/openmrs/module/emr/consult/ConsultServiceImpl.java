@@ -19,7 +19,9 @@ import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.impl.BaseOpenmrsService;
-import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.diagnosis.Diagnosis;
+import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -30,7 +32,7 @@ import java.util.Date;
  */
 public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultService {
 
-    private EmrProperties emrProperties;
+    private EmrApiProperties emrApiProperties;
 
     private EncounterService encounterService;
 
@@ -41,15 +43,15 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
             throw new IllegalArgumentException("Required: patient, encounter location, clinician provider, primary diagnosis");
         }
 
-        DiagnosisMetadata diagnosisMetadata = emrProperties.getDiagnosisMetadata();
+        DiagnosisMetadata diagnosisMetadata = emrApiProperties.getDiagnosisMetadata();
 
         Encounter encounter = new Encounter();
         encounter.setEncounterDatetime(new Date());
         encounter.setLocation(consultNote.getEncounterLocation());
-        encounter.setEncounterType(emrProperties.getConsultEncounterType());
+        encounter.setEncounterType(emrApiProperties.getConsultEncounterType());
         encounter.setPatient(consultNote.getPatient());
 
-        encounter.addProvider(emrProperties.getClinicianEncounterRole(), consultNote.getClinician());
+        encounter.addProvider(emrApiProperties.getClinicianEncounterRole(), consultNote.getClinician());
 
         encounter.addObs(diagnosisMetadata.buildDiagnosisObsGroup(consultNote.getPrimaryDiagnosis()));
 
@@ -60,7 +62,7 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
         }
 
         if (StringUtils.hasText(consultNote.getComments())) {
-            encounter.addObs(buildTextObs(emrProperties.getConsultFreeTextCommentsConcept(), consultNote.getComments()));
+            encounter.addObs(buildTextObs(emrApiProperties.getConsultFreeTextCommentsConcept(), consultNote.getComments()));
         }
 
         return encounterService.saveEncounter(encounter);
@@ -73,8 +75,8 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
         return obs;
     }
 
-    public void setEmrProperties(EmrProperties emrProperties) {
-        this.emrProperties = emrProperties;
+    public void setEmrApiProperties(EmrApiProperties emrApiProperties) {
+        this.emrApiProperties = emrApiProperties;
     }
 
     public void setEncounterService(EncounterService encounterService) {

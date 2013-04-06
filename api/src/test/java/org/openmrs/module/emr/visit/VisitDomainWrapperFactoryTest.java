@@ -6,9 +6,14 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.openmrs.*;
+import org.openmrs.Location;
+import org.openmrs.LocationTag;
+import org.openmrs.Patient;
+import org.openmrs.Visit;
+import org.openmrs.VisitType;
 import org.openmrs.module.emr.EmrConstants;
-import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 
 import java.util.Date;
 
@@ -25,19 +30,19 @@ public class VisitDomainWrapperFactoryTest {
     @InjectMocks
     private VisitDomainWrapperFactory factory;
     @MockitoAnnotations.Mock
-    private EmrProperties emrProperties;
+    private EmrApiProperties emrApiProperties;
 
     @Before
     public void setUp() {
         factory = new VisitDomainWrapperFactory();
-        emrProperties = mock(EmrProperties.class);
+        emrApiProperties = mock(EmrApiProperties.class);
         initMocks(this);
     }
 
     @Test
     public void shouldCreateWrapperForNewVisit() throws Exception {
         VisitType visitType = new VisitType();
-        when(emrProperties.getAtFacilityVisitType()).thenReturn(visitType);
+        when(emrApiProperties.getAtFacilityVisitType()).thenReturn(visitType);
 
         Patient patient = new Patient();
         Location parentLocation = new Location();

@@ -7,9 +7,9 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.module.emr.EmrConstants;
-import org.openmrs.module.emr.visit.VisitDomainWrapper;
 import org.openmrs.module.emr.visit.VisitDomainWrapperFactory;
 import org.openmrs.module.emr.visit.VisitDomainWrapperRepository;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 
@@ -20,7 +20,10 @@ import java.util.Date;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class QuickVisitFragmentControllerTest {
     

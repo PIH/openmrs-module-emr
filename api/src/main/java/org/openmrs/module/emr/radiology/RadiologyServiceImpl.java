@@ -5,17 +5,15 @@ import org.openmrs.Encounter;
 import org.openmrs.Order;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
-import org.openmrs.api.OrderService;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
-import org.openmrs.module.emr.adt.VisitSummary;
 import org.openmrs.module.emr.order.EmrOrderService;
 import org.openmrs.module.emr.radiology.db.RadiologyOrderDAO;
+import org.openmrs.module.emrapi.adt.VisitSummary;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.List;
 
 public class RadiologyServiceImpl extends BaseOpenmrsService implements RadiologyService {
 

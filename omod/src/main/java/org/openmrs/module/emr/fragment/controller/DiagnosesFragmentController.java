@@ -20,8 +20,8 @@ import org.openmrs.ConceptName;
 import org.openmrs.ConceptSearchResult;
 import org.openmrs.ConceptSource;
 import org.openmrs.module.emr.EmrContext;
-import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.api.EmrService;
+import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -39,16 +39,16 @@ public class DiagnosesFragmentController {
 
     public List<SimpleObject> search(EmrContext context,
                                      UiUtils ui,
-                                     @SpringBean("emrProperties") EmrProperties emrProperties,
+                                     @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
                                      @SpringBean("emrService") EmrService emrService,
                                      @RequestParam("term") String query,
                                      @RequestParam(value = "start", defaultValue = "0") Integer start,
                                      @RequestParam(value = "size", defaultValue = "50") Integer size) throws Exception {
 
-        Collection<Concept> diagnosisSets = emrProperties.getDiagnosisSets();
+        Collection<Concept> diagnosisSets = emrApiProperties.getDiagnosisSets();
         Locale locale = context.getUserContext().getLocale();
 
-        List<ConceptSource> sources = emrProperties.getConceptSourcesForDiagnosisSearch();
+        List<ConceptSource> sources = emrApiProperties.getConceptSourcesForDiagnosisSearch();
 
         List<ConceptSearchResult> hits = emrService.conceptSearch(query, locale, null, diagnosisSets, sources, null);
         List<SimpleObject> ret = new ArrayList<SimpleObject>();

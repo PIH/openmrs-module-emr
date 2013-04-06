@@ -25,6 +25,7 @@ import org.openmrs.ConceptReferenceTerm;
 import org.openmrs.ConceptSource;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 
 import java.util.Locale;
 

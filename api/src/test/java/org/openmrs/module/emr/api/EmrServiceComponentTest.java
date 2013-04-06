@@ -16,6 +16,7 @@ package org.openmrs.module.emr.api;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.openmrs.Concept;
@@ -101,6 +102,7 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
         assertContainsElementWithProperty(patients, "patientId", 7);
     }
 
+    @Ignore("since moving paper record number into the paperrecord module, this no longer works")
     @Test
     public void testFindPatientsByPaperRecordNumber() throws Exception {
         administrationService.setGlobalProperty(EmrConstants.PRIMARY_IDENTIFIER_TYPE, "1");

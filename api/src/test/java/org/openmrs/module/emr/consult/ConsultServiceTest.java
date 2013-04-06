@@ -37,7 +37,10 @@ import org.openmrs.User;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrConstants;
-import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
+import org.openmrs.module.emrapi.diagnosis.Diagnosis;
+import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.util.OpenmrsUtil;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -65,7 +68,7 @@ public class ConsultServiceTest {
 
     private ConsultServiceImpl consultService;
 
-    private EmrProperties emrProperties;
+    private EmrApiProperties emrApiProperties;
     private EncounterService encounterService;
     private Patient patient;
     private Concept diabetes;
@@ -129,10 +132,10 @@ public class ConsultServiceTest {
         diagnosisMetadata.setNonCodedDiagnosisConcept(nonCodedDiagnosis);
         diagnosisMetadata.setDiagnosisOrderConcept(diagnosisOrder);
 
-        emrProperties = mock(EmrProperties.class);
-        when(emrProperties.getConsultFreeTextCommentsConcept()).thenReturn(freeTextComments);
-        when(emrProperties.getDiagnosisMetadata()).thenReturn(diagnosisMetadata);
-        when(emrProperties.getClinicianEncounterRole()).thenReturn(clinician);
+        emrApiProperties = mock(EmrApiProperties.class);
+        when(emrApiProperties.getConsultFreeTextCommentsConcept()).thenReturn(freeTextComments);
+        when(emrApiProperties.getDiagnosisMetadata()).thenReturn(diagnosisMetadata);
+        when(emrApiProperties.getClinicianEncounterRole()).thenReturn(clinician);
 
         encounterService = mock(EncounterService.class);
         when(encounterService.saveEncounter(any(Encounter.class))).thenAnswer(new Answer<Object>() {
@@ -144,7 +147,7 @@ public class ConsultServiceTest {
 
         consultService = new ConsultServiceImpl();
         consultService.setEncounterService(encounterService);
-        consultService.setEmrProperties(emrProperties);
+        consultService.setEmrApiProperties(emrApiProperties);
     }
 
     private Concept buildConcept(int conceptId, String name) {

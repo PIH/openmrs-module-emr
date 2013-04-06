@@ -13,23 +13,21 @@
  */
 package org.openmrs.module.emr.fragment.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonName;
-import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.api.EmrService;
+import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static java.util.Arrays.asList;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * AJAX ssearch methods for patients
@@ -41,7 +39,7 @@ public class FindPatientFragmentController {
                                      @RequestParam(value = "checkedInAt", required = false) Location checkedInAt,
                                      @RequestParam(value = "maxResults", required = false) Integer maxResults,
                                      @SpringBean EmrService service,
-                                     @SpringBean EmrProperties emrProperties,
+                                     @SpringBean EmrApiProperties emrApiProperties,
                                      UiUtils ui) {
         if (StringUtils.isBlank(query)) {
             query = term;
@@ -51,33 +49,33 @@ public class FindPatientFragmentController {
             resultLimit = maxResults.intValue();
         }
         List<Patient> results = service.findPatients(query, checkedInAt, 0, resultLimit);
-        return simplify(ui, emrProperties, results);
+        return simplify(ui, emrApiProperties, results);
     }
 
     public SimpleObject searchById(@RequestParam(value = "primaryId", required = false) String primaryId,
                                      @SpringBean EmrService service,
-                                     @SpringBean EmrProperties emrProperties,
+                                     @SpringBean EmrApiProperties emrApiProperties,
                                      UiUtils ui) {
 
         Patient patient = service.findPatientByPrimaryId(primaryId);
-        return simplify(ui, emrProperties, patient);
+        return simplify(ui, emrApiProperties, patient);
 
     }
 
-    List<SimpleObject> simplify(UiUtils ui, EmrProperties emrProperties, List<Patient> results) {
+    List<SimpleObject> simplify(UiUtils ui, EmrApiProperties emrApiProperties, List<Patient> results) {
         List<SimpleObject> patients = new ArrayList<SimpleObject>(results.size());
         for (Patient patient : results) {
-            patients.add(simplify(ui, emrProperties, patient));
+            patients.add(simplify(ui, emrApiProperties, patient));
         }
         return patients;
     }
 
-    SimpleObject simplify(UiUtils ui, EmrProperties emrProperties, Patient patient) {
+    SimpleObject simplify(UiUtils ui, EmrApiProperties emrApiProperties, Patient patient) {
         PersonName name = patient.getPersonName();
         SimpleObject preferredName = SimpleObject.fromObject(name, ui, "givenName", "middleName", "familyName", "familyName2");
         preferredName.put("fullName", name.getFullName());
 
-        PatientIdentifierType primaryIdentifierType = emrProperties.getPrimaryIdentifierType();
+        PatientIdentifierType primaryIdentifierType = emrApiProperties.getPrimaryIdentifierType();
         List<PatientIdentifier> primaryIdentifiers = patient.getPatientIdentifiers(primaryIdentifierType);
 
         SimpleObject o = SimpleObject.fromObject(patient, ui, "patientId", "gender", "age", "birthdate", "birthdateEstimated");

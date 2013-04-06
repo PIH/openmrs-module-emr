@@ -29,10 +29,10 @@ import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.TestUiUtils;
-import org.openmrs.module.emr.consult.CodedOrFreeTextAnswer;
 import org.openmrs.module.emr.consult.ConsultNote;
 import org.openmrs.module.emr.consult.ConsultService;
-import org.openmrs.module.emr.consult.Diagnosis;
+import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
+import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.springframework.mock.web.MockHttpSession;
 
 import static java.util.Arrays.asList;

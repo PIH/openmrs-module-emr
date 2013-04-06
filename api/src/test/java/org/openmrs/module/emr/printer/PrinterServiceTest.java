@@ -22,6 +22,10 @@ import org.mockito.ArgumentMatcher;
 import org.openmrs.Location;
 import org.openmrs.LocationAttributeType;
 import org.openmrs.api.LocationService;
+import org.openmrs.module.emrapi.printer.Printer;
+import org.openmrs.module.emrapi.printer.PrinterService;
+import org.openmrs.module.emrapi.printer.PrinterServiceImpl;
+import org.openmrs.module.emrapi.printer.UnableToPrintViaSocketException;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 

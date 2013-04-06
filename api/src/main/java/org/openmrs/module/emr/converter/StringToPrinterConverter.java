@@ -15,8 +15,8 @@
 package org.openmrs.module.emr.converter;
 
 import org.apache.commons.lang.StringUtils;
-import org.openmrs.module.emr.printer.Printer;
-import org.openmrs.module.emr.printer.PrinterService;
+import org.openmrs.module.emrapi.printer.Printer;
+import org.openmrs.module.emrapi.printer.PrinterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.converter.Converter;

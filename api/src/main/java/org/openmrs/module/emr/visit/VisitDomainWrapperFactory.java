@@ -3,9 +3,9 @@ package org.openmrs.module.emr.visit;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
-import org.openmrs.VisitType;
 import org.openmrs.module.emr.EmrConstants;
-import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
@@ -13,7 +13,7 @@ import java.util.Date;
 public class VisitDomainWrapperFactory {
 
     @Autowired
-    private EmrProperties emrProperties;
+    private EmrApiProperties emrApiProperties;
 
     public VisitDomainWrapper createNewVisit(Patient patient, Location location, Date visitTime) {
         Visit visit = new Visit();
@@ -21,7 +21,7 @@ public class VisitDomainWrapperFactory {
         visit.setLocation(getVisitLocation(location));
         visit.setStartDatetime(visitTime);
 
-        visit.setVisitType(emrProperties.getAtFacilityVisitType());
+        visit.setVisitType(emrApiProperties.getAtFacilityVisitType());
 
         return new VisitDomainWrapper(visit);
     }

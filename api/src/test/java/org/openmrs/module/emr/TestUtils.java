@@ -23,8 +23,9 @@ import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptMapType;
 import org.openmrs.ConceptSource;
 import org.openmrs.api.ConceptService;
-import org.openmrs.module.emr.consult.DiagnosisMetadata;
 import org.openmrs.module.emr.test.builder.ConceptBuilder;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.util.OpenmrsUtil;
 
 import java.util.Collection;
@@ -176,7 +177,7 @@ public class TestUtils {
     /**
      * Creates an argument matcher that tests equality based on the equals method, the developer
      * doesn't have to type cast the returned argument when pass it to
-     * {@link Mockito#argThat(Matcher)} as it would be the case if we used {@link Equals} matcher
+     * {@link org.mockito.Mockito#argThat(Matcher)} as it would be the case if we used {@link org.mockito.internal.matchers.Equals} matcher
      *
      * @param object
      * @return
@@ -226,7 +227,7 @@ public class TestUtils {
     /**
      * This is written so it can be moved to a shared class and reused across multiple tests
      */
-    public static DiagnosisMetadata setupDiagnosisMetadata(ConceptService conceptService, EmrProperties emrProperties) {
+    public static DiagnosisMetadata setupDiagnosisMetadata(ConceptService conceptService, EmrApiProperties emrApiProperties) {
         ConceptSource emrSource = new EmrActivator().createConceptSources(conceptService);
         ConceptMapType sameAs = conceptService.getConceptMapTypeByName("same-as");
 
@@ -263,6 +264,6 @@ public class TestUtils {
                 .addSetMembers(order, codedDiagnosis, nonCodedDiagnosis)
                 .addMapping(sameAs, emrSource, EmrConstants.CONCEPT_CODE_DIAGNOSIS_CONCEPT_SET).saveAndGet();
 
-        return emrProperties.getDiagnosisMetadata();
+        return emrApiProperties.getDiagnosisMetadata();
     }
 }
