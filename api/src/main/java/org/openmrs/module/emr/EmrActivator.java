@@ -30,6 +30,8 @@ import org.openmrs.module.emr.htmlformentry.UiMessageTagHandler;
 import org.openmrs.module.emr.task.TaskDescriptor;
 import org.openmrs.module.emr.task.TaskFactory;
 import org.openmrs.module.emr.task.TaskService;
+import org.openmrs.module.emrapi.adt.CloseStaleVisitsTask;
+import org.openmrs.module.emrapi.utils.GeneralUtils;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.scheduler.SchedulerException;
 import org.openmrs.scheduler.SchedulerService;
@@ -96,7 +98,7 @@ public class EmrActivator implements ModuleActivator {
             task = new TaskDefinition();
             task.setName(EmrConstants.TASK_CLOSE_STALE_VISITS_NAME);
             task.setDescription(EmrConstants.TASK_CLOSE_STALE_VISITS_DESCRIPTION);
-            task.setTaskClass("org.openmrs.module.emrapi.adt.CloseStaleVisitsTask");
+            task.setTaskClass(CloseStaleVisitsTask.class.getName());
             task.setStartTime(DateUtils.addMinutes(new Date(), 5));
             task.setRepeatInterval(EmrConstants.TASK_CLOSE_STALE_VISITS_REPEAT_INTERVAL);
             task.setStartOnStartup(true);
@@ -106,6 +108,12 @@ public class EmrActivator implements ModuleActivator {
                 throw new RuntimeException("Failed to schedule close stale visits task", e);
             }
         } else {
+            // if you modify any of the properties above, you also need to set them here, in order to update existing servers
+            boolean changed = GeneralUtils.setPropertyIfDifferent(task, "taskClass", CloseStaleVisitsTask.class.getName());
+            if (changed) {
+                schedulerService.saveTask(task);
+            }
+
             if (!task.getStarted()) {
                 task.setStarted(true);
                 try {
