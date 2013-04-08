@@ -57,12 +57,9 @@ function FieldsKeyboardHandler(fieldModels, questionsHandler) {
     api.handleTabKey = function() {
         var currentField = selectedModel(fields);
         var isValid = (currentField ? currentField.isValid() : true);
-        if(isValid) {
-            return switchActiveField(function(i) { return i+1; }, true);
-        }
-        currentField.select();
+        var activeFieldSwitched = (isValid ? switchActiveField(function(i) { return i+1; }, true) : false);
+        if (!activeFieldSwitched) { currentField.select(); }
         return true;
-
     };
     api.handleShiftTabKey = function() {
         return switchActiveField(function(i) { return i-1; }, false);
@@ -97,6 +94,9 @@ function QuestionsKeyboardHandler(questionModels) {
     api.handleUpKey = function() {
         var question = selectedModel(questions);
         if(question) {
+            if (!question.onExit()) {   // run any exit handler, and don't proceed if it returns false
+                return true;
+            }
             var idx = _.indexOf(questions, question);
             if(idx > 0) {
                 question.toggleSelection();
@@ -118,7 +118,7 @@ function QuestionsKeyboardHandler(questionModels) {
             return true;
         }
 
-        if(!question.isValid()) {
+        if(!question.isValid() || !question.onExit()) {   // run the validation, if it passes, run the exit handlers; if either returns false, don't proceed
             return true;
         }
         var idx = _.indexOf(questions, question);
