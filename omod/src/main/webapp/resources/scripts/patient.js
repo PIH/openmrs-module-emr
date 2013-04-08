@@ -60,13 +60,15 @@ function createEditPatientIdentifierDialog(patientId) {
                         emr.successMessage(data.message);
                         editPatientIdentifierDialog.close();
                         var newValue= jq("#patientIdentifierValue").val();
+                        var identifierTypeId = jq("#hiddenIdentifierTypeId").val();
+                        var identifierElement =  jq(".editPatientIdentifier[data-identifier-type-id="+ identifierTypeId  +"]");
                         if(newValue.length>0){
-                            jq(".editPatientIdentifier").parents("span:first").removeClass('add-id');
-                            jq(".editPatientIdentifier").attr("data-patient-identifier-value", newValue);
-                            jq(".editPatientIdentifier").text(newValue);
+                            identifierElement.parents("span:first").removeClass('add-id');
+                            identifierElement.attr("data-patient-identifier-value", newValue);
+                            identifierElement.text(newValue);
                         }else{
-                            jq(".editPatientIdentifier").parents("span:first").addClass('add-id');
-                            jq(".editPatientIdentifier").text(addMessage);
+                            identifierElement.parents("span:first").addClass('add-id');
+                            identifierElement.text(addMessage);
                         }
                     },function(err){
                         emr.handleError(err);
