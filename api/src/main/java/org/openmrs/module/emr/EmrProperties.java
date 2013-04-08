@@ -26,8 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component("emrProperties")
 public class EmrProperties extends ModuleProperties {
 
@@ -86,10 +84,6 @@ public class EmrProperties extends ModuleProperties {
 
     public ConceptMapType getNarrowerThanConceptMapType() {
         return conceptService.getConceptMapTypeByUuid(EmrConstants.NARROWER_THAN_CONCEPT_MAP_TYPE_UUID);
-    }
-
-    public List<Location> getAllAvailableLocations() {
-        return emrService.getLoginLocations();
     }
 
 }

@@ -9,11 +9,11 @@
 
 
 <script type="text/javascript">
-    var addMessage ="${ ui.message("emr.patient.identifier.add") }";
-    jq(document).ready(function(){
+    var addMessage = "${ ui.message("emr.patient.identifier.add") }";
+    jq(document).ready(function () {
         createEditPatientIdentifierDialog(${patient.id});
 
-        jq(".editPatientIdentifier").click(function(event) {
+        jq(".editPatientIdentifier").click(function (event) {
             var identifierTypeId = jq(event.target).attr("data-identifier-type-id");
             var identifierTypeName = jq(event.target).attr("data-identifier-type-name");
             var patientIdentifierValue = jq(event.target).attr("data-patient-identifier-value");
@@ -25,7 +25,7 @@
             showEditPatientIdentifierDialog();
         });
 
-        jq(".demographics .name").click(function(){
+        jq(".demographics .name").click(function () {
             emr.navigateTo({
                 provider: 'emr',
                 page: 'patient',
@@ -39,21 +39,22 @@
 
     <div class="demographics">
         <h1 class="name">
-            <span>${ ui.format(patient.patient.familyName) },<em>${ui.message("emr.patientHeader.surname")}</em></span>
-            <span>${ ui.format(patient.patient.givenName) }<em>${ui.message("emr.patientHeader.name")}</em></span>
+            <span>${ui.format(patient.patient.familyName)},<em>${ui.message("emr.patientHeader.surname")}</em></span>
+            <span>${ui.format(patient.patient.givenName)}<em>${ui.message("emr.patientHeader.name")}</em></span>
         </h1>
+
         <div class="gender-age">
-            <span>${ ui.message("emr.gender." + patient.gender) }</span>
+            <span>${ui.message("emr.gender." + patient.gender)}</span>
             <% if (patient.birthdate) { %>
-                <% if (patient.age > 0) { %>
-                    <span>${ ui.message("emr.ageYears", patient.age) }</span>
-                <% } else if (patient.ageInMonths > 0) { %>
-                    <span>${ ui.message("emr.ageMonths", patient.ageInMonths) }</span>
-                <% } else { %>
-                    <span>${ ui.message("emr.ageDays", patient.ageInDays) }</span>
-                <% } %>
+            <% if (patient.age > 0) { %>
+            <span>${ui.message("emr.ageYears", patient.age)}</span>
+            <% } else if (patient.ageInMonths > 0) { %>
+            <span>${ui.message("emr.ageMonths", patient.ageInMonths)}</span>
             <% } else { %>
-            <span>${ ui.message("emr.unknownAge") }</span>
+            <span>${ui.message("emr.ageDays", patient.ageInDays)}</span>
+            <% } %>
+            <% } else { %>
+            <span>${ui.message("emr.unknownAge")}</span>
             <% } %>
         </div>
         <% if (emrContext.activeVisitSummary) { %>
@@ -68,49 +69,53 @@
 
     <div class="identifiers">
         <em>${ui.message("emr.patientHeader.patientId")}</em>
-        <% patient.primaryIdentifiers.each{ %>
-            <span>${it.identifier}</span>
+        <% patient.primaryIdentifiers.each { %>
+        <span>${it.identifier}</span>
         <% } %>
-        <% if (patient.paperRecordIdentifier) { %>
-            <br />
-            <em>${ ui.format(emrApiProperties.paperRecordIdentifierType) }</em>
-            <span>${patient.paperRecordIdentifier.identifier }</span>
-        <% } %>
-        <br />
+        <br/>
         <% if (emrApiProperties.extraPatientIdentifierTypes) { %>
-            <% emrApiProperties.extraPatientIdentifierTypes.each{ %>
-                <em>${ ui.format(it) }</em>
-                <% def extraPatientIdentifier = patient.patient.getPatientIdentifier(it)
-                   if (extraPatientIdentifier) { %>
-                        <span><a class="editPatientIdentifier" data-identifier-type-id="${ it.id }" data-identifier-type-name="${ it.name }" data-patient-identifier-value="${ extraPatientIdentifier }" href="#${ it.id }">${ extraPatientIdentifier }</a></span>
-                <% }else{ %>
-                        <span class="add-id"><a class="editPatientIdentifier" data-identifier-type-id="${ it.id }" data-identifier-type-name="${ it.name }" data-patient-identifier-value="" href="#${ it.id }">${ ui.message("emr.patient.identifier.add") }</a></span>
-                <% } %>
-            <% } %>
+        <% emrApiProperties.extraPatientIdentifierTypes.each { %>
+        <em>${ui.format(it)}</em>
+        <% def extraPatientIdentifier = patient.patient.getPatientIdentifier(it)
+            if (extraPatientIdentifier) { %>
+        <span><a class="editPatientIdentifier" data-identifier-type-id="${it.id}" data-identifier-type-name="${it.name}"
+                 data-patient-identifier-value="${extraPatientIdentifier}"
+                 href="#${it.id}">${extraPatientIdentifier}</a></span>
+        <% } else { %>
+        <span class="add-id"><a class="editPatientIdentifier" data-identifier-type-id="${it.id}"
+                                data-identifier-type-name="${it.name}" data-patient-identifier-value=""
+                                href="#${it.id}">${ui.message("emr.patient.identifier.add")}</a></span>
+        <% } %>
+        <br/>
+        <% } %>
         <% } %>
     </div>
 
-    <div class="unknown-patient" style=<%= (!patient.unknownPatient) ? "display:none" : "" %>>
-        ${ ui.message("emr.patient.temporaryRecord") } <br/>
-        <form action="/${ contextPath }/emr/mergePatients.page" method="get">
-            <input type="hidden" name="isUnknownPatient" value="true" />
-            <input type="hidden" name="patient1" value="${patient.patient.id}" />
-            <input type="submit" id="merge-button" value="${ ui.message("emr.mergePatients.mergeIntoAnotherPatientRecord.button") }" />
+    <div class="unknown-patient" style= <%=(!patient.unknownPatient) ? "display:none" : ""%>>
+        ${ui.message("emr.patient.temporaryRecord")} <br/>
+
+        <form action="/${contextPath}/emr/mergePatients.page" method="get">
+            <input type="hidden" name="isUnknownPatient" value="true"/>
+            <input type="hidden" name="patient1" value="${patient.patient.id}"/>
+            <input type="submit" id="merge-button"
+                   value="${ui.message("emr.mergePatients.mergeIntoAnotherPatientRecord.button")}"/>
         </form>
     </div>
 
     <div class="close"></div>
 </div>
+
 <div id="edit-patient-identifier-dialog" class="dialog" style="display: none">
     <div class="dialog-header">
-        <h3>${ ui.message("emr.patientDashBoard.editPatientIdentifier.title") }</h3>
+        <h3>${ui.message("emr.patientDashBoard.editPatientIdentifier.title")}</h3>
     </div>
+
     <div class="dialog-content">
         <input type="hidden" id="hiddenIdentifierTypeId" value=""/>
         <ul>
             <li class="info">
-                <span>${ ui.message("emr.patient") }</span>
-                <h5>${ ui.format(patient.patient) }</h5>
+                <span>${ui.message("emr.patient")}</span>
+                <h5>${ui.format(patient.patient)}</h5>
             </li>
             <li class="info">
                 <span id="identifierTypeNameSpan"></span>
@@ -120,7 +125,7 @@
             </li>
         </ul>
 
-        <button class="confirm right">${ ui.message("emr.confirm") }</button>
-        <button class="cancel">${ ui.message("emr.cancel") }</button>
+        <button class="confirm right">${ui.message("emr.confirm")}</button>
+        <button class="cancel">${ui.message("emr.cancel")}</button>
     </div>
 </div>

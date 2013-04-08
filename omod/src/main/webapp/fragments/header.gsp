@@ -5,26 +5,26 @@
         text: ko.observable()
     };
 
-    jq(function() {
-        jq(".change-location a").click(function() {
+    jq(function () {
+        jq(".change-location a").click(function () {
             jq('#session-location').show();
             jq(this).addClass('focus');
             jq(".change-location a i:nth-child(3)").removeClass("icon-caret-down");
             jq(".change-location a i:nth-child(3)").addClass("icon-caret-up");
         });
 
-        jq('#session-location').mouseleave(function() {
+        jq('#session-location').mouseleave(function () {
             jq('#session-location').hide();
             jq(".change-location a").removeClass('focus');
             jq(".change-location a i:nth-child(3)").addClass("icon-caret-down");
             jq(".change-location a i:nth-child(3)").removeClass("icon-caret-up");
         });
 
-        ko.applyBindings( sessionLocationModel, jq('.change-location').get(0) );
+        ko.applyBindings(sessionLocationModel, jq('.change-location').get(0));
         sessionLocationModel.id(${ emrContext.sessionLocation?.id });
         sessionLocationModel.text("${ ui.format(emrContext.sessionLocation) }");
 
-        jq("#session-location ul.select li").click(function(event) {
+        jq("#session-location ul.select li").click(function (event) {
             var element = jq(event.target);
             var locationId = element.attr("locationId");
             var locationName = element.attr("locationName");
@@ -33,7 +33,7 @@
 
             jq("#spinner").show();
 
-            jq.post("/${ contextPath }/mirebalais/standard.page", data, function(returnedData) {
+            jq.post("/${ contextPath }/mirebalais/standard.page", data, function (returnedData) {
                 sessionLocationModel.id(locationId);
                 sessionLocationModel.text(locationName);
                 jq('#session-location li').removeClass('selected');
@@ -52,15 +52,15 @@
 
 <header>
     <div class="logo">
-        <a href="${ ui.pageLink("mirebalais", "home") }">
-            <img src="${ ui.resourceLink("mirebalais", "images/partners_in_health_logo.png") }"/>
+        <a href="${ui.pageLink("mirebalais", "home")}">
+            <img src="${ui.resourceLink("mirebalais", "images/partners_in_health_logo.png")}"/>
         </a>
     </div>
     <% if (context.authenticated) { %>
     <ul class="user-options">
         <li class="identifier">
             <i class="icon-user small"></i>
-            ${ context.authenticatedUser.username ?: context.authenticatedUser.systemId }
+            ${context.authenticatedUser.username ?: context.authenticatedUser.systemId}
         </li>
         <li class="change-location">
             <a href="#">
@@ -70,19 +70,20 @@
             </a>
         </li>
         <li class="logout">
-            <a href="/${ contextPath }/logout">
-                ${ ui.message("emr.logout") }
+            <a href="/${contextPath}/logout">
+                ${ui.message("emr.logout")}
                 <i class="icon-signout small"></i>
             </a>
         </li>
     </ul>
+
     <div id="session-location">
         <div id="spinner" style="position:absolute; display:none">
             <img src="${ui.resourceLink("mirebalais", "images/spinner.gif")}">
         </div>
         <ul class="select">
-            <% emrApiProperties.allAvailableLocations.sort { ui.format(it) }.each {
-                def selected = (it==emrContext.sessionLocation) ? "selected" : ""
+            <% loginLocations.sort { ui.format(it) }.each {
+                def selected = (it == emrContext.sessionLocation) ? "selected" : ""
             %>
             <li class="${selected}" locationId="${it.id}" locationName="${ui.format(it)}">${ui.format(it)}</li>
             <% } %>
