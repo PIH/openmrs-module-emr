@@ -25,7 +25,7 @@ public class RadiologyConstants {
 
     public final static String GP_RADIOLOGY_TECHNICIAN_ENCOUNTER_ROLE = "emr.radiologyTechnicianEncounterRole";
 
-    public static final String GP_PRIMARY_RESULTS_INTERPRETER_ENCOUNTER_ROLE = "emr.primaryResultsInterpreterEncounterRole";
+    public static final String GP_PRINCIPAL_RESULTS_INTERPRETER_ENCOUNTER_ROLE = "emr.principalResultsInterpreterEncounterRole";
 
     public static final String GP_XRAY_ORDERABLES_CONCEPT = "emr.xrayOrderablesConcept";
 
@@ -37,10 +37,18 @@ public class RadiologyConstants {
 
     public static final String CONCEPT_CODE_RADIOLOGY_STUDY_SET = "Radiology Study Set";
 
+    public static final String CONCEPT_CODE_RADIOLOGY_REPORT_SET = "Radiology Report Set";
+
+    public static final String CONCEPT_CODE_RADIOLOGY_REPORT_BODY = "Radiology Report Body";
+
+    public static final String CONCEPT_CODE_RADIOLOGY_REPORT_TYPE = "Radiology Report Type";
+
     public static final String CONCEPT_CODE_RADIOLOGY_PROCEDURE = "Radiology Procedure";
 
     public static final String CONCEPT_CODE_RADIOLOGY_ACCESSION_NUMBER = "Accession Number";
 
-    public static final String CONCEPT_CODE_IMAGES_AVAILABLE = "Images Available";
+    public static final String CONCEPT_CODE_RADIOLOGY_IMAGES_AVAILABLE = "Images Available";
+
+
 
 }

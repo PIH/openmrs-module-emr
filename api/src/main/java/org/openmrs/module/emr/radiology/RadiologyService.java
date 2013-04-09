@@ -8,7 +8,7 @@ public interface RadiologyService extends OpenmrsService {
 
     Encounter placeRadiologyRequisition(EmrContext emrContext, RadiologyRequisition requisition);
 
-    void saveRadiologyReport(RadiologyReport radiologyReport);
+    Encounter saveRadiologyReport(RadiologyReport radiologyReport);
 
     Encounter saveRadiologyStudy(RadiologyStudy radiologyStudy);
 

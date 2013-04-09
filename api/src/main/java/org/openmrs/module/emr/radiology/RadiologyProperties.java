@@ -44,8 +44,8 @@ public class RadiologyProperties extends ModuleProperties {
         return getEncounterRoleByGlobalProperty(RadiologyConstants.GP_RADIOLOGY_TECHNICIAN_ENCOUNTER_ROLE);
     }
 
-    public EncounterRole getPrimaryResultsInterpreterEncounterRole() {
-        return getEncounterRoleByGlobalProperty(RadiologyConstants.GP_PRIMARY_RESULTS_INTERPRETER_ENCOUNTER_ROLE);
+    public EncounterRole getPrincipalResultsInterpreterEncounterRole() {
+        return getEncounterRoleByGlobalProperty(RadiologyConstants.GP_PRINCIPAL_RESULTS_INTERPRETER_ENCOUNTER_ROLE);
     }
 
     public OrderType getRadiologyTestOrderType() {

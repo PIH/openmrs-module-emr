@@ -35,7 +35,7 @@ public class RadiologyStudyConceptSet extends ConceptSetDescriptor {
         setup(conceptService, EmrConstants.EMR_CONCEPT_SOURCE_NAME,
                 "radiologyStudySetConcept", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_STUDY_SET,
                 "accessionNumberConcept", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_ACCESSION_NUMBER,
-                "imagesAvailableConcept", RadiologyConstants.CONCEPT_CODE_IMAGES_AVAILABLE,
+                "imagesAvailableConcept", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_IMAGES_AVAILABLE,
                 "procedureConcept", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_PROCEDURE);
 
     }

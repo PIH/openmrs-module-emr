@@ -42,10 +42,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Context.class)
-public class RadiologyStudyConceptSetTest {
-
-    private ConceptMapType sameAs;
-    private ConceptSource emrConceptSource;
+public class RadiologyStudyConceptSetTest extends BaseConceptSetTest {
 
     private Concept radiologyStudySetConcept;
     private Concept accessionNumberConcept;
@@ -75,7 +72,7 @@ public class RadiologyStudyConceptSetTest {
 
         radiologyStudySetConcept = setupConcept(conceptService, "Radiology Study Set", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_STUDY_SET);
         accessionNumberConcept = setupConcept(conceptService, "Accession Number", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_ACCESSION_NUMBER);
-        imagesAvailableConcept = setupConcept(conceptService, "Images Available", RadiologyConstants.CONCEPT_CODE_IMAGES_AVAILABLE);
+        imagesAvailableConcept = setupConcept(conceptService, "Images Available", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_IMAGES_AVAILABLE);
         imagesAvailableConcept.setDatatype(booleanType);
         procedureConcept = setupConcept(conceptService, "Procedure", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_PROCEDURE);
 
@@ -142,13 +139,6 @@ public class RadiologyStudyConceptSetTest {
 
     }
 
-    private Concept setupConcept(ConceptService mockConceptService, String name, String mappingCode) {
-        Concept concept = new Concept();
-        concept.addName(new ConceptName(name, Locale.ENGLISH));
-        concept.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(emrConceptSource, mappingCode, null), sameAs));
-        when(mockConceptService.getConceptByMapping(mappingCode, emrConceptSource.getName())).thenReturn(concept);
-        return concept;
-    }
 }
 
 

@@ -71,8 +71,23 @@ public class RadiologyServiceImpl extends BaseOpenmrsService implements Radiolog
     }
 
     @Override
-    public void saveRadiologyReport(RadiologyReport radiologyReport) {
+    public Encounter saveRadiologyReport(RadiologyReport radiologyReport) {
 
+        // TODO: add a validator
+
+        Encounter encounter = new Encounter();
+        encounter.setEncounterType(radiologyProperties.getRadiologyReportEncounterType());
+        encounter.setEncounterDatetime(radiologyReport.getReportDate());
+        encounter.setLocation(radiologyReport.getReportLocation() != null ?
+                radiologyReport.getReportLocation() : emrProperties.getUnknownLocation());
+        encounter.setPatient(radiologyReport.getPatient());
+        encounter.addProvider(radiologyProperties.getPrincipalResultsInterpreterEncounterRole(),
+                radiologyReport.getPrincipalResultsInterpreter() != null ?  radiologyReport.getPrincipalResultsInterpreter() : emrProperties.getUnknownProvider());
+
+        RadiologyReportConceptSet radiologyReportConceptSet = new RadiologyReportConceptSet(conceptService);
+        encounter.addObs(radiologyReportConceptSet.buildRadiologyReportObsGroup(radiologyReport));
+
+        return encounterService.saveEncounter(encounter);
     }
 
     @Override

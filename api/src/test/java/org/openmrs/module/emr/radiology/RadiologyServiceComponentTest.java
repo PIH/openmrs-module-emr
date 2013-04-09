@@ -211,4 +211,76 @@ public class RadiologyServiceComponentTest extends BaseModuleContextSensitiveTes
 
     }
 
+    @Test
+    public void shouldSaveARadiologyReport() {
+
+        Date timeOfStudy = new Date();
+
+        // use patient demo database
+        Patient patient = patientService.getPatient(6);
+
+        // from radiologyServiceComponentTestDataset.xml
+        Concept procedure = conceptService.getConcept(1001);
+        Concept reportType = conceptService.getConcept(1009);
+        RadiologyOrder radiologyOrder = radiologyService.getRadiologyOrderByAccessionNumber("12345");
+
+        RadiologyReport radiologyReport = new RadiologyReport();
+        radiologyReport.setPatient(patient);
+        radiologyReport.setProcedure(procedure);
+        radiologyReport.setReportType(reportType);
+        radiologyReport.setReportBody("Some test report");
+        radiologyReport.setAccessionNumber("12345");
+        radiologyReport.setAssociatedRadiologyOrder(radiologyOrder);
+        radiologyReport.setReportDate(timeOfStudy) ;
+
+        Encounter encounter = radiologyService.saveRadiologyReport(radiologyReport);
+
+        assertThat(encounter.getPatient(), is(patient));
+        assertThat(encounter.getEncounterType(), is(radiologyProperties.getRadiologyReportEncounterType()));
+        assertThat(encounter.getEncounterDatetime(), is(timeOfStudy));
+        assertThat(encounter.getLocation(), is(emrProperties.getUnknownLocation()));
+        assertThat(encounter.getProvidersByRole(radiologyProperties.getPrincipalResultsInterpreterEncounterRole()).size(), is(1));
+        assertThat(encounter.getProvidersByRole(radiologyProperties.getPrincipalResultsInterpreterEncounterRole()).iterator().next(), is(emrProperties.getUnknownProvider()));
+
+        assertThat(encounter.getObsAtTopLevel(false).size(), is(1));
+
+        Obs radiologyStudyObsSet = encounter.getObsAtTopLevel(false).iterator().next();
+
+
+        assertThat(radiologyStudyObsSet.getGroupMembers().size(), is(4));
+        assertThat(radiologyStudyObsSet.getOrder().getAccessionNumber(), is("12345"));
+
+        Obs accessionNumberObs = null;
+        Obs procedureObs = null;
+        Obs reportBodyObs = null;
+        Obs reportTypeObs = null;
+
+        // hack, just reference the concepts by their ids in the test dataset
+        for (Obs obs : radiologyStudyObsSet.getGroupMembers()) {
+            if (obs.getConcept().getId() == 1004) {
+                accessionNumberObs = obs;
+            }
+            if (obs.getConcept().getId() == 1003) {
+                procedureObs  = obs;
+            }
+            if (obs.getConcept().getId() == 1007) {
+                reportTypeObs = obs;
+            }
+            if (obs.getConcept().getId() == 1008) {
+                reportBodyObs = obs;
+            }
+        }
+
+        assertNotNull(accessionNumberObs);
+        assertNotNull(procedureObs);
+        assertNotNull(reportTypeObs);
+        assertNotNull(reportBodyObs);
+
+        assertThat(accessionNumberObs.getValueText(), is("12345"));
+        assertThat(procedureObs.getValueCoded(), is(procedure));
+        assertThat(reportBodyObs.getValueText(), is("Some test report"));
+        assertThat(reportTypeObs.getValueCoded(), is(reportType));
+
+    }
+
 }

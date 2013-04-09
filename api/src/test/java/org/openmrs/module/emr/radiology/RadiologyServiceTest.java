@@ -68,8 +68,10 @@ public class RadiologyServiceTest {
     private String clinicalHistory;
     private EncounterRole clinicianEncounterRole;
     private EncounterRole radiologyTechnicianEncounterRole;
+    private EncounterRole principalResultsInterpreterEncounterRole;
     private EncounterType placeOrdersEncounterType;
     private EncounterType radiologyStudyEncounterType;
+    private EncounterType radiologyReportEncounterType;
     private Visit currentVisit;
     private Provider provider;
     private Location currentLocation;
@@ -100,8 +102,10 @@ public class RadiologyServiceTest {
         currentVisit = new Visit();
         placeOrdersEncounterType = new EncounterType();
         radiologyStudyEncounterType = new EncounterType();
+        radiologyReportEncounterType = new EncounterType();
         clinicianEncounterRole = new EncounterRole();
         radiologyTechnicianEncounterRole = new EncounterRole();
+        principalResultsInterpreterEncounterRole = new EncounterRole();
 
         prepareMocks();
 
@@ -127,7 +131,9 @@ public class RadiologyServiceTest {
         when(emrContext.getActiveVisitSummary()).thenReturn(currentVisitSummary);
         when(radiologyProperties.getRadiologyOrderEncounterType()).thenReturn(placeOrdersEncounterType);
         when(radiologyProperties.getRadiologyStudyEncounterType()).thenReturn(radiologyStudyEncounterType);
+        when(radiologyProperties.getRadiologyReportEncounterType()).thenReturn(radiologyReportEncounterType);
         when(radiologyProperties.getRadiologyTechnicianEncounterRole()).thenReturn(radiologyTechnicianEncounterRole);
+        when(radiologyProperties.getPrincipalResultsInterpreterEncounterRole()).thenReturn(principalResultsInterpreterEncounterRole);
         when(emrProperties.getOrderingProviderEncounterRole()).thenReturn(clinicianEncounterRole);
         when(emrProperties.getUnknownLocation()).thenReturn(unknownLocation);
         when(emrProperties.getUnknownProvider()).thenReturn(unknownProvider);
@@ -194,7 +200,7 @@ public class RadiologyServiceTest {
 
         Concept radiologyStudySetConcept = setupConcept(conceptService, "Radiology Study Set", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_STUDY_SET);
         Concept accessionNumberConcept = setupConcept(conceptService, "Accession Number", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_ACCESSION_NUMBER);
-        Concept imagesAvailableConcept = setupConcept(conceptService, "Images Available", RadiologyConstants.CONCEPT_CODE_IMAGES_AVAILABLE);
+        Concept imagesAvailableConcept = setupConcept(conceptService, "Images Available", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_IMAGES_AVAILABLE);
         Concept procedureConcept = setupConcept(conceptService, "Procedure", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_PROCEDURE);
 
         radiologyStudySetConcept.addSetMember(accessionNumberConcept);
@@ -217,7 +223,7 @@ public class RadiologyServiceTest {
 
         Concept radiologyStudySetConcept = setupConcept(conceptService, "Radiology Study Set", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_STUDY_SET);
         Concept accessionNumberConcept = setupConcept(conceptService, "Accession Number", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_ACCESSION_NUMBER);
-        Concept imagesAvailableConcept = setupConcept(conceptService, "Images Available", RadiologyConstants.CONCEPT_CODE_IMAGES_AVAILABLE);
+        Concept imagesAvailableConcept = setupConcept(conceptService, "Images Available", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_IMAGES_AVAILABLE);
         Concept procedureConcept = setupConcept(conceptService, "Procedure", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_PROCEDURE);
 
         radiologyStudySetConcept.addSetMember(accessionNumberConcept);
@@ -233,6 +239,58 @@ public class RadiologyServiceTest {
         radiologyService.saveRadiologyStudy(study);
 
         verify(encounterService).saveEncounter(argThat(new IsExpectedRadiologyStudyEncounter(unknownLocation, unknownProvider)));
+    }
+
+    @Test
+    public void shouldCreateRadiologyReportEncounter() {
+
+        Concept radiologyReportSetConcept = setupConcept(conceptService, "Radiology Report Set", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_REPORT_SET);
+        Concept accessionNumberConcept = setupConcept(conceptService, "Accession Number", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_ACCESSION_NUMBER);
+        Concept reportBodyConcept = setupConcept(conceptService, "Report Body", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_REPORT_BODY);
+        Concept reportTypeConcept = setupConcept(conceptService, "Report Type", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_REPORT_TYPE);;
+        Concept procedureConcept = setupConcept(conceptService, "Procedure", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_PROCEDURE);
+
+        radiologyReportSetConcept.addSetMember(accessionNumberConcept);
+        radiologyReportSetConcept.addSetMember(reportBodyConcept);
+        radiologyReportSetConcept.addSetMember(reportTypeConcept);
+        radiologyReportSetConcept.addSetMember(procedureConcept);
+
+        RadiologyReport report = new RadiologyReport();
+        report.setPatient(patient);
+        report.setReportDate(currentDate);
+        report.setPrincipalResultsInterpreter(provider);
+        report.setReportLocation(currentLocation);
+
+        radiologyService.saveRadiologyReport(report);
+
+        verify(encounterService).saveEncounter(argThat(new IsExpectedRadiologyReportEncounter(currentLocation, provider)));
+
+    }
+
+    @Test
+    public void shouldNotFailIfInterpreterAndLocationNotSpecified() {
+
+        Concept radiologyReportSetConcept = setupConcept(conceptService, "Radiology Report Set", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_REPORT_SET);
+        Concept accessionNumberConcept = setupConcept(conceptService, "Accession Number", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_ACCESSION_NUMBER);
+        Concept reportBodyConcept = setupConcept(conceptService, "Report Body", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_REPORT_BODY);
+        Concept reportTypeConcept = setupConcept(conceptService, "Report Type", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_REPORT_TYPE);;
+        Concept procedureConcept = setupConcept(conceptService, "Procedure", RadiologyConstants.CONCEPT_CODE_RADIOLOGY_PROCEDURE);
+
+        radiologyReportSetConcept.addSetMember(accessionNumberConcept);
+        radiologyReportSetConcept.addSetMember(reportBodyConcept);
+        radiologyReportSetConcept.addSetMember(reportTypeConcept);
+        radiologyReportSetConcept.addSetMember(procedureConcept);
+
+        RadiologyReport report = new RadiologyReport();
+        report.setPatient(patient);
+        report.setReportDate(currentDate);
+        report.setPrincipalResultsInterpreter(null);
+        report.setReportLocation(null);
+
+        radiologyService.saveRadiologyReport(report);
+
+        verify(encounterService).saveEncounter(argThat(new IsExpectedRadiologyReportEncounter(unknownLocation, unknownProvider)));
+
     }
 
     private class IsExpectedOrder extends ArgumentMatcher<Order> {
@@ -319,6 +377,37 @@ public class RadiologyServiceTest {
             // just test that the obs are there (we test that the obs group is packaged correctly in RadiologyStudyConceptSetTest)
             assertThat(encounter.getObsAtTopLevel(false).size(), is(1));
             assertThat(encounter.getObsAtTopLevel(false).iterator().next().getGroupMembers().size(), is(3));
+            return true;
+        }
+
+    }
+
+    private class IsExpectedRadiologyReportEncounter extends ArgumentMatcher<Encounter> {
+
+        Location expectedLocation;
+
+        Provider expectedInterpreter;
+
+        public IsExpectedRadiologyReportEncounter(Location expectedLocation, Provider expectedInterpreter) {
+            this.expectedLocation = expectedLocation;
+            this.expectedInterpreter = expectedInterpreter;
+        }
+
+
+        @Override
+        public boolean matches(Object o) {
+            Encounter encounter = (Encounter) o;
+
+            assertThat(encounter.getEncounterType(), is(radiologyReportEncounterType));
+            assertThat(encounter.getPatient(), is(patient));
+            assertThat(encounter.getEncounterDatetime(), is(currentDate));
+            assertThat(encounter.getLocation(), is(expectedLocation));
+            assertThat(encounter.getProvidersByRole(principalResultsInterpreterEncounterRole).size(), is(1));
+            assertThat(encounter.getProvidersByRole(principalResultsInterpreterEncounterRole).iterator().next(), is(expectedInterpreter));
+
+            // just test that the obs are there (we test that the obs group is packaged correctly in RadiologyReportConceptSetTest)
+            assertThat(encounter.getObsAtTopLevel(false).size(), is(1));
+            assertThat(encounter.getObsAtTopLevel(false).iterator().next().getGroupMembers().size(), is(4));
             return true;
         }
 

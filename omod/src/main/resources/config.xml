@@ -237,10 +237,10 @@
     </globalProperty>
 
     <globalProperty>
-        <property>emr.primaryResultsInterpreterEncounterRole</property>
+        <property>emr.principalResultsInterpreterEncounterRole</property>
         <defaultValue></defaultValue>
         <description>
-            UUID of the the Radiology primary results interpreter encounter role
+            UUID of the the Radiology principal results interpreter encounter role
         </description>
     </globalProperty>
 

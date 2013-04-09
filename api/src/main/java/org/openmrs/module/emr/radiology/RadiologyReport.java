@@ -23,8 +23,6 @@ import java.util.Date;
 
 public class RadiologyReport {
 
-    public static enum Type { PRELIM, FINAL, CORRECTION }
-
     private RadiologyOrder associatedRadiologyOrder;
 
     private String accessionNumber;
@@ -37,7 +35,7 @@ public class RadiologyReport {
 
     private Location reportLocation;
 
-    private Type reportType;
+    private Concept reportType;
 
     private String reportBody;
 
@@ -92,11 +90,11 @@ public class RadiologyReport {
         this.reportLocation = reportLocation;
     }
 
-    public Type getReportType() {
+    public Concept getReportType() {
         return reportType;
     }
 
-    public void setReportType(Type reportType) {
+    public void setReportType(Concept reportType) {
         this.reportType = reportType;
     }
 
