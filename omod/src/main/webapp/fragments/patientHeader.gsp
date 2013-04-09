@@ -73,19 +73,24 @@
         <span>${it.identifier}</span>
         <% } %>
         <br/>
-        <% if (emrApiProperties.extraPatientIdentifierTypes) { %>
-        <% emrApiProperties.extraPatientIdentifierTypes.each { %>
-        <em>${ui.format(it)}</em>
-        <% def extraPatientIdentifier = patient.patient.getPatientIdentifier(it)
-            if (extraPatientIdentifier) { %>
-        <span><a class="editPatientIdentifier" data-identifier-type-id="${it.id}" data-identifier-type-name="${ui.format(it)}"
-                 data-patient-identifier-value="${extraPatientIdentifier}"
-                 href="#${it.id}">${extraPatientIdentifier}</a></span>
-        <% } else { %>
-        <span class="add-id"><a class="editPatientIdentifier" data-identifier-type-id="${it.id}"
-                                data-identifier-type-name="${ui.format(it)}" data-patient-identifier-value=""
-                                href="#${it.id}">${ui.message("emr.patient.identifier.add")}</a></span>
+        <% if (config.extraPatientIdentifierTypes) { %>
+        <% config.extraPatientIdentifierTypes.each { %>
+        <% def extraPatientIdentifier = patient.patient.getPatientIdentifier(it.patientIdentifierType) %>
+        <% if (extraPatientIdentifier) { %>
+            <em>${ui.format(it.patientIdentifierType)}</em>
+            <% if (it.editable) { %>
+                 <span><a class="editPatientIdentifier" data-identifier-type-id="${it.patientIdentifierType.id}" data-identifier-type-name="${ui.format(it.patientIdentifierType)}"
+                    data-patient-identifier-value="${extraPatientIdentifier}" href="#${it.patientIdentifierType.id}">${extraPatientIdentifier}</a></span>
+            <% } else {%>
+                <span>${extraPatientIdentifier}</span>
+            <% } %>
+        <% } else if (it.editable) { %>
+            <em>${ui.format(it.patientIdentifierType)}</em>
+            <span class="add-id"><a class="editPatientIdentifier" data-identifier-type-id="${it.patientIdentifierType.id}"
+                                    data-identifier-type-name="${ui.format(it.patientIdentifierType)}" data-patient-identifier-value=""
+                                    href="#${it.patientIdentifierType.id}">${ui.message("emr.patient.identifier.add")}</a></span>
         <% } %>
+
         <br/>
         <% } %>
         <% } %>
