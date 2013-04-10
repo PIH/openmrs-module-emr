@@ -13,6 +13,9 @@
  */
 package org.openmrs.module.emr.page.controller;
 
+import static org.openmrs.module.emr.task.ExtensionPoint.ACTIVE_VISITS;
+import static org.openmrs.module.emr.task.ExtensionPoint.GLOBAL_ACTIONS;
+
 import org.openmrs.Patient;
 import org.openmrs.api.OrderService;
 import org.openmrs.module.emr.EmrContext;
@@ -24,30 +27,24 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static org.openmrs.module.emr.task.ExtensionPoint.ACTIVE_VISITS;
-import static org.openmrs.module.emr.task.ExtensionPoint.GLOBAL_ACTIONS;
-
-
 /**
  *
  */
 public class PatientPageController {
-
+	
 	public void controller(@RequestParam("patientId") Patient patient,
-                           @RequestParam(value = "tab", defaultValue = "visits") String selectedTab,
-                           EmrContext emrContext,
-	                       PageModel model,
-                           @InjectBeans PatientDomainWrapper patientDomainWrapper,
-                           @SpringBean("orderService") OrderService orderService,
-                           @SpringBean("taskService") TaskService taskService) {
-
-        patientDomainWrapper.setPatient(patient);
-        model.addAttribute("patient", patientDomainWrapper);
-        model.addAttribute("orders", orderService.getOrdersByPatient(patient));
-        model.addAttribute("availableTasks", taskService.getAvailableTasksByExtensionPoint(emrContext, GLOBAL_ACTIONS));
-        model.addAttribute("activeVisitTasks", taskService.getAvailableTasksByExtensionPoint(emrContext, ACTIVE_VISITS));
-        model.addAttribute("selectedTab", selectedTab);
-        model.addAttribute("addressHierarchyLevels", GeneralUtils.getAddressHierarchyLevels());
-    }
-
+	                       @RequestParam(value = "tab", defaultValue = "visits") String selectedTab, EmrContext emrContext,
+	                       PageModel model, @InjectBeans PatientDomainWrapper patientDomainWrapper,
+	                       @SpringBean("orderService") OrderService orderService,
+	                       @SpringBean("taskService") TaskService taskService) {
+		
+		patientDomainWrapper.setPatient(patient);
+		model.addAttribute("patient", patientDomainWrapper);
+		model.addAttribute("orders", orderService.getOrdersByPatient(patient));
+		model.addAttribute("availableTasks", taskService.getAvailableTasksByExtensionPoint(emrContext, GLOBAL_ACTIONS));
+		model.addAttribute("activeVisitTasks", taskService.getAvailableTasksByExtensionPoint(emrContext, ACTIVE_VISITS));
+		model.addAttribute("selectedTab", selectedTab);
+		model.addAttribute("addressHierarchyLevels", GeneralUtils.getAddressHierarchyLevels());
+	}
+	
 }
