@@ -36,7 +36,7 @@ import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
@@ -86,6 +86,9 @@ public class ConsultServiceTest {
     private Concept primary;
     private Concept secondary;
     private Concept freeTextComments;
+    private Concept diagnosisCertainty;
+    private Concept confirmed;
+    private Concept presumed;
 
     @Before
     public void setUp() throws Exception {
@@ -104,15 +107,15 @@ public class ConsultServiceTest {
         freeTextComments = buildConcept(3, "Comments");
 
         ConceptSource emrConceptSource = new ConceptSource();
-        emrConceptSource.setName(EmrConstants.EMR_CONCEPT_SOURCE_NAME);
+        emrConceptSource.setName(EmrApiConstants.EMR_CONCEPT_SOURCE_NAME);
 
         ConceptMapType sameAs = new ConceptMapType();
 
         primary = buildConcept(4, "Primary");
-        primary.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(emrConceptSource, EmrConstants.CONCEPT_CODE_DIAGNOSIS_ORDER_PRIMARY, null), sameAs));
+        primary.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(emrConceptSource, EmrApiConstants.CONCEPT_CODE_DIAGNOSIS_ORDER_PRIMARY, null), sameAs));
 
         secondary = buildConcept(5, "Secondary");
-        secondary.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(emrConceptSource, EmrConstants.CONCEPT_CODE_DIAGNOSIS_ORDER_SECONDARY, null), sameAs));
+        secondary.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(emrConceptSource, EmrApiConstants.CONCEPT_CODE_DIAGNOSIS_ORDER_SECONDARY, null), sameAs));
 
         diagnosisOrder = buildConcept(6, "Diagnosis Order");
         diagnosisOrder.addAnswer(new ConceptAnswer(primary));
@@ -121,16 +124,28 @@ public class ConsultServiceTest {
         codedDiagnosis = buildConcept(7, "Diagnosis (Coded)");
         nonCodedDiagnosis = buildConcept(8, "Diagnosis (Non-Coded)");
 
+        confirmed = buildConcept(11, "Confirmed");
+        confirmed.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(emrConceptSource, EmrApiConstants.CONCEPT_CODE_DIAGNOSIS_CERTAINTY_CONFIRMED, null), sameAs));
+
+        presumed = buildConcept(12, "Presumed");
+        presumed.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(emrConceptSource, EmrApiConstants.CONCEPT_CODE_DIAGNOSIS_CERTAINTY_PRESUMED, null), sameAs));
+
+        diagnosisCertainty = buildConcept(10, "Diagnosis Certainty");
+        diagnosisCertainty.addAnswer(new ConceptAnswer(confirmed));
+        diagnosisCertainty.addAnswer(new ConceptAnswer(presumed));
+
         diagnosisGroupingConcept = buildConcept(9, "Grouping for Diagnosis");
         diagnosisGroupingConcept.addSetMember(diagnosisOrder);
         diagnosisGroupingConcept.addSetMember(codedDiagnosis);
         diagnosisGroupingConcept.addSetMember(nonCodedDiagnosis);
+        diagnosisGroupingConcept.addSetMember(diagnosisCertainty);
 
         DiagnosisMetadata diagnosisMetadata = new DiagnosisMetadata();
         diagnosisMetadata.setDiagnosisSetConcept(diagnosisGroupingConcept);
         diagnosisMetadata.setCodedDiagnosisConcept(codedDiagnosis);
         diagnosisMetadata.setNonCodedDiagnosisConcept(nonCodedDiagnosis);
         diagnosisMetadata.setDiagnosisOrderConcept(diagnosisOrder);
+        diagnosisMetadata.setDiagnosisCertaintyConcept(diagnosisCertainty);
 
         emrApiProperties = mock(EmrApiProperties.class);
         when(emrApiProperties.getConsultFreeTextCommentsConcept()).thenReturn(freeTextComments);
@@ -170,13 +185,14 @@ public class ConsultServiceTest {
 
         assertThat(obsAtTopLevel.size(), is(1));
         Obs primaryDiagnosis = obsAtTopLevel.iterator().next();
-        assertThat(primaryDiagnosis, diagnosisMatcher(primary, malaria, null));
+        assertThat(primaryDiagnosis, diagnosisMatcher(primary, presumed, malaria, null));
     }
 
     @Test
     public void saveConsultNote_shouldHandleCodedPrimaryDiagnosisWithSpecificName() {
         ConsultNote consultNote = buildConsultNote();
         consultNote.setPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(malariaSynonym)));
+        consultNote.getPrimaryDiagnosis().setCertainty(Diagnosis.Certainty.CONFIRMED);
         Encounter encounter = consultService.saveConsultNote(consultNote);
 
         assertNotNull(encounter);
@@ -185,7 +201,7 @@ public class ConsultServiceTest {
         Set<Obs> obsAtTopLevel = encounter.getObsAtTopLevel(false);
         assertThat(obsAtTopLevel.size(), is(1));
         Obs primaryDiagnosis = obsAtTopLevel.iterator().next();
-        assertThat(primaryDiagnosis, diagnosisMatcher(primary, malaria, malariaSynonym));
+        assertThat(primaryDiagnosis, diagnosisMatcher(primary, confirmed, malaria, malariaSynonym));
     }
 
     @Test
@@ -201,7 +217,7 @@ public class ConsultServiceTest {
         Set<Obs> obsAtTopLevel = encounter.getObsAtTopLevel(false);
         assertThat(obsAtTopLevel.size(), is(1));
         Obs primaryDiagnosis = obsAtTopLevel.iterator().next();
-        assertThat(primaryDiagnosis, diagnosisMatcher(primary, nonCodedAnswer));
+        assertThat(primaryDiagnosis, diagnosisMatcher(primary, presumed, nonCodedAnswer));
     }
 
     @Test
@@ -212,6 +228,7 @@ public class ConsultServiceTest {
         ConsultNote consultNote = buildConsultNote();
         consultNote.setPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(malaria)));
         consultNote.addAdditionalDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(diabetes)));
+        consultNote.getAdditionalDiagnoses().get(0).setCertainty(Diagnosis.Certainty.CONFIRMED);
         consultNote.addAdditionalDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(nonCodedAnswer)));
         consultNote.setComments(comments);
         Encounter encounter = consultService.saveConsultNote(consultNote);
@@ -223,9 +240,9 @@ public class ConsultServiceTest {
         assertThat(obsAtTopLevel.size(), is(4));
 
         assertThat(obsAtTopLevel, containsInAnyOrder(
-                diagnosisMatcher(primary, malaria, null),
-                diagnosisMatcher(secondary, diabetes, null),
-                diagnosisMatcher(secondary, nonCodedAnswer),
+                diagnosisMatcher(primary, presumed, malaria, null),
+                diagnosisMatcher(secondary, confirmed, diabetes, null),
+                diagnosisMatcher(secondary, presumed, nonCodedAnswer),
                 new ArgumentMatcher<Obs>() {
                     @Override
                     public boolean matches(Object o) {
@@ -244,17 +261,19 @@ public class ConsultServiceTest {
         return consultNote;
     }
 
-    private ArgumentMatcher<Obs> diagnosisMatcher(final Concept order, final Concept diagnosis, final ConceptName specificName) {
+    private ArgumentMatcher<Obs> diagnosisMatcher(final Concept order, final Concept certainty, final Concept diagnosis, final ConceptName specificName) {
         return new ArgumentMatcher<Obs>() {
             @Override
             public boolean matches(Object o) {
                 Obs obsGroup = (Obs) o;
                 if (obsGroup.getConcept().equals(diagnosisGroupingConcept) &&
                         containsInAnyOrder(new CodedObsMatcher(diagnosisOrder, order),
+                                new CodedObsMatcher(diagnosisCertainty, certainty),
                                 new CodedObsMatcher(codedDiagnosis, diagnosis, specificName)).matches(obsGroup.getGroupMembers())) {
                 }
                 return obsGroup.getConcept().equals(diagnosisGroupingConcept) &&
                         containsInAnyOrder(new CodedObsMatcher(diagnosisOrder, order),
+                                new CodedObsMatcher(diagnosisCertainty, certainty),
                                 new CodedObsMatcher(codedDiagnosis, diagnosis, specificName)).matches(obsGroup.getGroupMembers());
             }
 
@@ -265,17 +284,19 @@ public class ConsultServiceTest {
         };
     }
 
-    private ArgumentMatcher<Obs> diagnosisMatcher(final Concept order, final String nonCodedAnswer) {
+    private ArgumentMatcher<Obs> diagnosisMatcher(final Concept order, final Concept certainty, final String nonCodedAnswer) {
         return new ArgumentMatcher<Obs>() {
             @Override
             public boolean matches(Object o) {
                 Obs obsGroup = (Obs) o;
                 if (obsGroup.getConcept().equals(diagnosisGroupingConcept) &&
                         containsInAnyOrder(new CodedObsMatcher(diagnosisOrder, order),
+                                new CodedObsMatcher(diagnosisCertainty, certainty),
                                 new TextObsMatcher(nonCodedDiagnosis, nonCodedAnswer)).matches(obsGroup.getGroupMembers())) {
                 }
                 return obsGroup.getConcept().equals(diagnosisGroupingConcept) &&
                         containsInAnyOrder(new CodedObsMatcher(diagnosisOrder, order),
+                                new CodedObsMatcher(diagnosisCertainty, certainty),
                                 new TextObsMatcher(nonCodedDiagnosis, nonCodedAnswer)).matches(obsGroup.getGroupMembers());
             }
         };
@@ -307,6 +328,7 @@ public class ConsultServiceTest {
     private class TextObsMatcher extends ArgumentMatcher<Obs> {
         private Concept question;
         private String answer;
+
         public TextObsMatcher(Concept question, String answer) {
             this.question = question;
             this.answer = answer;
