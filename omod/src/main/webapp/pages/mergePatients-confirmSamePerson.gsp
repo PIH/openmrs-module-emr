@@ -1,6 +1,6 @@
 <%
     ui.decorateWith("emr", "standardEmrPage", [title: ui.message("emr.mergePatients")])
-    ui.includeCss("mirebalais", "mergePatients.css")
+    ui.includeCss("uicommons", "mirebalais/mergePatients.css")
 %>
 
 <script type="text/javascript">
