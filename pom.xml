@@ -48,6 +48,7 @@
         <serializationxstreamVersion>0.2.7</serializationxstreamVersion>
         <springVersion>3.0.5.RELEASE</springVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <uicommonsVersion>1.0-SNAPSHOT</uicommonsVersion>
     </properties>
 
     <dependencies>
@@ -169,6 +170,13 @@
             <artifactId>metadatasharing-api</artifactId>
             <version>${metadatasharingVersion}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>uicommons-api</artifactId>
+            <version>${uicommonsVersion}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- End OpenMRS modules -->

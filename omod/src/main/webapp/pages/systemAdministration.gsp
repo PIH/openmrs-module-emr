@@ -1,7 +1,7 @@
 <%
     ui.decorateWith("emr", "standardEmrPage", [ title: ui.message("emr.systemAdministration") ])
 
-    ui.includeCss("emr", "app.css")
+    ui.includeCss("uicommons", "emr/app.css")
 %>
 
 <script type="text/javascript">
