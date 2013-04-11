@@ -1,7 +1,7 @@
 <%
     ui.decorateWith("emr", "standardEmrPage")
 
-    ui.includeCss("emr", "account.css")
+    ui.includeCss("uicommons", "emr/account.css")
     ui.includeJavascript("emr", "account/account.js")
 
     def createAccount = (account.person.personId == null ? true : false);

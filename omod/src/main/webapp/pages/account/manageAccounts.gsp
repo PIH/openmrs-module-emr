@@ -1,6 +1,6 @@
 <%
     ui.decorateWith("emr", "standardEmrPage")
-    ui.includeCss("emr", "account.css")
+    ui.includeCss("uicommons", "emr/account.css")
 %>
 <script type="text/javascript">
     var breadcrumbs = [

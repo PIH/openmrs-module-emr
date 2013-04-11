@@ -1,7 +1,7 @@
 <%
 	ui.decorateWith("emr", "standardEmrPage")
 
-    ui.includeCss("emr", "patientDashboard.css")
+    ui.includeCss("uicommons", "emr/patientDashboard.css")
 
     ui.includeJavascript("emr", "patient.js")
     ui.includeJavascript("emr", "custom/visits.js")

@@ -5,7 +5,7 @@
     ui.includeJavascript("emr", "paperrecord/recordRequest.js")
     ui.includeJavascript("emr", "paperrecord/archivesRoom.js")
 
-    ui.includeCss("emr", "archivesRoom.css")
+    ui.includeCss("uicommons", "emr/archivesRoom.css")
 
 %>
 <script type="text/javascript">
