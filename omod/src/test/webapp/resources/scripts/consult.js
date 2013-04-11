@@ -148,27 +148,24 @@ describe("Outpatient consult form", function() {
     });
 
     it("should select primary diagnosis", function() {
-        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[2])));
-        expect(viewModel.primaryDiagnosis().diagnosis).toBe(options[2]);
-        expect(viewModel.primaryDiagnosis().certainty).toBe("presumed");
+        viewModel.addDiagnosis(ConceptSearchResult(options[2]));
+        expect(viewModel.primaryDiagnosis()).toBe(options[2]);
         expect(viewModel.secondaryDiagnoses().length).toBe(0);
         expect(viewModel.isValid()).toBe(true);
     });
 
     it("should not be able to select the same diagnosis twice", function() {
-        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[2])));
-        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[2])));
-        expect(viewModel.primaryDiagnosis().diagnosis).toEqual(ConceptSearchResult(options[2]));
-        expect(viewModel.primaryDiagnosis().certainty).toBe("presumed");
+        viewModel.addDiagnosis(ConceptSearchResult(options[2]));
+        viewModel.addDiagnosis(ConceptSearchResult(options[2]));
+        expect(viewModel.primaryDiagnosis()).toEqual(ConceptSearchResult(options[2]));
         expect(viewModel.secondaryDiagnoses().length).toBe(0);
         expect(viewModel.isValid()).toBe(true);
     });
 
     it("should not be able to select the same diagnosis twice with different names", function() {
-        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[0])));
-        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[1])));
-        expect(viewModel.primaryDiagnosis().diagnosis).toEqual(ConceptSearchResult(options[0]));
-        expect(viewModel.primaryDiagnosis().certainty).toBe("presumed");
+        viewModel.addDiagnosis(ConceptSearchResult(options[0]));
+        viewModel.addDiagnosis(ConceptSearchResult(options[1]));
+        expect(viewModel.primaryDiagnosis()).toEqual(ConceptSearchResult(options[0]));
         expect(viewModel.secondaryDiagnoses().length).toBe(0);
         expect(viewModel.isValid()).toBe(true);
     });
