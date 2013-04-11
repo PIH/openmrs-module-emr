@@ -269,7 +269,7 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>exec</goal>
+                            <!-- <goal>exec</goal> -->
                         </goals>
                         <phase>generate-resources</phase>
                     </execution>
