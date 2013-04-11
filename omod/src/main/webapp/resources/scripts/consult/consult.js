@@ -46,12 +46,23 @@ function FreeTextListItem(text) {
     return api;
 }
 
+function Diagnosis(item) {
+    var api = {
+        diagnosis: item,
+        certainty: "presumed",
+        valueToSubmit: function() {
+            return JSON.stringify({ certainty: certainty, diagnosis: item.valueToSubmit() });
+        }
+    }
+    return api;
+}
+
 function ConsultFormViewModel() {
     var sameDiagnosis = function(d1, d2) {
-        if (d1.conceptId && d2.conceptId) {
-            return d1.conceptId === d2.conceptId;
+        if (d1.diagnosis.conceptId && d2.diagnosis.conceptId) {
+            return d1.diagnosis.conceptId === d2.diagnosis.conceptId;
         } else {
-            return d1.matchedName === d2.matchedName;
+            return d1.diagnosis.matchedName === d2.diagnosis.matchedName;
         }
     }
 
@@ -114,10 +125,10 @@ function ConsultFormViewModel() {
     api.selectedConceptIds = function() {
         var selected = [];
         if (api.primaryDiagnosis()) {
-            selected.push(api.primaryDiagnosis().conceptId);
+            selected.push(api.primaryDiagnosis().diagnosis.conceptId);
         }
         _.each(api.secondaryDiagnoses(), function(item) {
-            selected.push(item.conceptId);
+            selected.push(item.diagnosis.conceptId);
         });
         return selected;
     }
@@ -153,7 +164,7 @@ ko.bindingHandlers.autocomplete = {
                 }
             },
             select: function( event, ui ) {
-                viewModel.addDiagnosis(ui.item);
+                viewModel.addDiagnosis(Diagnosis(ui.item));
                 $(this).val("");
                 return false;
             }

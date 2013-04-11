@@ -23,7 +23,7 @@
     };
 
     var formatChosenItem = function(item) {
-        return formatAutosuggestion(item);
+        return formatAutosuggestion(item.diagnosis);
     };
 
     var valueToSubmit = function(item) {
