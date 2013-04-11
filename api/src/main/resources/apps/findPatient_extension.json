@@ -1,0 +1,10 @@
+[
+    {
+        "id": "emr.findPatient",
+        "appId": "referenceapplication.homepage",
+        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
+        "type": "link",
+        "label": "emr.findPatient",
+        "url": "emr/findPatient.page"
+    }
+]

@@ -1,0 +1,20 @@
+[
+    {
+        "id": "emr.orderXray",
+        "appId": "emr.patientDashboard",
+        "extensionPointId": "org.openmrs.emr.generalActions",
+        "type": "link",
+        "label": "emr.action.orderXray.label",
+        "url": "emr/radiology/orderXray.page?patientId={{patientId}}",
+        "order": "-10"
+    },
+    {
+        "id": "emr.consult",
+        "appId": "emr.patientDashboard",
+        "extensionPointId": "org.openmrs.emr.generalActions",
+        "type": "link",
+        "label": "emr.action.consult.label",
+        "url": "emr/consult/consult.page?patientId={{patientId}}",
+        "order": "30"
+    }
+]

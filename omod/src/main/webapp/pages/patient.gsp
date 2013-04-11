@@ -7,6 +7,8 @@
     ui.includeJavascript("emr", "custom/visits.js")
     ui.includeJavascript("emr", "bootstrap-collapse.js")
     ui.includeJavascript("emr", "bootstrap-transition.js")
+    
+    def contextModel = [ patientId: patient.patientId ] 
 
     def tabs = [
         [ id: "visits", label: ui.message("emr.patientDashBoard.visits") ],
@@ -40,14 +42,13 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
                 <div><a href="javascript:visit.showQuickVisitCreationDialog()"><i class="icon-check-in"></i>${ ui.message("emr.task.startVisit.label") }</a></div>
             <% } %>
 
-            <% availableTasks.each {
-                def url = it.getUrl(emrContext)
-                if (!url.startsWith("javascript:")) {
-                    url = "/" + contextPath + "/" + url
-                }
-            %>
-            <div><a href="${ url }"><i class="${ it.getIconUrl(emrContext) }"></i>${ it.getLabel(emrContext) }</a></div>
-            <% } %>
+             <ul>
+             	<% extensions.each { ext -> %>
+				<li>
+					${ ui.includeFragment("uicommons", "extension", [ extension: ext, contextModel: contextModel ]) }
+				</li>
+				<% } %>
+ 			</ul> 
         </div>
         <ul>
             <% tabs.each { %>

@@ -9,7 +9,7 @@
 		<property name="moduleId" value="${project.parent.artifactId}"/>
 	</bean>
 
-    <!-- Apps -->
+    <!-- Apps 
     <bean id="emrArchivesRoomApp" class="org.openmrs.module.appframework.SimpleAppDescriptor">
         <property name="id" value="emr.archivesRoom"/>
         <property name="labelCode" value="emr.app.archivesRoom.label"/>
@@ -39,9 +39,10 @@
         <property name="iconUrl" value="icon-cog"/>
         <property name="requiredPrivilegeName" value="Allowed for everyone"/>
     </bean>
+	-->
 
 
-    <!-- Tasks -->
+    <!-- Tasks 
     <bean id="emrPrintLabelsOnPatientDashboard" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
         <property name="id" value="emr.printLabels"/>
         <property name="labelCode" value="emr.task.printLabels.label"/>
@@ -78,7 +79,7 @@
         <property name="requiredPrivilegeName" value="Task: emr.enterClinicalForms"/>
     </bean>
 
-    <!--
+    
     <bean id="emrOrderUltrasoundTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
         <property name="id" value="emr.orderUltrasound"/>
         <property name="labelCode" value="emr.task.orderUltrasound.label"/>
