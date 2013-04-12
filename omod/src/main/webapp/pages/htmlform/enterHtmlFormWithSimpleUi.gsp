@@ -19,7 +19,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 <script type="text/javascript">
     var breadcrumbs = _.flatten([
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        ${ breadcrumbMiddle },
+        ${ breadcrumbMiddle } ,
         { label: "${ ui.escapeJs(ui.format(htmlForm)) }" }
     ]);
 
@@ -45,6 +45,7 @@ ${ ui.includeFragment("emr", "htmlform/enterHtmlForm", [
         patient: patient,
         htmlForm: htmlForm,
         visit: visit,
+        createVisit: createVisit,
         returnUrl: returnUrl,
         automaticValidation: false,
         cssClass: "simple-form-ui"

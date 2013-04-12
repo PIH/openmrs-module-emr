@@ -25,6 +25,7 @@ import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.htmlform.HtmlFormUtil;
+import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.FormSubmissionError;
@@ -84,6 +85,7 @@ public class EnterHtmlFormFragmentController {
                            @FragmentParam(value = "definitionUiResource", required = false) String definitionUiResource,
                            @FragmentParam(value = "encounter", required = false) Encounter encounter,
                            @FragmentParam(value = "visit", required = false) Visit visit,
+                           @FragmentParam(value = "createVisit", required = false) Boolean createVisit,
                            @FragmentParam(value = "returnUrl", required = false) String returnUrl,
                            @FragmentParam(value = "automaticValidation", defaultValue = "true") boolean automaticValidation,
                            FragmentModel model,
@@ -130,6 +132,7 @@ public class EnterHtmlFormFragmentController {
 
         model.addAttribute("command", fes);
         model.addAttribute("visit", visit);
+        model.addAttribute("createVisit", createVisit);
     }
 
     /**
@@ -166,12 +169,16 @@ public class EnterHtmlFormFragmentController {
      * @return
      * @throws Exception
      */
-    public SimpleObject submit(@RequestParam("personId") Patient patient,
+    public SimpleObject submit(
+                          EmrContext emrContext,
+                         @RequestParam("personId") Patient patient,
                          @RequestParam("htmlFormId") HtmlForm hf,
                          @RequestParam(value = "encounterId", required = false) Encounter encounter,
                          @RequestParam(value = "visitId", required = false) Visit visit,
+                         @RequestParam(value = "createVisit", required = false) Boolean createVisit,
                          @RequestParam(value = "returnUrl", required = false) String returnUrl,
                          @SpringBean("encounterService") EncounterService encounterService,
+                         @SpringBean("adtService") AdtService adtService,
                          @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
                          UiUtils ui,
                          HttpServletRequest request) throws Exception {
@@ -206,10 +213,9 @@ public class EnterHtmlFormFragmentController {
         }
 
         // If encounter is for a specific visit then check encounter date is valid for that visit
+        Encounter formEncounter = fes.getContext().getMode() == FormEntryContext.Mode.ENTER ? fes.getSubmissionActions().getEncountersToCreate().get(0) : encounter;
+        Date formEncounterDateTime = formEncounter.getEncounterDatetime();
         if (visit != null) {
-            Encounter formEncounter = fes.getContext().getMode() == FormEntryContext.Mode.ENTER ? fes.getSubmissionActions().getEncountersToCreate().get(0) : encounter;
-            Date formEncounterDateTime = formEncounter.getEncounterDatetime();
-
             if (formEncounterDateTime.before(visit.getStartDatetime())) {
                 validationErrors.add(new FormSubmissionError("general-form-error", "Encounter datetime should be after the visit start date"));
             }
@@ -220,6 +226,9 @@ public class EnterHtmlFormFragmentController {
             if (validationErrors.size() > 0) {
                 return returnHelper(validationErrors, fes.getContext());
             }
+        }else if(createVisit!=null && (createVisit)){
+            visit= adtService.ensureActiveVisit(patient, emrContext.getSessionLocation());
+            visit.setStartDatetime(formEncounterDateTime);
         }
 
         // Do actual encounter creation/updating

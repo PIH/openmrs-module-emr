@@ -27,6 +27,7 @@ import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.TestUiUtils;
+import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
@@ -79,6 +80,10 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
     @Autowired
     EncounterService encounterService;
 
+    @Qualifier("adtService")
+    @Autowired
+    AdtService adtService;
+
     ResourceFactory resourceFactory;
 
     UiUtils ui;
@@ -111,7 +116,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         config.put("patient", patient);
         config.put("definitionResource", resourcePath);
 
-        controller.controller(config, emrContext, htmlFormEntryService, formService, resourceFactory, patient, null, null, null, null, resourcePath, null, null, null, true, model, null);
+        controller.controller(config, emrContext, htmlFormEntryService, formService, resourceFactory, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
 
         FormEntrySession command = (FormEntrySession) model.getAttribute("command");
         String html = command.getHtmlToDisplay();
@@ -142,7 +147,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         request.addParameter("w5", "2"); // location = Xanadu
         request.addParameter("w7", "502"); // provider = Hippocrates
 
-        SimpleObject result = controller.submit(patient, hf, null, null, null, encounterService, resourceFactory, ui, request);
+        SimpleObject result = controller.submit(emrContext, patient, hf, null, null, null, null, encounterService, adtService, resourceFactory, ui, request);
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
         Encounter created = encounterService.getEncountersByPatient(patient).get(0);

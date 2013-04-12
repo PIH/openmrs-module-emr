@@ -39,6 +39,7 @@ public abstract class BaseEnterHtmlFormPageController {
                     @RequestParam(value = "formUuid", required = false) String formUuid,
                     @RequestParam(value = "htmlFormId", required = false) HtmlForm htmlForm,
                     @RequestParam(value = "visitId", required = false) Visit visit,
+                    @RequestParam(value = "createVisit", required = false) Boolean createVisit,
                     @RequestParam(value = "returnUrl", required = false) String returnUrl,
                     @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride,
                     @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
@@ -60,13 +61,15 @@ public abstract class BaseEnterHtmlFormPageController {
         }
 
         if (timing == EntryTiming.REAL_TIME) {
-            if (emrContext.getActiveVisitSummary() == null) {
-                throw new IllegalStateException("No active visit");
+            if(!createVisit){
+                if (emrContext.getActiveVisitSummary() == null) {
+                    throw new IllegalStateException("No active visit");
+                }
             }
             if (visit != null && !visit.equals(emrContext.getActiveVisitSummary().getVisit())) {
                 throw new IllegalStateException("Can't enter a real-time HTML Form for a different visit than the active one");
             }
-            if (visit == null) {
+            if (visit == null && emrContext.getActiveVisitSummary()!=null) {
                 visit = emrContext.getActiveVisitSummary().getVisit();
             }
         }
@@ -84,6 +87,7 @@ public abstract class BaseEnterHtmlFormPageController {
         model.addAttribute("htmlForm", htmlForm);
         model.addAttribute("patient", currentPatient);
         model.addAttribute("visit", visit);
+        model.addAttribute("createVisit", createVisit);
         model.addAttribute("returnUrl", returnUrl);
         model.addAttribute("breadcrumbOverride", breadcrumbOverride);
     }
