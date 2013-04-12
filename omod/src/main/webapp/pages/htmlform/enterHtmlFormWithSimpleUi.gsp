@@ -7,6 +7,8 @@
     ui.includeJavascript("emr", "navigator/exitHandlers.js", Integer.MAX_VALUE - 22);
     ui.includeCss("uicommons", "emr/simpleFormUi.css", -200)
 
+    def createNewVisit = createVisit ?: false
+
     def breadcrumbMiddle = breadcrumbOverride ?: """
         [ { label: "${ ui.escapeJs(ui.format(patient.familyName)) }, ${ ui.escapeJs(ui.format(patient.givenName)) }" , link: '${ui.pageLink("emr", "patient", [patientId: patient.id])}'} ]
     """
@@ -45,7 +47,7 @@ ${ ui.includeFragment("emr", "htmlform/enterHtmlForm", [
         patient: patient,
         htmlForm: htmlForm,
         visit: visit,
-        createVisit: createVisit,
+        createVisit: createNewVisit,
         returnUrl: returnUrl,
         automaticValidation: false,
         cssClass: "simple-form-ui"
