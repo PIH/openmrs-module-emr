@@ -61,7 +61,7 @@ public abstract class BaseEnterHtmlFormPageController {
         }
 
         if (timing == EntryTiming.REAL_TIME) {
-            if(!createVisit){
+            if((createVisit==null) || (createVisit!=null && !createVisit)){
                 if (emrContext.getActiveVisitSummary() == null) {
                     throw new IllegalStateException("No active visit");
                 }
