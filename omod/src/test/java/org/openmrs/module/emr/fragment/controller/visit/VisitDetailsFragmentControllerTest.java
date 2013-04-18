@@ -61,6 +61,7 @@ public class VisitDetailsFragmentControllerTest {
         encounter.setEncounterType(encounterType);
         encounter.setEncounterProviders(new LinkedHashSet<EncounterProvider>());
         encounter.getEncounterProviders().add(encounterProvider);
+        encounter.setCreator(authenticatedUser);
 
         visit.addEncounter(encounter);
 
