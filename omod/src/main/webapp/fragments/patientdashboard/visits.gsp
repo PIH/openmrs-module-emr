@@ -1,7 +1,6 @@
 <%
     def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy")
     def timeFormat = new java.text.SimpleDateFormat("hh:mm a")
-    def canDelete = context.hasPrivilege("Task: emr.patient.encounter.delete")
     def formatDiagnoses = {
         it.collect{ ui.escapeHtml(it.diagnosis.formatWithoutSpecificAnswer(context.locale)) } .join(", ")
     }
@@ -103,7 +102,7 @@
                     </li>
                     {{}}}
                 </ul>
-                {{ if (${ canDelete } ) { }}
+                {{ if ( encounter.canDelete ) { }}
                 <span>
                     <i class="deleteEncounterId delete-item icon-remove" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("emr.delete") }"></i>
                 </span>

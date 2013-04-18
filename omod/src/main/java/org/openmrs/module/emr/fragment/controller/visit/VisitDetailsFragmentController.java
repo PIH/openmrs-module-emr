@@ -11,6 +11,7 @@ import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.visit.ParserEncounterIntoSimpleObjects;
 import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.encounter.EncounterDomainWrapper;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.UiUtils;
@@ -51,17 +52,18 @@ public class VisitDetailsFragmentController {
         simpleObject.put("encounters", encounters);
 
         String[] datePatterns = { administrationService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATETIME_FORMAT) };
-        for (Encounter e : visit.getEncounters()) {
-            if (!e.getVoided()) {
-                SimpleObject simpleEncounter = SimpleObject.fromObject(e, uiUtils,  "encounterId", "location", "encounterDatetime", "encounterProviders.provider", "voided", "form");
+        for (Encounter encounter : visit.getEncounters()) {
+            if (!encounter.getVoided()) {
+                SimpleObject simpleEncounter = SimpleObject.fromObject(encounter, uiUtils,  "encounterId", "location", "encounterDatetime", "encounterProviders.provider", "voided", "form");
 
                 // manually set the date and time components so we can control how we format them
-                simpleEncounter.put("encounterDate", DateFormatUtils.format(e.getEncounterDatetime(), "dd MMM yyyy", emrContext.getUserContext().getLocale()));
-                simpleEncounter.put("encounterTime", DateFormatUtils.format(e.getEncounterDatetime(), "hh:mm a", emrContext.getUserContext().getLocale()));
+                simpleEncounter.put("encounterDate", DateFormatUtils.format(encounter.getEncounterDatetime(), "dd MMM yyyy", emrContext.getUserContext().getLocale()));
+                simpleEncounter.put("encounterTime", DateFormatUtils.format(encounter.getEncounterDatetime(), "hh:mm a", emrContext.getUserContext().getLocale()));
 
-                EncounterType encounterType = e.getEncounterType();
+                EncounterType encounterType = encounter.getEncounterType();
                 simpleEncounter.put("encounterType", SimpleObject.create("uuid", encounterType.getUuid(), "name", uiUtils.format(encounterType)));
-                if(canDelete){
+
+                if(verifyIfUserHasPermissionToDeleteAnEncounter(encounter, authenticatedUser, canDelete)){
                     simpleEncounter.put("canDelete", true);
                 }
                 encounters.add(simpleEncounter);
@@ -98,7 +100,7 @@ public class VisitDetailsFragmentController {
        if(encounter!=null){
            User authenticatedUser = emrContext.getUserContext().getAuthenticatedUser();
            boolean canDelete = authenticatedUser.hasPrivilege(EmrConstants.PRIVILEGE_DELETE_ENCOUNTER);
-           if(canDelete){
+           if(verifyIfUserHasPermissionToDeleteAnEncounter(encounter, authenticatedUser, canDelete)){
                encounterService.voidEncounter(encounter, "delete encounter");
                encounterService.saveEncounter(encounter);
            }else{
@@ -106,6 +108,10 @@ public class VisitDetailsFragmentController {
            }
        }
        return new SuccessResult(ui.message("emr.patientDashBoard.deleteEncounter.successMessage"));
+    }
+
+    private boolean verifyIfUserHasPermissionToDeleteAnEncounter(Encounter encounter, User authenticatedUser, boolean canDelete) {
+        return canDelete || new EncounterDomainWrapper(encounter).participatedInEncounter(authenticatedUser);
     }
 }
 
