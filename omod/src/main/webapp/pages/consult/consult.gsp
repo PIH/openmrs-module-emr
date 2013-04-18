@@ -105,7 +105,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             <div class="actions">
                 <label>
                     <input type="checkbox" data-bind="checked: confirmed"/>
-                    ${ ui.message("emr.consult.confirmed") }
+                    ${ ui.message("emr.Diagnosis.Certainty.CONFIRMED") }
                 </label>
             </div>
         <% } %>
