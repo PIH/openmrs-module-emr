@@ -110,10 +110,8 @@ public class ParserEncounterIntoSimpleObjects {
 
 
     private SimpleObject createDiagnosisComment(Obs observation) {
-        String name = observation.getConcept().getName(uiUtils.getLocale()).getName();
-
         SimpleObject simpleObject = SimpleObject.fromObject(observation, uiUtils, "obsId");
-        simpleObject.put("question", capitalizeString(name));
+        simpleObject.put("question", capitalizeString(uiUtils.format(observation.getConcept())));
         simpleObject.put("answer", observation.getValueAsString(uiUtils.getLocale()));
         simpleObject.put("order", 99);
         return simpleObject;
@@ -121,21 +119,20 @@ public class ParserEncounterIntoSimpleObjects {
 
     private SimpleObject createDiagnosis(DiagnosisMetadata diagnosisMetadata, Obs observation) {
 
-        SimpleObject simpleObject = SimpleObject.fromObject(observation, uiUtils, "obsId");
         Diagnosis diagnosis = diagnosisMetadata.toDiagnosis(observation);
 
-        simpleObject.put("question", getDiagnosisQuestion(diagnosis.getOrder().name()));
+        String answer = "(" + uiUtils.message("emr.Diagnosis.Certainty." + diagnosis.getCertainty()) + ") ";
+        answer += diagnosis.getDiagnosis().formatWithCode(uiUtils.getLocale(), emrApiProperties.getConceptSourcesForDiagnosisSearch());
 
-        String answer = diagnosis.getDiagnosis().formatWithCode(uiUtils.getLocale(), emrApiProperties.getConceptSourcesForDiagnosisSearch());
+        SimpleObject simpleObject = SimpleObject.fromObject(observation, uiUtils, "obsId");
+        simpleObject.put("question", formatDiagnosisQuestion(diagnosis.getOrder()));
         simpleObject.put("answer", answer);
-
         simpleObject.put("order", diagnosis.getOrder().ordinal());
         return simpleObject;
     }
 
-    private String getDiagnosisQuestion(String name) {
-
-        return capitalizeString(name) + " " + uiUtils.message("emr.patientDashboard.diagnosis");
+    private String formatDiagnosisQuestion(Diagnosis.Order order) {
+        return uiUtils.message("emr.patientDashBoard.diagnosisQuestion." + order);
     }
 
     private String capitalizeString(String name) {
