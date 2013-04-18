@@ -22,14 +22,6 @@
         return item ? formatTemplate({ item: item }) : "";
     };
 
-    var formatChosenItem = function(item) {
-        return formatAutosuggestion(item);
-    };
-
-    var valueToSubmit = function(item) {
-        return item ? item.valueToSubmit() : null;
-    };
-
     var viewModel = ConsultFormViewModel();
 
     jq(function() {
@@ -68,15 +60,11 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
         <div id="display-diagnoses">
             <h3>${ ui.message("emr.consult.primaryDiagnosis") }</h3>
-            <div data-bind="visible: !primaryDiagnosis()">
+            <div data-bind="ifnot: primaryDiagnosis">
                 ${ ui.message("emr.consult.primaryDiagnosis.notChosen") }
             </div>
-            <ul>
-                <li>
-                    <div class="diagnosis" data-bind="visible: primaryDiagnosis, html: formatChosenItem(primaryDiagnosis())"></div>
-                    <i data-bind="visible: primaryDiagnosis, click: removePrimaryDiagnosis" tabindex="-1" class="icon-remove delete-item"></i>
-                    <input type="hidden" name="primaryDiagnosis" data-bind="value: valueToSubmit(primaryDiagnosis())">
-                </li>
+            <ul data-bind="if: primaryDiagnosis">
+                <li data-bind="template: { name: 'selected-diagnosis-template', data: primaryDiagnosis() }"></li>
             </ul>
             <br/>
 
@@ -85,11 +73,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 ${ ui.message("emr.consult.secondaryDiagnoses.notChosen") }
             </div>
             <ul data-bind="foreach: secondaryDiagnoses">
-                <li>
-                    <div class="diagnosis" data-bind="html: formatChosenItem(\$data)"></div>
-                    <i data-bind="click: \$parent.removeDiagnosis" tabindex="-1" class="icon-remove delete-item"></i>
-                    <input type="hidden" name="secondaryDiagnoses" data-bind="value: valueToSubmit(\$data)"/>
-                </li>
+                <li data-bind="template: 'selected-diagnosis-template'"></li>
             </ul>
         </div>
 
@@ -100,6 +84,37 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
     </form>
 </div>
 
+<% /* This is a knockout template, so we can use data-binds inside */ %>
+<script type="text/html" id="selected-diagnosis-template">
+    <div class="diagnosis">
+        <span class="code">
+            <span data-bind="if: diagnosis().code, text: diagnosis().code"></span>
+            <span data-bind="if: !diagnosis().code && diagnosis().concept">
+                ${ ui.message("emr.consult.codedButNoCode") }
+            </span>
+            <span data-bind="if: !diagnosis().code && !diagnosis().concept">
+                ${ ui.message("emr.consult.nonCoded") }
+            </span>
+        </span>
+        <strong class="matched-name" data-bind="text: diagnosis().matchedName"></strong>
+        <span class="preferred-name" data-bind="if: diagnosis().preferredName">
+            <small>${ ui.message("emr.consult.synonymFor") }</small>
+            <span data-bind="diagnosis().concept.preferredName"></span>
+        </span>
+        <% if (featureToggles.isFeatureEnabled("consult_note_confirm_diagnoses")) { %>
+            <div class="actions">
+                <label>
+                    <input type="checkbox" data-bind="checked: confirmed"/>
+                    ${ ui.message("emr.consult.confirmed") }
+                </label>
+            </div>
+        <% } %>
+    </div>
+    <i data-bind="click: \$parent.removeDiagnosis" tabindex="-1" class="icon-remove delete-item"></i>
+    <input type="hidden" name="diagnosis" data-bind="value: valueToSubmit()">
+</script>
+
+<% /* This is an underscore template */ %>
 <script type="text/template" id="autocomplete-render-template">
     <span class="code">
         {{ if (item.code) { }}

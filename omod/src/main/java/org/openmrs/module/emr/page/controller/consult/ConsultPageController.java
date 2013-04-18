@@ -14,6 +14,8 @@
 
 package org.openmrs.module.emr.page.controller.consult;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.emr.EmrConstants;
@@ -45,8 +47,7 @@ public class ConsultPageController {
     }
 
     public String post(@RequestParam("patientId") Patient patient,
-                       @RequestParam("primaryDiagnosis") String primaryDiagnosisCode,
-                       @RequestParam(required = false, value = "secondaryDiagnoses") List<String> secondaryDiagnosisCodes,
+                       @RequestParam("diagnosis") List<String> diagnoses, // each string is json, like {"certainty":"PRESUMED","diagnosisOrder":"PRIMARY","diagnosis":"ConceptName:840"}
                        @RequestParam(required = false, value = "freeTextComments") String freeTextComments,
                        HttpSession httpSession,
                        @SpringBean("consultService") ConsultService consultService,
@@ -56,10 +57,17 @@ public class ConsultPageController {
                        UiUtils ui) {
         ConsultNote consultNote = new ConsultNote();
         consultNote.setPatient(patient);
-        consultNote.setPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(primaryDiagnosisCode, conceptService)));
-        if (secondaryDiagnosisCodes != null) {
-            for (String code : secondaryDiagnosisCodes) {
-                consultNote.addAdditionalDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(code, conceptService)));
+        for (String diagnosisJson : diagnoses) {
+            Diagnosis diagnosis;
+            try {
+                diagnosis = parseDiagnosisJson(diagnosisJson, conceptService);
+            } catch (Exception e) {
+                throw new RuntimeException("Invalid submitted diagnosis: " + diagnosisJson, e);
+            }
+            if (diagnosis.getOrder().equals(Diagnosis.Order.PRIMARY)) {
+                consultNote.setPrimaryDiagnosis(diagnosis);
+            } else {
+                consultNote.addAdditionalDiagnosis(diagnosis);
             }
         }
         if (StringUtils.hasText(freeTextComments)) {
@@ -74,6 +82,26 @@ public class ConsultPageController {
         httpSession.setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
         return "redirect:" + ui.pageLink("emr", "patient", SimpleObject.create("patientId", patient.getId()));
+    }
+
+    /**
+     *
+     * @param diagnosisJson like {"certainty":"PRESUMED","diagnosisOrder":"PRIMARY","diagnosis":"ConceptName:840"}
+     * @param conceptService
+     * @return
+     * @throws Exception
+     */
+    private Diagnosis parseDiagnosisJson(String diagnosisJson, ConceptService conceptService) throws Exception {
+        JsonNode node = new ObjectMapper().readValue(diagnosisJson, JsonNode.class);
+
+        CodedOrFreeTextAnswer answer = new CodedOrFreeTextAnswer(node.get("diagnosis").getTextValue(), conceptService);
+        Diagnosis.Order diagnosisOrder = Diagnosis.Order.valueOf(node.get("diagnosisOrder").getTextValue());
+        Diagnosis.Certainty certainty = Diagnosis.Certainty.valueOf(node.get("certainty").getTextValue());
+
+        Diagnosis diagnosis = new Diagnosis(answer, diagnosisOrder);
+        diagnosis.setCertainty(certainty);
+
+        return diagnosis;
     }
 
 }

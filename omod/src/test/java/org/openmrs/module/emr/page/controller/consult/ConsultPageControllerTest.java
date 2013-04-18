@@ -71,6 +71,10 @@ public class ConsultPageControllerTest {
         final String secondaryText = "Fatigue from too much testing";
         final String freeTextComments = "30 year old male, presenting with...";
 
+        String diagnosisJson1 = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"PRIMARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.CONCEPT_NAME_PREFIX + primaryConceptNameId + "\" }";
+        String diagnosisJson2 = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"SECONDARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.CONCEPT_PREFIX + secondaryConceptId + "\" }";
+        String diagnosisJson3 = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"SECONDARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.NON_CODED_PREFIX + secondaryText + "\" }";
+
         Concept conceptFor2460 = new Concept();
         final ConceptName conceptName2460 = new ConceptName();
         conceptName2460.setConcept(conceptFor2460);
@@ -92,9 +96,7 @@ public class ConsultPageControllerTest {
         MockHttpSession httpSession = new MockHttpSession();
         ConsultPageController controller = new ConsultPageController();
         String result = controller.post(patient,
-                CodedOrFreeTextAnswer.CONCEPT_NAME_PREFIX + primaryConceptNameId,
-                asList(CodedOrFreeTextAnswer.CONCEPT_PREFIX + secondaryConceptId,
-                        CodedOrFreeTextAnswer.NON_CODED_PREFIX + secondaryText),
+                asList(diagnosisJson1, diagnosisJson2, diagnosisJson3),
                 freeTextComments,
                 httpSession,
                 consultService,

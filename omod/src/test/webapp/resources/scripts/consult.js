@@ -148,33 +148,48 @@ describe("Outpatient consult form", function() {
     });
 
     it("should select primary diagnosis", function() {
-        viewModel.addDiagnosis(ConceptSearchResult(options[2]));
-        expect(viewModel.primaryDiagnosis()).toBe(options[2]);
+        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[2])));
+        expect(viewModel.primaryDiagnosis().diagnosis()).toBe(options[2]);
+        expect(viewModel.primaryDiagnosis().confirmed()).toBe(false);
+        expect(viewModel.secondaryDiagnoses().length).toBe(0);
+        expect(viewModel.isValid()).toBe(true);
+    });
+
+    it("should select primary diagnosis and mark it preferred", function() {
+        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[2])));
+        viewModel.primaryDiagnosis().confirmed(true);
+        expect(viewModel.primaryDiagnosis().diagnosis()).toBe(options[2]);
+        expect(viewModel.primaryDiagnosis().confirmed()).toBe(true);
         expect(viewModel.secondaryDiagnoses().length).toBe(0);
         expect(viewModel.isValid()).toBe(true);
     });
 
     it("should not be able to select the same diagnosis twice", function() {
-        viewModel.addDiagnosis(ConceptSearchResult(options[2]));
-        viewModel.addDiagnosis(ConceptSearchResult(options[2]));
-        expect(viewModel.primaryDiagnosis()).toEqual(ConceptSearchResult(options[2]));
+        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[2])));
+        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[2])));
+        expect(viewModel.primaryDiagnosis().diagnosis()).toEqual(ConceptSearchResult(options[2]));
+        expect(viewModel.primaryDiagnosis().confirmed()).toBe(false);
         expect(viewModel.secondaryDiagnoses().length).toBe(0);
         expect(viewModel.isValid()).toBe(true);
     });
 
     it("should not be able to select the same diagnosis twice with different names", function() {
-        viewModel.addDiagnosis(ConceptSearchResult(options[0]));
-        viewModel.addDiagnosis(ConceptSearchResult(options[1]));
-        expect(viewModel.primaryDiagnosis()).toEqual(ConceptSearchResult(options[0]));
+        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[0])));
+        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[1])));
+        expect(viewModel.primaryDiagnosis().diagnosis()).toEqual(ConceptSearchResult(options[0]));
+        expect(viewModel.primaryDiagnosis().confirmed()).toBe(false);
         expect(viewModel.secondaryDiagnoses().length).toBe(0);
         expect(viewModel.isValid()).toBe(true);
     });
 
     it("should select primary and secondary diagnoses", function() {
-        viewModel.addDiagnosis(ConceptSearchResult(options[1]));
-        viewModel.addDiagnosis(ConceptSearchResult(options[2]));
-        expect(viewModel.primaryDiagnosis()).toEqual(ConceptSearchResult(options[1]));
-        expect(viewModel.secondaryDiagnoses()).toEqual([ ConceptSearchResult(options[2]) ]);
+        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[1])));
+        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[2])));
+        expect(viewModel.primaryDiagnosis().diagnosis()).toEqual(ConceptSearchResult(options[1]));
+        expect(viewModel.primaryDiagnosis().confirmed()).toBe(false);
+        expect(viewModel.secondaryDiagnoses().length).toBe(1);
+        expect(viewModel.secondaryDiagnoses()[0].diagnosis()).toEqual(ConceptSearchResult(options[2]));
+        expect(viewModel.secondaryDiagnoses()[0].confirmed()).toBe(false);
         expect(viewModel.isValid()).toBe(true);
     });
 
@@ -187,11 +202,13 @@ describe("Outpatient consult form", function() {
         });
         var diagnosis1 = "Never seen it before";
         var diagnosis2 = "Haven't seen this either";
-        viewModel.addDiagnosis(FreeTextListItem(diagnosis1));
-        viewModel.addDiagnosis(FreeTextListItem(diagnosis2));
-        expect(viewModel.primaryDiagnosis()).toBeNonCodedDiagnosis(diagnosis1);
+        viewModel.addDiagnosis(Diagnosis(FreeTextListItem(diagnosis1)));
+        viewModel.addDiagnosis(Diagnosis(FreeTextListItem(diagnosis2)));
+        expect(viewModel.primaryDiagnosis().diagnosis()).toBeNonCodedDiagnosis(diagnosis1);
+        expect(viewModel.primaryDiagnosis().confirmed()).toBe(false);
         expect(viewModel.secondaryDiagnoses().length).toBe(1);
-        expect(viewModel.secondaryDiagnoses()[0]).toBeNonCodedDiagnosis(diagnosis2);
+        expect(viewModel.secondaryDiagnoses()[0].diagnosis()).toBeNonCodedDiagnosis(diagnosis2);
+        expect(viewModel.secondaryDiagnoses()[0].confirmed()).toBe(false);
         expect(viewModel.isValid()).toBe(true);
     });
 
