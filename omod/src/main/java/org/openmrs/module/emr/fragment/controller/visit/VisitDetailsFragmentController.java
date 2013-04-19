@@ -9,6 +9,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
+import org.openmrs.module.emr.utils.FeatureToggleProperties;
 import org.openmrs.module.emr.visit.ParserEncounterIntoSimpleObjects;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.encounter.EncounterDomainWrapper;
@@ -29,14 +30,19 @@ import java.util.List;
 public class VisitDetailsFragmentController {
 
     public SimpleObject getVisitDetails(
+            @SpringBean("featureToggles") FeatureToggleProperties featureToggleProperties,
             @SpringBean("adminService") AdministrationService administrationService,
             @RequestParam("visitId") Visit visit,
             UiUtils uiUtils,
             EmrContext emrContext) throws ParseException {
 
         SimpleObject simpleObject = SimpleObject.fromObject(visit, uiUtils, "id", "location");
+
         User authenticatedUser = emrContext.getUserContext().getAuthenticatedUser();
+
+        boolean deleteEncounter = featureToggleProperties.isFeatureEnabled("deleteEncounter");
         boolean canDelete = authenticatedUser.hasPrivilege(EmrConstants.PRIVILEGE_DELETE_ENCOUNTER);
+
         Date startDatetime = visit.getStartDatetime();
         Date stopDatetime = visit.getStopDatetime();
 
@@ -63,7 +69,7 @@ public class VisitDetailsFragmentController {
                 EncounterType encounterType = encounter.getEncounterType();
                 simpleEncounter.put("encounterType", SimpleObject.create("uuid", encounterType.getUuid(), "name", uiUtils.format(encounterType)));
 
-                if(verifyIfUserHasPermissionToDeleteAnEncounter(encounter, authenticatedUser, canDelete)){
+                if(verifyIfUserHasPermissionToDeleteAnEncounter(encounter, authenticatedUser, canDelete, deleteEncounter)){
                     simpleEncounter.put("canDelete", true);
                 }
                 encounters.add(simpleEncounter);
@@ -93,14 +99,16 @@ public class VisitDetailsFragmentController {
 
 
     public FragmentActionResult deleteEncounter(UiUtils ui,
+                                        @SpringBean("featureToggles") FeatureToggleProperties featureToggleProperties,
                                         @RequestParam("encounterId")Encounter encounter,
                                         @SpringBean("encounterService")EncounterService encounterService,
                                         EmrContext emrContext){
 
        if(encounter!=null){
            User authenticatedUser = emrContext.getUserContext().getAuthenticatedUser();
+           boolean deleteEncounter = featureToggleProperties.isFeatureEnabled("deleteEncounter");
            boolean canDelete = authenticatedUser.hasPrivilege(EmrConstants.PRIVILEGE_DELETE_ENCOUNTER);
-           if(verifyIfUserHasPermissionToDeleteAnEncounter(encounter, authenticatedUser, canDelete)){
+           if(verifyIfUserHasPermissionToDeleteAnEncounter(encounter, authenticatedUser, canDelete, deleteEncounter)){
                encounterService.voidEncounter(encounter, "delete encounter");
                encounterService.saveEncounter(encounter);
            }else{
@@ -110,8 +118,10 @@ public class VisitDetailsFragmentController {
        return new SuccessResult(ui.message("emr.patientDashBoard.deleteEncounter.successMessage"));
     }
 
-    private boolean verifyIfUserHasPermissionToDeleteAnEncounter(Encounter encounter, User authenticatedUser, boolean canDelete) {
-        return canDelete || new EncounterDomainWrapper(encounter).participatedInEncounter(authenticatedUser);
+    private boolean verifyIfUserHasPermissionToDeleteAnEncounter(Encounter encounter, User authenticatedUser, boolean canDelete, boolean deleteEncounter) {
+        EncounterDomainWrapper encounterDomainWrapper = new EncounterDomainWrapper(encounter);
+        boolean userParticipatedInEncounter = encounterDomainWrapper.participatedInEncounter(authenticatedUser);
+        return canDelete || (deleteEncounter && userParticipatedInEncounter);
     }
 }
 

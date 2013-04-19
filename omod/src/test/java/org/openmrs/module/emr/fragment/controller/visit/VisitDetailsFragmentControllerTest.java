@@ -8,6 +8,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.UserContext;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.TestUiUtils;
+import org.openmrs.module.emr.utils.FeatureToggleProperties;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.UiUtils;
@@ -21,6 +22,8 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.notNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -31,8 +34,11 @@ public class VisitDetailsFragmentControllerTest {
         EmrContext emrContext = mock(EmrContext.class);
         UserContext userContext = mock(UserContext.class);
         User authenticatedUser = new User();
+        FeatureToggleProperties featureToggleProperties = mock(FeatureToggleProperties.class);
+
         when(userContext.getAuthenticatedUser()).thenReturn(authenticatedUser);
         when(emrContext.getUserContext()).thenReturn(userContext);
+        when(featureToggleProperties.isFeatureEnabled(anyString())).thenReturn(true);
 
         AdministrationService administrationService = mock(AdministrationService.class);
         when(administrationService.getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_DATETIME_FORMAT)).thenReturn("dd.MMM.yyyy, HH:mm:ss");
@@ -68,7 +74,7 @@ public class VisitDetailsFragmentControllerTest {
         UiUtils uiUtils = new TestUiUtils(administrationService);
         VisitDetailsFragmentController controller = new VisitDetailsFragmentController();
 
-        SimpleObject response = controller.getVisitDetails(administrationService, visit, uiUtils, emrContext);
+        SimpleObject response = controller.getVisitDetails(featureToggleProperties, administrationService, visit, uiUtils, emrContext);
         List<SimpleObject> actualEncounters = (List<SimpleObject>) response.get("encounters");
         SimpleObject actualEncounter = actualEncounters.get(0);
 
