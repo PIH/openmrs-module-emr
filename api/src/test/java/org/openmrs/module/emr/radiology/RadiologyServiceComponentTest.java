@@ -39,12 +39,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.Matchers.is;
 
 public class RadiologyServiceComponentTest extends BaseModuleContextSensitiveTest {
 
@@ -101,7 +100,7 @@ public class RadiologyServiceComponentTest extends BaseModuleContextSensitiveTes
 
         EmrContext emrContext = mock(EmrContext.class);
         when(emrContext.getSessionLocation()).thenReturn(locationService.getLocation(1));
-        when(emrContext.getActiveVisitSummary()).thenReturn(null);
+        when(emrContext.getActiveVisit()).thenReturn(null);
 
         RadiologyRequisition requisition = new RadiologyRequisition();
 
@@ -126,7 +125,7 @@ public class RadiologyServiceComponentTest extends BaseModuleContextSensitiveTes
 
         EmrContext emrContext = mock(EmrContext.class);
         when(emrContext.getSessionLocation()).thenReturn(locationService.getLocation(1));
-        when(emrContext.getActiveVisitSummary()).thenReturn(null);
+        when(emrContext.getActiveVisit()).thenReturn(null);
 
         RadiologyRequisition requisition = new RadiologyRequisition();
 

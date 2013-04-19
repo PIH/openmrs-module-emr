@@ -62,15 +62,15 @@ public abstract class BaseEnterHtmlFormPageController {
 
         if (timing == EntryTiming.REAL_TIME) {
             if((createVisit==null) || (createVisit!=null && !createVisit)){
-                if (emrContext.getActiveVisitSummary() == null) {
+                if (emrContext.getActiveVisit() == null) {
                     throw new IllegalStateException("No active visit");
                 }
             }
-            if (visit != null && !visit.equals(emrContext.getActiveVisitSummary().getVisit())) {
+            if (visit != null && !visit.equals(emrContext.getActiveVisit().getVisit())) {
                 throw new IllegalStateException("Can't enter a real-time HTML Form for a different visit than the active one");
             }
-            if (visit == null && emrContext.getActiveVisitSummary()!=null) {
-                visit = emrContext.getActiveVisitSummary().getVisit();
+            if (visit == null && emrContext.getActiveVisit()!=null) {
+                visit = emrContext.getActiveVisit().getVisit();
             }
         }
 

@@ -57,9 +57,9 @@
             <span>${ui.message("emr.unknownAge")}</span>
             <% } %>
         </div>
-        <% if (emrContext.activeVisitSummary) { %>
+        <% if (emrContext.activeVisit) { %>
         <div class="visit-status">
-            <% def visit = emrContext.activeVisitSummary.visit %>
+            <% def visit = emrContext.activeVisit.visit %>
             <span class="status active"></span>
             ${ui.message("emr.activeVisit")}
         </div>

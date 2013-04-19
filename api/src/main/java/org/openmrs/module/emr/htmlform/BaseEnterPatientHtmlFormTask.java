@@ -186,7 +186,7 @@ public abstract class BaseEnterPatientHtmlFormTask extends BasePatientSpecificTa
 
     @Override
     public boolean isAvailable(EmrContext context) {
-        if (timing == EntryTiming.REAL_TIME && context.getActiveVisitSummary() == null) {
+        if (timing == EntryTiming.REAL_TIME && context.getActiveVisit() == null) {
             return false;
         }
         return super.isAvailable(context);

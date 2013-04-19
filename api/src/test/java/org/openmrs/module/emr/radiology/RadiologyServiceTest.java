@@ -31,7 +31,7 @@ import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.TestUtils;
 import org.openmrs.module.emr.order.EmrOrderService;
 import org.openmrs.module.emr.radiology.db.RadiologyOrderDAO;
-import org.openmrs.module.emrapi.adt.VisitSummary;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -127,8 +127,8 @@ public class RadiologyServiceTest {
         conceptService = mock(ConceptService.class);
         radiologyOrderDAO = mock(RadiologyOrderDAO.class);
 
-        VisitSummary currentVisitSummary = new VisitSummary(currentVisit, null);
-        when(emrContext.getActiveVisitSummary()).thenReturn(currentVisitSummary);
+        VisitDomainWrapper currentVisitSummary = new VisitDomainWrapper(currentVisit);
+        when(emrContext.getActiveVisit()).thenReturn(currentVisitSummary);
         when(radiologyProperties.getRadiologyOrderEncounterType()).thenReturn(placeOrdersEncounterType);
         when(radiologyProperties.getRadiologyStudyEncounterType()).thenReturn(radiologyStudyEncounterType);
         when(radiologyProperties.getRadiologyReportEncounterType()).thenReturn(radiologyReportEncounterType);
@@ -188,7 +188,7 @@ public class RadiologyServiceTest {
         RadiologyRequisition radiologyRequisition = new RadiologyRequisition();
         radiologyRequisition.setPatient(patient);
 
-        when(emrContext.getActiveVisitSummary()).thenReturn(null);
+        when(emrContext.getActiveVisit()).thenReturn(null);
 
         Encounter encounter = radiologyService.placeRadiologyRequisition(emrContext, radiologyRequisition);
 

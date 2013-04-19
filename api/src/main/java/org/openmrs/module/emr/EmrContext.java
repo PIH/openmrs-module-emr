@@ -20,7 +20,7 @@ import org.openmrs.Provider;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
-import org.openmrs.module.emrapi.adt.VisitSummary;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 
 import javax.servlet.http.HttpSession;
 
@@ -41,7 +41,7 @@ public class EmrContext {
 
     Provider currentProvider;
 
-    VisitSummary activeVisitSummary;
+    VisitDomainWrapper activeVisit;
 
     HttpSession session;
 
@@ -93,12 +93,12 @@ public class EmrContext {
         this.currentPatient = currentPatient;
     }
 
-    public VisitSummary getActiveVisitSummary() {
-        return activeVisitSummary;
+    public VisitDomainWrapper getActiveVisit() {
+        return activeVisit;
     }
 
-    public void setActiveVisitSummary(VisitSummary activeVisitSummary) {
-        this.activeVisitSummary = activeVisitSummary;
+    public void setActiveVisit(VisitDomainWrapper activeVisit) {
+        this.activeVisit = activeVisit;
     }
 
     public boolean isAuthenticated() {

@@ -19,7 +19,6 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.User;
-import org.openmrs.Visit;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.module.emr.EmrContext;
@@ -27,7 +26,7 @@ import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.utils.FeatureToggleProperties;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
-import org.openmrs.module.emrapi.adt.VisitSummary;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.ui.framework.fragment.FragmentContext;
 import org.openmrs.ui.framework.fragment.FragmentModelConfigurator;
 import org.openmrs.ui.framework.fragment.PossibleFragmentActionArgumentProvider;
@@ -153,9 +152,9 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
                     emrContext.setCurrentPatient(patient);
 
                     Location visitLocation = adtService.getLocationThatSupportsVisits(emrContext.getSessionLocation());
-                    Visit activeVisit = adtService.getActiveVisit(patient, visitLocation);
+                    VisitDomainWrapper activeVisit = adtService.getActiveVisit(patient, visitLocation);
                     if (activeVisit != null) {
-                        emrContext.setActiveVisitSummary(new VisitSummary(activeVisit, emrApiProperties));
+                        emrContext.setActiveVisit(activeVisit);
                     }
                 }
             } catch (Exception ex) {

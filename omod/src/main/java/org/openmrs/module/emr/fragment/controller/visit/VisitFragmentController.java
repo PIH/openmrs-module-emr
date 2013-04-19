@@ -33,8 +33,8 @@ public class VisitFragmentController {
             UiUtils uiUtils, HttpServletRequest request) {
 
         // if patient has an active visit close it
-        if(patient!=null && (emrContext.getActiveVisitSummary()!=null)){
-            Visit visit = emrContext.getActiveVisitSummary().getVisit();
+        if(patient!=null && (emrContext.getActiveVisit()!=null)){
+            Visit visit = emrContext.getActiveVisit().getVisit();
             if(visit!=null && stopActive){
                 adtService.closeAndSaveVisit(visit);
             }

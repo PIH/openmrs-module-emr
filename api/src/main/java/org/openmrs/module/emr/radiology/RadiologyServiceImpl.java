@@ -10,7 +10,7 @@ import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.order.EmrOrderService;
 import org.openmrs.module.emr.radiology.db.RadiologyOrderDAO;
-import org.openmrs.module.emrapi.adt.VisitSummary;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -37,7 +37,7 @@ public class RadiologyServiceImpl extends BaseOpenmrsService implements Radiolog
         encounter.setProvider(emrProperties.getOrderingProviderEncounterRole(), requisition.getRequestedBy());
         encounter.setPatient(requisition.getPatient());
         encounter.setLocation(emrContext.getSessionLocation());
-        VisitSummary activeVisitSummary = emrContext.getActiveVisitSummary();
+        VisitDomainWrapper activeVisitSummary = emrContext.getActiveVisit();
         if (activeVisitSummary != null) {
             encounter.setVisit(activeVisitSummary.getVisit());
         }

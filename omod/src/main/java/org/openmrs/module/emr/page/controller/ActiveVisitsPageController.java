@@ -21,7 +21,7 @@ public class ActiveVisitsPageController {
 			throw new IllegalStateException("Configuration required");
 		}
 		
-		model.addAttribute("visitSummaries", service.getActiveVisitSummaries(visitLocation));
+		model.addAttribute("visitSummaries", service.getActiveVisits(visitLocation));
 	}
 	
 }

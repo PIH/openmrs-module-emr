@@ -1,15 +1,24 @@
 package org.openmrs.module.emr.visit;
 
 
+import org.apache.commons.lang.time.DateUtils;
+import org.hamcrest.core.Is;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
 import org.openmrs.Visit;
+import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedHashSet;
 
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.HOUR;
@@ -32,6 +41,34 @@ public class VisitDomainWrapperTest {
         visitDomainWrapper = new VisitDomainWrapper(visit);
     }
 
+    // this test was merged in when VisitSummary was merged into VisitDomainWrapper
+    @Test
+    public void test() throws Exception {
+        EncounterType checkInEncounterType = new EncounterType();
+
+        EmrApiProperties props = Mockito.mock(EmrApiProperties.class);
+        Mockito.when(props.getCheckInEncounterType()).thenReturn(checkInEncounterType);
+
+        Encounter checkIn = new Encounter();
+        checkIn.setEncounterDatetime(DateUtils.addHours(new Date(), -2));
+        checkIn.setEncounterType(checkInEncounterType);
+        Encounter vitals = new Encounter();
+        vitals.setEncounterDatetime(DateUtils.addHours(new Date(), -1));
+        Encounter consult = new Encounter();
+        consult.setEncounterDatetime(new Date());
+
+        // per the hbm.xml file, visit.encounters are sorted by encounterDatetime desc
+        Visit visit = new Visit();
+        visit.setStartDatetime(checkIn.getEncounterDatetime());
+        visit.setEncounters(new LinkedHashSet<Encounter>(3));
+        visit.addEncounter(consult);
+        visit.addEncounter(vitals);
+        visit.addEncounter(checkIn);
+
+        VisitDomainWrapper wrapper = new VisitDomainWrapper(visit, props);
+        Assert.assertThat(wrapper.getCheckInEncounter(), Is.is(checkIn));
+        Assert.assertThat(wrapper.getLastEncounter(), Is.is(consult));
+    }
 
     @Test
     public void shouldReturnDifferenceInDaysBetweenCurrentDateAndStartDate(){
