@@ -65,9 +65,9 @@ public class ConsultPageController {
                 throw new RuntimeException("Invalid submitted diagnosis: " + diagnosisJson, e);
             }
             if (diagnosis.getOrder().equals(Diagnosis.Order.PRIMARY)) {
-                consultNote.setPrimaryDiagnosis(diagnosis);
+                consultNote.addPrimaryDiagnosis(diagnosis);
             } else {
-                consultNote.addAdditionalDiagnosis(diagnosis);
+                consultNote.addSecondaryDiagnosis(diagnosis);
             }
         }
         if (StringUtils.hasText(freeTextComments)) {

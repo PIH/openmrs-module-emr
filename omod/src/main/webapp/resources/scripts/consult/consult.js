@@ -82,8 +82,19 @@ function ConsultFormViewModel() {
     api.submitting = ko.observable(false);
 
     api.searchTerm = ko.observable();
-    api.primaryDiagnosis = ko.observable();
-    api.secondaryDiagnoses = ko.observableArray();
+    api.diagnoses = ko.observableArray();
+
+    api.primaryDiagnoses = ko.computed(function() {
+        return _.filter(api.diagnoses(), function(candidate) {
+            return candidate.primary();
+        });
+    });
+
+    api.secondaryDiagnoses = ko.computed(function() {
+        return _.filter(api.diagnoses(), function(candidate) {
+            return !candidate.primary();
+        });
+    });
 
     api.startSubmitting = function() {
         api.submitting(true);
@@ -93,58 +104,45 @@ function ConsultFormViewModel() {
         return api.isValid() && !api.submitting();
     }
 
+    api.hasPrimaryDiagnosis = function() {
+        return _.some(api.diagnoses(), function(item) {
+            return item.primary();
+        });
+    }
+
     api.isValid = function() {
-        return api.primaryDiagnosis() != null;
+        return api.hasPrimaryDiagnosis();
     }
 
     api.findSelectedSimilarDiagnosis = function(diagnosis) {
-        if (api.primaryDiagnosis() && sameDiagnosis(diagnosis, api.primaryDiagnosis())) {
-            return api.primaryDiagnosis()
-        } else {
-            return _.find(api.secondaryDiagnoses(), function(item) {
-                return sameDiagnosis(diagnosis, item);
-            });
-        }
+        return _.find(api.diagnoses(), function(candidate) {
+            return sameDiagnosis(diagnosis, candidate);
+        });
     }
 
     api.addDiagnosis = function(diagnosis) {
         if (api.findSelectedSimilarDiagnosis(diagnosis)) {
             return;
         }
-        if (api.primaryDiagnosis()) {
-            diagnosis.primary(false);
-            api.secondaryDiagnoses.push(diagnosis);
-        } else {
+        if (!api.hasPrimaryDiagnosis()) {
             diagnosis.primary(true);
-            api.primaryDiagnosis(diagnosis);
         }
-    }
-
-    api.removePrimaryDiagnosis = function() {
-        var useInstead = api.secondaryDiagnoses.shift();
-        useInstead.primary(true);
-        api.primaryDiagnosis(useInstead);
+        api.diagnoses.push(diagnosis);
     }
 
     api.removeDiagnosis = function(diagnosis) {
-        if (api.primaryDiagnosis() && sameDiagnosis(diagnosis, api.primaryDiagnosis())) {
-            api.removePrimaryDiagnosis();
-        } else {
-            api.secondaryDiagnoses.remove(function(item) {
-                return sameDiagnosis(diagnosis, item);
-            });
+        api.diagnoses.remove(function(candidate) {
+            return sameDiagnosis(diagnosis, candidate);
+        });
+        if (!api.hasPrimaryDiagnosis() && api.diagnoses().length > 0) {
+            api.diagnoses()[0].primary(true);
         }
     }
 
     api.selectedConceptIds = function() {
-        var selected = [];
-        if (api.primaryDiagnosis()) {
-            selected.push(api.primaryDiagnosis().diagnosis().conceptId);
-        }
-        _.each(api.secondaryDiagnoses(), function(item) {
-            selected.push(item.diagnosis().conceptId);
+        return _.map(api.diagnoses(), function(item) {
+            return item.diagnosis().conceptId;
         });
-        return selected;
     }
 
     return api;

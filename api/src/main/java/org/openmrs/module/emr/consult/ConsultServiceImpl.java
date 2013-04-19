@@ -39,7 +39,7 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
     @Transactional
     @Override
     public Encounter saveConsultNote(ConsultNote consultNote) {
-        if (consultNote.getPatient() == null || consultNote.getEncounterLocation() == null || consultNote.getPrimaryDiagnosis() == null || consultNote.getClinician() == null) {
+        if (consultNote.getPatient() == null || consultNote.getEncounterLocation() == null || consultNote.getDiagnoses(Diagnosis.Order.PRIMARY).size() == 0 || consultNote.getClinician() == null) {
             throw new IllegalArgumentException("Required: patient, encounter location, clinician provider, primary diagnosis");
         }
 
@@ -53,12 +53,8 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
 
         encounter.addProvider(emrApiProperties.getClinicianEncounterRole(), consultNote.getClinician());
 
-        encounter.addObs(diagnosisMetadata.buildDiagnosisObsGroup(consultNote.getPrimaryDiagnosis()));
-
-        if (consultNote.getAdditionalDiagnoses() != null) {
-            for (Diagnosis diagnosis : consultNote.getAdditionalDiagnoses()) {
-                encounter.addObs(diagnosisMetadata.buildDiagnosisObsGroup(diagnosis));
-            }
+        for (Diagnosis diagnosis : consultNote.getDiagnoses()) {
+            encounter.addObs(diagnosisMetadata.buildDiagnosisObsGroup(diagnosis));
         }
 
         if (StringUtils.hasText(consultNote.getComments())) {

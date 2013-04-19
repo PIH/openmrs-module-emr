@@ -31,9 +31,7 @@ public class ConsultNote {
 
     private Location encounterLocation;
 
-    private Diagnosis primaryDiagnosis;
-
-    private List<Diagnosis> additionalDiagnoses;
+    private List<Diagnosis> diagnoses = new ArrayList<Diagnosis>();
 
     private String comments;
 
@@ -47,8 +45,22 @@ public class ConsultNote {
         this.patient = patient;
     }
 
-    public Diagnosis getPrimaryDiagnosis() {
-        return primaryDiagnosis;
+    public List<Diagnosis> getDiagnoses() {
+        return diagnoses;
+    }
+
+    public void setDiagnoses(List<Diagnosis> diagnoses) {
+        this.diagnoses = diagnoses;
+    }
+
+    public void addDiagnosis(Diagnosis diagnosis) {
+        if (diagnosis.getOrder() == null) {
+            throw new IllegalArgumentException("diagnosis.order is required");
+        }
+        if (diagnosis.getCertainty() == null) {
+            throw new IllegalArgumentException("diagnosis.certainty is required");
+        }
+        diagnoses.add(diagnosis);
     }
 
     public Location getEncounterLocation() {
@@ -59,17 +71,24 @@ public class ConsultNote {
         this.encounterLocation = encounterLocation;
     }
 
-    public void setPrimaryDiagnosis(Diagnosis primaryDiagnosis) {
+    public void addPrimaryDiagnosis(Diagnosis primaryDiagnosis) {
         primaryDiagnosis.setOrder(Diagnosis.Order.PRIMARY);
-        this.primaryDiagnosis = primaryDiagnosis;
+        addDiagnosis(primaryDiagnosis);
     }
 
-    public List<Diagnosis> getAdditionalDiagnoses() {
-        return additionalDiagnoses;
+    public List<Diagnosis> getDiagnoses(Diagnosis.Order withOrder) {
+        List<Diagnosis> matches = new ArrayList<Diagnosis>();
+        for (Diagnosis candidate : diagnoses) {
+            if (candidate.getOrder().equals(withOrder)) {
+                matches.add(candidate);
+            }
+        }
+        return matches;
     }
 
-    public void setAdditionalDiagnoses(List<Diagnosis> additionalDiagnoses) {
-        this.additionalDiagnoses = additionalDiagnoses;
+    public void addSecondaryDiagnosis(Diagnosis secondaryDiagnosis) {
+        secondaryDiagnosis.setOrder(Diagnosis.Order.SECONDARY);
+        addDiagnosis(secondaryDiagnosis);
     }
 
     public String getComments() {
@@ -86,14 +105,6 @@ public class ConsultNote {
 
     public void setClinician(Provider clinician) {
         this.clinician = clinician;
-    }
-
-    public void addAdditionalDiagnosis(Diagnosis diagnosis) {
-        if (additionalDiagnoses == null) {
-            additionalDiagnoses = new ArrayList<Diagnosis>();
-        }
-        diagnosis.setOrder(Diagnosis.Order.SECONDARY);
-        additionalDiagnoses.add(diagnosis);
     }
 
 }

@@ -60,21 +60,17 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
         <div id="display-diagnoses">
             <h3>${ ui.message("emr.consult.primaryDiagnosis") }</h3>
-            <div data-bind="ifnot: primaryDiagnosis">
+            <div data-bind="visible: primaryDiagnoses().length == 0">
                 ${ ui.message("emr.consult.primaryDiagnosis.notChosen") }
             </div>
-            <ul data-bind="if: primaryDiagnosis">
-                <li data-bind="template: { name: 'selected-diagnosis-template', data: primaryDiagnosis() }"></li>
-            </ul>
+            <ul data-bind="template: { name: 'selected-diagnosis-template', foreach: primaryDiagnoses }"></ul>
             <br/>
 
             <h3>${ ui.message("emr.consult.secondaryDiagnoses") }</h3>
             <div data-bind="visible: secondaryDiagnoses().length == 0">
                 ${ ui.message("emr.consult.secondaryDiagnoses.notChosen") }
             </div>
-            <ul data-bind="foreach: secondaryDiagnoses">
-                <li data-bind="template: 'selected-diagnosis-template'"></li>
-            </ul>
+            <ul data-bind="template: { name: 'selected-diagnosis-template', foreach: secondaryDiagnoses }"></ul>
         </div>
 
         <div id="buttons">
@@ -86,32 +82,38 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
 <% /* This is a knockout template, so we can use data-binds inside */ %>
 <script type="text/html" id="selected-diagnosis-template">
-    <div class="diagnosis">
-        <span class="code">
-            <span data-bind="if: diagnosis().code, text: diagnosis().code"></span>
-            <span data-bind="if: !diagnosis().code && diagnosis().concept">
-                ${ ui.message("emr.consult.codedButNoCode") }
+    <li>
+        <div class="diagnosis" data-bind="css: { primary: primary }">
+            <span class="code">
+                <span data-bind="if: diagnosis().code, text: diagnosis().code"></span>
+                <span data-bind="if: !diagnosis().code && diagnosis().concept">
+                    ${ ui.message("emr.consult.codedButNoCode") }
+                </span>
+                <span data-bind="if: !diagnosis().code && !diagnosis().concept">
+                    ${ ui.message("emr.consult.nonCoded") }
+                </span>
             </span>
-            <span data-bind="if: !diagnosis().code && !diagnosis().concept">
-                ${ ui.message("emr.consult.nonCoded") }
+            <strong class="matched-name" data-bind="text: diagnosis().matchedName"></strong>
+            <span class="preferred-name" data-bind="if: diagnosis().preferredName">
+                <small>${ ui.message("emr.consult.synonymFor") }</small>
+                <span data-bind="text: diagnosis().concept.preferredName"></span>
             </span>
-        </span>
-        <strong class="matched-name" data-bind="text: diagnosis().matchedName"></strong>
-        <span class="preferred-name" data-bind="if: diagnosis().preferredName">
-            <small>${ ui.message("emr.consult.synonymFor") }</small>
-            <span data-bind="diagnosis().concept.preferredName"></span>
-        </span>
-        <% if (featureToggles.isFeatureEnabled("consult_note_confirm_diagnoses")) { %>
-            <div class="actions">
-                <label>
-                    <input type="checkbox" data-bind="checked: confirmed"/>
-                    ${ ui.message("emr.Diagnosis.Certainty.CONFIRMED") }
-                </label>
-            </div>
-        <% } %>
-    </div>
-    <i data-bind="click: \$parent.removeDiagnosis" tabindex="-1" class="icon-remove delete-item"></i>
-    <input type="hidden" name="diagnosis" data-bind="value: valueToSubmit()">
+            <% if (featureToggles.isFeatureEnabled("consult_note_confirm_diagnoses")) { %>
+                <div class="actions">
+                    <label>
+                        <input type="checkbox" data-bind="checked: primary"/>
+                        ${ ui.message("emr.Diagnosis.Order.PRIMARY") }
+                    </label>
+                    <label>
+                        <input type="checkbox" data-bind="checked: confirmed"/>
+                        ${ ui.message("emr.Diagnosis.Certainty.CONFIRMED") }
+                    </label>
+                </div>
+            <% } %>
+        </div>
+        <i data-bind="click: \$parent.removeDiagnosis" tabindex="-1" class="icon-remove delete-item"></i>
+        <input type="hidden" name="diagnosis" data-bind="value: valueToSubmit()">
+    </li>
 </script>
 
 <% /* This is an underscore template */ %>

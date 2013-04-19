@@ -175,7 +175,7 @@ public class ConsultServiceTest {
     @Test
     public void saveConsultNote_shouldHandleCodedPrimaryDiagnosis() {
         ConsultNote consultNote = buildConsultNote();
-        consultNote.setPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(malaria)));
+        consultNote.addPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(malaria)));
         Encounter encounter = consultService.saveConsultNote(consultNote);
 
         assertNotNull(encounter);
@@ -191,8 +191,9 @@ public class ConsultServiceTest {
     @Test
     public void saveConsultNote_shouldHandleCodedPrimaryDiagnosisWithSpecificName() {
         ConsultNote consultNote = buildConsultNote();
-        consultNote.setPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(malariaSynonym)));
-        consultNote.getPrimaryDiagnosis().setCertainty(Diagnosis.Certainty.CONFIRMED);
+        Diagnosis diag = new Diagnosis(new CodedOrFreeTextAnswer(malariaSynonym));
+        diag.setCertainty(Diagnosis.Certainty.CONFIRMED);
+        consultNote.addPrimaryDiagnosis(diag);
         Encounter encounter = consultService.saveConsultNote(consultNote);
 
         assertNotNull(encounter);
@@ -208,7 +209,7 @@ public class ConsultServiceTest {
     public void saveConsultNote_shouldHandleNonCodedPrimaryDiagnosis() {
         String nonCodedAnswer = "New disease we've never heard of";
         ConsultNote consultNote = buildConsultNote();
-        consultNote.setPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(nonCodedAnswer)));
+        consultNote.addPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(nonCodedAnswer)));
         Encounter encounter = consultService.saveConsultNote(consultNote);
 
         assertNotNull(encounter);
@@ -226,10 +227,11 @@ public class ConsultServiceTest {
         final String comments = "This is a very interesting case";
 
         ConsultNote consultNote = buildConsultNote();
-        consultNote.setPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(malaria)));
-        consultNote.addAdditionalDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(diabetes)));
-        consultNote.getAdditionalDiagnoses().get(0).setCertainty(Diagnosis.Certainty.CONFIRMED);
-        consultNote.addAdditionalDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(nonCodedAnswer)));
+        consultNote.addPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(malaria)));
+        Diagnosis diag = new Diagnosis(new CodedOrFreeTextAnswer(diabetes));
+        diag.setCertainty(Diagnosis.Certainty.CONFIRMED);
+        consultNote.addSecondaryDiagnosis(diag);
+        consultNote.addSecondaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(nonCodedAnswer)));
         consultNote.setComments(comments);
         Encounter encounter = consultService.saveConsultNote(consultNote);
 
