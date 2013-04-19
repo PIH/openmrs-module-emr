@@ -110,9 +110,9 @@ public class ConsultPageControllerTest {
             @Override
             public boolean matches(Object o) {
                 ConsultNote actual = (ConsultNote) o;
-                return actual.getPrimaryDiagnosis().equals(new Diagnosis(new CodedOrFreeTextAnswer(conceptName2460), Diagnosis.Order.PRIMARY)) &&
-                        containsInAnyOrder(new Diagnosis(new CodedOrFreeTextAnswer(concept3), Diagnosis.Order.SECONDARY),
-                                new Diagnosis(new CodedOrFreeTextAnswer(secondaryText), Diagnosis.Order.SECONDARY)).matches(actual.getAdditionalDiagnoses()) &&
+                return containsInAnyOrder(new Diagnosis(new CodedOrFreeTextAnswer(conceptName2460), Diagnosis.Order.PRIMARY),
+                        new Diagnosis(new CodedOrFreeTextAnswer(concept3), Diagnosis.Order.SECONDARY),
+                        new Diagnosis(new CodedOrFreeTextAnswer(secondaryText), Diagnosis.Order.SECONDARY)).matches(actual.getDiagnoses()) &&
                         actual.getComments().equals(freeTextComments) &&
                         actual.getEncounterLocation().equals(sessionLocation) &&
                         actual.getClinician().equals(currentProvider);
