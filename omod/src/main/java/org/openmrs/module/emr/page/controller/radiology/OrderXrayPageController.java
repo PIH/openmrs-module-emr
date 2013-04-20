@@ -18,23 +18,19 @@ import org.openmrs.Concept;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
-import org.openmrs.api.ConceptService;
-import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.api.EmrService;
-import org.openmrs.module.emr.comparator.ByFormattedObjectComparator;
 import org.openmrs.module.emr.radiology.RadiologyProperties;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
+import org.openmrs.ui.util.ByFormattedObjectComparator;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
