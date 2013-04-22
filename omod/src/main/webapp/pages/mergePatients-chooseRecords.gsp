@@ -1,6 +1,6 @@
 <%
     ui.decorateWith("emr", "standardEmrPage", [ title: ui.message("emr.mergePatients") ])
-    ui.includeCss("uicommons", "mirebalais/mergePatients.css")
+    ui.includeCss("mirebalais", "mergePatients.css")
     ui.includeJavascript("emr", "mergePatients.js")
 
     def id = ""
