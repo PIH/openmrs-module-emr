@@ -1,0 +1,30 @@
+[
+    {
+        "id": "emrArchivesRoomApp",
+        "label": "emr.app.archivesRoom.label",
+        "url": "emr/paperrecord/archivesRoom.page",
+        "iconUrl": "icon-folder-open",
+        "order": 1
+    },
+    {
+        "id": "emrActiveVisitsApp",
+        "label": "emr.app.activeVisits.label",
+        "url": "emr/activeVisits.page",
+        "iconUrl": "icon-calendar",
+        "order": 3
+    },
+    {
+        "id": "systemAdministrationApp",
+        "label": "emr.app.systemAdministration.label",
+        "url": "emr/systemAdministration.page",
+        "iconUrl": "icon-cogs",
+        "order": 2
+    },
+    {
+        "id": "myAccount",
+        "label": "emr.app.system.administration.myAccount.label",
+        "url": "emr/account/myAccount.page",
+        "iconUrl": "icon-cog",
+        "requiredPrivilege": "Allowed for everyone"
+    }
+]
