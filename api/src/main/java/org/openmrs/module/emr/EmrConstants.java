@@ -49,8 +49,10 @@ public class EmrConstants {
     // copied to emrapi
     public static final String GP_DIAGNOSIS_SET_OF_SETS = "emr.concept.diagnosisSetOfSets";
 
+    // copied to emrapi
     public static final String GP_UNKNOWN_LOCATION = "emr.unknownLocation";
 
+    // copied to emrapi
     public static final String GP_UNKNOWN_PROVIDER = "emr.unknownProvider";
 
     // copied to paperrecord

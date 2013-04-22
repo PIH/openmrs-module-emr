@@ -139,6 +139,27 @@ public class RadiologyStudyConceptSetTest extends BaseConceptSetTest {
 
     }
 
+    @Test
+    public void shouldNotCreateObsForAccessionNumberAndImagesAvailableIfNoValue() {
+
+        Concept procedure = new Concept();
+
+        RadiologyStudy radiologyStudy = new RadiologyStudy();
+        radiologyStudy.setProcedure(procedure);
+
+        RadiologyStudyConceptSet radiologyStudyConceptSet = new RadiologyStudyConceptSet(conceptService);
+        Obs radiologyStudyObsSet = radiologyStudyConceptSet.buildRadiologyStudyObsGroup(radiologyStudy);
+
+        assertThat(radiologyStudyObsSet.getGroupMembers().size(), is(1));
+
+        Obs procedureObs = radiologyStudyObsSet.getGroupMembers().iterator().next();
+
+
+        assertNotNull(procedureObs);
+        assertThat(procedureObs.getValueCoded(), is(procedure));
+    }
+
+
 }
 
 

@@ -14,6 +14,7 @@
 
 package org.openmrs.module.emr.radiology;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.api.ConceptService;
@@ -46,20 +47,26 @@ public class RadiologyStudyConceptSet extends ConceptSetDescriptor {
         radiologyStudySet.setConcept(radiologyStudySetConcept);
         radiologyStudySet.setOrder(radiologyStudy.getAssociatedRadiologyOrder());
 
-        Obs accessionNumber = new Obs();
-        accessionNumber.setConcept(accessionNumberConcept);
-        accessionNumber.setValueText(radiologyStudy.getAccessionNumber());
-        radiologyStudySet.addGroupMember(accessionNumber);
+        if (StringUtils.isNotBlank(radiologyStudy.getAccessionNumber())) {
+            Obs accessionNumber = new Obs();
+            accessionNumber.setConcept(accessionNumberConcept);
+            accessionNumber.setValueText(radiologyStudy.getAccessionNumber());
+            radiologyStudySet.addGroupMember(accessionNumber);
+        }
 
-        Obs imagesAvailable = new Obs();
-        imagesAvailable.setConcept(imagesAvailableConcept);
-        imagesAvailable.setValueBoolean(radiologyStudy.isImagesAvailable());
-        radiologyStudySet.addGroupMember(imagesAvailable);
+        if (radiologyStudy.isImagesAvailable() != null) {
+            Obs imagesAvailable = new Obs();
+            imagesAvailable.setConcept(imagesAvailableConcept);
+            imagesAvailable.setValueBoolean(radiologyStudy.isImagesAvailable());
+            radiologyStudySet.addGroupMember(imagesAvailable);
+        }
 
-        Obs procedure = new Obs();
-        procedure.setConcept(procedureConcept);
-        procedure.setValueCoded(radiologyStudy.getProcedure());
-        radiologyStudySet.addGroupMember(procedure);
+        if (radiologyStudy.getProcedure() != null) {
+            Obs procedure = new Obs();
+            procedure.setConcept(procedureConcept);
+            procedure.setValueCoded(radiologyStudy.getProcedure());
+            radiologyStudySet.addGroupMember(procedure);
+        }
 
         return radiologyStudySet;
 

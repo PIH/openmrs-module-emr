@@ -1,5 +1,6 @@
 package org.openmrs.module.emr.radiology;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.api.ConceptService;
@@ -35,25 +36,33 @@ public class RadiologyReportConceptSet extends ConceptSetDescriptor {
         radiologyReportSet.setConcept(radiologyReportSetConcept);
         radiologyReportSet.setOrder(radiologyReport.getAssociatedRadiologyOrder());
 
-        Obs accessionNumber = new Obs();
-        accessionNumber.setConcept(accessionNumberConcept);
-        accessionNumber.setValueText(radiologyReport.getAccessionNumber());
-        radiologyReportSet.addGroupMember(accessionNumber);
+        if (StringUtils.isNotBlank(radiologyReport.getAccessionNumber())) {
+            Obs accessionNumber = new Obs();
+            accessionNumber.setConcept(accessionNumberConcept);
+            accessionNumber.setValueText(radiologyReport.getAccessionNumber());
+            radiologyReportSet.addGroupMember(accessionNumber);
+        }
 
-        Obs reportBody = new Obs();
-        reportBody.setConcept(reportBodyConcept);
-        reportBody.setValueText(radiologyReport.getReportBody());
-        radiologyReportSet.addGroupMember(reportBody);
+        if (StringUtils.isNotBlank(radiologyReport.getReportBody())) {
+            Obs reportBody = new Obs();
+            reportBody.setConcept(reportBodyConcept);
+            reportBody.setValueText(radiologyReport.getReportBody());
+            radiologyReportSet.addGroupMember(reportBody);
+        }
 
-        Obs reportType = new Obs();
-        reportType.setConcept(reportTypeConcept);
-        reportType.setValueCoded(radiologyReport.getReportType());
-        radiologyReportSet.addGroupMember(reportType);
+        if (radiologyReport.getReportType() != null) {
+            Obs reportType = new Obs();
+            reportType.setConcept(reportTypeConcept);
+            reportType.setValueCoded(radiologyReport.getReportType());
+            radiologyReportSet.addGroupMember(reportType);
+        }
 
-        Obs procedure = new Obs();
-        procedure.setConcept(procedureConcept);
-        procedure.setValueCoded(radiologyReport.getProcedure());
-        radiologyReportSet.addGroupMember(procedure);
+        if (radiologyReport.getProcedure() != null) {
+            Obs procedure = new Obs();
+            procedure.setConcept(procedureConcept);
+            procedure.setValueCoded(radiologyReport.getProcedure());
+            radiologyReportSet.addGroupMember(procedure);
+        }
 
         return radiologyReportSet;
     }

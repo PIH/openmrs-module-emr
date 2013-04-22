@@ -35,20 +35,26 @@ public class RadiologyConstants {
 
     public static final String GP_RADIOLOGY_TEST_ORDER_TYPE = "emr.radiologyTestOrderType";
 
-    public static final String CONCEPT_CODE_RADIOLOGY_STUDY_SET = "Radiology Study Set";
+    // concept codes used by radiology
 
-    public static final String CONCEPT_CODE_RADIOLOGY_REPORT_SET = "Radiology Report Set";
+    public static final String CONCEPT_CODE_RADIOLOGY_STUDY_SET = "Radiology study construct";
 
-    public static final String CONCEPT_CODE_RADIOLOGY_REPORT_BODY = "Radiology Report Body";
+    public static final String CONCEPT_CODE_RADIOLOGY_REPORT_SET = "Radiology report construct";
 
-    public static final String CONCEPT_CODE_RADIOLOGY_REPORT_TYPE = "Radiology Report Type";
+    public static final String CONCEPT_CODE_RADIOLOGY_REPORT_BODY = "Radiology report comments";
 
-    public static final String CONCEPT_CODE_RADIOLOGY_PROCEDURE = "Radiology Procedure";
+    public static final String CONCEPT_CODE_RADIOLOGY_REPORT_TYPE = "Type of radiology report";
 
-    public static final String CONCEPT_CODE_RADIOLOGY_ACCESSION_NUMBER = "Accession Number";
+    public static final String CONCEPT_CODE_RADIOLOGY_PROCEDURE = "Radiology procedure performed";
 
-    public static final String CONCEPT_CODE_RADIOLOGY_IMAGES_AVAILABLE = "Images Available";
+    public static final String CONCEPT_CODE_RADIOLOGY_ACCESSION_NUMBER = "Radiology accession number";
 
+    public static final String CONCEPT_CODE_RADIOLOGY_IMAGES_AVAILABLE = "Radiology images available";
 
+    public static final String CONCEPT_CODE_RADIOLOGY_REPORT_PRELIM = "Radiology report preliminary";
+
+    public static final String CONCEPT_CODE_RADIOLOGY_REPORT_FINAL = "Radiology report final";
+
+    public static final String CONCEPT_CODE_RADIOLOGY_REPORT_CORRECTION = "Radiology report correction";
 
 }

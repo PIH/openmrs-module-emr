@@ -113,4 +113,39 @@ public class RadiologyReportConceptSetTest extends BaseConceptSetTest {
 
     }
 
+    @Test
+    public void shouldNotCreateObsForAccessionNumberAndTypeIfNotSpecified() {
+
+        Concept procedure = new Concept();
+
+        RadiologyReport radiologyReport = new RadiologyReport();
+        radiologyReport.setReportBody("Some report body");
+        radiologyReport.setProcedure(procedure);
+
+        RadiologyReportConceptSet radiologyReportConceptSet = new RadiologyReportConceptSet(conceptService);
+        Obs radiologyReportObsSet = radiologyReportConceptSet.buildRadiologyReportObsGroup(radiologyReport);
+
+        assertThat(radiologyReportObsSet.getGroupMembers().size(), is(2));
+
+        Obs procedureObs = null;
+        Obs reportBodyObs = null;
+
+        for (Obs obs : radiologyReportObsSet.getGroupMembers()) {
+            if (obs.getConcept().equals(procedureConcept)) {
+                procedureObs  = obs;
+            }
+            if (obs.getConcept().equals(reportBodyConcept)) {
+                reportBodyObs = obs;
+            }
+        }
+
+        assertNotNull(procedureObs);
+        assertNotNull(reportBodyObs);
+
+        assertThat(procedureObs.getValueCoded(), is(procedure));
+        assertThat(reportBodyObs.getValueText(), is("Some report body"));
+
+    }
+
+
 }
