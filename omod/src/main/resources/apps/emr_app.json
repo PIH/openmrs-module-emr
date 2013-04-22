@@ -1,27 +1,27 @@
 [
     {
-        "id": "emrArchivesRoomApp",
+        "id": "emr.archivesRoom",
         "label": "emr.app.archivesRoom.label",
         "url": "emr/paperrecord/archivesRoom.page",
         "iconUrl": "icon-folder-open",
         "order": 1
     },
     {
-        "id": "emrActiveVisitsApp",
+        "id": "emr.activeVisits",
         "label": "emr.app.activeVisits.label",
         "url": "emr/activeVisits.page",
         "iconUrl": "icon-calendar",
         "order": 3
     },
     {
-        "id": "systemAdministrationApp",
+        "id": "emr.systemAdministration",
         "label": "emr.app.systemAdministration.label",
         "url": "emr/systemAdministration.page",
         "iconUrl": "icon-cogs",
         "order": 2
     },
     {
-        "id": "myAccount",
+        "id": "emr.myAccount",
         "label": "emr.app.system.administration.myAccount.label",
         "url": "emr/account/myAccount.page",
         "iconUrl": "icon-cog",
