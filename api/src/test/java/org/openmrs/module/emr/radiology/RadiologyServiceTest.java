@@ -212,6 +212,8 @@ public class RadiologyServiceTest {
         study.setDatePerformed(currentDate);
         study.setStudyLocation(currentLocation);
         study.setTechnician(provider);
+        study.setAccessionNumber("123");
+        study.setProcedure(new Concept());
 
         radiologyService.saveRadiologyStudy(study);
 
@@ -235,6 +237,8 @@ public class RadiologyServiceTest {
         study.setDatePerformed(currentDate);
         study.setStudyLocation(null);
         study.setTechnician(null);
+        study.setAccessionNumber("123");
+        study.setProcedure(new Concept());
 
         radiologyService.saveRadiologyStudy(study);
 
@@ -260,6 +264,10 @@ public class RadiologyServiceTest {
         report.setReportDate(currentDate);
         report.setPrincipalResultsInterpreter(provider);
         report.setReportLocation(currentLocation);
+        report.setAccessionNumber("123");
+        report.setReportBody("test");
+        report.setProcedure(new Concept());
+        report.setReportType(new Concept());
 
         radiologyService.saveRadiologyReport(report);
 
@@ -286,6 +294,10 @@ public class RadiologyServiceTest {
         report.setReportDate(currentDate);
         report.setPrincipalResultsInterpreter(null);
         report.setReportLocation(null);
+        report.setAccessionNumber("123");
+        report.setReportBody("test");
+        report.setProcedure(new Concept());
+        report.setReportType(new Concept());
 
         radiologyService.saveRadiologyReport(report);
 
@@ -376,7 +388,7 @@ public class RadiologyServiceTest {
 
             // just test that the obs are there (we test that the obs group is packaged correctly in RadiologyStudyConceptSetTest)
             assertThat(encounter.getObsAtTopLevel(false).size(), is(1));
-            assertThat(encounter.getObsAtTopLevel(false).iterator().next().getGroupMembers().size(), is(3));
+            assertThat(encounter.getObsAtTopLevel(false).iterator().next().getGroupMembers().size(), is(2));  // only two because we aren't including images available concept
             return true;
         }
 
