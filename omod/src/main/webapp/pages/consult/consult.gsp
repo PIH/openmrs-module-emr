@@ -4,7 +4,7 @@
     ui.includeJavascript("emr", "knockout-2.1.0.js")
     ui.includeJavascript("emr", "consult/consult.js")
 
-    ui.includeCss("uicommons", "emr/consult.css", -200)
+    ui.includeCss("mirebalais", "consult.css", -200)
 
     def patient = emrContext.currentPatient
 %>

@@ -5,7 +5,7 @@
     ui.includeJavascript("emr", "navigator/navigatorHandlers.js", Integer.MAX_VALUE - 21)
     ui.includeJavascript("emr", "navigator/navigatorModels.js", Integer.MAX_VALUE - 21)
     ui.includeJavascript("emr", "navigator/exitHandlers.js", Integer.MAX_VALUE - 22);
-    ui.includeCss("uicommons", "emr/simpleFormUi.css", -200)
+    ui.includeCss("mirebalais", "simpleFormUi.css", -200)
 
     def createNewVisit = createVisit ?: false
 

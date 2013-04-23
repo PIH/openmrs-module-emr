@@ -1,7 +1,7 @@
 <%
     ui.decorateWith("emr", "standardEmrPage", [ title: ui.message("emr.myaccount") ])
 
-    ui.includeCss("uicommons", "emr/account.css")
+    ui.includeCss("mirebalais", "account.css")
 
     ui.includeJavascript("emr", "account/changePassword.js")
 
