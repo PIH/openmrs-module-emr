@@ -135,11 +135,11 @@ public class ArchivesRoomFragmentController {
             return new SuccessResult(ui.message("emr.archivesRoom.pullRequests.message"));
         }
         catch (UnableToPrintLabelException ex) {
-            log.error(ex);
+            log.error("Unable to assign pull requests", ex);
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToPrintLabel"));
         }
         catch (IllegalStateException ex) {
-            log.error(ex);
+            log.error("Unable to assign pull requests", ex);
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToAssignRecords"));
         }
 
@@ -156,11 +156,11 @@ public class ArchivesRoomFragmentController {
             return new SuccessResult(ui.message("emr.archivesRoom.createRequests.message"));
         }
         catch (UnableToPrintLabelException ex) {
-            log.error(ex);
+            log.error("Unable to assign create requests", ex);
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToPrintLabel"));
         }
         catch (IllegalStateException ex) {
-            log.error(ex);
+            log.error("Unable to assign create requests", ex);
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToAssignRecords"));
         }
 
@@ -216,7 +216,7 @@ public class ArchivesRoomFragmentController {
         }
         catch (Exception e) {
             // generic catch-all
-            log.error(e);
+            log.error("Unable to mark paper record request as sent", e);
             return new FailureResult(ui.message("emr.error.systemError"));
         }
 
@@ -253,7 +253,7 @@ public class ArchivesRoomFragmentController {
         }
         catch (Exception e) {
             // generic catch-all
-            log.error(e);
+            log.error("Unable to mark paper record request as returned", e);
             return new FailureResult(ui.message("emr.error.systemError"));
         }
 
@@ -269,7 +269,7 @@ public class ArchivesRoomFragmentController {
             return new SuccessResult();
         }
         catch (Exception e) {
-            log.error(e);
+            log.error("Unable to mark paper record request as cancelled", e);
             return new FailureResult(ui.message("emr.error.systemError"));
 
         }
@@ -285,7 +285,7 @@ public class ArchivesRoomFragmentController {
             return new SuccessResult(ui.message("emr.archivesRoom.printedLabel.message", request.getIdentifier()));
         }
         catch (Exception e) {
-            log.error(e);
+            log.error("Unable to print paper record label", e);
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToPrintLabel"));
 
         }
