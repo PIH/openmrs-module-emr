@@ -54,14 +54,6 @@ public class EmrProperties extends ModuleProperties {
         return getEncounterRoleByGlobalProperty(EmrConstants.GP_ORDERING_PROVIDER_ENCOUNTER_ROLE);
     }
 
-    public Location getUnknownLocation() {
-        return getLocationByGlobalProperty(EmrConstants.GP_UNKNOWN_LOCATION);
-    }
-
-    public Provider getUnknownProvider() {
-        return getProviderByGlobalProperty(EmrConstants.GP_UNKNOWN_PROVIDER);
-    }
-
     public Concept getPaymentConstructConcept() {
         return getConceptByGlobalProperty(EmrConstants.PAYMENT_CONSTRUCT_CONCEPT);
     }

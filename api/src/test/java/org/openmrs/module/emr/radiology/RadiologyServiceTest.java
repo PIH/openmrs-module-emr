@@ -31,6 +31,7 @@ import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.TestUtils;
 import org.openmrs.module.emr.order.EmrOrderService;
 import org.openmrs.module.emr.radiology.db.RadiologyOrderDAO;
+import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -57,6 +58,7 @@ public class RadiologyServiceTest {
 
     private RadiologyServiceImpl radiologyService;
     private EmrProperties emrProperties;
+    private EmrApiProperties emrApiProperties;
     private RadiologyProperties radiologyProperties;
     private EncounterService encounterService;
     private RadiologyOrderDAO radiologyOrderDAO;
@@ -111,6 +113,7 @@ public class RadiologyServiceTest {
 
         radiologyService = new RadiologyServiceImpl();
         radiologyService.setEmrProperties(emrProperties);
+        radiologyService.setEmrApiProperties(emrApiProperties);
         radiologyService.setRadiologyProperties(radiologyProperties);
         radiologyService.setEncounterService(encounterService);
         radiologyService.setEmrOrderService(emrOrderService);
@@ -120,6 +123,7 @@ public class RadiologyServiceTest {
 
     private void prepareMocks() {
         emrProperties = mock(EmrProperties.class);
+        emrApiProperties = mock(EmrApiProperties.class);
         radiologyProperties = mock(RadiologyProperties.class);
         encounterService = mock(EncounterService.class);
         emrContext = mock(EmrContext.class);
@@ -135,8 +139,8 @@ public class RadiologyServiceTest {
         when(radiologyProperties.getRadiologyTechnicianEncounterRole()).thenReturn(radiologyTechnicianEncounterRole);
         when(radiologyProperties.getPrincipalResultsInterpreterEncounterRole()).thenReturn(principalResultsInterpreterEncounterRole);
         when(emrProperties.getOrderingProviderEncounterRole()).thenReturn(clinicianEncounterRole);
-        when(emrProperties.getUnknownLocation()).thenReturn(unknownLocation);
-        when(emrProperties.getUnknownProvider()).thenReturn(unknownProvider);
+        when(emrApiProperties.getUnknownLocation()).thenReturn(unknownLocation);
+        when(emrApiProperties.getUnknownProvider()).thenReturn(unknownProvider);
         when(emrContext.getSessionLocation()).thenReturn(currentLocation);
         when(radiologyProperties.getRadiologyTestOrderType()).thenReturn(orderType);
         when(encounterService.saveEncounter(isA(Encounter.class))).thenAnswer(new Answer<Object>() {

@@ -30,6 +30,7 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -72,8 +73,8 @@ public class RadiologyServiceComponentTest extends BaseModuleContextSensitiveTes
     private EncounterService encounterService;
 
     @Autowired
-    @Qualifier("emrProperties")
-    private EmrProperties emrProperties;
+    @Qualifier("emrApiProperties")
+    private EmrApiProperties emrApiProperties;
 
     @Autowired
     @Qualifier("radiologyProperties")
@@ -171,9 +172,9 @@ public class RadiologyServiceComponentTest extends BaseModuleContextSensitiveTes
         assertThat(encounter.getPatient(), is(patient));
         assertThat(encounter.getEncounterType(), is(radiologyProperties.getRadiologyStudyEncounterType()));
         assertThat(encounter.getEncounterDatetime(), is(timeOfStudy));
-        assertThat(encounter.getLocation(), is(emrProperties.getUnknownLocation()));
+        assertThat(encounter.getLocation(), is(emrApiProperties.getUnknownLocation()));
         assertThat(encounter.getProvidersByRole(radiologyProperties.getRadiologyTechnicianEncounterRole()).size(), is(1));
-        assertThat(encounter.getProvidersByRole(radiologyProperties.getRadiologyTechnicianEncounterRole()).iterator().next(), is(emrProperties.getUnknownProvider()));
+        assertThat(encounter.getProvidersByRole(radiologyProperties.getRadiologyTechnicianEncounterRole()).iterator().next(), is(emrApiProperties.getUnknownProvider()));
 
         assertThat(encounter.getObsAtTopLevel(false).size(), is(1));
 
@@ -237,9 +238,9 @@ public class RadiologyServiceComponentTest extends BaseModuleContextSensitiveTes
         assertThat(encounter.getPatient(), is(patient));
         assertThat(encounter.getEncounterType(), is(radiologyProperties.getRadiologyReportEncounterType()));
         assertThat(encounter.getEncounterDatetime(), is(timeOfStudy));
-        assertThat(encounter.getLocation(), is(emrProperties.getUnknownLocation()));
+        assertThat(encounter.getLocation(), is(emrApiProperties.getUnknownLocation()));
         assertThat(encounter.getProvidersByRole(radiologyProperties.getPrincipalResultsInterpreterEncounterRole()).size(), is(1));
-        assertThat(encounter.getProvidersByRole(radiologyProperties.getPrincipalResultsInterpreterEncounterRole()).iterator().next(), is(emrProperties.getUnknownProvider()));
+        assertThat(encounter.getProvidersByRole(radiologyProperties.getPrincipalResultsInterpreterEncounterRole()).iterator().next(), is(emrApiProperties.getUnknownProvider()));
 
         assertThat(encounter.getObsAtTopLevel(false).size(), is(1));
 
