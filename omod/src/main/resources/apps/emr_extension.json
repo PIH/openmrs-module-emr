@@ -1,0 +1,41 @@
+[
+    {
+        "id": "emr.archivesRoom",
+        "extensionPointId": "org.openmrs.mirebalais.homepageLink",
+        "type": "link",
+        "label": "emr.app.archivesRoom.label",
+        "url": "emr/paperrecord/archivesRoom.page",
+        "icon": "icon-folder-open",
+        "order": 1,
+        "requiredPrivilege": "App: emr.archivesRoom"
+    },
+    {
+        "id": "emr.activeVisits",
+        "extensionPointId": "org.openmrs.mirebalais.homepageLink",
+        "type": "link",
+        "label": "emr.app.activeVisits.label",
+        "url": "emr/activeVisits.page",
+        "icon": "icon-calendar",
+        "order": 3,
+        "requiredPrivilege": "App: emr.activeVisits"
+    },
+    {
+        "id": "emr.systemAdministration",
+        "extensionPointId": "org.openmrs.mirebalais.homepageLink",
+        "type": "link",
+        "label": "emr.app.systemAdministration.label",
+        "url": "emr/systemAdministration.page",
+        "icon": "icon-cogs",
+        "order": 2,
+        "requiredPrivilege": "App: emr.systemAdministration"
+    },
+    {
+        "id": "emr.myAccount",
+        "extensionPointId": "org.openmrs.mirebalais.homepageLink",
+        "type": "link",
+        "label": "emr.app.system.administration.myAccount.label",
+        "url": "emr/account/myAccount.page",
+        "icon": "icon-cog",
+        "requiredPrivilege": "Allowed for everyone"
+    }
+]
