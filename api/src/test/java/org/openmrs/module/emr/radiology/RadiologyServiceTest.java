@@ -44,8 +44,8 @@ import java.util.Set;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
@@ -361,7 +361,7 @@ public class RadiologyServiceTest {
             assertThat(encounter.getOrders().size(), is(expectedStudies.length));
 
             for (Concept expectedStudy : expectedStudies) {
-               // assertThat(encounter.getOrders(), hasItem(new IsExpectedOrder(expectedLocation, expectedStudy)));
+                assertThat(encounter.getOrders(), hasItem(new IsExpectedOrder(expectedLocation, expectedStudy)));
             }
 
             return true;
