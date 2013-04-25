@@ -351,14 +351,14 @@ public class RadiologyServiceTest {
             Encounter encounter = (Encounter) o;
 
             Set<Provider> providersByRole = encounter.getProvidersByRole(clinicianEncounterRole);
-          //  assertThat(encounter.getEncounterType(), is(placeOrdersEncounterType));
-           // assertThat(providersByRole.size(), is(1));
-           // assertThat(providersByRole.iterator().next(), is(provider));
-           // assertThat(encounter.getPatient(), is(patient));
-            //assertThat(encounter.getLocation(), is(currentLocation));
-            //assertThat(encounter.getEncounterDatetime(), notNullValue());
-            // assertThat(encounter.getVisit(), is(currentVisit));
-            // assertThat(encounter.getOrders().size(), is(expectedStudies.length));
+            assertThat(encounter.getEncounterType(), is(placeOrdersEncounterType));
+            assertThat(providersByRole.size(), is(1));
+            assertThat(providersByRole.iterator().next(), is(provider));
+            assertThat(encounter.getPatient(), is(patient));
+            assertThat(encounter.getLocation(), is(currentLocation));
+            assertThat(encounter.getEncounterDatetime(), notNullValue());
+            assertThat(encounter.getVisit(), is(currentVisit));
+            assertThat(encounter.getOrders().size(), is(expectedStudies.length));
 
             for (Concept expectedStudy : expectedStudies) {
                // assertThat(encounter.getOrders(), hasItem(new IsExpectedOrder(expectedLocation, expectedStudy)));
