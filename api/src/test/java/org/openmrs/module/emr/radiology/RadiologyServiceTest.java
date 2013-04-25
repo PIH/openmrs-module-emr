@@ -1,5 +1,6 @@
 package org.openmrs.module.emr.radiology;
 
+import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,14 +38,15 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.isA;
@@ -338,12 +340,16 @@ public class RadiologyServiceTest {
     }
 
     private class IsExpectedRadiologyOrderEncounter extends ArgumentMatcher<Encounter> {
-        private Location expectedLocation;
+
         private Concept[] expectedStudies;
+        private List<IsExpectedOrder> expectedOrders = new ArrayList<IsExpectedOrder>();
 
         public IsExpectedRadiologyOrderEncounter(Location expectedLocation, Concept... expectedStudies) {
-            this.expectedLocation = expectedLocation;
             this.expectedStudies = expectedStudies;
+
+            for (Concept expectedStudy : expectedStudies) {
+                expectedOrders.add(new IsExpectedOrder(expectedLocation, expectedStudy));
+            }
         }
 
         @Override
@@ -359,10 +365,7 @@ public class RadiologyServiceTest {
             assertThat(encounter.getEncounterDatetime(), notNullValue());
             assertThat(encounter.getVisit(), is(currentVisit));
             assertThat(encounter.getOrders().size(), is(expectedStudies.length));
-
-            for (Concept expectedStudy : expectedStudies) {
-                assertThat(encounter.getOrders(), hasItem(new IsExpectedOrder(expectedLocation, expectedStudy)));
-            }
+            new IsIterableContainingInAnyOrder(expectedOrders).matches(encounter.getOrders());
 
             return true;
         }
