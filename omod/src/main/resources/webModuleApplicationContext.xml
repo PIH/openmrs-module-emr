@@ -9,37 +9,6 @@
 		<property name="moduleId" value="${project.parent.artifactId}"/>
 	</bean>
 
-    <!-- Apps -->
-    <bean id="emrArchivesRoomApp" class="org.openmrs.module.appframework.SimpleAppDescriptor">
-        <property name="id" value="emr.archivesRoom"/>
-        <property name="labelCode" value="emr.app.archivesRoom.label"/>
-        <property name="homepageUrl" value="emr/paperrecord/archivesRoom.page"/>
-        <property name="iconUrl" value="icon-folder-open"/>
-        <property name="order" value="1" />
-    </bean>
-    <bean id="emrActiveVisitsApp" class="org.openmrs.module.appframework.SimpleAppDescriptor">
-        <property name="id" value="emr.activeVisits"/>
-        <property name="labelCode" value="emr.app.activeVisits.label"/>
-        <property name="homepageUrl" value="emr/activeVisits.page"/>
-        <property name="iconUrl" value="icon-calendar"/>
-        <property name="order" value="3" />
-    </bean>
-    <bean id="systemAdministrationApp" class="org.openmrs.module.appframework.SimpleAppDescriptor">
-        <property name="id" value="emr.systemAdministration"/>
-        <property name="labelCode" value="emr.app.systemAdministration.label"/>
-        <property name="homepageUrl" value="emr/systemAdministration.page"/>
-        <property name="iconUrl" value="icon-cogs"/>
-        <property name="order" value="2" />
-    </bean>
-
-    <bean id="myAccount" class="org.openmrs.module.appframework.SimpleAppDescriptor">
-        <property name="id" value="emr.myAccount" />
-        <property name="labelCode" value="emr.app.system.administration.myAccount.label"/>
-        <property name="homepageUrl" value="emr/account/myAccount.page"/>
-        <property name="iconUrl" value="icon-cog"/>
-        <property name="requiredPrivilegeName" value="Allowed for everyone"/>
-    </bean>
-
 
     <!-- Tasks -->
     <bean id="emrPrintLabelsOnPatientDashboard" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
