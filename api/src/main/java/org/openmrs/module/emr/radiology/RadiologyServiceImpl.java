@@ -77,6 +77,7 @@ public class RadiologyServiceImpl extends BaseOpenmrsService implements Radiolog
     public Encounter saveRadiologyReport(RadiologyReport radiologyReport) {
 
         // TODO: add a validator
+        // TODO: or just validate that there is an accession number, report date?
 
         Encounter encounter = new Encounter();
         encounter.setEncounterType(radiologyProperties.getRadiologyReportEncounterType());
@@ -97,6 +98,7 @@ public class RadiologyServiceImpl extends BaseOpenmrsService implements Radiolog
     public Encounter saveRadiologyStudy(RadiologyStudy radiologyStudy) {
 
         // TODO: add a validator?
+        // TODO: or just validate that there is an accession number, report date?
 
         Encounter encounter = new Encounter();
         encounter.setEncounterType(radiologyProperties.getRadiologyStudyEncounterType());
