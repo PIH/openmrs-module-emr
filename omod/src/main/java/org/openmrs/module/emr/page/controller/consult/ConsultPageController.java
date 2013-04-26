@@ -92,7 +92,7 @@ public class ConsultPageController {
      * @throws Exception
      */
     private Diagnosis parseDiagnosisJson(String diagnosisJson, ConceptService conceptService) throws Exception {
-        JsonNode node = new ObjectMapper().readValue(diagnosisJson, JsonNode.class);
+        JsonNode node = new ObjectMapper().readTree(diagnosisJson);
 
         CodedOrFreeTextAnswer answer = new CodedOrFreeTextAnswer(node.get("diagnosis").getTextValue(), conceptService);
         Diagnosis.Order diagnosisOrder = Diagnosis.Order.valueOf(node.get("diagnosisOrder").getTextValue());
