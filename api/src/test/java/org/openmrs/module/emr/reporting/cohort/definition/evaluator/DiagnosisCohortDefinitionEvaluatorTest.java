@@ -122,24 +122,46 @@ public class DiagnosisCohortDefinitionEvaluatorTest extends BaseModuleContextSen
         assertThat(cohort, hasExactlyIds(2, 7));
     }
 
-    private void createDiagnosisObs() {
-        Patient patient = patientService.getPatient(2);
-        buildDiagnosis(patient, "2013-01-02", Diagnosis.Order.PRIMARY, conceptService.getConcept(11)).save();
-        buildDiagnosis(patient, "2013-01-02", Diagnosis.Order.SECONDARY, "Headache").save();
+    @Test
+    public void testEvaluateByCertainty() throws Exception {
+        createDiagnosisObs();
 
-        Patient otherPatient = patientService.getPatient(7);
-        buildDiagnosis(otherPatient, "2013-03-11", Diagnosis.Order.PRIMARY, "Cough").save();
-
-        Patient thirdPatient = patientService.getPatient(6);
-        buildDiagnosis(thirdPatient, "2013-03-11", Diagnosis.Order.PRIMARY, conceptService.getConcept(9)).save();
+        DiagnosisCohortDefinition cd = new DiagnosisCohortDefinition();
+        cd.setCertainty(Diagnosis.Certainty.CONFIRMED);
+        cd.setCodedDiagnoses(Arrays.asList(conceptService.getConcept(9)));
+        EvaluatedCohort cohort = evaluator.evaluate(cd, new EvaluationContext());
+        assertThat(cohort, hasExactlyIds(6));
     }
 
-    private ObsBuilder buildDiagnosis(Patient patient, String dateYmd, Diagnosis.Order order, Object diagnosis) {
+    @Test
+    public void testEvaluateByCodedExclusions() throws Exception {
+        createDiagnosisObs();
+
+        DiagnosisCohortDefinition cd = new DiagnosisCohortDefinition();
+        cd.setExcludeCodedDiagnoses(Arrays.asList(conceptService.getConcept(9)));
+        EvaluatedCohort cohort = evaluator.evaluate(cd, new EvaluationContext());
+        assertThat(cohort, hasExactlyIds(2)); // everyone with a coded diagnosis that isn't concept 9
+    }
+
+    private void createDiagnosisObs() {
+        Patient patient = patientService.getPatient(2);
+        buildDiagnosis(patient, "2013-01-02", Diagnosis.Order.PRIMARY, Diagnosis.Certainty.PRESUMED, conceptService.getConcept(11)).save();
+        buildDiagnosis(patient, "2013-01-02", Diagnosis.Order.SECONDARY, Diagnosis.Certainty.PRESUMED, "Headache").save();
+
+        Patient otherPatient = patientService.getPatient(7);
+        buildDiagnosis(otherPatient, "2013-03-11", Diagnosis.Order.PRIMARY, Diagnosis.Certainty.PRESUMED, "Cough").save();
+
+        Patient thirdPatient = patientService.getPatient(6);
+        buildDiagnosis(thirdPatient, "2013-03-11", Diagnosis.Order.PRIMARY, Diagnosis.Certainty.CONFIRMED, conceptService.getConcept(9)).save();
+    }
+
+    private ObsBuilder buildDiagnosis(Patient patient, String dateYmd, Diagnosis.Order order, Diagnosis.Certainty certainty, Object diagnosis) {
         ObsBuilder builder = new ObsBuilder()
             .setPerson(patient)
                 .setObsDatetime(DateUtil.parseDate(dateYmd, "yyyy-MM-dd"))
                 .setConcept(dmd.getDiagnosisSetConcept())
-                .addMember(dmd.getDiagnosisOrderConcept(), dmd.getConceptFor(order));
+                .addMember(dmd.getDiagnosisOrderConcept(), dmd.getConceptFor(order))
+                .addMember(dmd.getDiagnosisCertaintyConcept(), dmd.getConceptFor(certainty));
         if (diagnosis instanceof Concept) {
             builder.addMember(dmd.getCodedDiagnosisConcept(), (Concept) diagnosis);
         } else if (diagnosis instanceof String) {

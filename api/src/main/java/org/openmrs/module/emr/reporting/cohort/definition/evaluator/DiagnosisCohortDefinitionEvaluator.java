@@ -84,6 +84,16 @@ public class DiagnosisCohortDefinitionEvaluator implements CohortDefinitionEvalu
             crit.add(Subqueries.exists(orderClause));
         }
 
+        if (cd.getCertainty() != null) {
+            DetachedCriteria certaintyClause = DetachedCriteria.forClass(Obs.class, "certaintyObs");
+            certaintyClause.add(Restrictions.eq("voided", false));
+            certaintyClause.add(Restrictions.eq("concept", dmd.getDiagnosisCertaintyConcept()));
+            certaintyClause.add(Restrictions.eq("valueCoded", dmd.getConceptFor(cd.getCertainty())));
+            certaintyClause.add(Restrictions.eqProperty("obsGroup", "obsgroup.id"));
+            certaintyClause.setProjection(Projections.property("id"));
+            crit.add(Subqueries.exists(certaintyClause));
+        }
+
         if (cd.isIncludeAllCodedDiagnoses()) {
             // Note: since every diagnosis is either coded or non-coded if they want to include all coded *and* non-coded
             // diagnoses, we can just ignore both clauses
@@ -96,7 +106,7 @@ public class DiagnosisCohortDefinitionEvaluator implements CohortDefinitionEvalu
                 crit.add(Subqueries.exists(anyCodedClause));
             }
         }
-        else if (cd.getCodedDiagnoses() != null) {
+        else if (cd.getCodedDiagnoses() != null || cd.getExcludeCodedDiagnoses() != null) {
             if (cd.isIncludeAllNonCodedDiagnoses()) {
                 throw new IllegalArgumentException("Not Yet Implemented: handling both all-non-coded and specific coded diagnoses together");
             }
@@ -104,7 +114,12 @@ public class DiagnosisCohortDefinitionEvaluator implements CohortDefinitionEvalu
                 DetachedCriteria specificCodedClause = DetachedCriteria.forClass(Obs.class, "codedDiagnosisObs");
                 specificCodedClause.add(Restrictions.eq("voided", false));
                 specificCodedClause.add(Restrictions.eq("concept", dmd.getCodedDiagnosisConcept()));
-                specificCodedClause.add(Restrictions.in("valueCoded", cd.getCodedDiagnoses()));
+                if (cd.getCodedDiagnoses() != null) {
+                    specificCodedClause.add(Restrictions.in("valueCoded", cd.getCodedDiagnoses()));
+                }
+                if (cd.getExcludeCodedDiagnoses() != null) {
+                    specificCodedClause.add(Restrictions.not(Restrictions.in("valueCoded", cd.getExcludeCodedDiagnoses())));
+                }
                 specificCodedClause.add(Restrictions.eqProperty("obsGroup", "obsgroup.id"));
                 specificCodedClause.setProjection(Projections.property("id"));
                 crit.add(Subqueries.exists(specificCodedClause));

@@ -35,6 +35,9 @@ public class DiagnosisCohortDefinition extends BaseCohortDefinition {
     private List<Concept> codedDiagnoses;
 
     @ConfigurationProperty(group = "which")
+    private List<Concept> excludeCodedDiagnoses;
+
+    @ConfigurationProperty(group = "which")
     boolean includeAllCodedDiagnoses = false;
 
     @ConfigurationProperty(group = "which")
@@ -42,6 +45,9 @@ public class DiagnosisCohortDefinition extends BaseCohortDefinition {
 
     @ConfigurationProperty(group = "which")
     private Diagnosis.Order diagnosisOrder;
+
+    @ConfigurationProperty(group = "which")
+    private Diagnosis.Certainty certainty;
 
     @ConfigurationProperty(group = "when")
     private Date onOrAfter;
@@ -55,6 +61,14 @@ public class DiagnosisCohortDefinition extends BaseCohortDefinition {
 
     public void setCodedDiagnoses(List<Concept> codedDiagnoses) {
         this.codedDiagnoses = codedDiagnoses;
+    }
+
+    public List<Concept> getExcludeCodedDiagnoses() {
+        return excludeCodedDiagnoses;
+    }
+
+    public void setExcludeCodedDiagnoses(List<Concept> excludeCodedDiagnoses) {
+        this.excludeCodedDiagnoses = excludeCodedDiagnoses;
     }
 
     public boolean isIncludeAllCodedDiagnoses() {
@@ -81,6 +95,14 @@ public class DiagnosisCohortDefinition extends BaseCohortDefinition {
         this.diagnosisOrder = diagnosisOrder;
     }
 
+    public Diagnosis.Certainty getCertainty() {
+        return certainty;
+    }
+
+    public void setCertainty(Diagnosis.Certainty certainty) {
+        this.certainty = certainty;
+    }
+
     public Date getOnOrAfter() {
         return onOrAfter;
     }
@@ -96,4 +118,5 @@ public class DiagnosisCohortDefinition extends BaseCohortDefinition {
     public void setOnOrBefore(Date onOrBefore) {
         this.onOrBefore = onOrBefore;
     }
+
 }
