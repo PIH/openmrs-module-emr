@@ -47,6 +47,11 @@ public class ConceptBuilder {
         return concept;
     }
 
+    public ConceptBuilder setUuid(String uuid) {
+        concept.setUuid(uuid);
+        return this;
+    }
+
     public ConceptBuilder add(ConceptName conceptName) {
         if (concept.getNames().size() == 0) {
             conceptName.setLocalePreferred(true);
