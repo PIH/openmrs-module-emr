@@ -36,6 +36,7 @@
         "label": "emr.app.system.administration.myAccount.label",
         "url": "emr/account/myAccount.page",
         "icon": "icon-cog",
+        "order": 13,
         "requiredPrivilege": "Allowed for everyone"
     }
 ]
