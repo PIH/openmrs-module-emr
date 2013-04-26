@@ -21,11 +21,12 @@
             }else{
                 jq('.confirm').removeAttr("disabled");
                 jq('.confirm').removeClass("disabled");
+                if(event.keyCode == 13){
+                    //ENTER key has been pressed
+                    jq('#confirmIdentifierId').click();
+                }
             }
-            if(event.keyCode == 13){
-                //ENTER key has been pressed
-                jq('#confirmIdentifierId').click();
-            }
+
         });
 
         jq(".editPatientIdentifier").click(function (event) {
