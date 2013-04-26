@@ -12,6 +12,21 @@
     var addMessage = "${ ui.message("emr.patient.identifier.add") }";
     jq(document).ready(function () {
         createEditPatientIdentifierDialog(${patient.id});
+        jq("#patientIdentifierValue").keyup(function(event){
+            var oldValue = jq("#patientIdentifierValue").val();
+            var newValue = jq("#hiddenInitialIdentifierValue").val();
+            if(oldValue==newValue){
+                jq('.confirm').attr("disabled", "disabled");
+                jq('.confirm').addClass("disabled");
+            }else{
+                jq('.confirm').removeAttr("disabled");
+                jq('.confirm').removeClass("disabled");
+            }
+            if(event.keyCode == 13){
+                //ENTER key has been pressed
+                jq('#confirmIdentifierId').click();
+            }
+        });
 
         jq(".editPatientIdentifier").click(function (event) {
             var identifierTypeId = jq(event.target).attr("data-identifier-type-id");
@@ -19,10 +34,15 @@
             var patientIdentifierValue = jq(event.target).attr("data-patient-identifier-value");
 
             jq("#hiddenIdentifierTypeId").val(identifierTypeId);
+            jq("#hiddenInitialIdentifierValue").val(patientIdentifierValue);
             jq("#identifierTypeNameSpan").text(identifierTypeName);
             jq("#patientIdentifierValue").val(patientIdentifierValue);
 
             showEditPatientIdentifierDialog();
+
+            jq('.confirm').attr("disabled", "disabled");
+            jq('.confirm').addClass("disabled");
+
         });
 
         jq(".demographics .name").click(function () {
@@ -117,6 +137,7 @@
 
     <div class="dialog-content">
         <input type="hidden" id="hiddenIdentifierTypeId" value=""/>
+        <input type="hidden" id="hiddenInitialIdentifierValue" value=""/>
         <ul>
             <li class="info">
                 <span>${ui.message("emr.patient")}</span>
@@ -130,7 +151,7 @@
             </li>
         </ul>
 
-        <button class="confirm right">${ui.message("emr.confirm")}</button>
+        <button id="confirmIdentifierId" class="confirm right">${ui.message("emr.confirm")}</button>
         <button class="cancel">${ui.message("emr.cancel")}</button>
     </div>
 </div>

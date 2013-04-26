@@ -74,6 +74,7 @@ function createEditPatientIdentifierDialog(patientId) {
                         emr.handleError(err);
                         editPatientIdentifierDialog.close();
                     });
+
             },
             cancel: function() {
                 editPatientIdentifierDialog.close();

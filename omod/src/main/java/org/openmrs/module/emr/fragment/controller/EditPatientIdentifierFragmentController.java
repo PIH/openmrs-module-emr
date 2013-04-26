@@ -26,7 +26,11 @@ public class EditPatientIdentifierFragmentController {
 
         if(patient!=null && identifierType!=null){
             PatientIdentifier patientIdentifier = patient.getPatientIdentifier(identifierType);
-            if(patientIdentifier==null && StringUtils.isNotBlank(identifierValue)){
+            if(patientIdentifier==null && StringUtils.isBlank(identifierValue)){
+                //nothing to do
+                return new SuccessResult(ui.message("emr.patientDashBoard.editPatientIdentifier.warningMessage"));
+            }
+            if(patientIdentifier==null){
                 patientIdentifier = new PatientIdentifier(identifierValue, identifierType, location);
             }else{
                 if(StringUtils.isNotBlank(identifierValue)){
