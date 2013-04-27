@@ -15,11 +15,8 @@
 package org.openmrs.module.emr;
 
 import org.openmrs.Concept;
-import org.openmrs.ConceptMapType;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
-import org.openmrs.Location;
-import org.openmrs.Provider;
 import org.openmrs.module.emr.api.EmrService;
 import org.openmrs.module.emrapi.utils.ModuleProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,14 +65,6 @@ public class EmrProperties extends ModuleProperties {
 
     public Concept getPaymentReceiptNumberConcept() {
         return getConceptByGlobalProperty(EmrConstants.PAYMENT_RECEIPT_NUMBER_CONCEPT);
-    }
-
-    public ConceptMapType getSameAsConceptMapType() {
-        return conceptService.getConceptMapTypeByUuid(EmrConstants.SAME_AS_CONCEPT_MAP_TYPE_UUID);
-    }
-
-    public ConceptMapType getNarrowerThanConceptMapType() {
-        return conceptService.getConceptMapTypeByUuid(EmrConstants.NARROWER_THAN_CONCEPT_MAP_TYPE_UUID);
     }
 
 }
