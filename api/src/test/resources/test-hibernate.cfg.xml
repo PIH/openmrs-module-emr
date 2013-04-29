@@ -7,7 +7,6 @@
     <session-factory>
         <mapping resource="PaperRecordRequest.hbm.xml"/>
         <mapping resource="PaperRecordMergeRequest.hbm.xml"/>
-        <mapping resource="RadiologyOrder.hbm.xml"/>
         <mapping resource="IdentifierSource.hbm.xml" />
         <mapping resource="HtmlFormEntryHtmlForm.hbm.xml" />
 
