@@ -38,20 +38,6 @@
         <property name="requiredPrivilegeName" value="Task: emr.enterClinicalForms"/>
     </bean>
 
-    <!--
-    <bean id="emrOrderUltrasoundTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
-        <property name="id" value="emr.orderUltrasound"/>
-        <property name="labelCode" value="emr.task.orderUltrasound.label"/>
-        <property name="url" value="emr/radiology/orderUltrasound.page"/>
-        <property name="priority" value="20.1"/>
-    </bean>
-    <bean id="emrOrderCTScanTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
-        <property name="id" value="emr.orderCTScan"/>
-        <property name="labelCode" value="emr.task.orderCTScan.label"/>
-        <property name="url" value="emr/radiology/orderCTScan.page"/>
-        <property name="priority" value="20"/>
-    </bean>
-    -->
     <!-- not for first release
     <bean id="emrRetrospectiveCheckin" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
         <property name="id" value="emr.retrospectiveCheckin"/>
