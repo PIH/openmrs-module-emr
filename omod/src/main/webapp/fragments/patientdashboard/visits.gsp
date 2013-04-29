@@ -13,23 +13,22 @@
     jq(".collapse").collapse();
 </script>
 
-<script type="text/template" id="encounterDetailsTemplate">
-    {{ _.each(observations, function(observation) { }}
-        {{ if(observation.answer != null) {}}
-            <p><small>{{- observation.question}}</small><span>{{- observation.answer}}</span></p>
-        {{}}}
-    {{ }); }}
+<!-- Encounter templates -->
+<script type="text/javascript">
+var defaultEncounterTemplate;
+\$(function() {
+	defaultEncounterTemplate = _.template(\$('#defaultEncounterTemplate').html());
+});
+function displayEncounter(encounter) {
+	var data = new Object();
+	data.encounter = encounter;	
+	
+	return defaultEncounterTemplate(data);
+};
 
-    {{ _.each(diagnoses, function(diagnosis) { }}
-        {{ if(diagnosis.answer != null) {}}
-            <p><small>{{- diagnosis.question}}</small><span>{{- diagnosis.answer}}</span></p>
-    {{}}}
-    {{ }); }}
-
-    {{ _.each(orders, function(order) { }}
-         <p><small>${ ui.message("emr.patientDashBoard.order")}</small><span>{{- order.concept }}</span></p>
-    {{ }); }}
 </script>
+${ ui.includeFragment("emr", "patientdashboard/defaultEncounterTemplate") }
+<!-- End of encounter templates -->
 
 <script type="text/template" id="visitDetailsTemplate">
     {{ if (stopDatetime) { }}
@@ -59,63 +58,16 @@
 
     <h4>${ ui.message("emr.patientDashBoard.encounters")} </h4>
     <ul id="encountersList">
-    {{ var i = 1;}}
         {{ _.each(encounters, function(encounter) { }}
             {{ if (!encounter.voided) { }}
             <li>
-                <div class="encounter-date">
-                    <i class="icon-time"></i>
-                    <strong>
-                        {{- encounter.encounterTime }}
-                    </strong>
-                    {{- encounter.encounterDate }}
-                </div>
-                <ul class="encounter-details">
-                    <li> 
-                        <div class="encounter-type">
-                            <strong>
-                                <i class="{{- getEncounterIcon(encounter.encounterType.uuid) }}"></i>
-                                <span class="encounter-name" data-encounter-id="{{- encounter.encounterId }}">{{- encounter.encounterType.name }}</span>
-                            </strong>
-                        </div>
-                    </li>
-                    <li>
-                        <div>
-                            ${ ui.message("emr.by") }
-                            <strong>
-                                {{- encounter.encounterProviders[0] ? encounter.encounterProviders[0].provider : '' }}
-                            </strong>
-                            ${ ui.message("emr.in") }
-                            <strong>{{- encounter.location }}</strong>
-                        </div>
-                    </li>
-                    {{ if (encounter.encounterType.uuid != "873f968a-73a8-4f9c-ac78-9f4778b751b6") {}}
-                    <li>
-                        <div class="details-action">
-                            <a class="view-details collapsed" href='javascript:void(0);' data-encounter-id="{{- encounter.encounterId }}" data-encounter-form="{{- encounter.form != null}}" data-target="#encounter-summary{{- i }}" data-toggle="collapse" data-target="#encounter-summary{{- i }}">
-                                <span class="show-details">${ ui.message("emr.patientDashBoard.showDetails")}</span>
-                                <span class="hide-details">${ ui.message("emr.patientDashBoard.hideDetails")}</span>
-                                <i class="icon-caret-right"></i>
-                            </a>
-                            
-                        </div>
-                    </li>
-                    {{}}}
-                </ul>
-                {{ if ( encounter.canDelete ) { }}
-                <span>
-                    <i class="deleteEncounterId delete-item icon-remove" data-encounter-id="{{- encounter.encounterId }}" title="${ ui.message("emr.delete") }"></i>
-                </span>
-                {{  } }}
-                <div id="encounter-summary{{- i }}" class="collapse">
-                    <div class="encounter-summary-container"></div>
-		        </div>
-                {{ i++; }}
+            {{= displayEncounter(encounter) }}
             </li>
             {{  } }}
         {{ }); }}
     </ul>
 </script>
+
 <script type="text/javascript">
     jq(function(){
         loadTemplates();
