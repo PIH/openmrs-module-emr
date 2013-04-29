@@ -12,7 +12,7 @@
     <changeSet id="20121101" author="abarbosa and ffreire">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="radiology_order" />
+                <tableExists tableName="emr_radiology_order" />
             </not>
         </preConditions>
         <comment>Create radiology_order table</comment>
