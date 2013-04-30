@@ -16,6 +16,7 @@ package org.openmrs.module.emr.page.controller;
 import org.openmrs.Patient;
 import org.openmrs.api.OrderService;
 import org.openmrs.module.emr.EmrContext;
+import org.openmrs.module.emr.fragment.template.EncounterTemplates;
 import org.openmrs.module.emr.task.TaskService;
 import org.openmrs.module.emr.utils.GeneralUtils;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
@@ -39,7 +40,8 @@ public class PatientPageController {
 	                       PageModel model,
                            @InjectBeans PatientDomainWrapper patientDomainWrapper,
                            @SpringBean("orderService") OrderService orderService,
-                           @SpringBean("taskService") TaskService taskService) {
+                           @SpringBean("taskService") TaskService taskService,
+                           @SpringBean("encounterTemplates") EncounterTemplates encounterTemplates) {
 
         patientDomainWrapper.setPatient(patient);
         model.addAttribute("patient", patientDomainWrapper);
@@ -48,6 +50,7 @@ public class PatientPageController {
         model.addAttribute("activeVisitTasks", taskService.getAvailableTasksByExtensionPoint(emrContext, ACTIVE_VISITS));
         model.addAttribute("selectedTab", selectedTab);
         model.addAttribute("addressHierarchyLevels", GeneralUtils.getAddressHierarchyLevels());
+        model.addAttribute("encounterTemplates", encounterTemplates);
     }
 
 }

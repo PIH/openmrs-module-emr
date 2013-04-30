@@ -13,22 +13,7 @@
     jq(".collapse").collapse();
 </script>
 
-<!-- Encounter templates -->
-<script type="text/javascript">
-var defaultEncounterTemplate;
-\$(function() {
-	defaultEncounterTemplate = _.template(\$('#defaultEncounterTemplate').html());
-});
-function displayEncounter(encounter) {
-	var data = new Object();
-	data.encounter = encounter;	
-	
-	return defaultEncounterTemplate(data);
-};
-
-</script>
-${ ui.includeFragment("emr", "patientdashboard/defaultEncounterTemplate") }
-<!-- End of encounter templates -->
+${ encounterTemplates.include(ui) }
 
 <script type="text/template" id="visitDetailsTemplate">
     {{ if (stopDatetime) { }}
