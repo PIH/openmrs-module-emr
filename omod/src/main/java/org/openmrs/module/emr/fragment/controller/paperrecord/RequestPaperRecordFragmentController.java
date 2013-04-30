@@ -60,7 +60,7 @@ public class RequestPaperRecordFragmentController {
             return SimpleObject.create("success", true, "message", ui.message("emr.patientDashBoard.printLabels.successMessage") + " " + printer.getPhysicalLocation().getName());
         } catch (UnableToPrintLabelException e) {
             log.error("User " + emrContext.getUserContext().getAuthenticatedUser() + " unable to print paper record label at location "
-                    + emrContext.getUserContext().getLocation(), e);
+                    + emrContext.getSessionLocation(), e);
             return SimpleObject.create("success", false, "message", ui.message("emr.archivesRoom.error.unableToPrintLabel"));
         }
     }

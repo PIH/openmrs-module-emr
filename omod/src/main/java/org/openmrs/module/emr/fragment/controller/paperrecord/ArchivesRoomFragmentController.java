@@ -286,7 +286,7 @@ public class ArchivesRoomFragmentController {
         }
         catch (Exception e) {
             log.error("User " + emrContext.getUserContext().getAuthenticatedUser() + " unable to print paper record label at location "
-                    + emrContext.getUserContext().getLocation(), e);
+                    + emrContext.getSessionLocation(), e);
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToPrintLabel"));
 
         }
