@@ -1,4 +1,5 @@
 <script type="text/template" id="noDetailsEncounterTemplate">
+<li>
 	<div class="encounter-date">
 	    <i class="icon-time"></i>
 	    <strong>
@@ -34,4 +35,5 @@
 	<div id="encounter-summary{{- encounter.encounterId }}" class="collapse">
 	    <div class="encounter-summary-container"></div>
 	</div>
+</li>
 </script>

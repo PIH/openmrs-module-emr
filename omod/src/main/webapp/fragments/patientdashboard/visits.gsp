@@ -45,9 +45,7 @@ ${ encounterTemplates.include(ui) }
     <ul id="encountersList">
         {{ _.each(encounters, function(encounter) { }}
             {{ if (!encounter.voided) { }}
-            <li>
             {{= displayEncounter(encounter) }}
-            </li>
             {{  } }}
         {{ }); }}
     </ul>

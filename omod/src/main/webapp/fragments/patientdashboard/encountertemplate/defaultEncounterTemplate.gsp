@@ -53,6 +53,7 @@ function getEncounterIcon(encounterType) {
 </script>
 
 <script type="text/template" id="defaultEncounterTemplate">
+<li>
 	<div class="encounter-date">
 	    <i class="icon-time"></i>
 	    <strong>
@@ -97,6 +98,7 @@ function getEncounterIcon(encounterType) {
 	<div id="encounter-summary{{- encounter.encounterId }}" class="collapse">
 	    <div class="encounter-summary-container"></div>
 	</div>
+</li>
 </script>
 
 <script type="text/template" id="defaultEncounterDetailsTemplate">
