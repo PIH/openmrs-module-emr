@@ -14,8 +14,11 @@
 
 package org.openmrs.module.emr.fragment.controller.paperrecord;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emrapi.printer.Printer;
 import org.openmrs.module.emrapi.printer.PrinterService;
 import org.openmrs.module.paperrecord.PaperRecordService;
@@ -29,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  *
  */
 public class RequestPaperRecordFragmentController {
+
+    private final Log log = LogFactory.getLog(getClass());
 
     public SimpleObject requestPaperRecord(UiUtils ui,
 	       @RequestParam("patientId") Patient patient,
@@ -44,7 +49,8 @@ public class RequestPaperRecordFragmentController {
            @RequestParam("patientId") Patient patient,
            @RequestParam("locationId") Location location,
            @SpringBean("paperRecordService") PaperRecordService service,
-           @SpringBean("printerService") PrinterService printerService) throws UnableToPrintLabelException {
+           @SpringBean("printerService") PrinterService printerService,
+           EmrContext emrContext) throws UnableToPrintLabelException {
 
         try {
             service.printPaperRecordLabels(patient, location, 3);
@@ -53,6 +59,8 @@ public class RequestPaperRecordFragmentController {
 
             return SimpleObject.create("success", true, "message", ui.message("emr.patientDashBoard.printLabels.successMessage") + " " + printer.getPhysicalLocation().getName());
         } catch (UnableToPrintLabelException e) {
+            log.error("User " + emrContext.getUserContext().getAuthenticatedUser() + " unable to print paper record label at location "
+                    + emrContext.getUserContext().getLocation(), e);
             return SimpleObject.create("success", false, "message", ui.message("emr.archivesRoom.error.unableToPrintLabel"));
         }
     }
