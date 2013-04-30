@@ -47,10 +47,6 @@ public class EmrProperties extends ModuleProperties {
         return getEncounterTypeByGlobalProperty(EmrConstants.GP_TRIAGE_ENCOUNTER_TYPE);
     }
 
-    public EncounterRole getOrderingProviderEncounterRole() {
-        return getEncounterRoleByGlobalProperty(EmrConstants.GP_ORDERING_PROVIDER_ENCOUNTER_ROLE);
-    }
-
     public Concept getPaymentConstructConcept() {
         return getConceptByGlobalProperty(EmrConstants.PAYMENT_CONSTRUCT_CONCEPT);
     }

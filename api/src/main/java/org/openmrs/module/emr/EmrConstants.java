@@ -35,9 +35,7 @@ public class EmrConstants {
     // copied to emrapi
     public static final String GP_CLINICIAN_ENCOUNTER_ROLE = "emr.clinicianEncounterRole";
 
-    public static final String GP_ORDERING_PROVIDER_ENCOUNTER_ROLE = "emr.orderingProviderEncounterRole";
-
-    // copied to emrapi
+      // copied to emrapi
     public static final String GP_CHECK_IN_CLERK_ENCOUNTER_ROLE = "emr.checkInClerkEncounterRole";
 
     // copied to paperrecord
