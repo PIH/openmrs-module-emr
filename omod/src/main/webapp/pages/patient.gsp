@@ -57,12 +57,29 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
                     </a>
                 </li>
             <% } %>
+
+            <% if (featureToggles.isFeatureEnabled("radiologyTab")) { %>
+            <!-- hack to include radiology tab until we move to new dashboard -->
+                <li>
+                    <a href="#radiologyTab">
+                        Radiology
+                    </a>
+                </li>
+            <% } %>
+
         </ul>
 
         <% tabs.each { %>
         <div id="${it.id}">
             ${ ui.includeFragment("emr", "patientdashboard/" + it.id) }
         </div>
+        <% } %>
+
+        <% if (featureToggles.isFeatureEnabled("radiologyTab")) { %>
+            <!-- hack to include radiology tab until we move to new dashboard -->
+            <div id="radiologyTab">
+                ${ ui.includeFragment("radiologyapp", "radiologyTab") }
+            </div>
         <% } %>
 
     </div>
