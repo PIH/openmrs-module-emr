@@ -24,7 +24,7 @@
         "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
         "type": "link",
         "label": "emr.app.systemAdministration.label",
-        "url": "emr/systemAdmi  nistration.page",
+        "url": "emr/systemAdministration.page",
         "icon": "icon-cogs",
         "order": 2,
         "requiredPrivilege": "App: emr.systemAdministration"
