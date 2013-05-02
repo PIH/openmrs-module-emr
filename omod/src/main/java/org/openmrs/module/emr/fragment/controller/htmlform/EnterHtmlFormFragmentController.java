@@ -132,7 +132,11 @@ public class EnterHtmlFormFragmentController {
 
         model.addAttribute("command", fes);
         model.addAttribute("visit", visit);
-        model.addAttribute("createVisit", createVisit);
+        if(createVisit!=null){
+            model.addAttribute("createVisit", createVisit.toString());
+        }else{
+            model.addAttribute("createVisit", "false");
+        }
     }
 
     /**

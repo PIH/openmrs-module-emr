@@ -87,7 +87,11 @@ public abstract class BaseEnterHtmlFormPageController {
         model.addAttribute("htmlForm", htmlForm);
         model.addAttribute("patient", currentPatient);
         model.addAttribute("visit", visit);
-        model.addAttribute("createVisit", createVisit);
+        if(createVisit!=null){
+            model.addAttribute("createVisit", createVisit.toString());
+        }else{
+            model.addAttribute("createVisit", "false");
+        }
         model.addAttribute("returnUrl", returnUrl);
         model.addAttribute("breadcrumbOverride", breadcrumbOverride);
     }
