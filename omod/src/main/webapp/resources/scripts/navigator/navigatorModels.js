@@ -25,6 +25,10 @@ SelectableModel.prototype = {
     disable: function() {
         this.element.attr('disabled', 'true');
         this.element.addClass("disabled");
+    },
+    onExit: function() {
+        // override this to provide onExit functionality
+        return true;
     }
 }
 
