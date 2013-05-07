@@ -13,7 +13,32 @@
     jq(".collapse").collapse();
 </script>
 
-${ encounterTemplates.include(ui) }
+<!-- Encounter templates -->
+<%
+	ui.includeJavascript("emr", "fragments/encounterTemplates.js")
+%>
+<script type="text/javascript">
+	jq(function() {
+		<%
+			encounterTemplateExtensions.each { extension -> 
+				extension.extensionParams.supportedEncounters?.each { encounter ->
+					println ""
+					println "		encounterTemplates.setEncounterTemplate('$encounter.key', _.template(jq('#" + extension.extensionParams.templateId + "').html()));"
+					println "		encounterTemplates.setEncounterIcon('$encounter.key', '$encounter.value.icon');"
+				}
+			}
+		%>
+		encounterTemplates.setDefaultEncounterTemplate(_.template(jq('#defaultEncounterTemplate').html()));
+		
+	});
+</script>
+<%
+	encounterTemplateExtensions.each { extension ->
+		println ui.includeFragment(extension.extensionParams.templateFragmentProviderName, extension.extensionParams.templateFragmentId)
+		println ""
+	}
+%>
+<!-- End of encounter templates -->
 
 <script type="text/template" id="visitDetailsTemplate">
     {{ if (stopDatetime) { }}
@@ -45,7 +70,7 @@ ${ encounterTemplates.include(ui) }
     <ul id="encountersList">
         {{ _.each(encounters, function(encounter) { }}
             {{ if (!encounter.voided) { }}
-            {{= displayEncounter(encounter) }}
+            {{= encounterTemplates.displayEncounter(encounter) }}
             {{  } }}
         {{ }); }}
     </ul>

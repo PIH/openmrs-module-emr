@@ -11,7 +11,7 @@
 	    <li> 
 	        <div class="encounter-type">
 	            <strong>
-	                <i class="{{- getEncounterIcon(encounter.encounterType.uuid) }}"></i>
+	                <i class="{{- encounter.icon }}"></i>
 	                <span class="encounter-name" data-encounter-id="{{- encounter.encounterId }}">{{- encounter.encounterType.name }}</span>
 	            </strong>
 	        </div>
