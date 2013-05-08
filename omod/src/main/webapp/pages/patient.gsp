@@ -8,10 +8,16 @@
     ui.includeJavascript("emr", "bootstrap-collapse.js")
     ui.includeJavascript("emr", "bootstrap-transition.js")
 
-    def tabs = [
-        [ id: "visits", label: ui.message("emr.patientDashBoard.visits") ],
-        [ id: "contactInfo", label: ui.message("emr.patientDashBoard.contactinfo") ]
-    ]
+    def tabs = []
+
+    tabs.add([ id: "visits", label: ui.message("emr.patientDashBoard.visits"), app: "emr", fragment: "patientdashboard/visits" ])
+
+    if (featureToggles.isFeatureEnabled("radiologyTab")) {
+        tabs.add([ id: "radiologyTab", label: ui.message("radiologyapp.radiology.label"), app: "radiologyapp", fragment: "radiologyTab" ])
+    }
+
+    tabs.add([ id: "contactInfo", label: ui.message("emr.patientDashBoard.contactinfo"), app: "emr", fragment: "patientdashboard/contactInfo" ])
+
 
 %>
 <script type="text/javascript">
@@ -57,31 +63,13 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
                     </a>
                 </li>
             <% } %>
-
-            <% if (featureToggles.isFeatureEnabled("radiologyTab")) { %>
-            <!-- hack to include radiology tab until we move to new dashboard -->
-                <li>
-                    <a href="#radiologyTab">
-                        Radiology
-                    </a>
-                </li>
-            <% } %>
-
         </ul>
 
         <% tabs.each { %>
         <div id="${it.id}">
-            ${ ui.includeFragment("emr", "patientdashboard/" + it.id) }
+            ${ ui.includeFragment(it.app, it.fragment) }
         </div>
         <% } %>
-
-        <% if (featureToggles.isFeatureEnabled("radiologyTab")) { %>
-            <!-- hack to include radiology tab until we move to new dashboard -->
-            <div id="radiologyTab">
-                ${ ui.includeFragment("radiologyapp", "radiologyTab") }
-            </div>
-        <% } %>
-
     </div>
 </div>
 
