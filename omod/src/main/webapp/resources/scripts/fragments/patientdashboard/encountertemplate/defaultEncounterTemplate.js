@@ -11,10 +11,16 @@ jq(function() {
 		createDeleteEncounterDialog(encounterId, jq(this));
 		showDeleteEncounterDialog();
 	});
-	    
-	var defaultEncounterDetailsTemplate = _.template(jq('#defaultEncounterDetailsTemplate').html());
+	
+	//We cannot assign it here due to Jasmine failure: 
+	//net.sourceforge.htmlunit.corejs.javascript.EcmaError: TypeError: Cannot call method "replace" of undefined
+	var defaultEncounterDetailsTemplate = null;
 	
 	function getEncounterDetails(id, isHtmlForm, dataTarget){
+		if (defaultEncounterDetailsTemplate == null) {
+			defaultEncounterDetailsTemplate = _.template(jq('#defaultEncounterDetailsTemplate').html());
+		}
+		
 	    var encounterDetailsSection = jq(dataTarget + ' .encounter-summary-container');
 	    if (isHtmlForm == "true"){
 	        jq.getJSON(
