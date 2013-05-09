@@ -19,25 +19,20 @@
 %>
 <script type="text/javascript">
 	jq(function() {
-		<%
-			encounterTemplateExtensions.each { extension -> 
-				extension.extensionParams.supportedEncounters?.each { encounter ->
-					println ""
-					println "		encounterTemplates.setEncounterTemplate('$encounter.key', _.template(jq('#" + extension.extensionParams.templateId + "').html()));"
-					println "		encounterTemplates.setEncounterIcon('$encounter.key', '$encounter.value.icon');"
-				}
+		<% encounterTemplateExtensions.each { extension -> 
+			extension.extensionParams.supportedEncounterTypes?.each { encounterType -> %>
+		encounterTemplates.setTemplate('${encounterType.key}', _.template(jq('#${extension.extensionParams.templateId}').html()));
+				<% encounterType.value.each { parameter -> %>
+		encounterTemplates.setParameter('${encounterType.key}', '${parameter.key}', '${parameter.value}');
+				<% }
 			}
-		%>
-		encounterTemplates.setDefaultEncounterTemplate(_.template(jq('#defaultEncounterTemplate').html()));
-		
+		} %>
+		encounterTemplates.setDefaultTemplate(_.template(jq('#defaultEncounterTemplate').html()));
 	});
 </script>
-<%
-	encounterTemplateExtensions.each { extension ->
-		println ui.includeFragment(extension.extensionParams.templateFragmentProviderName, extension.extensionParams.templateFragmentId)
-		println ""
-	}
-%>
+<% encounterTemplateExtensions.each { extension -> %>
+	${ui.includeFragment(extension.extensionParams.templateFragmentProviderName, extension.extensionParams.templateFragmentId)}
+<% } %>
 <!-- End of encounter templates -->
 
 <script type="text/template" id="visitDetailsTemplate">

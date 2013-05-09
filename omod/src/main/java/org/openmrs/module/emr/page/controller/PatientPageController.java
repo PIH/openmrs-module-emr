@@ -13,8 +13,7 @@
  */
 package org.openmrs.module.emr.page.controller;
 
-import static org.openmrs.module.emr.task.ExtensionPoint.ACTIVE_VISITS;
-import static org.openmrs.module.emr.task.ExtensionPoint.GLOBAL_ACTIONS;
+import static org.openmrs.module.emr.task.ExtensionPoint.*;
 
 import java.util.List;
 

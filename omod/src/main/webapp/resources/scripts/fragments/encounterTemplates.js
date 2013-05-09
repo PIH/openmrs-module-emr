@@ -3,18 +3,21 @@
 		
 	var templates = {};
 	var defaultTemplate;
-	var encounterIcons = {};
+	var parameters = {};
 	
-	encounterTemplates.setEncounterTemplate = function(uuid, template) {
-		templates[uuid] = template;
+	encounterTemplates.setTemplate = function(encounterTypeUuid, template) {
+		templates[encounterTypeUuid] = template;
 	};
 	
-	encounterTemplates.setDefaultEncounterTemplate = function(template) {
+	encounterTemplates.setDefaultTemplate = function(template) {
 		defaultTemplate = template;
 	};
 	
-	encounterTemplates.setEncounterIcon = function(uuid, icon) {
-		encounterIcons[uuid] = icon;
+	encounterTemplates.setParameter = function(encounterTypeUuid, name, value) {
+		if (!(encounterTypeUuid in parameters)) {
+			parameters[encounterTypeUuid] = {};
+		}
+		parameters[encounterTypeUuid][name] = value;
 	};
 
 	encounterTemplates.displayEncounter = function(encounter) {
@@ -25,13 +28,13 @@
 			template = defaultTemplate;
 		}
 		
-		var data = new Object();
-		data.encounter = encounter;
-		if (encounterIcons[encounter.encounterType.uuid]) {
-			data.encounter.icon = encounterIcons[encounter.encounterType.uuid];
+		var data = {};
+		if (parameters[encounter.encounterType.uuid]) {
+			data = parameters[encounter.encounterType.uuid];
 		} else {
-			data.encounter.icon = "icon-time";
+			data.icon = "icon-time";
 		}
+		data.encounter = encounter;
 		
 		return template(data);
 	};
