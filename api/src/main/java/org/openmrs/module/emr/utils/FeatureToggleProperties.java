@@ -14,31 +14,34 @@
 
 package org.openmrs.module.emr.utils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 @Component("featureToggles")
 public class FeatureToggleProperties {
 
-    private static final String FEATURE_TOGGLE_PROPERTIES_FILE = "FEATURE_TOGGLE_PROPERTIES_FILE";
-    private static final String FEATURE_TOGGLE_PROPERTIES_FILE_NAME = "feature-toggle.properties";
+    private static final String FEATURE_TOGGLE_PROPERTIES_ENV = "FEATURE_TOGGLE_PROPERTIES_ENV";
+    private static final String FEATURE_TOGGLE_PROPERTIES_FILE_NAME = "feature_toggles.properties";
 
     private Log log = LogFactory.getLog(getClass());
-    private String propertiesFile;
+    private File propertiesFile;
 
     FeatureToggleProperties() {
-        propertiesFile = System.getenv(FEATURE_TOGGLE_PROPERTIES_FILE);
+        String propertiesFileName = System.getenv(FEATURE_TOGGLE_PROPERTIES_ENV);
+        if (propertiesFileName == null) {
+            propertiesFileName = OpenmrsUtil.getApplicationDataDirectory() + File.separatorChar + FEATURE_TOGGLE_PROPERTIES_FILE_NAME;
+        }
+
+        propertiesFile = new File(propertiesFileName);
     }
 
     public boolean isFeatureEnabled(String key) {
@@ -53,29 +56,14 @@ public class FeatureToggleProperties {
 
     private Properties loadToggles() {
         Properties toggles = new Properties();
-        FileInputStream configFile = null;
-        try {
-            if (propertiesFile != null) {
-                configFile = new FileInputStream(propertiesFile);
-            }
-        }
-        catch (IOException e) {
-            log.error("File feature_toggles.properties not found. Error: ", e);
-        }
-        if(configFile==null){
-            //try the webapp folder
-            try {
-                configFile= new FileInputStream(OpenmrsUtil.getApplicationDataDirectory() + File.separatorChar + FEATURE_TOGGLE_PROPERTIES_FILE_NAME);
-            } catch (FileNotFoundException e) {
-                log.error("File feature_toggles.properties not found. Error: ", e);
-            }
 
-        }
-        if(configFile!=null){
+        if(propertiesFile.exists()){
             try {
-                toggles.load(configFile);
+                FileInputStream inputStream = new FileInputStream(propertiesFile);
+                toggles.load(inputStream);
+                inputStream.close();
             } catch (IOException e) {
-                log.error("File feature_toggles.properties not found. Error: ", e);
+                log.error("Problem loading feature_toggles.properties file. Error: ", e);
             }
         }
 
