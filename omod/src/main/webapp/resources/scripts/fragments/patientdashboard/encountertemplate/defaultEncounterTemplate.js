@@ -23,14 +23,16 @@ jq(function() {
 		
 	    var encounterDetailsSection = jq(dataTarget + ' .encounter-summary-container');
 	    if (isHtmlForm == "true"){
+	    		if(encounterDetailsSection.html() == "") { encounterDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");}
 	        jq.getJSON(
-	            emr.fragmentActionLink("emr", "htmlform/viewEncounterWithHtmlForm", "getAsHtml", { encounterId: id })
+	        		emr.fragmentActionLink("emr", "htmlform/viewEncounterWithHtmlForm", "getAsHtml", { encounterId: id })
 	        ).success(function(data){
 	            encounterDetailsSection.html(data.html);
 	        }).error(function(err){
 	            emr.errorAlert(err);
 	        });
 	    } else {
+	    		if(encounterDetailsSection.html() == "") { encounterDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");}
 	        jq.getJSON(
 	            emr.fragmentActionLink("emr", "visit/visitDetails", "getEncounterDetails", { encounterId: id })
 	        ).success(function(data){
