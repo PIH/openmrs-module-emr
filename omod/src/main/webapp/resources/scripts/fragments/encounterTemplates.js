@@ -5,12 +5,12 @@
 	var defaultTemplate;
 	var parameters = {};
 	
-	encounterTemplates.setTemplate = function(encounterTypeUuid, template) {
-		templates[encounterTypeUuid] = template;
+	encounterTemplates.setTemplate = function(encounterTypeUuid, templateId) {
+		templates[encounterTypeUuid] = _.template(jq('#' + templateId).html());
 	};
 	
-	encounterTemplates.setDefaultTemplate = function(template) {
-		defaultTemplate = template;
+	encounterTemplates.setDefaultTemplate = function(templateId) {
+		defaultTemplate = _.template(jq('#' + templateId).html());
 	};
 	
 	encounterTemplates.setParameter = function(encounterTypeUuid, name, value) {

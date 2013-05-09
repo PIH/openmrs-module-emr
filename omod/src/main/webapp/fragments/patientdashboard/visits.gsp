@@ -21,13 +21,13 @@
 	jq(function() {
 		<% encounterTemplateExtensions.each { extension -> 
 			extension.extensionParams.supportedEncounterTypes?.each { encounterType -> %>
-		encounterTemplates.setTemplate('${encounterType.key}', _.template(jq('#${extension.extensionParams.templateId}').html()));
+		encounterTemplates.setTemplate('${encounterType.key}', '${extension.extensionParams.templateId}');
 				<% encounterType.value.each { parameter -> %>
 		encounterTemplates.setParameter('${encounterType.key}', '${parameter.key}', '${parameter.value}');
 				<% }
 			}
 		} %>
-		encounterTemplates.setDefaultTemplate(_.template(jq('#defaultEncounterTemplate').html()));
+		encounterTemplates.setDefaultTemplate('defaultEncounterTemplate');
 	});
 </script>
 <% encounterTemplateExtensions.each { extension -> %>
