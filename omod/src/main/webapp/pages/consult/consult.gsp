@@ -39,6 +39,27 @@
             }
             return valid;
         });
+
+        jq('#dispositions').change(function(){
+            var option_id = jq(this).val();
+
+            _.each(dispositions, function(id){
+                
+                if (option_id == id){
+                    jq("#" + id).show();
+                } else {
+                    jq("#" + id).hide();
+                }
+            })
+
+        })
+
+        var dispositions = [];
+        <% dispositions.each { disposition -> %>
+            <% disposition.clientSideActions.each { action -> %>
+                dispositions.push("${disposition.uuid}")
+            <% } %>
+        <% } %>
     });
 </script>
 
@@ -52,6 +73,26 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 <label for="diagnosis-search">${ ui.message("emr.consult.addDiagnosis") }</label>
                 <input id="diagnosis-search" type="text" placeholder="${ ui.message("emr.consult.addDiagnosis.placeholder") }" data-bind="autocomplete: searchTerm, itemFormatter: formatAutosuggestion"/>
             </p>
+            <p>
+            <label for="dispositions">${ ui.message("emr.consult.disposition") }</label>
+            <select id="dispositions">
+
+                <% dispositions.each { disposition -> %>
+                    <option value="${disposition.uuid}">${ui.message(disposition.name)}</option>
+                <% } %>
+
+            </select>
+        </p>
+
+            <% dispositions.each { disposition -> %>
+
+                <% disposition.clientSideActions.each { action -> %>
+
+                    ${ ui.includeFragment(action.module, action.fragment, action.fragmentConfig ) }
+
+                <% } %>
+
+            <% } %>
             <p>
                 <label for="free-text-comments">${ ui.message("emr.consult.freeTextComments") }</label>
                 <textarea id="free-text-comments" rows="5" name="freeTextComments"></textarea>

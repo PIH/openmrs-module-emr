@@ -25,6 +25,7 @@ import org.openmrs.module.emr.consult.ConsultNote;
 import org.openmrs.module.emr.consult.ConsultService;
 import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
+import org.openmrs.module.emrapi.disposition.DispositionFactory;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -33,6 +34,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -41,9 +43,10 @@ import java.util.List;
 public class ConsultPageController {
 
     public void get(@RequestParam("patientId") Patient patient,
+                    @SpringBean() DispositionFactory factory,
                     UiUtils ui,
-                    PageModel model) {
-        //model.addAttribute("patient", patient);
+                    PageModel model) throws IOException {
+        model.addAttribute("dispositions", factory.getDispositions());
     }
 
     public String post(@RequestParam("patientId") Patient patient,
