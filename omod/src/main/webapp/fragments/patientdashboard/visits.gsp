@@ -53,11 +53,15 @@
                 if (!url.startsWith("javascript:")) {
                     url = "/" + contextPath + "/" + url
                 }
+                // toggle surgical operative note
+                if (featureToggles.isFeatureEnabled("surgical_operative_note")
+                    || task.id != "mirebalais.surgicalOperativeNote") {
             %>
-            <a href="${ url }" class="button task">
-                <i class="${task.getIconUrl(emrContext)}"></i> ${ task.getLabel(emrContext) }
-            </a>
-            <% } %>
+                <a href="${ url }" class="button task">
+                    <i class="${task.getIconUrl(emrContext)}"></i> ${ task.getLabel(emrContext) }
+                </a>
+            <%  }
+              }%>
         </div>
    {{  } }}
 
