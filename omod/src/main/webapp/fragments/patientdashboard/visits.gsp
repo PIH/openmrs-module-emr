@@ -54,7 +54,7 @@
                     url = "/" + contextPath + "/" + url
                 }
                 // toggle surgical operative note
-                if (featureToggles.isFeatureEnabled("surgical_operative_note")
+                if (featureToggles.isFeatureEnabled("surgicalOperativeNote")
                     || task.id != "mirebalais.surgicalOperativeNote") {
             %>
                 <a href="${ url }" class="button task">
