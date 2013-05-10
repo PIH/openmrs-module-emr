@@ -1,15 +1,5 @@
 [
     {
-        "id": "emr.archivesRoom",
-        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
-        "type": "link",
-        "label": "emr.app.archivesRoom.label",
-        "url": "emr/paperrecord/archivesRoom.page",
-        "icon": "icon-folder-open",
-        "order": 1,
-        "requiredPrivilege": "App: emr.archivesRoom"
-    },
-    {
         "id": "emr.activeVisits",
         "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
         "type": "link",
