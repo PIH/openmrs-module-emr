@@ -14,6 +14,7 @@
 
 package org.openmrs.module.emr.consult;
 
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,20 +36,32 @@ import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.concept.EmrConceptService;
 import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
+import org.openmrs.module.emrapi.disposition.Disposition;
+import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
+import org.openmrs.module.emrapi.disposition.actions.Action;
+import org.openmrs.module.emrapi.disposition.actions.MarkPatientDeadAction;
+import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.util.OpenmrsUtil;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
@@ -70,6 +83,7 @@ public class ConsultServiceTest {
 
     private EmrApiProperties emrApiProperties;
     private EncounterService encounterService;
+    private PatientService patientService;
     private Patient patient;
     private Concept diabetes;
     private Concept malaria;
@@ -89,6 +103,11 @@ public class ConsultServiceTest {
     private Concept diagnosisCertainty;
     private Concept confirmed;
     private Concept presumed;
+    private Concept dispositionGroupingConcept;
+    private Concept disposition;
+    private Concept patientDied;
+    private Disposition death;
+    private EmrConceptService emrConceptService;
 
     @Before
     public void setUp() throws Exception {
@@ -147,9 +166,22 @@ public class ConsultServiceTest {
         diagnosisMetadata.setDiagnosisOrderConcept(diagnosisOrder);
         diagnosisMetadata.setDiagnosisCertaintyConcept(diagnosisCertainty);
 
+        patientDied = buildConcept(13, "Patient Died");
+
+        disposition = buildConcept(14, "Disposition");
+        disposition.addAnswer(new ConceptAnswer(patientDied));
+
+        dispositionGroupingConcept = buildConcept(15, "Grouping for Disposition");
+        dispositionGroupingConcept.addSetMember(disposition);
+
+        DispositionDescriptor dispositionDescriptor = new DispositionDescriptor();
+        dispositionDescriptor.setDispositionSetConcept(dispositionGroupingConcept);
+        dispositionDescriptor.setDispositionConcept(disposition);
+
         emrApiProperties = mock(EmrApiProperties.class);
         when(emrApiProperties.getConsultFreeTextCommentsConcept()).thenReturn(freeTextComments);
         when(emrApiProperties.getDiagnosisMetadata()).thenReturn(diagnosisMetadata);
+        when(emrApiProperties.getDispositionDescriptor()).thenReturn(dispositionDescriptor);
         when(emrApiProperties.getClinicianEncounterRole()).thenReturn(clinician);
 
         encounterService = mock(EncounterService.class);
@@ -160,9 +192,28 @@ public class ConsultServiceTest {
             }
         });
 
+        patientService = mock(PatientService.class);
+        when(patientService.savePatient(any(Patient.class))).thenAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                return invocation.getArguments()[0];
+            }
+        });
+
+        String snomedDiedCode = "SNOMED CT:397709008";
+        emrConceptService = mock(EmrConceptService.class);
+        when(emrConceptService.getConcept(snomedDiedCode)).thenReturn(patientDied);
+
         consultService = new ConsultServiceImpl();
         consultService.setEncounterService(encounterService);
         consultService.setEmrApiProperties(emrApiProperties);
+        consultService.setEmrConceptService(emrConceptService);
+
+        List<Action> actions = new ArrayList<Action>();
+        actions.add(new MarkPatientDeadAction());
+        death = new Disposition("patientDied", "Patient Died", snomedDiedCode, actions, null);
+
+        PowerMockito.when(Context.getPatientService()).thenReturn(patientService);
     }
 
     private Concept buildConcept(int conceptId, String name) {
@@ -222,6 +273,29 @@ public class ConsultServiceTest {
     }
 
     @Test
+    public void saveConsultNote_shouldHandleDisposition() {
+        Map<String, String[]> requestParameters = new HashMap<String, String[]>();
+        String deathDate = "2013-04-05";
+        requestParameters.put("deathDate", new String[]{deathDate});
+
+        ConsultNote consultNote = buildConsultNote();
+        consultNote.addPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer("Doesn't matter for this test")));
+        consultNote.setDisposition(death);
+        consultNote.setDispositionParameters(requestParameters);
+
+        Encounter encounter = consultService.saveConsultNote(consultNote);
+
+        assertNotNull(encounter);
+        verify(encounterService).saveEncounter(encounter);
+        Set<Obs> obsAtTopLevel = encounter.getObsAtTopLevel(false);
+        assertThat(obsAtTopLevel, hasItem((Matcher) dispositionMatcher(patientDied)));
+
+        verify(patientService).savePatient(patient);
+        assertThat(patient.isDead(), is(true));
+        assertThat(patient.getDeathDate(), is(DateUtil.parseDate(deathDate, "yyyy-MM-dd")));
+    }
+
+    @Test
     public void saveConsultNote_shouldHandleAllFields() {
         String nonCodedAnswer = "New disease we've never heard of";
         final String comments = "This is a very interesting case";
@@ -268,11 +342,6 @@ public class ConsultServiceTest {
             @Override
             public boolean matches(Object o) {
                 Obs obsGroup = (Obs) o;
-                if (obsGroup.getConcept().equals(diagnosisGroupingConcept) &&
-                        containsInAnyOrder(new CodedObsMatcher(diagnosisOrder, order),
-                                new CodedObsMatcher(diagnosisCertainty, certainty),
-                                new CodedObsMatcher(codedDiagnosis, diagnosis, specificName)).matches(obsGroup.getGroupMembers())) {
-                }
                 return obsGroup.getConcept().equals(diagnosisGroupingConcept) &&
                         containsInAnyOrder(new CodedObsMatcher(diagnosisOrder, order),
                                 new CodedObsMatcher(diagnosisCertainty, certainty),
@@ -291,15 +360,22 @@ public class ConsultServiceTest {
             @Override
             public boolean matches(Object o) {
                 Obs obsGroup = (Obs) o;
-                if (obsGroup.getConcept().equals(diagnosisGroupingConcept) &&
-                        containsInAnyOrder(new CodedObsMatcher(diagnosisOrder, order),
-                                new CodedObsMatcher(diagnosisCertainty, certainty),
-                                new TextObsMatcher(nonCodedDiagnosis, nonCodedAnswer)).matches(obsGroup.getGroupMembers())) {
-                }
                 return obsGroup.getConcept().equals(diagnosisGroupingConcept) &&
                         containsInAnyOrder(new CodedObsMatcher(diagnosisOrder, order),
                                 new CodedObsMatcher(diagnosisCertainty, certainty),
                                 new TextObsMatcher(nonCodedDiagnosis, nonCodedAnswer)).matches(obsGroup.getGroupMembers());
+            }
+        };
+    }
+
+    private ArgumentMatcher<Obs> dispositionMatcher(Concept dispositionConcept) {
+        return new ArgumentMatcher<Obs>() {
+            @Override
+            public boolean matches(Object o) {
+                Obs obsGroup = (Obs) o;
+                return obsGroup.getConcept().equals(dispositionGroupingConcept) &&
+                        containsInAnyOrder(new CodedObsMatcher(disposition, patientDied))
+                                .matches(obsGroup.getGroupMembers());
             }
         };
     }

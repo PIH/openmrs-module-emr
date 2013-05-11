@@ -19,8 +19,12 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
+import org.openmrs.module.emrapi.disposition.Disposition;
+
+import java.util.HashMap;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -34,10 +38,17 @@ public class ConsultNoteTest {
         String answer2 = "Another disease";
         String answer3 = "A third disease";
 
+        Disposition died = new Disposition("died", "emr.disposition.died", "SNOMED CT:397709008", null, null);
+        HashMap<String, String[]> map = new HashMap<String, String[]>();
+        map.put("deathDate", new String[] { "2013-02-01" });
+
         ConsultNote consultNote = new ConsultNote();
         consultNote.addPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(answer1)));
         consultNote.addPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(answer2)));
         consultNote.addSecondaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(answer3)));
+
+        consultNote.setDisposition(died);
+        consultNote.setDispositionParameters(map);
 
         assertThat(consultNote.getDiagnoses().size(), is(3));
 
@@ -47,6 +58,8 @@ public class ConsultNoteTest {
 
         assertThat(consultNote.getDiagnoses(Diagnosis.Order.SECONDARY).size(), is(1));
         assertThat(consultNote.getDiagnoses(Diagnosis.Order.SECONDARY).get(0), matchesDiagnosis(Diagnosis.Order.SECONDARY, Diagnosis.Certainty.PRESUMED, answer3));
+
+        assertThat(consultNote.getDisposition(), notNullValue());
     }
 
     private Matcher<Diagnosis> matchesDiagnosis(final Diagnosis.Order order, final Diagnosis.Certainty certainty, final String nonCodedAnswer) {

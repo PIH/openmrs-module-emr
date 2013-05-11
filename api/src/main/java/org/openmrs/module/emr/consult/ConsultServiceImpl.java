@@ -20,8 +20,12 @@ import org.openmrs.Obs;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.concept.EmrConceptService;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
+import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
+import org.openmrs.module.emrapi.disposition.actions.Action;
+import org.openmrs.module.emrapi.encounter.EncounterDomainWrapper;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -36,6 +40,8 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
 
     private EncounterService encounterService;
 
+    private EmrConceptService emrConceptService;
+
     @Transactional
     @Override
     public Encounter saveConsultNote(ConsultNote consultNote) {
@@ -44,6 +50,7 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
         }
 
         DiagnosisMetadata diagnosisMetadata = emrApiProperties.getDiagnosisMetadata();
+        DispositionDescriptor dispositionDescriptor = emrApiProperties.getDispositionDescriptor();
 
         Encounter encounter = new Encounter();
         encounter.setEncounterDatetime(new Date());
@@ -59,6 +66,16 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
 
         if (StringUtils.hasText(consultNote.getComments())) {
             encounter.addObs(buildTextObs(emrApiProperties.getConsultFreeTextCommentsConcept(), consultNote.getComments()));
+        }
+
+        EncounterDomainWrapper encounterDomainWrapper = new EncounterDomainWrapper(encounter);
+
+        if (consultNote.getDisposition() != null) {
+            Obs dispositionGroup = dispositionDescriptor.buildObsGroup(consultNote.getDisposition(), emrConceptService);
+            for (Action action : consultNote.getDisposition().getActions()) {
+                action.action(encounterDomainWrapper, dispositionGroup, consultNote.getDispositionParameters());
+            }
+            encounter.addObs(dispositionGroup);
         }
 
         return encounterService.saveEncounter(encounter);
@@ -77,6 +94,10 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
 
     public void setEncounterService(EncounterService encounterService) {
         this.encounterService = encounterService;
+    }
+
+    public void setEmrConceptService(EmrConceptService emrConceptService) {
+        this.emrConceptService = emrConceptService;
     }
 
 }

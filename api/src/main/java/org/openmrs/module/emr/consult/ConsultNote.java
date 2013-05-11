@@ -18,9 +18,11 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
+import org.openmrs.module.emrapi.disposition.Disposition;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a note written by a clinician after performing a consultation on a patient
@@ -36,6 +38,10 @@ public class ConsultNote {
     private String comments;
 
     private Provider clinician;
+
+    private Disposition disposition;
+
+    private Map<String, String[]> dispositionParameters;
 
     public Patient getPatient() {
         return patient;
@@ -105,6 +111,22 @@ public class ConsultNote {
 
     public void setClinician(Provider clinician) {
         this.clinician = clinician;
+    }
+
+    public Disposition getDisposition() {
+        return disposition;
+    }
+
+    public void setDisposition(Disposition disposition) {
+        this.disposition = disposition;
+    }
+
+    public Map<String, String[]> getDispositionParameters() {
+        return dispositionParameters;
+    }
+
+    public void setDispositionParameters(Map<String, String[]> dispositionParameters) {
+        this.dispositionParameters = dispositionParameters;
     }
 
 }

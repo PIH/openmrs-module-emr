@@ -75,8 +75,8 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             </p>
             <p>
             <label for="dispositions">${ ui.message("emr.consult.disposition") }</label>
-            <select id="dispositions">
-
+            <select id="dispositions" name="disposition">
+                <option value=""></option>
                 <% dispositions.each { disposition -> %>
                     <option value="${disposition.uuid}">${ui.message(disposition.name)}</option>
                 <% } %>

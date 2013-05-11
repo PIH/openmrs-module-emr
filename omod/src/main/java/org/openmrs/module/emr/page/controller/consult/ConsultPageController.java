@@ -33,9 +33,11 @@ import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -43,7 +45,7 @@ import java.util.List;
 public class ConsultPageController {
 
     public void get(@RequestParam("patientId") Patient patient,
-                    @SpringBean() DispositionFactory factory,
+                    @SpringBean DispositionFactory factory,
                     UiUtils ui,
                     PageModel model) throws IOException {
         model.addAttribute("dispositions", factory.getDispositions());
@@ -51,13 +53,16 @@ public class ConsultPageController {
 
     public String post(@RequestParam("patientId") Patient patient,
                        @RequestParam("diagnosis") List<String> diagnoses, // each string is json, like {"certainty":"PRESUMED","diagnosisOrder":"PRIMARY","diagnosis":"ConceptName:840"}
+                       @RequestParam(required = false, value = "disposition") String disposition, // a unique key for a disposition
                        @RequestParam(required = false, value = "freeTextComments") String freeTextComments,
                        HttpSession httpSession,
+                       HttpServletRequest request,
                        @SpringBean("consultService") ConsultService consultService,
                        @SpringBean("conceptService") ConceptService conceptService,
+                       @SpringBean DispositionFactory dispositionFactory,
                        @SpringBean EmrProperties emrProperties,
                        EmrContext emrContext,
-                       UiUtils ui) {
+                       UiUtils ui) throws IOException {
         ConsultNote consultNote = new ConsultNote();
         consultNote.setPatient(patient);
         for (String diagnosisJson : diagnoses) {
@@ -78,6 +83,11 @@ public class ConsultPageController {
         }
         consultNote.setClinician(emrContext.getCurrentProvider());
         consultNote.setEncounterLocation(emrContext.getSessionLocation());
+
+        if (StringUtils.hasText(disposition)) {
+            consultNote.setDisposition(dispositionFactory.getDispositionByUniqueId(disposition));
+            consultNote.setDispositionParameters((Map<String, String[]>) request.getParameterMap());
+        }
 
         consultService.saveConsultNote(consultNote);
 
