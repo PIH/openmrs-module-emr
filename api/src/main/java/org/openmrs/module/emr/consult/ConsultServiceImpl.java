@@ -24,7 +24,7 @@ import org.openmrs.module.emrapi.concept.EmrConceptService;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
-import org.openmrs.module.emrapi.disposition.actions.Action;
+import org.openmrs.module.emrapi.disposition.actions.DispositionAction;
 import org.openmrs.module.emrapi.encounter.EncounterDomainWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -78,7 +78,7 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
         if (consultNote.getDisposition() != null) {
             Obs dispositionGroup = dispositionDescriptor.buildObsGroup(consultNote.getDisposition(), emrConceptService);
             for (String actionBeanName : consultNote.getDisposition().getActions()) {
-                Action action = applicationContext.getBean(actionBeanName, Action.class);
+                DispositionAction action = applicationContext.getBean(actionBeanName, DispositionAction.class);
                 action.action(encounterDomainWrapper, dispositionGroup, consultNote.getDispositionParameters());
             }
             encounter.addObs(dispositionGroup);

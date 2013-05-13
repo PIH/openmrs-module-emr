@@ -46,8 +46,8 @@ import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
-import org.openmrs.module.emrapi.disposition.actions.Action;
-import org.openmrs.module.emrapi.disposition.actions.MarkPatientDeadAction;
+import org.openmrs.module.emrapi.disposition.actions.DispositionAction;
+import org.openmrs.module.emrapi.disposition.actions.MarkPatientDeadDispositionAction;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.util.OpenmrsUtil;
 import org.powermock.api.mockito.PowerMockito;
@@ -204,11 +204,11 @@ public class ConsultServiceTest {
         emrConceptService = mock(EmrConceptService.class);
         when(emrConceptService.getConcept(snomedDiedCode)).thenReturn(patientDied);
 
-        MarkPatientDeadAction markPatientDeadAction = new MarkPatientDeadAction();
+        MarkPatientDeadDispositionAction markPatientDeadAction = new MarkPatientDeadDispositionAction();
         markPatientDeadAction.setPatientService(patientService);
 
         ApplicationContext applicationContext = mock(ApplicationContext.class);
-        when(applicationContext.getBean("markPatientDeadAction", Action.class)).thenReturn(markPatientDeadAction);
+        when(applicationContext.getBean("markPatientDeadAction", DispositionAction.class)).thenReturn(markPatientDeadAction);
 
         consultService = new ConsultServiceImpl();
         consultService.setEncounterService(encounterService);
