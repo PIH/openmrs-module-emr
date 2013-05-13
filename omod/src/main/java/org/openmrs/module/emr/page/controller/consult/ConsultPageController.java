@@ -14,10 +14,20 @@
 
 package org.openmrs.module.emr.page.controller.consult;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.openmrs.Concept;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
+import org.openmrs.module.appframework.domain.Extension;
+import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
@@ -33,22 +43,41 @@ import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-/**
- *
- */
 public class ConsultPageController {
+
+    private static final String CONSULT_NOTE_CONFIG_EXTENSION = "org.openmrs.referenceapplication.consult.note.config";
 
     public void get(@RequestParam("patientId") Patient patient,
                     @SpringBean DispositionFactory factory,
-                    UiUtils ui,
-                    PageModel model) throws IOException {
+                    @RequestParam("config") String configExtensionId,
+                    @SpringBean("conceptService") ConceptService conceptService,
+                    @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService,
+                    PageModel model) {
+
+        Extension wantedConfig = getWantedConfig(configExtensionId, appFrameworkService);
+        List<String> additionalFields = (List<String>) wantedConfig.getExtensionParams().get(
+            "additionalFields");
+
+        List<Concept> additionalConcepts = new LinkedList<Concept>();
+        for (String conceptId : additionalFields) {
+            additionalConcepts.add(conceptService.getConcept(conceptId));
+        }
+
         model.addAttribute("dispositions", factory.getDispositions());
+        model.addAttribute("additionalConcepts", additionalConcepts);
+    }
+
+    private Extension getWantedConfig(String configExtensionId, AppFrameworkService appFrameworkService) {
+        Extension wantedConfig = null;
+        List<Extension> extensions = appFrameworkService.getExtensionsForCurrentUser(CONSULT_NOTE_CONFIG_EXTENSION);
+        for (Extension extension : extensions) {
+            if (extension.getId().equals(configExtensionId)) {
+                wantedConfig = extension;
+                break;
+            }
+        }
+
+        return wantedConfig;
     }
 
     public String post(@RequestParam("patientId") Patient patient,

@@ -31,5 +31,22 @@
         "extensionParams": {
             "featureToggle": "myAccountFeature"
         }
+    },
+    {
+        "id": "emr.clinic.consulte.note",
+        "extensionPointId": "org.openmrs.referenceapplication.consult.note.config",
+        "type": "config",
+        "extensionParams": {
+        }
+    },
+    {
+        "id": "emr.ed.consulte.note",
+        "extensionPointId": "org.openmrs.referenceapplication.consult.note.config",
+        "type": "config",
+        "extensionParams": {
+            "additionalFields": [
+                "concept:123"
+            ]
+        }
     }
 ]

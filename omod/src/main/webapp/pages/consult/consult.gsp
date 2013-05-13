@@ -92,6 +92,17 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 <% } %>
             <% } %>
 
+            <% additionalConcepts.each { concept -> %>
+                <p>
+                    <label for="${ concept.getId() }">${ ui.format(concept) }</label>
+                    <select name="additionalObs.0">
+                        <% concept.getAnswers().each { answer -> %>
+                            <option value="${ answer.getConceptAnswerId() }">${ ui.format(answer.getConcept()) }</option>
+                        <% } %>
+                    </select>
+                </p>
+            <% } %>
+
             <p>
                 <label for="free-text-comments">${ ui.message("emr.consult.freeTextComments") }</label>
                 <textarea id="free-text-comments" rows="5" name="freeTextComments"></textarea>

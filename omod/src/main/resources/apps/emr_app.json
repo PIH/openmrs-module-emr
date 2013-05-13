@@ -1,0 +1,10 @@
+[
+    {
+        "id": "emr.consult.note.config",
+        "extensionPoints": [
+            {
+                "id": "org.openmrs.referenceapplication.consult.note.config"
+            }
+        ]
+    }
+]

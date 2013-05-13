@@ -28,11 +28,21 @@
         <property name="iconUrl" value="icon-folder-open"/>
     </bean>
 
-    <bean id="emrConsultationTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
+    <bean id="emrClinicConsultationTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
         <property name="id" value="emr.consult"/>
-        <property name="labelCode" value="emr.consult.title"/>
-        <property name="url" value="emr/consult/consult.page"/>
+        <property name="labelCode" value="emr.clinic.consult.title"/>
+        <property name="url" value="emr/consult/consult.page?config=emr.clinic.consult.note"/>
         <property name="priority" value="30.0"/>
+        <property name="extensionPoint" value="patient.visits.active.actions"/>
+        <property name="iconUrl" value="icon-stethoscope"/>
+        <property name="requiredPrivilegeName" value="Task: emr.enterClinicalForms"/>
+    </bean>
+
+    <bean id="emrEDConsultationTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
+        <property name="id" value="emr.consult"/>
+        <property name="labelCode" value="emr.ed.consult.title"/>
+        <property name="url" value="emr/consult/consult.page?config=emr.ed.consult.note"/>
+        <property name="priority" value="31.0"/>
         <property name="extensionPoint" value="patient.visits.active.actions"/>
         <property name="iconUrl" value="icon-stethoscope"/>
         <property name="requiredPrivilegeName" value="Task: emr.enterClinicalForms"/>
