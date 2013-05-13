@@ -97,7 +97,7 @@
                 }
             }
 
-            // only do the validation if all the beforeValidationk functions returned "true"
+            // only do the validation if all the beforeValidation functions returned "true"
             if (state_beforeValidation){
                 var anyErrors = findAndHighlightErrors();
 
@@ -145,7 +145,7 @@
         // only do the submit if all the beforeSubmit functions returned "true"
         if (state_beforeSubmit){
             var form = jq('#htmlform');
-            // TODO hide all errors
+            jq('.error').hide();
             //ui.openLoadingDialog('Submitting Form');
             jq.post(form.attr('action'), form.serialize(), function(result) {
                 if (result.success) {
@@ -163,6 +163,8 @@
                     for (key in result.errors) {
                         showError(key, result.errors[key]);
                     }
+                    // if there are errors, scroll to the first error (with 50 pixel padding)
+                    jq('body').scrollTop(jq('.error:visible:first').parent().offset().top - 50);
                     //ui.enableConfirmBeforeNavigating();
                 }
             }, 'json')
