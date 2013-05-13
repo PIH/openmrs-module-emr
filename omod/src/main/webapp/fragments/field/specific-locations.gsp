@@ -2,10 +2,12 @@
     config.require("uuid")
     config.require("id")
     config.require("label")
-    def date = new java.text.SimpleDateFormat("yyyy-MM-dd").format(new Date());
 %>
 
 <p id="${config.uuid}" style="display: none">
     <label for="${ config.id }-field">${ ui.message(config.label) }</label>
-    <input type="date" id="${ config.id }-field" name="${ config.id }" value="${date}"  />
+    <select id="locations-field" name="locations-field">
+        <option value="8">Emergency</option>
+        <option value="Others">Others</option>
+    </select>
 </p>
