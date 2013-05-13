@@ -45,7 +45,7 @@
     function submitHtmlForm() {
         if (!tryingToSubmit) {
             tryingToSubmit = true;
-            //ui.disableConfirmBeforeNavigating();
+            disableSubmitButton();
             jq.getJSON(emr.fragmentActionLink('emr', 'htmlform/enterHtmlForm', 'checkIfLoggedIn'), function(result) {
                 checkIfLoggedInAndErrorsCallback(result.isLoggedIn);
             });
@@ -103,6 +103,7 @@
 
                 if (anyErrors) {
                     tryingToSubmit = false;
+                    enableSubmitButton();
                     return;
                 }else{
                     doSubmitHtmlForm();
@@ -165,12 +166,12 @@
                     }
                     // if there are errors, scroll to the first error (with 50 pixel padding)
                     jq('body').scrollTop(jq('.error:visible:first').parent().offset().top - 50);
-                    //ui.enableConfirmBeforeNavigating();
+                    enableSubmitButton();
                 }
             }, 'json')
                     .error(function(jqXHR, textStatus, errorThrown) {
                         //ui.closeLoadingDialog();
-                        //ui.enableConfirmBeforeNavigating();
+                        enableSubmitButton();
                         emr.errorAlert('Unexpected error, please contact your System Administrator: ' + textStatus);
                     });
         }
@@ -184,6 +185,18 @@
     function cancelDeleteForm() {
         jq('#confirmDeleteFormPopup').hide();
     }
+
+    // both these methods assume that the default case for a submit button is being used
+    function disableSubmitButton() {
+        jq('.submitButton').attr("disabled", "disabled");
+        jq('.submitButton').addClass("disabled");
+    }
+
+    function enableSubmitButton() {
+        jq('.submitButton').removeAttr("disabled");
+        jq('.submitButton').removeClass("disabled");
+    }
+
 </script>
 
 <div id="${ config.id }" <% if (config.style) { %>style="${ config.style }"<% } %> <% if (config.cssClass) { %>class="${config.cssClass}"<% } %>>
