@@ -31,7 +31,6 @@ import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
-import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.consult.ConsultNote;
 import org.openmrs.module.emr.consult.ConsultService;
 import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
@@ -53,15 +52,16 @@ public class ConsultPageController {
                     @SpringBean DispositionFactory factory,
                     @SpringBean("conceptService") ConceptService conceptService,
                     @MethodParam("getConfigFromExtension") Extension config,
-                    UiUtils ui,
                     PageModel model) {
 
         List<String> additionalConceptUuids = (List<String>) config.getExtensionParams().get(
             "additionalConcepts");
 
         List<Concept> additionalConcepts = new LinkedList<Concept>();
-        for (String conceptUuid : additionalConceptUuids) {
-            additionalConcepts.add(conceptService.getConceptByUuid(conceptUuid));
+        if (additionalConceptUuids != null) {
+            for (String conceptUuid : additionalConceptUuids) {
+                additionalConcepts.add(conceptService.getConceptByUuid(conceptUuid));
+            }
         }
 
         model.addAttribute("dispositions", factory.getDispositions());
@@ -85,14 +85,13 @@ public class ConsultPageController {
     public String post(@RequestParam("patientId") Patient patient,
                        @RequestParam("diagnosis") List<String> diagnoses, // each string is json, like {"certainty":"PRESUMED","diagnosisOrder":"PRIMARY","diagnosis":"ConceptName:840"}
                        @RequestParam(required = false, value = "disposition") String disposition, // a unique key for a disposition
-                       @RequestParam("additionalObs") List<String> additionalObs,
+                       @RequestParam(value = "additionalObs", required = false) List<String> additionalObs,
                        @RequestParam(required = false, value = "freeTextComments") String freeTextComments,
                        HttpSession httpSession,
                        HttpServletRequest request,
                        @SpringBean("consultService") ConsultService consultService,
                        @SpringBean("conceptService") ConceptService conceptService,
                        @SpringBean DispositionFactory dispositionFactory,
-                       @SpringBean EmrProperties emrProperties,
                        EmrContext emrContext,
                        UiUtils ui) throws IOException {
         ConsultNote consultNote = new ConsultNote();

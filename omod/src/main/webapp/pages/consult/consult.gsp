@@ -97,7 +97,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                     <label for="additionalObs">${ ui.format(concept) }</label>
                     <select id="additionalObs" name="additionalObs">
                         <% concept.getAnswers().each { answer -> %>
-                            <option value="{'concept':'${ answer.getConcept().getUuid() }', 'value_coded': '${ answer.getAnswerConcept().getUuid() }'">${ ui.format(answer.getAnswerConcept()) }</option>
+                            <option value='{"concept":"${ answer.getConcept().getUuid() }", "value_coded": "${ answer.getAnswerConcept().getUuid() }"}'>${ ui.format(answer.getAnswerConcept()) }</option>
                         <% } %>
                     </select>
                 </p>

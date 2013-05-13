@@ -28,7 +28,6 @@ import org.openmrs.Provider;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
-import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.TestUiUtils;
 import org.openmrs.module.emr.consult.ConsultNote;
 import org.openmrs.module.emr.consult.ConsultService;
@@ -59,9 +58,6 @@ public class ConsultPageControllerTest {
 
     @Mock
     ConceptService conceptService;
-
-    @Mock
-    EmrProperties emrProperties;
 
     @Before
     public void initMocks() {
@@ -112,7 +108,7 @@ public class ConsultPageControllerTest {
                 consultService,
                 conceptService,
                 dispositionFactory,
-                emrProperties, emrContext, new TestUiUtils());
+                emrContext, new TestUiUtils());
 
         assertThat(result, startsWith("redirect:"));
         assertThat(httpSession.getAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE), notNullValue());
@@ -177,7 +173,7 @@ public class ConsultPageControllerTest {
             consultService,
             conceptService,
             dispositionFactory,
-            emrProperties, emrContext, new TestUiUtils());
+            emrContext, new TestUiUtils());
 
         final Obs traumaObs = new Obs();
         traumaObs.setConcept(conceptForAdditionalObs);
