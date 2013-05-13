@@ -14,15 +14,16 @@
 
 package org.openmrs.module.emr.consult;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.openmrs.Location;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.disposition.Disposition;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Represents a note written by a clinician after performing a consultation on a patient
@@ -34,6 +35,7 @@ public class ConsultNote {
     private Location encounterLocation;
 
     private List<Diagnosis> diagnoses = new ArrayList<Diagnosis>();
+    private List<Obs> additionalObs = new ArrayList<Obs>();
 
     private String comments;
 
@@ -129,4 +131,11 @@ public class ConsultNote {
         this.dispositionParameters = dispositionParameters;
     }
 
+    public List<Obs> getAdditionalObs() {
+        return additionalObs;
+    }
+
+    public void addAdditionalObs(Obs obs) {
+        additionalObs.add(obs);
+    }
 }

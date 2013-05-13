@@ -33,19 +33,19 @@
         }
     },
     {
-        "id": "emr.clinic.consulte.note",
+        "id": "emr.clinic.consult.note",
         "extensionPointId": "org.openmrs.referenceapplication.consult.note.config",
         "type": "config",
         "extensionParams": {
         }
     },
     {
-        "id": "emr.ed.consulte.note",
+        "id": "emr.ed.consult.note",
         "extensionPointId": "org.openmrs.referenceapplication.consult.note.config",
         "type": "config",
         "extensionParams": {
-            "additionalFields": [
-                "concept:123"
+            "additionalConcepts": [
+                "7c5ef8cd-3c2b-46c1-b995-20e52c11ce94"
             ]
         }
     }

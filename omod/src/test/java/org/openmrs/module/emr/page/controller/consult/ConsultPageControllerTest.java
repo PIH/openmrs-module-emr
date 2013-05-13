@@ -21,6 +21,7 @@ import org.mockito.MockitoAnnotations;
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.Location;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PersonName;
 import org.openmrs.Provider;
@@ -104,6 +105,7 @@ public class ConsultPageControllerTest {
         String result = controller.post(patient,
                 asList(diagnosisJson1, diagnosisJson2, diagnosisJson3),
                 "", // no disposition
+                null,
                 freeTextComments,
                 httpSession,
                 httpServletRequest,
@@ -125,6 +127,70 @@ public class ConsultPageControllerTest {
                         actual.getComments().equals(freeTextComments) &&
                         actual.getEncounterLocation().equals(sessionLocation) &&
                         actual.getClinician().equals(currentProvider);
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSubmitEDConsultNoteWithAdditionalObservations() throws Exception {
+        int primaryConceptNameId = 2460;
+
+        String diagnosisJson = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"PRIMARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.CONCEPT_NAME_PREFIX + primaryConceptNameId + "\" }";
+        String additionalObsJson = "{ \"concept\": \"uuid-123\", \"value_coded\": \"uuid-answer-123\"}";
+
+        Concept conceptFor2460 = new Concept();
+        final ConceptName conceptName2460 = new ConceptName();
+        conceptName2460.setConcept(conceptFor2460);
+
+        when(conceptService.getConceptName(primaryConceptNameId)).thenReturn(conceptName2460);
+
+        final Concept conceptForAdditionalObs = new Concept();
+        conceptForAdditionalObs.setUuid("uuid-123");
+
+        final Concept answerForAdditionalObs = new Concept();
+        answerForAdditionalObs.setUuid("uuid-answer-123");
+
+        when(conceptService.getConceptByUuid("uuid-123")).thenReturn(conceptForAdditionalObs);
+        when(conceptService.getConceptByUuid("uuid-answer-123")).thenReturn(answerForAdditionalObs);
+
+        Patient patient = new Patient();
+        patient.addName(new PersonName("Jean", "Paul", "Marie"));
+        final Location sessionLocation = new Location();
+        final Provider currentProvider = new Provider();
+
+        DispositionFactory dispositionFactory = mock(DispositionFactory.class);
+
+        EmrContext emrContext = new EmrContext();
+        emrContext.setSessionLocation(sessionLocation);
+        emrContext.setCurrentProvider(currentProvider);
+
+        MockHttpSession httpSession = new MockHttpSession();
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        ConsultPageController controller = new ConsultPageController();
+        String result = controller.post(patient,
+            asList(diagnosisJson),
+            "",
+            asList(additionalObsJson),
+            "",
+            httpSession,
+            httpServletRequest,
+            consultService,
+            conceptService,
+            dispositionFactory,
+            emrProperties, emrContext, new TestUiUtils());
+
+        final Obs traumaObs = new Obs();
+        traumaObs.setConcept(conceptForAdditionalObs);
+        traumaObs.setValueCoded(answerForAdditionalObs);
+
+        verify(consultService).saveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
+            @Override
+            public boolean matches(Object o) {
+                ConsultNote actual = (ConsultNote) o;
+                Obs actualObs = actual.getAdditionalObs().get(0);
+                return containsInAnyOrder(new Diagnosis(new CodedOrFreeTextAnswer(conceptName2460), Diagnosis.Order.PRIMARY)).matches(actual.getDiagnoses()) &&
+                    actual.getAdditionalObs().size() == 1 && actualObs.getConcept() == conceptForAdditionalObs &&
+                    actualObs.getValueCoded() == answerForAdditionalObs;
             }
         }));
     }

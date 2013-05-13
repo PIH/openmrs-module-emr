@@ -14,6 +14,12 @@
 
 package org.openmrs.module.emr.consult;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,12 +60,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.context.ApplicationContext;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
@@ -333,6 +333,31 @@ public class ConsultServiceTest {
                         return obs.getConcept().equals(freeTextComments) && obs.getValueText().equals(comments);
                     }
                 }));
+    }
+
+    @Test
+    public void saveConsultNote_shouldSaveAdditionalObservations() throws Exception {
+        ConsultNote consultNote = buildConsultNote();
+        consultNote.addPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(malaria)));
+
+        Concept trauma = buildConcept(111, "trauma");
+        Concept accident = buildConcept(222, "accident");
+        Obs additionalObs = new Obs();
+        additionalObs.setConcept(trauma);
+        additionalObs.setValueCoded(accident);
+
+        consultNote.addAdditionalObs(additionalObs);
+
+        Encounter encounter = consultService.saveConsultNote(consultNote);
+
+        assertNotNull(encounter);
+        verify(encounterService).saveEncounter(encounter);
+
+        Set<Obs> obsAtTopLevel = encounter.getObsAtTopLevel(false);
+
+        assertThat(obsAtTopLevel, containsInAnyOrder(
+            diagnosisMatcher(primary, presumed, malaria, null),
+            new CodedObsMatcher(trauma, accident)));
     }
 
     private ConsultNote buildConsultNote() {

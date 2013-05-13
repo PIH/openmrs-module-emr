@@ -14,6 +14,8 @@
 
 package org.openmrs.module.emr.consult;
 
+import java.util.Date;
+
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
@@ -32,8 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
-import java.util.Date;
 
 /**
  *
@@ -71,6 +71,10 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
 
         for (Diagnosis diagnosis : consultNote.getDiagnoses()) {
             encounter.addObs(diagnosisMetadata.buildDiagnosisObsGroup(diagnosis));
+        }
+
+        for (Obs observation : consultNote.getAdditionalObs()) {
+            encounter.addObs(observation);
         }
 
         if (StringUtils.hasText(consultNote.getComments())) {
