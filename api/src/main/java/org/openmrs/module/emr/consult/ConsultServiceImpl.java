@@ -26,6 +26,8 @@ import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
 import org.openmrs.module.emrapi.disposition.actions.Action;
 import org.openmrs.module.emrapi.encounter.EncounterDomainWrapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -35,6 +37,9 @@ import java.util.Date;
  *
  */
 public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultService {
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     private EmrApiProperties emrApiProperties;
 
@@ -72,7 +77,8 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
 
         if (consultNote.getDisposition() != null) {
             Obs dispositionGroup = dispositionDescriptor.buildObsGroup(consultNote.getDisposition(), emrConceptService);
-            for (Action action : consultNote.getDisposition().getActions()) {
+            for (String actionBeanName : consultNote.getDisposition().getActions()) {
+                Action action = applicationContext.getBean(actionBeanName, Action.class);
                 action.action(encounterDomainWrapper, dispositionGroup, consultNote.getDispositionParameters());
             }
             encounter.addObs(dispositionGroup);
@@ -98,6 +104,10 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
 
     public void setEmrConceptService(EmrConceptService emrConceptService) {
         this.emrConceptService = emrConceptService;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
 }

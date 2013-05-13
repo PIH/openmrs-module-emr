@@ -53,10 +53,10 @@ import org.openmrs.util.OpenmrsUtil;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.context.ApplicationContext;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -204,14 +204,19 @@ public class ConsultServiceTest {
         emrConceptService = mock(EmrConceptService.class);
         when(emrConceptService.getConcept(snomedDiedCode)).thenReturn(patientDied);
 
+        MarkPatientDeadAction markPatientDeadAction = new MarkPatientDeadAction();
+        markPatientDeadAction.setPatientService(patientService);
+
+        ApplicationContext applicationContext = mock(ApplicationContext.class);
+        when(applicationContext.getBean("markPatientDeadAction", Action.class)).thenReturn(markPatientDeadAction);
+
         consultService = new ConsultServiceImpl();
         consultService.setEncounterService(encounterService);
         consultService.setEmrApiProperties(emrApiProperties);
         consultService.setEmrConceptService(emrConceptService);
+        consultService.setApplicationContext(applicationContext);
 
-        List<Action> actions = new ArrayList<Action>();
-        actions.add(new MarkPatientDeadAction());
-        death = new Disposition("patientDied", "Patient Died", snomedDiedCode, actions, null);
+        death = new Disposition("patientDied", "Patient Died", snomedDiedCode, Arrays.asList("markPatientDeadAction"), null);
 
         PowerMockito.when(Context.getPatientService()).thenReturn(patientService);
     }

@@ -33,6 +33,8 @@ import org.openmrs.module.emr.consult.ConsultNote;
 import org.openmrs.module.emr.consult.ConsultService;
 import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
+import org.openmrs.module.emrapi.disposition.DispositionFactory;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 
 import static java.util.Arrays.asList;
@@ -41,6 +43,7 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.Mock;
@@ -93,14 +96,20 @@ public class ConsultPageControllerTest {
         emrContext.setSessionLocation(sessionLocation);
         emrContext.setCurrentProvider(currentProvider);
 
+        DispositionFactory dispositionFactory = mock(DispositionFactory.class);
+
         MockHttpSession httpSession = new MockHttpSession();
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         ConsultPageController controller = new ConsultPageController();
         String result = controller.post(patient,
                 asList(diagnosisJson1, diagnosisJson2, diagnosisJson3),
+                "", // no disposition
                 freeTextComments,
                 httpSession,
+                httpServletRequest,
                 consultService,
                 conceptService,
+                dispositionFactory,
                 emrProperties, emrContext, new TestUiUtils());
 
         assertThat(result, startsWith("redirect:"));
