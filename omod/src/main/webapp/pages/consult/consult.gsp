@@ -40,18 +40,11 @@
             return valid;
         });
 
+        hideAllDispositionSubquestionsExcept(null);
+
         jq('#dispositions').change(function(){
             var option_id = jq(this).val();
-
-            _.each(dispositions, function(id){
-                
-                if (option_id == id){
-                    jq("#" + id).show();
-                } else {
-                    jq("#" + id).hide();
-                }
-            })
-
+            hideAllDispositionSubquestionsExcept(option_id);
         })
 
         var dispositions = [];
@@ -85,13 +78,13 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
         </p>
 
             <% dispositions.each { disposition -> %>
-
-                <% disposition.clientSideActions.each { action -> %>
-
-                    ${ ui.includeFragment(action.module, action.fragment, action.fragmentConfig ) }
-
+                <% if (disposition.clientSideActions) { %>
+                    <div class="dispo-question" id="dispo-question-${ disposition.uuid }">
+                        <% disposition.clientSideActions.each { action -> %>
+                            ${ ui.includeFragment(action.module, action.fragment, action.fragmentConfig ) }
+                        <% } %>
+                    </div>
                 <% } %>
-
             <% } %>
             <p>
                 <label for="free-text-comments">${ ui.message("emr.consult.freeTextComments") }</label>

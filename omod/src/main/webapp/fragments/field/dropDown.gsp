@@ -3,7 +3,7 @@
     config.require("options")
 %>
 
-<p>
+<p id="${ config.id }">
     <label for="${ config.id }-field">
         ${ config.label ?: '' } <% if (config.classes && config.classes.contains("required")) { %><span>(${ ui.message("emr.formValidation.messages.requiredField.label") })</span><% } %>
     </label>

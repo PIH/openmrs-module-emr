@@ -192,3 +192,10 @@ ko.bindingHandlers.autocomplete = {
         $(element).val("");
     }
 }
+
+function hideAllDispositionSubquestionsExcept(dispoUuid) {
+    jq('.dispo-question').hide();
+    if (dispoUuid) {
+        jq('#dispo-question-' + dispoUuid).show();
+    }
+}

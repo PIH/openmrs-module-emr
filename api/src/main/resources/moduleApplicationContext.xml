@@ -99,7 +99,9 @@
         <property name="target">
             <bean class="org.openmrs.module.emr.consult.ConsultServiceImpl">
                 <property name="encounterService" ref="encounterService"/>
+                <property name="visitService" ref="visitService"/>
                 <property name="emrApiProperties" ref="emrApiProperties"/>
+                <property name="emrConceptService" ref="emrConceptService"/>
             </bean>
         </property>
         <property name="preInterceptors">
