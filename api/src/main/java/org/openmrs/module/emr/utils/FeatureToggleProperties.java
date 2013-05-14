@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 @Component("featureToggles")
 public class FeatureToggleProperties {
 
-    private static final String FEATURE_TOGGLE_PROPERTIES_ENV = "FEATURE_TOGGLE_PROPERTIES_ENV";
+    private static final String FEATURE_TOGGLE_PROPERTIES_ENV = "FEATURE_TOGGLE_PROPERTIES";
     private static final String FEATURE_TOGGLE_PROPERTIES_FILE_NAME = "feature_toggles.properties";
 
     private Log log = LogFactory.getLog(getClass());
