@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
@@ -52,20 +51,18 @@ public class ConsultPageController {
                     @SpringBean DispositionFactory factory,
                     @SpringBean("conceptService") ConceptService conceptService,
                     @MethodParam("getConfigFromExtension") Extension config,
-                    PageModel model) {
+                    PageModel model) throws IOException {
 
-        List<String> additionalConceptUuids = (List<String>) config.getExtensionParams().get(
-            "additionalConcepts");
+        List<Map<String, Object>> additionalObservationsConfig = (List<Map<String, Object>>) config.getExtensionParams().get(
+            "additionalObservationsConfig");
 
-        List<Concept> additionalConcepts = new LinkedList<Concept>();
-        if (additionalConceptUuids != null) {
-            for (String conceptUuid : additionalConceptUuids) {
-                additionalConcepts.add(conceptService.getConceptByUuid(conceptUuid));
-            }
+        if (additionalObservationsConfig == null) {
+            additionalObservationsConfig = new LinkedList<Map<String, Object>>();
         }
 
         model.addAttribute("dispositions", factory.getDispositions());
-        model.addAttribute("additionalConcepts", additionalConcepts);
+        model.addAttribute("additionalObservationsConfig", additionalObservationsConfig);
+        model.addAttribute("conceptService", conceptService);
     }
 
     public Extension getConfigFromExtension(@RequestParam("config") String configExtensionId,
@@ -85,7 +82,7 @@ public class ConsultPageController {
     public String post(@RequestParam("patientId") Patient patient,
                        @RequestParam("diagnosis") List<String> diagnoses, // each string is json, like {"certainty":"PRESUMED","diagnosisOrder":"PRIMARY","diagnosis":"ConceptName:840"}
                        @RequestParam(required = false, value = "disposition") String disposition, // a unique key for a disposition
-                       @RequestParam(value = "additionalObs", required = false) List<String> additionalObs,
+                       @RequestParam(required = false, value = "additionalObservations") List<String> additionalObs,
                        @RequestParam(required = false, value = "freeTextComments") String freeTextComments,
                        HttpSession httpSession,
                        HttpServletRequest request,
