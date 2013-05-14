@@ -14,6 +14,7 @@
 
 package org.openmrs.module.emr;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
@@ -85,6 +86,19 @@ public class EmrContext {
         this.sessionLocation = sessionLocation;
     }
 
+    public void setSessionAttribute(String attributeName, Object object){
+        if (session != null && StringUtils.isNotBlank(attributeName)  && object!=null) {
+            session.setAttribute(attributeName, object);
+        }
+    }
+
+    public Object getSessionAttribute(String attributeName){
+        Object object = null;
+        if (session != null && StringUtils.isNotBlank(attributeName)) {
+            object = session.getAttribute(attributeName);
+        }
+        return object;
+    }
     public Patient getCurrentPatient() {
         return currentPatient;
     }

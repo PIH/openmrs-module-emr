@@ -45,7 +45,7 @@
     function submitHtmlForm() {
         if (!tryingToSubmit) {
             tryingToSubmit = true;
-            //ui.disableConfirmBeforeNavigating();
+            disableSubmitButton();
             jq.getJSON(emr.fragmentActionLink('emr', 'htmlform/enterHtmlForm', 'checkIfLoggedIn'), function(result) {
                 checkIfLoggedInAndErrorsCallback(result.isLoggedIn);
             });
@@ -97,12 +97,13 @@
                 }
             }
 
-            // only do the validation if all the beforeValidationk functions returned "true"
+            // only do the validation if all the beforeValidation functions returned "true"
             if (state_beforeValidation){
                 var anyErrors = findAndHighlightErrors();
 
                 if (anyErrors) {
                     tryingToSubmit = false;
+                    enableSubmitButton();
                     return;
                 }else{
                     doSubmitHtmlForm();
@@ -145,7 +146,7 @@
         // only do the submit if all the beforeSubmit functions returned "true"
         if (state_beforeSubmit){
             var form = jq('#htmlform');
-            // TODO hide all errors
+            jq('.error').hide();
             //ui.openLoadingDialog('Submitting Form');
             jq.post(form.attr('action'), form.serialize(), function(result) {
                 if (result.success) {
@@ -163,12 +164,14 @@
                     for (key in result.errors) {
                         showError(key, result.errors[key]);
                     }
-                    //ui.enableConfirmBeforeNavigating();
+                    // if there are errors, scroll to the first error (with 50 pixel padding)
+                    jq('body').scrollTop(jq('.error:visible:first').parent().offset().top - 50);
+                    enableSubmitButton();
                 }
             }, 'json')
                     .error(function(jqXHR, textStatus, errorThrown) {
                         //ui.closeLoadingDialog();
-                        //ui.enableConfirmBeforeNavigating();
+                        enableSubmitButton();
                         emr.errorAlert('Unexpected error, please contact your System Administrator: ' + textStatus);
                     });
         }
@@ -182,6 +185,18 @@
     function cancelDeleteForm() {
         jq('#confirmDeleteFormPopup').hide();
     }
+
+    // both these methods assume that the default case for a submit button is being used
+    function disableSubmitButton() {
+        jq('.submitButton').attr("disabled", "disabled");
+        jq('.submitButton').addClass("disabled");
+    }
+
+    function enableSubmitButton() {
+        jq('.submitButton').removeAttr("disabled");
+        jq('.submitButton').removeClass("disabled");
+    }
+
 </script>
 
 <div id="${ config.id }" <% if (config.style) { %>style="${ config.style }"<% } %> <% if (config.cssClass) { %>class="${config.cssClass}"<% } %>>
