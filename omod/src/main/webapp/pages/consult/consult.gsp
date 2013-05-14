@@ -40,17 +40,19 @@
             return valid;
         });
 
-        hideAllDispositionSubquestionsExcept(null);
+        <% if (featureToggles.isFeatureEnabled("consultNoteDispositions")) { %>
+            showDispositionClientSideActions(null);
 
-        jq('#dispositions').change(function(){
-            var option_id = jq(this).val();
-            hideAllDispositionSubquestionsExcept(option_id);
-        })
+            jq('#dispositions').change(function(){
+                var option_id = jq(this).val();
+                showDispositionClientSideActions(option_id);
+            })
 
-        var dispositions = [];
-        <% dispositions.each { disposition -> %>
-            <% disposition.clientSideActions.each { action -> %>
-                dispositions.push("${disposition.uuid}")
+            var dispositions = [];
+            <% dispositions.each { disposition -> %>
+                <% disposition.clientSideActions.each { action -> %>
+                    dispositions.push("${disposition.uuid}")
+                <% } %>
             <% } %>
         <% } %>
     });
@@ -66,26 +68,30 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 <label for="diagnosis-search">${ ui.message("emr.consult.addDiagnosis") }</label>
                 <input id="diagnosis-search" type="text" placeholder="${ ui.message("emr.consult.addDiagnosis.placeholder") }" data-bind="autocomplete: searchTerm, itemFormatter: formatAutosuggestion"/>
             </p>
-            <p>
-            <label for="dispositions">${ ui.message("emr.consult.disposition") }</label>
-            <select id="dispositions" name="disposition">
-                <option value=""></option>
-                <% dispositions.each { disposition -> %>
-                    <option value="${disposition.uuid}">${ui.message(disposition.name)}</option>
-                <% } %>
 
-            </select>
-        </p>
-
-            <% dispositions.each { disposition -> %>
-                <% if (disposition.clientSideActions) { %>
-                    <div class="dispo-question" id="dispo-question-${ disposition.uuid }">
-                        <% disposition.clientSideActions.each { action -> %>
-                            ${ ui.includeFragment(action.module, action.fragment, action.fragmentConfig ) }
+            <% if (featureToggles.isFeatureEnabled("consultNoteDispositions")) { %>
+                <p>
+                    <label for="dispositions">${ ui.message("emr.consult.disposition") }</label>
+                    <select id="dispositions" name="disposition">
+                        <option value=""></option>
+                        <% dispositions.each { disposition -> %>
+                            <option value="${disposition.uuid}">${ui.message(disposition.name)}</option>
                         <% } %>
-                    </div>
+
+                    </select>
+                </p>
+
+                <% dispositions.each { disposition -> %>
+                    <% if (disposition.clientSideActions) { %>
+                        <div class="dispo-question" id="dispo-question-${ disposition.uuid }">
+                            <% disposition.clientSideActions.each { action -> %>
+                                ${ ui.includeFragment(action.module, action.fragment, action.fragmentConfig ) }
+                            <% } %>
+                        </div>
+                    <% } %>
                 <% } %>
             <% } %>
+
             <p>
                 <label for="free-text-comments">${ ui.message("emr.consult.freeTextComments") }</label>
                 <textarea id="free-text-comments" rows="5" name="freeTextComments"></textarea>

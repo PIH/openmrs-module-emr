@@ -193,7 +193,7 @@ ko.bindingHandlers.autocomplete = {
     }
 }
 
-function hideAllDispositionSubquestionsExcept(dispoUuid) {
+function showDispositionClientSideActions(dispoUuid) {
     jq('.dispo-question').hide();
     if (dispoUuid) {
         jq('#dispo-question-' + dispoUuid).show();
