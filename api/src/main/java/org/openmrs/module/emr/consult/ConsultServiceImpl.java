@@ -19,6 +19,7 @@ import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
+import org.openmrs.api.handler.EncounterVisitHandler;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.concept.EmrConceptService;
@@ -78,10 +79,13 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
 
         // normally we'd wait for encounterService.saveEncounter to assign a visit, but the actions may want to modify the visit,
         // so assign that now
-        encounterService.getActiveEncounterVisitHandler().beforeCreateEncounter(encounter);
-        if (encounter.getVisit() != null && encounter.getVisit().getVisitId() == null) {
-            //If we have been assigned a new visit, persist it.
-            visitService.saveVisit(encounter.getVisit());
+        EncounterVisitHandler activeEncounterVisitHandler = encounterService.getActiveEncounterVisitHandler();
+        if (activeEncounterVisitHandler != null) {
+            activeEncounterVisitHandler.beforeCreateEncounter(encounter);
+            if (encounter.getVisit() != null && encounter.getVisit().getVisitId() == null) {
+                //If we have been assigned a new visit, persist it.
+                visitService.saveVisit(encounter.getVisit());
+            }
         }
 
         EncounterDomainWrapper encounterDomainWrapper = new EncounterDomainWrapper(encounter);
