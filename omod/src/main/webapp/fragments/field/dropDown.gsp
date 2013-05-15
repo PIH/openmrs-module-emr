@@ -1,6 +1,14 @@
 <%
     config.require("formFieldName")
     config.require("options")
+
+    def selectDataBind = "";
+    if (config.depends && config.depends.disable) {
+        selectDataBind += "disable: ${ config.depends.variable }() == '${ config.depends.disable }'"
+    }
+    if (config.dependency || (config.classes && config.classes.contains("required"))) {
+        selectDataBind += ", value: ${ config.observable }"
+    }
 %>
 
 <p id="${ config.id }"
@@ -9,14 +17,14 @@
     <label for="${ config.id }-field">
         ${ config.label ?: '' } <% if (config.classes && config.classes.contains("required")) { %><span>(${ ui.message("emr.formValidation.messages.requiredField.label") })</span><% } %>
     </label>
-    
+
     <select id="${ config.id }-field" name="${ config.formFieldName}"
             <% if (config.classes) { %> class="${ config.classes.join(' ') }" <% } %>
             <% if (config.maximumSize) { %> size="${ [config.maximumSize, config.options.size()].min() }" <% } %>
-            <% if (config.depends && config.depends.disable) { %> data-bind="disable: ${ config.depends.variable }() == '${ config.depends.disable }'" <% } %> >
+            <% if (selectDataBind) { %> data-bind="${ selectDataBind }" <% } %> >
 
         <% if(!config.hideEmptyLabel) { %>
-            <option value="">${ config.emptyOptionLabel ?: ''}</option>
+            <option value="">${ ui.message(config.emptyOptionLabel ?: '') }</option>
         <% } %>
         <% config.options.each {
             def selected = it.selected || it.value == config.initialValue
@@ -27,3 +35,14 @@
 
     ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: config.formFieldName ]) }
 </p>
+
+<% if (config.dependency || (config.classes && config.classes.contains("required"))) { %>
+<script type="text/javascript">
+    viewModel.${ config.observable } = ko.observable();
+    <% if (config.classes && config.classes.contains("required")) { %>
+    viewModel.validations.push(function() {
+        return jq('#${ config.id }-field').is(':disabled') || viewModel.${ config.observable }();
+    });
+    <% } %>
+</script>
+<% } %>

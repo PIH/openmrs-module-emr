@@ -16,6 +16,8 @@ ${ ui.includeFragment("emr", "field/" + config.type, [
         options: options,
         classes: config.classes,
         hideEmptyLabel: config.hideEmptyLabel,
+        emptyOptionLabel: config.emptyOptionLabel,
         depends: config.depends,
-        dependency: config.dependency
+        dependency: config.dependency,
+        observable: config.id
 ])}
