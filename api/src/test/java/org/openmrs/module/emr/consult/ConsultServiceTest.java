@@ -183,6 +183,7 @@ public class ConsultServiceTest {
         when(emrApiProperties.getDiagnosisMetadata()).thenReturn(diagnosisMetadata);
         when(emrApiProperties.getDispositionDescriptor()).thenReturn(dispositionDescriptor);
         when(emrApiProperties.getClinicianEncounterRole()).thenReturn(clinician);
+        when(emrApiProperties.getUnknownCauseOfDeathConcept()).thenReturn(new Concept());
 
         encounterService = mock(EncounterService.class);
         when(encounterService.saveEncounter(any(Encounter.class))).thenAnswer(new Answer<Object>() {
@@ -206,6 +207,7 @@ public class ConsultServiceTest {
 
         MarkPatientDeadDispositionAction markPatientDeadAction = new MarkPatientDeadDispositionAction();
         markPatientDeadAction.setPatientService(patientService);
+        markPatientDeadAction.setEmrApiProperties(emrApiProperties);
 
         ApplicationContext applicationContext = mock(ApplicationContext.class);
         when(applicationContext.getBean("markPatientDeadAction", DispositionAction.class)).thenReturn(markPatientDeadAction);
