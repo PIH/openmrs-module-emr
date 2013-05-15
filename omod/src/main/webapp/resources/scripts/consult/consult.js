@@ -110,8 +110,25 @@ function ConsultFormViewModel() {
         });
     }
 
+    api.allRequiredFieldsAreSet = function() {
+        var fieldsValid = false || $(".required").size() == 0;
+        $(".required").each(function (index, field) {
+            if ($(field).attr('type') == 'radio' || $(field).attr('type') == 'checkbox') {
+                if ($(field).is(':checked')) {
+                    fieldsValid = true;
+                    return;
+                }
+            }
+            else if ($(field).val())  {
+                fieldsValid = true;
+                return;
+            }
+        });
+        return fieldsValid;
+    }
+
     api.isValid = function() {
-        return api.hasPrimaryDiagnosis();
+        return api.hasPrimaryDiagnosis() && api.allRequiredFieldsAreSet();
     }
 
     api.findSelectedSimilarDiagnosis = function(diagnosis) {

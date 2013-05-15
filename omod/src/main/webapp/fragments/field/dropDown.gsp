@@ -13,7 +13,7 @@
     <select id="${ config.id }-field" name="${ config.formFieldName}"
             <% if (config.classes) { %> class="${ config.classes.join(' ') }" <% } %>
             <% if (config.maximumSize) { %> size="${ [config.maximumSize, config.options.size()].min() }" <% } %>
-            <% if (config.depends.disable) { %> data-bind="disable: ${ config.depends.variable }() == '${ config.depends.disable }'" <% } %> >
+            <% if (config.depends && config.depends.disable) { %> data-bind="disable: ${ config.depends.variable }() == '${ config.depends.disable }'" <% } %> >
 
         <% if(!config.hideEmptyLabel) { %>
             <option value="">${ config.emptyOptionLabel ?: ''}</option>

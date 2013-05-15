@@ -251,4 +251,31 @@ describe("Outpatient consult form", function() {
         expect(viewModel.isValid()).toBe(true);
     });
 
+    it("should invalidate required fields without value", function() {
+        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[2])));
+        $('body').append('<input id="test-input" type="text" class="required"/>');
+        expect(viewModel.isValid()).toBe(false);
+        $('#test-input').remove();
+    });
+
+    it("should validate required fields with value", function() {
+        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[2])));
+        $('body').append('<input id="test-input" type="text" class="required" value="value"/>');
+        expect(viewModel.isValid()).toBe(true);
+        $('#test-input').remove();
+    });
+
+    it("should invalidate required radio not checked", function() {
+        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[2])));
+        $('body').append('<input id="test-input" type="radio" class="required" value="value"/>');
+        expect(viewModel.isValid()).toBe(false);
+        $('#test-input').remove();
+    });
+
+    it("should validate required radio that's checked", function() {
+        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[2])));
+        $('body').append('<input id="test-input" type="radio" class="required" value="value" checked/>');
+        expect(viewModel.isValid()).toBe(true);
+        $('#test-input').remove();
+    });
 });

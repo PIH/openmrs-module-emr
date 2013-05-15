@@ -48,7 +48,7 @@
                     "id": "trauma_question",
                     "type": "radioButtons",
                     "concept": "f8134959-62d2-4f94-af6c-3580312b07a0",
-                    "required": true,
+                    "classes": ["required"],
                     "dependency": "traumaQuestion"
                 },
                 {

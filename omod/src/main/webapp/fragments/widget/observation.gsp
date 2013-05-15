@@ -14,6 +14,8 @@ ${ ui.includeFragment("emr", "field/" + config.type, [
         label: ui.format(concept),
         formFieldName: "additionalObservations",
         options: options,
+        classes: config.classes,
+        hideEmptyLabel: config.hideEmptyLabel,
         depends: config.depends,
         dependency: config.dependency
 ])}
