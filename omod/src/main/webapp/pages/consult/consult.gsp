@@ -69,7 +69,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                 <input id="diagnosis-search" type="text" placeholder="${ ui.message("emr.consult.addDiagnosis.placeholder") }" data-bind="autocomplete: searchTerm, itemFormatter: formatAutosuggestion"/>
             </p>
 
-            <% if (featureToggles.isFeatureEnabled("consultNoteDispositions")) { %>
+            <% if (dispositions && featureToggles.isFeatureEnabled("consultNoteDispositions")) { %>
                 <p>
                     <label for="dispositions">${ ui.message("emr.consult.disposition") }</label>
                     <select id="dispositions" name="disposition">

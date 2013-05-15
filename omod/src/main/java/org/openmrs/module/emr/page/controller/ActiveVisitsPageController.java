@@ -18,7 +18,7 @@ public class ActiveVisitsPageController {
 			visitLocation= service.getLocationThatSupportsVisits(sessionLocation);
 		}
 		if (visitLocation == null) {
-			throw new IllegalStateException("Configuration required");
+			throw new IllegalStateException("Configuration required: no visit location found based on session location");
 		}
 		
 		model.addAttribute("visitSummaries", service.getActiveVisits(visitLocation));
