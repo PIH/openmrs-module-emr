@@ -53,7 +53,7 @@ public class RequestPaperRecordFragmentController {
            EmrContext emrContext) throws UnableToPrintLabelException {
 
         try {
-            service.printPaperRecordLabels(patient, location, 3);
+            service.printPaperRecordLabels(patient, location, 1);     // we print one label by default
             service.printIdCardLabel(patient, location);
             Printer printer = printerService.getDefaultPrinter(location, Printer.Type.LABEL);
 
