@@ -45,7 +45,7 @@
         <property name="priority" value="31.0"/>
         <property name="extensionPoint" value="patient.visits.active.actions"/>
         <property name="iconUrl" value="icon-stethoscope"/>
-        <property name="requiredPrivilegeName" value="Task: emr.enterClinicalForms"/>
+        <property name="requiredPrivilegeName" value="only sysadmin can see this now"/>
     </bean>
 
     <!-- not for first release
