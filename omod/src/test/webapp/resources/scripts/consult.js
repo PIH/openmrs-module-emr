@@ -251,31 +251,27 @@ describe("Outpatient consult form", function() {
         expect(viewModel.isValid()).toBe(true);
     });
 
-    it("should invalidate required fields without value", function() {
+    it("should invalidate on added false validation", function() {
         viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[2])));
-        $('body').append('<input id="test-input" type="text" class="required"/>');
+        viewModel.validations.push(function() { return false; });
         expect(viewModel.isValid()).toBe(false);
-        $('#test-input').remove();
     });
 
-    it("should validate required fields with value", function() {
+    it("should validate on added true validation", function() {
         viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[2])));
-        $('body').append('<input id="test-input" type="text" class="required" value="value"/>');
+        viewModel.validations.push(function() { return true; });
         expect(viewModel.isValid()).toBe(true);
-        $('#test-input').remove();
     });
 
-    it("should invalidate required radio not checked", function() {
-        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[2])));
-        $('body').append('<input id="test-input" type="radio" class="required" value="value"/>');
+    it("should invalidate on any false validation", function() {
+        viewModel.validations.push(function() { return true; });
         expect(viewModel.isValid()).toBe(false);
-        $('#test-input').remove();
+
+        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[2])));
+        expect(viewModel.isValid()).toBe(true);
+
+        viewModel.validations.push(function() { return false; });
+        expect(viewModel.isValid()).toBe(false);
     });
 
-    it("should validate required radio that's checked", function() {
-        viewModel.addDiagnosis(Diagnosis(ConceptSearchResult(options[2])));
-        $('body').append('<input id="test-input" type="radio" class="required" value="value" checked/>');
-        expect(viewModel.isValid()).toBe(true);
-        $('#test-input').remove();
-    });
 });

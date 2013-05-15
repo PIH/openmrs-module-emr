@@ -22,6 +22,11 @@
 <% if (config.dependency) { %>
     <script type="text/javascript">
         viewModel.${ config.dependency } = ko.observable();
+        <% if (config.classes && config.classes.contains("required")) { %>
+            viewModel.validations.push(function() {
+                return viewModel.${ config.dependency }() !== undefined;
+            });
+        <% } %>
     </script>
 <% } %>
 

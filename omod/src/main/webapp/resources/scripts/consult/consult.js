@@ -84,6 +84,8 @@ function ConsultFormViewModel() {
     api.searchTerm = ko.observable();
     api.diagnoses = ko.observableArray();
 
+    api.validations = [];
+
     api.primaryDiagnoses = ko.computed(function() {
         return _.filter(api.diagnoses(), function(candidate) {
             return candidate.primary();
@@ -110,25 +112,14 @@ function ConsultFormViewModel() {
         });
     }
 
-    api.allRequiredFieldsAreSet = function() {
-        var fieldsValid = false || $(".required").size() == 0;
-        $(".required").each(function (index, field) {
-            if ($(field).attr('type') == 'radio' || $(field).attr('type') == 'checkbox') {
-                if ($(field).is(':checked')) {
-                    fieldsValid = true;
-                    return;
-                }
-            }
-            else if ($(field).val())  {
-                fieldsValid = true;
-                return;
-            }
-        });
-        return fieldsValid;
-    }
+    api.validations.push(api.hasPrimaryDiagnosis);
 
     api.isValid = function() {
-        return api.hasPrimaryDiagnosis() && api.allRequiredFieldsAreSet();
+        var validated = true;
+        _.each(api.validations, function(validation) {
+            validated = validated && validation();
+        })
+        return validated;
     }
 
     api.findSelectedSimilarDiagnosis = function(diagnosis) {
