@@ -96,10 +96,10 @@ public class HibernateEmrDAO implements EmrDAO {
     private Criteria buildCriteria(String query, Criteria criteria) {
         if (query.matches(".*\\d.*")) {
             // has at least one digit, so treat as an identifier
-            return new PatientSearchCriteria(sessionFactory, criteria).prepareCriteria(null, query, emrApiProperties.getIdentifierTypesToSearch(), true, true);
+            return new PatientSearchCriteria(sessionFactory, criteria).prepareCriteria(null, query, emrApiProperties.getIdentifierTypesToSearch(), true, true, true);
         } else {
             // no digits, so treat as a name
-            return new PatientSearchCriteria(sessionFactory, criteria).prepareCriteria(query, null, new ArrayList<PatientIdentifierType>(), true, true);
+            return new PatientSearchCriteria(sessionFactory, criteria).prepareCriteria(query, null, new ArrayList<PatientIdentifierType>(), true, true, true);
         }
     }
 
