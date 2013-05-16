@@ -28,7 +28,7 @@
         <property name="priority" value="-10.0"/>
         <property name="extensionPoint" value="patient.globalActions"/>
         <property name="iconUrl" value="icon-print"/>
-        <property name="requiredPrivilegeName" value="Task: emr.printLabels"/>
+        <property name="requiredPrivilegeName" value="Task: toggledOffForNow"/>
     </bean>
 
     <bean id="emrRequestChartOnPatientDashboard" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
