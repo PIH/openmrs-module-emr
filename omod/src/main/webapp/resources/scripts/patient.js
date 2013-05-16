@@ -34,8 +34,22 @@ function createPaperRecordDialog(patientId) {
         }
     });
 }
-function printLabels() {
-    emr.getFragmentActionWithCallback('emr', 'paperrecord/requestPaperRecord', 'printLabels'
+
+function printIdCardLabel() {
+    emr.getFragmentActionWithCallback('emr', 'paperrecord/requestPaperRecord', 'printIdCardLabel'
+        , { patientId: patient.id, locationId: sessionLocationModel.id() }
+        , function(data) {
+            if(data.success) {
+                emr.successMessage(data.message);
+            } else {
+                emr.errorMessage(data.message);
+            }
+        }
+    );
+}
+
+function printPaperRecordLabel() {
+    emr.getFragmentActionWithCallback('emr', 'paperrecord/requestPaperRecord', 'printPaperRecordLabel'
         , { patientId: patient.id, locationId: sessionLocationModel.id() }
         , function(data) {
             if(data.success) {
@@ -46,6 +60,7 @@ function printLabels() {
         }
     );   
 }
+
 function createEditPatientIdentifierDialog(patientId) {
     editPatientIdentifierDialog = emr.setupConfirmationDialog({
         selector: '#edit-patient-identifier-dialog',

@@ -45,7 +45,7 @@ public class RequestPaperRecordFragmentController {
         return SimpleObject.create("message", ui.message("emr.patientDashBoard.requestPaperRecord.successMessage"));
     }
 
-    public SimpleObject printLabels(UiUtils ui,
+    public SimpleObject printPaperRecordLabel(UiUtils ui,
            @RequestParam("patientId") Patient patient,
            @RequestParam("locationId") Location location,
            @SpringBean("paperRecordService") PaperRecordService service,
@@ -54,12 +54,30 @@ public class RequestPaperRecordFragmentController {
 
         try {
             service.printPaperRecordLabels(patient, location, 1);     // we print one label by default
-            //service.printIdCardLabel(patient, location);   // don't print id card label
             Printer printer = printerService.getDefaultPrinter(location, Printer.Type.LABEL);
 
             return SimpleObject.create("success", true, "message", ui.message("emr.patientDashBoard.printLabels.successMessage") + " " + printer.getPhysicalLocation().getName());
         } catch (UnableToPrintLabelException e) {
             log.error("User " + emrContext.getUserContext().getAuthenticatedUser() + " unable to print paper record label at location "
+                    + emrContext.getSessionLocation(), e);
+            return SimpleObject.create("success", false, "message", ui.message("emr.archivesRoom.error.unableToPrintLabel"));
+        }
+    }
+
+    public SimpleObject printIdCardLabel(UiUtils ui,
+                                              @RequestParam("patientId") Patient patient,
+                                              @RequestParam("locationId") Location location,
+                                              @SpringBean("paperRecordService") PaperRecordService service,
+                                              @SpringBean("printerService") PrinterService printerService,
+                                              EmrContext emrContext) throws UnableToPrintLabelException {
+
+        try {
+            service.printIdCardLabel(patient, location);
+            Printer printer = printerService.getDefaultPrinter(location, Printer.Type.LABEL);
+
+            return SimpleObject.create("success", true, "message", ui.message("emr.patientDashBoard.printLabels.successMessage") + " " + printer.getPhysicalLocation().getName());
+        } catch (UnableToPrintLabelException e) {
+            log.error("User " + emrContext.getUserContext().getAuthenticatedUser() + " unable to print id card label at location "
                     + emrContext.getSessionLocation(), e);
             return SimpleObject.create("success", false, "message", ui.message("emr.archivesRoom.error.unableToPrintLabel"));
         }
