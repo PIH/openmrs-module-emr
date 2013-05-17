@@ -60,6 +60,7 @@ public class ConsultPageController {
             additionalObservationsConfig = new LinkedList<Map<String, Object>>();
         }
 
+        model.addAttribute("title", config.getExtensionParams().get("title"));
         model.addAttribute("dispositions", factory.getDispositions());
         model.addAttribute("additionalObservationsConfig", additionalObservationsConfig);
         model.addAttribute("conceptService", conceptService);

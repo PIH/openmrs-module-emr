@@ -1,5 +1,5 @@
 <%
-    config.require("id", "type", "concept")
+    config.require("id", "field", "concept")
 
     def concept = conceptService.getConceptByUuid(config.concept)
 
@@ -10,9 +10,9 @@
 
 %>
 
-${ ui.includeFragment("emr", "field/" + config.type, [
+${ ui.includeFragment("emr", "field/" + config.field, [
         label: ui.format(concept),
-        formFieldName: "additionalObservations",
+        formFieldName: config.formFieldName,
         options: options,
         classes: config.classes,
         hideEmptyLabel: config.hideEmptyLabel,
