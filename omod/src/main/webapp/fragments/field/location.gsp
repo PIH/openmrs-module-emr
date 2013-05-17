@@ -17,7 +17,7 @@
 
 ${ ui.includeFragment("emr", "field/dropDown", [
         id: config.id,
-        label: config.label,
+        label: ui.message(config.label),
         formFieldName: config.formFieldName,
         options: options
     ]) }
