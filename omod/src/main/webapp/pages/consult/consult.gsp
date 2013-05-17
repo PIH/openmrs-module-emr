@@ -13,7 +13,7 @@
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
         { label: "${ ui.format(patient.familyName) }, ${ ui.format(patient.givenName) }", link:'${ ui.pageLink("emr", "patient", [patientId: patient.id]) }' },
-        { label: "${ ui.message("emr.consult.title") }" }
+        { label: "${ ui.message(title) }" }
     ];
 
     var formatTemplate;
