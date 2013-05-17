@@ -37,7 +37,7 @@
         <openMRSVersion>1.9.4-SNAPSHOT</openMRSVersion>
         <emrapiVersion>1.0-SNAPSHOT</emrapiVersion>
         <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
-        <uiframeworkVersion>2.5.2-SNAPSHOT</uiframeworkVersion>
+        <uiframeworkVersion>2.5.2</uiframeworkVersion>
         <appframeworkVersion>2.0-SNAPSHOT</appframeworkVersion>
         <idgenVersion>2.5</idgenVersion>
         <htmlformentryVersion>2.0.9-SNAPSHOT</htmlformentryVersion>
