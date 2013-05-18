@@ -9,7 +9,7 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonName;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.emr.EmrContext;
-import org.openmrs.module.emr.TestUiUtils;
+import org.openmrs.module.emr.test.TestUiUtils;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.fragment.action.FragmentActionResult;
 import org.openmrs.ui.framework.fragment.action.SuccessResult;

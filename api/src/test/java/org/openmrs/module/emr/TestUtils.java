@@ -23,10 +23,10 @@ import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptMapType;
 import org.openmrs.ConceptSource;
 import org.openmrs.api.ConceptService;
-import org.openmrs.module.emr.test.builder.ConceptBuilder;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
+import org.openmrs.module.emrapi.test.builder.ConceptBuilder;
 import org.openmrs.util.OpenmrsUtil;
 
 import java.util.Collection;
@@ -226,7 +226,7 @@ public class TestUtils {
     }
 
     /**
-     * This is written so it can be moved to a shared class and reused across multiple tests
+     * Sets up DiagnosisMetadata in a context-sensitive test
      */
     public static DiagnosisMetadata setupDiagnosisMetadata(ConceptService conceptService, EmrApiProperties emrApiProperties) {
         ConceptSource emrSource = new EmrActivator().createConceptSources(conceptService);

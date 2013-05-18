@@ -58,12 +58,6 @@
         {{}}}
     {{ }); }}
 
-    {{ _.each(diagnoses, function(diagnosis) { }}
-        {{ if(diagnosis.answer != null) {}}
-            <p><small>{{- diagnosis.question}}</small><span>{{- diagnosis.answer}}</span></p>
-    {{}}}
-    {{ }); }}
-
     {{ _.each(orders, function(order) { }}
          <p><small>${ ui.message("emr.patientDashBoard.order")}</small><span>{{- order.concept }}</span></p>
     {{ }); }}

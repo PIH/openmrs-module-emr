@@ -25,7 +25,7 @@ import org.openmrs.PersonName;
 import org.openmrs.User;
 import org.openmrs.api.context.UserContext;
 import org.openmrs.module.emr.EmrContext;
-import org.openmrs.module.emr.TestUiUtils;
+import org.openmrs.module.emr.test.TestUiUtils;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.paperrecord.PaperRecordRequest;
 import org.openmrs.module.paperrecord.PaperRecordService;

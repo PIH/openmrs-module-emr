@@ -16,7 +16,7 @@ package org.openmrs.module.emr.fragment.controller.printer;
 
 import org.junit.Test;
 import org.openmrs.Location;
-import org.openmrs.module.emr.TestUiUtils;
+import org.openmrs.module.emr.test.TestUiUtils;
 import org.openmrs.module.emrapi.printer.Printer;
 import org.openmrs.module.emrapi.printer.PrinterService;
 import org.openmrs.ui.framework.UiUtils;

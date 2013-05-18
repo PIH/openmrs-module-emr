@@ -12,9 +12,11 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.emr;
+package org.openmrs.module.emr.test;
 
+import org.openmrs.Concept;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.module.emr.TestUtils;
 import org.openmrs.ui.framework.BasicUiUtils;
 import org.openmrs.ui.framework.FormatterImpl;
 
@@ -23,6 +25,10 @@ import org.openmrs.ui.framework.FormatterImpl;
  * This doesn't have a MessageSource configured, so it won't do localization
  */
 public class TestUiUtils extends BasicUiUtils {
+
+    private AdministrationService administrationService;
+
+    private boolean mockFormattingConcepts = false;
 
     /**
      * If you use this constructor, the UiUtils will have no AdministrationService so it won't do date formatting
@@ -36,7 +42,27 @@ public class TestUiUtils extends BasicUiUtils {
      * @param administrationService
      */
     public TestUiUtils(AdministrationService administrationService) {
-        this.formatter = new FormatterImpl(null, administrationService);
+        this.administrationService = administrationService;
+        this.formatter = new FormatterImpl(null, this.administrationService);
+    }
+
+    /**
+     * If you set this to true, then calling the #format(Object) method on a concept will just print
+     * and arbitrary name, instead of going to the context to check locales
+     * @param mockFormattingConcepts
+     */
+    public void setMockFormattingConcepts(boolean mockFormattingConcepts) {
+        this.mockFormattingConcepts = mockFormattingConcepts;
+    }
+
+    @Override
+    public String format(Object o) {
+        if (mockFormattingConcepts && o instanceof Concept) {
+            Concept concept = (Concept) o;
+            return concept.getNames().iterator().next().getName();
+        } else {
+            return super.format(o);
+        }
     }
 
     @Override

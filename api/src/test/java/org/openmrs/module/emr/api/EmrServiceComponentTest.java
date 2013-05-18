@@ -38,7 +38,7 @@ import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
-import org.openmrs.module.emr.test.builder.ConceptBuilder;
+import org.openmrs.module.emrapi.test.builder.ConceptBuilder;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;

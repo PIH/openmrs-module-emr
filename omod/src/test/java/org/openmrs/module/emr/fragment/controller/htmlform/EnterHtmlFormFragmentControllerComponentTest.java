@@ -26,7 +26,7 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.module.emr.EmrContext;
-import org.openmrs.module.emr.TestUiUtils;
+import org.openmrs.module.emr.test.TestUiUtils;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.HtmlForm;

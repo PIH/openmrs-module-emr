@@ -4,10 +4,10 @@ package org.openmrs.module.emr.visit;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Order;
-import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
+import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 
@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 
 public class ParserEncounterIntoSimpleObjects {
@@ -40,96 +39,70 @@ public class ParserEncounterIntoSimpleObjects {
         return orders;
     }
 
-    public List<SimpleObject> parseObservations(){
-        List<SimpleObject> observations = new ArrayList<SimpleObject>();
+    public ParsedObs parseObservations(Locale locale) {
+        DiagnosisMetadata diagnosisMetadata = emrApiProperties.getDiagnosisMetadata();
+        DispositionDescriptor dispositionDescriptor = emrApiProperties.getDispositionDescriptor();
 
-        if (!encounter.getEncounterType().getUuid().equals(EmrConstants.CONSULTATION_TYPE_UUID)){
-            observations = createSimpleObjectWithObservations(encounter.getObs(), uiUtils.getLocale());
-        }
+        ParsedObs parsedObs = new ParsedObs();
 
-        return observations;
-    }
-
-    private List<SimpleObject> createSimpleObjectWithObservations(Set<Obs> obs, Locale locale) {
-        List<SimpleObject> encounterDetails = new ArrayList<SimpleObject>();
-
-        for (Obs ob : obs) {
-
-            SimpleObject simpleObject = SimpleObject.fromObject(ob, uiUtils, "obsId");
-            simpleObject.put("question", ob.getConcept().getName(locale).getName());
-            simpleObject.put("answer", ob.getValueAsString(locale));
-
-            encounterDetails.add(simpleObject);
-        }
-        return encounterDetails;
-    }
-
-    public List<SimpleObject> parseDiagnoses() {
-        List<SimpleObject> diagnoses = new ArrayList<SimpleObject>();
-
-        if (encounter.getEncounterType().getUuid().equals(EmrConstants.CONSULTATION_TYPE_UUID)){
-
-            diagnoses =  parseDiagnosesInformation(emrApiProperties.getDiagnosisMetadata());
-
-        }
-        return diagnoses;
-    }
-
-
-    private List<SimpleObject> parseDiagnosesInformation(DiagnosisMetadata diagnosisMetadata) {
-
-        Set<Obs> groupedObservations = encounter.getObsAtTopLevel(false);
-
-        return parseDiagnosesFromObservations(diagnosisMetadata, groupedObservations);
-    }
-
-    private List<SimpleObject> parseDiagnosesFromObservations(DiagnosisMetadata diagnosisMetadata, Set<Obs> groupedObservations) {
-        List<SimpleObject> diagnoses = new ArrayList<SimpleObject>();
-
-        for (Obs observation : groupedObservations) {
-
-            if (diagnosisMetadata.isDiagnosis(observation)) {
-                diagnoses.add(createDiagnosis(diagnosisMetadata, observation));
+        for (Obs obs : encounter.getObsAtTopLevel(false)) {
+            if (diagnosisMetadata.isDiagnosis(obs)) {
+                parsedObs.getDiagnoses().add(parseDiagnosis(diagnosisMetadata, obs));
+            } else if (dispositionDescriptor.isDisposition(obs)) {
+                parsedObs.getDispositions().add(parseDisposition(dispositionDescriptor, obs, locale));
             } else {
-                diagnoses.add(createDiagnosisComment(observation));
+                parsedObs.getObs().add(parseObs(obs, locale));
             }
-
         }
 
-        Collections.sort(diagnoses, new Comparator<SimpleObject>() {
+        Collections.sort(parsedObs.getDiagnoses(), new Comparator<SimpleObject>() {
             @Override
             public int compare(SimpleObject o1, SimpleObject o2) {
                 Integer order1 = (Integer) o1.get("order");
                 Integer order2 = (Integer) o2.get("order");
-                return order1- order2;
+                return order1 - order2;
             }
         });
 
-        return diagnoses;
+        return parsedObs;
     }
 
-
-    private SimpleObject createDiagnosisComment(Obs observation) {
-        SimpleObject simpleObject = SimpleObject.fromObject(observation, uiUtils, "obsId");
-        simpleObject.put("question", capitalizeString(uiUtils.format(observation.getConcept())));
-        simpleObject.put("answer", observation.getValueAsString(uiUtils.getLocale()));
-        simpleObject.put("order", 99);
+    private SimpleObject parseObs(Obs obs, Locale locale) {
+        SimpleObject simpleObject = SimpleObject.create("obsId", obs.getObsId());
+        simpleObject.put("question", capitalizeString(uiUtils.format(obs.getConcept())));
+        simpleObject.put("answer", obs.getValueAsString(locale));
         return simpleObject;
     }
 
-    private SimpleObject createDiagnosis(DiagnosisMetadata diagnosisMetadata, Obs observation) {
+    private SimpleObject parseDisposition(DispositionDescriptor dispositionDescriptor, Obs obs, Locale locale) {
+        Obs dispositionObs = dispositionDescriptor.getDispositionObs(obs);
+        List<Obs> additionalObs = dispositionDescriptor.getAdditionalObs(obs);
 
-        Diagnosis diagnosis = diagnosisMetadata.toDiagnosis(observation);
+        SimpleObject simpleObject = SimpleObject.create("obsId", obs.getObsId());
+        simpleObject.put("disposition", dispositionObs.getValueAsString(locale));
+
+        List<SimpleObject> simplifiedAdditionalObs = new ArrayList<SimpleObject>();
+        for (Obs additional : additionalObs) {
+            simplifiedAdditionalObs.add(parseObs(additional, locale));
+        }
+        simpleObject.put("additionalObs", simplifiedAdditionalObs);
+
+        return simpleObject;
+    }
+
+    private SimpleObject parseDiagnosis(DiagnosisMetadata diagnosisMetadata, Obs obs) {
+        Diagnosis diagnosis = diagnosisMetadata.toDiagnosis(obs);
 
         String answer = "(" + uiUtils.message("emr.Diagnosis.Certainty." + diagnosis.getCertainty()) + ") ";
         answer += diagnosis.getDiagnosis().formatWithCode(uiUtils.getLocale(), emrApiProperties.getConceptSourcesForDiagnosisSearch());
 
-        SimpleObject simpleObject = SimpleObject.fromObject(observation, uiUtils, "obsId");
+        SimpleObject simpleObject = SimpleObject.fromObject(obs, uiUtils, "obsId");
         simpleObject.put("question", formatDiagnosisQuestion(diagnosis.getOrder()));
         simpleObject.put("answer", answer);
         simpleObject.put("order", diagnosis.getOrder().ordinal());
         return simpleObject;
     }
+
 
     private String formatDiagnosisQuestion(Diagnosis.Order order) {
         return uiUtils.message("emr.patientDashBoard.diagnosisQuestion." + order);

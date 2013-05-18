@@ -10,6 +10,7 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.utils.FeatureToggleProperties;
+import org.openmrs.module.emr.visit.ParsedObs;
 import org.openmrs.module.emr.visit.ParserEncounterIntoSimpleObjects;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.encounter.EncounterDomainWrapper;
@@ -82,18 +83,14 @@ public class VisitDetailsFragmentController {
 
     public SimpleObject getEncounterDetails(@RequestParam("encounterId") Encounter encounter,
                                             @SpringBean("emrApiProperties") EmrApiProperties emrApiProperties,
-                                            UiUtils uiUtils){
+                                            UiUtils uiUtils) {
 
         ParserEncounterIntoSimpleObjects parserEncounter = new ParserEncounterIntoSimpleObjects(encounter, uiUtils, emrApiProperties);
 
-        List<SimpleObject> observations = parserEncounter.parseObservations();
-
-        List<SimpleObject> diagnoses = parserEncounter.parseDiagnoses();
-
+        ParsedObs parsedObs = parserEncounter.parseObservations(uiUtils.getLocale());
         List<SimpleObject> orders = parserEncounter.parseOrders();
 
-
-        return SimpleObject.create("observations", observations, "orders", orders, "diagnoses", diagnoses);
+        return SimpleObject.create("observations", parsedObs.getObs(), "orders", orders, "diagnoses", parsedObs.getDiagnoses(), "dispositions", parsedObs.getDispositions());
     }
 
 

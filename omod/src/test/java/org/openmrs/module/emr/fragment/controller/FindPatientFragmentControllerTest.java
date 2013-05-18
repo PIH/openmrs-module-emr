@@ -20,7 +20,7 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonName;
-import org.openmrs.module.emr.TestUiUtils;
+import org.openmrs.module.emr.test.TestUiUtils;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.ui.framework.SimpleObject;
 

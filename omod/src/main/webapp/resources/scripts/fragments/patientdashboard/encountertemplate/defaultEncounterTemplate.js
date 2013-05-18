@@ -1,10 +1,12 @@
 jq(function() {
 	jq(document).on('click','.view-details.collapsed', function(event){
-	        var encounterId = jq(event.currentTarget).attr("data-encounter-id");
-	        var isHtmlForm = jq(event.currentTarget).attr("data-encounter-form");
-	        var dataTarget = jq(event.currentTarget).attr("data-target");
-	        getEncounterDetails(encounterId, isHtmlForm, dataTarget);
-	    });
+        var jqTarget = jq(event.currentTarget);
+        var encounterId = jqTarget.data("encounter-id");
+        var isHtmlForm = jqTarget.data("encounter-form");
+        var dataTarget = jqTarget.data("target");
+        var customTemplateId = jqTarget.data("display-template");
+        getEncounterDetails(encounterId, isHtmlForm, dataTarget, customTemplateId ? customTemplateId : "defaultEncounterDetailsTemplate");
+    });
 	    
 	jq(document).on('click', '.deleteEncounterId', function(event){
 		var encounterId = jq(event.target).attr("data-encounter-id");
@@ -14,13 +16,14 @@ jq(function() {
 	
 	//We cannot assign it here due to Jasmine failure: 
 	//net.sourceforge.htmlunit.corejs.javascript.EcmaError: TypeError: Cannot call method "replace" of undefined
-	var defaultEncounterDetailsTemplate = null;
-	
-	function getEncounterDetails(id, isHtmlForm, dataTarget){
-		if (defaultEncounterDetailsTemplate == null) {
-			defaultEncounterDetailsTemplate = _.template(jq('#defaultEncounterDetailsTemplate').html());
-		}
-		
+    var detailsTemplates = {};
+
+	function getEncounterDetails(id, isHtmlForm, dataTarget, displayTemplateId) {
+        if (!detailsTemplates[displayTemplateId]) {
+            detailsTemplates[displayTemplateId] = _.template(jq('#' + displayTemplateId).html());
+        }
+        var displayTemplate = detailsTemplates[displayTemplateId];
+
 	    var encounterDetailsSection = jq(dataTarget + ' .encounter-summary-container');
 	    if (isHtmlForm == "true"){
 	    		if(encounterDetailsSection.html() == "") { encounterDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");}
@@ -36,7 +39,7 @@ jq(function() {
 	        jq.getJSON(
 	            emr.fragmentActionLink("emr", "visit/visitDetails", "getEncounterDetails", { encounterId: id })
 	        ).success(function(data){
-	            encounterDetailsSection.html(defaultEncounterDetailsTemplate(data));
+	            encounterDetailsSection.html(displayTemplate(data));
 	        }).error(function(err){
 	            emr.errorAlert(err);
 	        });
