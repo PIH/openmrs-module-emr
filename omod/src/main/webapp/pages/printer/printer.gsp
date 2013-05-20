@@ -1,5 +1,5 @@
 <%
-    ui.decorateWith("emr", "standardEmrPage")
+    ui.decorateWith("appui", "standardEmrPage")
 
     def typeOptions = []
 
@@ -42,11 +42,11 @@
     <h3>${ ui.message("emr.printer.edit") }</h3>
 
     <fieldset>
-        ${ ui.includeFragment("emr", "field/radioButtons", [ label: ui.message("emr.printer.type"), formFieldName: "type", initialValue: (printer.type ?: ''), options: typeOptions ])}
+        ${ ui.includeFragment("uicommons", "field/radioButtons", [ label: ui.message("emr.printer.type"), formFieldName: "type", initialValue: (printer.type ?: ''), options: typeOptions ])}
         ${ ui.includeFragment("emr", "field/dropDown", [ label: ui.message("emr.printer.physicalLocation"), formFieldName: "physicalLocation", initialValue: (printer.physicalLocation?.id ?: ''), options: locationOptions ])}
-        ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.printer.name"), formFieldName: "name", initialValue: (printer.name ?: '') ])}
-        ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.printer.ipAddress"), formFieldName: "ipAddress", initialValue: (printer.ipAddress ?: '') ])}
-        ${ ui.includeFragment("emr", "field/text", [ label: ui.message("emr.printer.port"), formFieldName: "port",initialValue: (printer.port ?: '') ])}
+        ${ ui.includeFragment("uicommons", "field/text", [ label: ui.message("emr.printer.name"), formFieldName: "name", initialValue: (printer.name ?: '') ])}
+        ${ ui.includeFragment("uicommons", "field/text", [ label: ui.message("emr.printer.ipAddress"), formFieldName: "ipAddress", initialValue: (printer.ipAddress ?: '') ])}
+        ${ ui.includeFragment("uicommons", "field/text", [ label: ui.message("emr.printer.port"), formFieldName: "port",initialValue: (printer.port ?: '') ])}
     </fieldset>
 
     <div>

@@ -23,7 +23,6 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.EmrProperties;
-import org.openmrs.module.emr.utils.FeatureToggleProperties;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
@@ -70,10 +69,6 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
     EmrProperties emrProperties;
 
     @Autowired
-    @Qualifier("featureToggles")
-    FeatureToggleProperties featureToggle;
-
-    @Autowired
     @Qualifier("providerService")
     ProviderService providerService;
 
@@ -85,7 +80,6 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
         pageContext.getModel().addAttribute("emrContext", emrContext);
         pageContext.getModel().addAttribute("emrProperties", emrProperties);
         pageContext.getModel().addAttribute("emrApiProperties", emrApiProperties);
-        pageContext.getModel().addAttribute("featureToggles", featureToggle);
     }
 
     @Override
@@ -96,7 +90,6 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
         fragmentContext.getModel().addAttribute("emrContext", emrContext);
         fragmentContext.getModel().addAttribute("emrProperties", emrProperties);
         fragmentContext.getModel().addAttribute("emrApiProperties", emrApiProperties);
-        fragmentContext.getModel().addAttribute("featureToggles", featureToggle);
     }
 
     @Override

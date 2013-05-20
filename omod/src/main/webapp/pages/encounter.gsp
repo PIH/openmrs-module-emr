@@ -1,5 +1,5 @@
 <%
-    ui.decorateWith("emr", "standardEmrPage")
+    ui.decorateWith("appui", "standardEmrPage")
 %>
 
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }

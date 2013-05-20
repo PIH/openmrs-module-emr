@@ -1,5 +1,5 @@
 <%
-    ui.decorateWith("emr", "standardEmrPage")
+    ui.decorateWith("appui", "standardEmrPage")
 
     ui.includeCss("mirebalais", "account.css")
     ui.includeJavascript("emr", "account/account.js")
@@ -63,19 +63,19 @@
 	<fieldset>
 		<legend>${ ui.message("emr.person.details") }</legend>
 
-        ${ ui.includeFragment("emr", "field/text", [
+        ${ ui.includeFragment("uicommons", "field/text", [
             label: ui.message("emr.person.familyName"),
             formFieldName: "familyName", 
             initialValue: (account.familyName ?: '') 
         ])}
 
-        ${ ui.includeFragment("emr", "field/text", [
+        ${ ui.includeFragment("uicommons", "field/text", [
                 label: ui.message("emr.person.givenName"),
                 formFieldName: "givenName",
                 initialValue: (account.givenName ?: '')
         ])}
 
-        ${ ui.includeFragment("emr", "field/radioButtons", [ 
+        ${ ui.includeFragment("uicommons", "field/radioButtons", [
             label: ui.message("emr.gender"),
             formFieldName: "gender", 
             initialValue: (account.gender ?: 'M'), 
@@ -95,7 +95,7 @@
                 checked: account.userEnabled 
             ])}
 
-            ${ ui.includeFragment("emr", "field/text", [ 
+            ${ ui.includeFragment("uicommons", "field/text", [
                 label: ui.message("emr.user.username"), 
                 formFieldName: "username", 
                 initialValue: (account.username ?: '') 
@@ -110,13 +110,13 @@
                 <label class="form-header" for="password">${ ui.message("emr.user.password") }</label>
                 <input type="password" id="password" name="password" value="${ account.password ?: ''}" autocomplete="off"/>
                 <label id="format-password">${ ui.message("emr.account.passwordFormat") }</label>
-                ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "password" ])}
+                ${ ui.includeFragment("uicommons", "fieldErrors", [ fieldName: "password" ])}
             </p>
 
             <p class="emr_passwordDetails" <% if(!account.password && !account.confirmPassword) { %>style="display: none"<% } %>>
                 <label class="form-header" for="confirmPassword">${ ui.message("emr.user.confirmPassword") }</label>
                 <input type="password" id="confirmPassword" name="confirmPassword" value="${ account.confirmPassword ?: '' }" autocomplete="off" />
-                ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "confirmPassword" ])}
+                ${ ui.includeFragment("uicommons", "fieldErrors", [ fieldName: "confirmPassword" ])}
             </p>
 
             ${ ui.includeFragment("emr", "field/dropDown", [ 

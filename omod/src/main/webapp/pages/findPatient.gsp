@@ -1,5 +1,5 @@
 <%
-	ui.decorateWith("emr", "standardEmrPage")
+	ui.decorateWith("appui", "standardEmrPage")
     ui.includeCss("emr", "findPatient.css")
 %>
 <script id="patient-result-template" type="text/template">

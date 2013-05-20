@@ -1,5 +1,5 @@
 <%
-    ui.decorateWith("emr", "standardEmrPage", [title: ui.message("emr.mergePatients")])
+    ui.decorateWith("appui", "standardEmrPage", [title: ui.message("emr.mergePatients")])
     ui.includeCss("mirebalais", "mergePatients.css")
 %>
 

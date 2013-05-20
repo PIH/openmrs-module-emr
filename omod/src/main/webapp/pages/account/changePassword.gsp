@@ -31,20 +31,20 @@
         <p id="oldPasswordSection" class="emr_passwordDetails">
             <label class="form-header" for="oldPassword">${ ui.message("emr.account.oldPassword") }</label>
             <input type="password" id="oldPassword" name="oldPassword"  autocomplete="off"/>
-            ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "oldPassword" ])}
+            ${ ui.includeFragment("uicommons", "fieldErrors", [ fieldName: "oldPassword" ])}
         </p>
 
         <p id="newPasswordSection" class="emr_passwordDetails">
             <label class="form-header" for="newPassword">${ ui.message("emr.account.newPassword") }</label>
             <input type="password" id="newPassword" name="newPassword"  autocomplete="off"/>
             <label id="format-password">${ ui.message("emr.account.passwordFormat") }</label>
-            ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "newPassword" ])}
+            ${ ui.includeFragment("uicommons", "fieldErrors", [ fieldName: "newPassword" ])}
         </p>
 
         <p id="confirmPasswordSection" class="emr_passwordDetails">
             <label class="form-header" for="confirmPassword">${ ui.message("emr.user.confirmPassword") }</label>
             <input type="password" id="confirmPassword" name="confirmPassword"  autocomplete="off"/>
-            ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: "confirmPassword" ])}
+            ${ ui.includeFragment("uicommons", "fieldErrors", [ fieldName: "confirmPassword" ])}
         </p>
     </fieldset>
 

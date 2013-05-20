@@ -10,7 +10,7 @@
 
 %>
 
-${ ui.includeFragment("emr", "field/" + config.field, [
+${ ui.includeFragment(config.fieldProvider, "field/" + config.field, [
         label: ui.format(concept),
         formFieldName: config.formFieldName,
         options: options,

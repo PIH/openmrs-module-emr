@@ -1,6 +1,6 @@
 
 <%
-    ui.decorateWith("emr", "standardEmrPage")
+    ui.decorateWith("appui", "standardEmrPage")
 
     def idCardPrinterOptions = []
 

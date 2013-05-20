@@ -33,7 +33,7 @@
         <% } %>
     </select>
 
-    ${ ui.includeFragment("emr", "fieldErrors", [ fieldName: config.formFieldName ]) }
+    ${ ui.includeFragment("uicommons", "fieldErrors", [ fieldName: config.formFieldName ]) }
 </p>
 
 <% if (config.dependency || (config.classes && config.classes.contains("required"))) { %>

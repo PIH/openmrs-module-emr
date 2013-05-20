@@ -1,10 +1,10 @@
 <%
-    ui.decorateWith("emr", "standardEmrPage")
-    ui.includeJavascript("emr", "navigator/validators.js", Integer.MAX_VALUE - 19)
-    ui.includeJavascript("emr", "navigator/navigator.js", Integer.MAX_VALUE - 20)
-    ui.includeJavascript("emr", "navigator/navigatorHandlers.js", Integer.MAX_VALUE - 21)
-    ui.includeJavascript("emr", "navigator/navigatorModels.js", Integer.MAX_VALUE - 21)
-    ui.includeJavascript("emr", "navigator/exitHandlers.js", Integer.MAX_VALUE - 22);
+    ui.decorateWith("appui", "standardEmrPage")
+    ui.includeJavascript("uicommons", "navigator/validators.js", Integer.MAX_VALUE - 19)
+    ui.includeJavascript("uicommons", "navigator/navigator.js", Integer.MAX_VALUE - 20)
+    ui.includeJavascript("uicommons", "navigator/navigatorHandlers.js", Integer.MAX_VALUE - 21)
+    ui.includeJavascript("uicommons", "navigator/navigatorModels.js", Integer.MAX_VALUE - 21)
+    ui.includeJavascript("uicommons", "navigator/exitHandlers.js", Integer.MAX_VALUE - 22);
 %>
 
 ${ ui.includeFragment("emr", "validationMessages")}
