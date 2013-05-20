@@ -79,7 +79,7 @@
             <% } %>
         </div>
         <% if (emrContext.activeVisit) { %>
-        <div class="visit-status">
+        <div class="status-container">
             <% def visit = emrContext.activeVisit.visit %>
             <span class="status active"></span>
             ${ui.message("emr.activeVisit")}

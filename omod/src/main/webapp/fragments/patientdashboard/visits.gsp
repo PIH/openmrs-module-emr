@@ -37,12 +37,12 @@
 
 <script type="text/template" id="visitDetailsTemplate">
     {{ if (stopDatetime) { }}
-        <div class="visit-status">
+        <div class="status-container">
             <i class="icon-time small"></i> ${ ui.message("emr.visitDetails", '{{- startDatetime }}', '{{- stopDatetime }}')}
         </div>
     {{ } else { }}
 
-        <div class="visit-status">
+        <div class="status-container">
             <span class="status active"></span> ${ui.message("emr.activeVisit")}
             <i class="icon-time small"></i>
             ${ ui.message("emr.activeVisit.time", '{{- startDatetime }}')}
