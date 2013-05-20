@@ -81,12 +81,12 @@
     });
 </script>
 
-<ul id="visits-list">
+<ul id="visits-list" class="left-menu">
     <% patient.allVisitsUsingWrappers.each { wrapper ->
         def primaryDiagnoses = wrapper.primaryDiagnoses
     %>
-        <li class="viewVisitDetails" visitId="${wrapper.visit.visitId}">
-            <span class="visit-date">
+        <li class="menu-item viewVisitDetails" visitId="${wrapper.visit.visitId}">
+            <span class="menu-date">
                 <i class="icon-time"></i>
                 ${dateFormat.format(wrapper.visit.startDatetime)}
                 <% if(wrapper.visit.stopDatetime != null) { %>
@@ -95,7 +95,7 @@
                     (${ ui.message("emr.patientDashBoard.activeSince")} ${timeFormat.format(wrapper.visit.startDatetime)})
                 <% } %>
             </span>
-            <span class="visit-primary-diagnosis">
+            <span class="menu-title">
                 <i class="icon-stethoscope"></i>
                 <% if (primaryDiagnoses) { %>
                     ${ formatDiagnoses(primaryDiagnoses) }
@@ -111,7 +111,7 @@
         ${ ui.message("emr.patientDashBoard.noVisits")} 
     <% } %>
 </ul>
-<div id="visit-details">
+<div id="visit-details" class="main-content">
 </div>
 <div id="delete-encounter-dialog" class="dialog" style="display: none">
     <div class="dialog-header">
