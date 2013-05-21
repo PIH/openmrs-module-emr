@@ -13,6 +13,7 @@
     options = options.collect {
         [ label: ui.format(it), value: it.id, selected: false ]
     }
+    options = options.sort { a, b -> a.label <=> b.label }
 %>
 
 ${ ui.includeFragment("emr", "field/dropDown", [
