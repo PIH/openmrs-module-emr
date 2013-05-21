@@ -4,9 +4,11 @@ import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
+import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -22,8 +24,8 @@ public class EditHtmlFormWithStandardUiPageController {
                     UiUtils ui,
                     PageModel pageModel) {
 
-        if (returnUrl == null) {
-            returnUrl = ui.pageLink("*", "home");
+        if (!StringUtils.hasText(returnUrl)) {
+            returnUrl = ui.pageLink("emr", "patient", SimpleObject.create("patientId", patient.getId()));
         }
 
         if (!encounter.getPatient().equals(patient)) {
