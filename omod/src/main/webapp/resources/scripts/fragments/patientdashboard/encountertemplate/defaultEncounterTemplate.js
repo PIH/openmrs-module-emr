@@ -35,7 +35,7 @@ jq(function() {
         var displayTemplate = detailsTemplates[displayTemplateId];
 
 	    var encounterDetailsSection = jq(dataTarget + ' .encounter-summary-container');
-	    if (isHtmlForm == "true"){
+	    if (isHtmlForm) {
 	    		if(encounterDetailsSection.html() == "") { encounterDetailsSection.html("<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i>");}
 	        jq.getJSON(
 	        		emr.fragmentActionLink("emr", "htmlform/viewEncounterWithHtmlForm", "getAsHtml", { encounterId: id })
