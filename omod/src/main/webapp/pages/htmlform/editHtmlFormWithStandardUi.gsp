@@ -10,15 +10,14 @@
     var breadcrumbs = _.flatten([
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
         ${ breadcrumbMiddle },
-        { label: "${ ui.escapeJs(ui.format(htmlForm.form)) }" }
+        { label: "${ ui.escapeJs(ui.message("emr.editHtmlForm.breadcrumb", ui.format(htmlForm.form))) }" }
     ]);
 </script>
 
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
 ${ ui.includeFragment("emr", "htmlform/enterHtmlForm", [
+        encounter: encounter,
         patient: patient,
-        htmlForm: htmlForm,
-        visit: visit,
         returnUrl: returnUrl
 ]) }

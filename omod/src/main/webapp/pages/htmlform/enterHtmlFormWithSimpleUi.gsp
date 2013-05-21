@@ -21,7 +21,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
     var breadcrumbs = _.flatten([
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
         ${ breadcrumbMiddle } ,
-        { label: "${ ui.escapeJs(ui.format(htmlForm)) }" }
+        { label: "${ ui.escapeJs(ui.format(htmlForm.form)) }" }
     ]);
 
     jQuery(function() {
