@@ -20,7 +20,7 @@
 		parameters[encounterTypeUuid][name] = value;
 	};
 
-	encounterTemplates.displayEncounter = function(encounter) {
+	encounterTemplates.displayEncounter = function(encounter, patient) {
 		var template;
 		if (templates[encounter.encounterType.uuid]) {
 			template = templates[encounter.encounterType.uuid];
@@ -28,14 +28,14 @@
 			template = defaultTemplate;
 		}
 		
-		var data = {};
-		if (parameters[encounter.encounterType.uuid]) {
-			data = parameters[encounter.encounterType.uuid];
-		} else {
-			data.icon = "icon-time";
-		}
-		data.encounter = encounter;
-		
+		var data = {
+            encounter: encounter,
+            patient: patient
+        };
+        data.config = _.extend({
+            icon: "icon-time"
+        }, parameters[encounter.encounterType.uuid]);
+
 		return template(data);
 	};
 	

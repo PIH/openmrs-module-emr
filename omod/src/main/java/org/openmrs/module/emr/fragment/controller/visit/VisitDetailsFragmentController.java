@@ -37,7 +37,7 @@ public class VisitDetailsFragmentController {
             UiUtils uiUtils,
             EmrContext emrContext) throws ParseException {
 
-        SimpleObject simpleObject = SimpleObject.fromObject(visit, uiUtils, "id", "location");
+        SimpleObject simpleObject = SimpleObject.fromObject(visit, uiUtils, "id", "location", "patient.patientId");
 
         User authenticatedUser = emrContext.getUserContext().getAuthenticatedUser();
 
@@ -90,7 +90,7 @@ public class VisitDetailsFragmentController {
         ParsedObs parsedObs = parserEncounter.parseObservations(uiUtils.getLocale());
         List<SimpleObject> orders = parserEncounter.parseOrders();
 
-        return SimpleObject.create("observations", parsedObs.getObs(), "orders", orders, "diagnoses", parsedObs.getDiagnoses(), "dispositions", parsedObs.getDispositions());
+        return SimpleObject.create("patientId", encounter.getPatient().getPatientId(), "observations", parsedObs.getObs(), "orders", orders, "diagnoses", parsedObs.getDiagnoses(), "dispositions", parsedObs.getDispositions());
     }
 
 

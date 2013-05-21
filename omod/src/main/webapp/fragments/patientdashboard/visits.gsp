@@ -69,7 +69,7 @@
     <ul id="encountersList">
         {{ _.each(encounters, function(encounter) { }}
             {{ if (!encounter.voided) { }}
-            {{= encounterTemplates.displayEncounter(encounter) }}
+            {{= encounterTemplates.displayEncounter(encounter, patient) }}
             {{  } }}
         {{ }); }}
     </ul>

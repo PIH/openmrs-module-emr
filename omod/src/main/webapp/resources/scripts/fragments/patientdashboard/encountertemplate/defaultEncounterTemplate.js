@@ -8,11 +8,21 @@ jq(function() {
         getEncounterDetails(encounterId, isHtmlForm, dataTarget, customTemplateId ? customTemplateId : "defaultEncounterDetailsTemplate");
     });
 	    
-	jq(document).on('click', '.deleteEncounterId', function(event){
+	jq(document).on('click', '.deleteEncounterId', function(event) {
 		var encounterId = jq(event.target).attr("data-encounter-id");
 		createDeleteEncounterDialog(encounterId, jq(this));
 		showDeleteEncounterDialog();
 	});
+
+    jq(document).on('click', '.editEncounter', function(event) {
+        var encounterId = jq(event.target).attr("data-encounter-id");
+        var patientId = jq(event.target).attr("data-patient-id");
+        emr.navigateTo({
+            provider: "emr",
+            page: "htmlform/editHtmlFormWithStandardUi",
+            query: { patientId: patientId, encounterId: encounterId }
+        });
+    });
 	
 	//We cannot assign it here due to Jasmine failure: 
 	//net.sourceforge.htmlunit.corejs.javascript.EcmaError: TypeError: Cannot call method "replace" of undefined
