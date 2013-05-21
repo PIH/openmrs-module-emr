@@ -14,6 +14,10 @@
 
 package org.openmrs.module.emr.page.controller.consult;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -128,11 +132,12 @@ public class ConsultPageControllerTest {
     }
 
     @Test
-    public void shouldSubmitEDConsultNoteWithAdditionalObservations() throws Exception {
+    public void shouldSubmitEDConsultNoteWithAdditionalObservationsOfTypeCoded() throws Exception {
         int primaryConceptNameId = 2460;
 
         String diagnosisJson = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"PRIMARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.CONCEPT_NAME_PREFIX + primaryConceptNameId + "\" }";
-        String additionalObsJson = "{ \"concept\": \"uuid-123\", \"value_coded\": \"uuid-answer-123\"}";
+
+        String additionalObsJson = "{ \"concept\": \"uuid-123\", \"value\": \"uuid-answer-123\", \"datatype\": \"Coded\"}";
 
         Concept conceptFor2460 = new Concept();
         final ConceptName conceptName2460 = new ConceptName();
@@ -187,6 +192,119 @@ public class ConsultPageControllerTest {
                 return containsInAnyOrder(new Diagnosis(new CodedOrFreeTextAnswer(conceptName2460), Diagnosis.Order.PRIMARY)).matches(actual.getDiagnoses()) &&
                     actual.getAdditionalObs().size() == 1 && actualObs.getConcept() == conceptForAdditionalObs &&
                     actualObs.getValueCoded() == answerForAdditionalObs;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSubmitEDConsultNoteWithAdditionalObservationsOfTypeDate() throws Exception {
+        int primaryConceptNameId = 2460;
+
+        String diagnosisJson = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"PRIMARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.CONCEPT_NAME_PREFIX + primaryConceptNameId + "\" }";
+
+        String additionalObsJson = "{ \"concept\": \"uuid-123\", \"value\": \"2013-05-21 17:23:47\", \"datatype\": \"Date\"}";
+
+        Concept conceptFor2460 = new Concept();
+        final ConceptName conceptName2460 = new ConceptName();
+        conceptName2460.setConcept(conceptFor2460);
+
+        when(conceptService.getConceptName(primaryConceptNameId)).thenReturn(conceptName2460);
+
+        final Concept conceptForAdditionalObs = new Concept();
+        conceptForAdditionalObs.setUuid("uuid-123");
+        Calendar calendar = new GregorianCalendar(2013, 04, 21, 17, 23, 47);
+        final Date dateForAdditionalObs = calendar.getTime();
+
+        when(conceptService.getConceptByUuid("uuid-123")).thenReturn(conceptForAdditionalObs);
+
+        Patient patient = new Patient();
+        patient.addName(new PersonName("Jean", "Paul", "Marie"));
+        final Location sessionLocation = new Location();
+        final Provider currentProvider = new Provider();
+
+        DispositionFactory dispositionFactory = mock(DispositionFactory.class);
+
+        EmrContext emrContext = new EmrContext();
+        emrContext.setSessionLocation(sessionLocation);
+        emrContext.setCurrentProvider(currentProvider);
+
+        MockHttpSession httpSession = new MockHttpSession();
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        ConsultPageController controller = new ConsultPageController();
+        String result = controller.post(patient,
+            asList(diagnosisJson),
+            "",
+            asList(additionalObsJson),
+            "",
+            httpSession,
+            httpServletRequest,
+            consultService,
+            conceptService,
+            dispositionFactory,
+            emrContext, new TestUiUtils());
+
+        final Obs traumaObs = new Obs();
+        traumaObs.setConcept(conceptForAdditionalObs);
+        traumaObs.setValueDate(dateForAdditionalObs);
+
+        verify(consultService).saveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
+            @Override
+            public boolean matches(Object o) {
+                ConsultNote actual = (ConsultNote) o;
+                Obs actualObs = actual.getAdditionalObs().get(0);
+                return containsInAnyOrder(new Diagnosis(new CodedOrFreeTextAnswer(conceptName2460), Diagnosis.Order.PRIMARY)).matches(actual.getDiagnoses()) &&
+                    actual.getAdditionalObs().size() == 1 && actualObs.getConcept() == conceptForAdditionalObs &&
+                    actualObs.getValueDate().equals(dateForAdditionalObs);
+            }
+        }));
+    }
+
+    @Test
+    public void shouldSubmitConsultNoteWithOptionalAdditionalObservationsWithoutValur() throws Exception {
+        int primaryConceptNameId = 2460;
+
+        String diagnosisJson = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"PRIMARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.CONCEPT_NAME_PREFIX + primaryConceptNameId + "\" }";
+
+        String additionalObsJson = "";
+
+        Concept conceptFor2460 = new Concept();
+        final ConceptName conceptName2460 = new ConceptName();
+        conceptName2460.setConcept(conceptFor2460);
+
+        when(conceptService.getConceptName(primaryConceptNameId)).thenReturn(conceptName2460);
+
+        Patient patient = new Patient();
+        patient.addName(new PersonName("Jean", "Paul", "Marie"));
+        final Location sessionLocation = new Location();
+        final Provider currentProvider = new Provider();
+
+        DispositionFactory dispositionFactory = mock(DispositionFactory.class);
+
+        EmrContext emrContext = new EmrContext();
+        emrContext.setSessionLocation(sessionLocation);
+        emrContext.setCurrentProvider(currentProvider);
+
+        MockHttpSession httpSession = new MockHttpSession();
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        ConsultPageController controller = new ConsultPageController();
+        String result = controller.post(patient,
+            asList(diagnosisJson),
+            "",
+            asList(additionalObsJson),
+            "",
+            httpSession,
+            httpServletRequest,
+            consultService,
+            conceptService,
+            dispositionFactory,
+            emrContext, new TestUiUtils());
+
+        verify(consultService).saveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
+            @Override
+            public boolean matches(Object o) {
+                ConsultNote actual = (ConsultNote) o;
+                return containsInAnyOrder(new Diagnosis(new CodedOrFreeTextAnswer(conceptName2460), Diagnosis.Order.PRIMARY)).matches(actual.getDiagnoses()) &&
+                    actual.getAdditionalObs().size() == 0;
             }
         }));
     }

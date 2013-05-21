@@ -92,7 +92,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             <% } %>
 
             <% additionalObservationsConfig.each { config -> %>
-                ${ ui.includeFragment("emr", "widget/observation", config) }
+                ${ ui.includeFragment("emr", "widget/" + config.widget, config) }
             <% } %>
 
             <p>
