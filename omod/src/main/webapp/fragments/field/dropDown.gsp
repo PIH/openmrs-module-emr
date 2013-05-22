@@ -6,6 +6,9 @@
     if (config.depends && config.depends.disable) {
         selectDataBind += "disable: ${ config.depends.variable }() == '${ config.depends.disable }'"
     }
+    if (config.depends && config.depends.enable) {
+        selectDataBind += "enable: ${ config.depends.variable }() == '${ config.depends.enable }'"
+    }
     if (config.dependency || (config.classes && config.classes.contains("required"))) {
         selectDataBind += ", value: ${ config.observable }"
     }
@@ -15,7 +18,7 @@
     <% if (config.depends) { %> data-bind="visible: ${ config.depends.variable }() == '${ config.depends.value }'" <% } %> >
 
     <label for="${ config.id }-field">
-        ${ config.label ?: '' } <% if (config.classes && config.classes.contains("required")) { %><span>(${ ui.message("emr.formValidation.messages.requiredField.label") })</span><% } %>
+        ${ ui.message(config.label) ?: '' } <% if (config.classes && config.classes.contains("required")) { %><span>(${ ui.message("emr.formValidation.messages.requiredField.label") })</span><% } %>
     </label>
 
     <select id="${ config.id }-field" name="${ config.formFieldName}"

@@ -79,10 +79,12 @@ function ConsultFormViewModel() {
 
     var api = {};
 
+    api.requireDisposition = ko.observable(false);
     api.submitting = ko.observable(false);
 
     api.searchTerm = ko.observable();
     api.diagnoses = ko.observableArray();
+    api.disposition = ko.observable();
 
     api.validations = [];
 
@@ -102,24 +104,31 @@ function ConsultFormViewModel() {
         api.submitting(true);
     }
 
-    api.canSubmit = function() {
-        return api.isValid() && !api.submitting();
-    }
-
     api.hasPrimaryDiagnosis = function() {
         return _.some(api.diagnoses(), function(item) {
             return item.primary();
         });
     }
 
+    api.hasDispositionIfRequired = function() {
+        return !api.requireDisposition() || api.disposition();
+    }
+
     api.validations.push(api.hasPrimaryDiagnosis);
+    api.validations.push(api.hasDispositionIfRequired);
 
     api.isValid = function() {
+        console.log("isValid");
         var validated = true;
         _.each(api.validations, function(validation) {
             validated = validated && validation();
         })
         return validated;
+    }
+
+    api.canSubmit = function() {
+        console.log("canSubmit: " + (api.isValid()) + " && " + (!api.submitting()));
+        return api.isValid() && !api.submitting();
     }
 
     api.findSelectedSimilarDiagnosis = function(diagnosis) {
@@ -198,12 +207,5 @@ ko.bindingHandlers.autocomplete = {
         // It's invoked everytime we update the observable associated to the element
         // In this cases, we assume we'll always want to reset it
         $(element).val("");
-    }
-}
-
-function showDispositionClientSideActions(dispoUuid) {
-    jq('.dispo-question').hide();
-    if (dispoUuid) {
-        jq('#dispo-question-' + dispoUuid).show();
     }
 }

@@ -41,19 +41,13 @@
         });
 
         <% if (featureToggles.isFeatureEnabled("consultNoteDispositions")) { %>
-            showDispositionClientSideActions(null);
-
-            jq('#dispositions').change(function(){
-                var option_id = jq(this).val();
-                showDispositionClientSideActions(option_id);
-            })
-
             var dispositions = [];
             <% dispositions.each { disposition -> %>
                 <% disposition.clientSideActions.each { action -> %>
                     dispositions.push("${disposition.uuid}")
                 <% } %>
             <% } %>
+            viewModel.requireDisposition(dispositions);
         <% } %>
     });
 </script>
@@ -72,7 +66,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             <% if (dispositions && featureToggles.isFeatureEnabled("consultNoteDispositions")) { %>
                 <p>
                     <label for="dispositions">${ ui.message("emr.consult.disposition") }</label>
-                    <select id="dispositions" name="disposition">
+                    <select id="dispositions" name="disposition" data-bind="value: disposition">
                         <option value=""></option>
                         <% dispositions.each { disposition -> %>
                             <option value="${disposition.uuid}">${ui.message(disposition.name)}</option>
@@ -83,9 +77,14 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
                 <% dispositions.each { disposition -> %>
                     <% if (disposition.clientSideActions) { %>
-                        <div class="dispo-question" id="dispo-question-${ disposition.uuid }">
-                            <% disposition.clientSideActions.each { action -> %>
-                                ${ ui.includeFragment(action.module, action.fragment, action.fragmentConfig ) }
+                        <div data-bind="visible: disposition() == '${ disposition.uuid }'">
+                            <% disposition.clientSideActions.each { action ->
+                                def includeConfig = [
+                                        observable: action.fragmentConfig.formFieldName,
+                                        depends: [ variable: "disposition", value: "${ disposition.uuid }", enable: "${ disposition.uuid }" ]
+                                ] << action.fragmentConfig
+                            %>
+                                ${ ui.includeFragment(action.module, action.fragment, includeConfig ) }
                             <% } %>
                         </div>
                     <% } %>
