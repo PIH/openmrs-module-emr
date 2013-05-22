@@ -41,7 +41,7 @@
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
 
 <div class="actions">
-    <span class="dropdown-name">Actions<i class="icon-sort-down"></i></span>
+    <span class="dropdown-name"><i class="icon-cog"></i>${ ui.message("emr.actions") }<i class="icon-sort-down"></i></span>
     <ul>
         <% if (!emrContext.activeVisit) { %>
             <li>
