@@ -118,7 +118,6 @@ function ConsultFormViewModel() {
     api.validations.push(api.hasDispositionIfRequired);
 
     api.isValid = function() {
-        console.log("isValid");
         var validated = true;
         _.each(api.validations, function(validation) {
             validated = validated && validation();
@@ -127,7 +126,6 @@ function ConsultFormViewModel() {
     }
 
     api.canSubmit = function() {
-        console.log("canSubmit: " + (api.isValid()) + " && " + (!api.submitting()));
         return api.isValid() && !api.submitting();
     }
 
