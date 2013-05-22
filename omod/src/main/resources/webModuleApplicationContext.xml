@@ -21,7 +21,6 @@
         <property name="requiredPrivilegeName" value="Task: emr.printLabels"/>
     </bean>
 
-    <!--
     <bean id="emrPrintIdCardLabelsOnPatientDashboard" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
         <property name="id" value="emr.printIdCardLabel"/>
         <property name="labelCode" value="emr.task.printIdCardLabel.label"/>
@@ -31,8 +30,6 @@
         <property name="iconUrl" value="icon-print"/>
         <property name="requiredPrivilegeName" value="Task: emr.printLabels"/>
     </bean>
-    -->
-
 
     <bean id="emrRequestChartOnPatientDashboard" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
         <property name="id" value="emr.requestPaperRecord"/>
