@@ -39,22 +39,37 @@
 
 
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
+
+<div class="actions">
+    <span class="dropdown-name">Actions<i class="icon-sort-down"></i></span>
+    <ul>
+        <% if (!emrContext.activeVisit) { %>
+            <li>
+                <a href="javascript:visit.showQuickVisitCreationDialog()">
+                    <i class="icon-check-in"></i>${ ui.message("emr.task.startVisit.label") }
+                </a>
+            </li>
+        <% } %>
+
+        <% availableTasks.each {
+            def url = it.getUrl(emrContext)
+            if (!url.startsWith("javascript:")) {
+                url = "/" + contextPath + "/" + url
+            }
+        %>
+        <li>
+            <a href="${ url }">
+                <i class="${ it.getIconUrl(emrContext) }"></i>
+                ${ it.getLabel(emrContext) }
+            </a>
+        </li>
+        <% } %>
+    </ul>
+</div>
+
 <div class="tabs" xmlns="http://www.w3.org/1999/html">
     <div class="dashboard-container">
-        <div class="actions">
-            <% if (!emrContext.activeVisit) { %>
-                <div><a href="javascript:visit.showQuickVisitCreationDialog()"><i class="icon-check-in"></i>${ ui.message("emr.task.startVisit.label") }</a></div>
-            <% } %>
 
-            <% availableTasks.each {
-                def url = it.getUrl(emrContext)
-                if (!url.startsWith("javascript:")) {
-                    url = "/" + contextPath + "/" + url
-                }
-            %>
-            <div><a href="${ url }"><i class="${ it.getIconUrl(emrContext) }"></i>${ it.getLabel(emrContext) }</a></div>
-            <% } %>
-        </div>
         <ul>
             <% tabs.each { %>
                 <li>
