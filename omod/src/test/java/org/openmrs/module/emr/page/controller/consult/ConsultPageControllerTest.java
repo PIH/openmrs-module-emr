@@ -18,6 +18,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
@@ -33,6 +35,7 @@ import org.openmrs.Patient;
 import org.openmrs.PersonName;
 import org.openmrs.Provider;
 import org.openmrs.api.ConceptService;
+import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.consult.ConsultNote;
@@ -45,8 +48,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;
@@ -105,11 +108,15 @@ public class ConsultPageControllerTest {
         MockHttpSession httpSession = new MockHttpSession();
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         ConsultPageController controller = new ConsultPageController();
+
+        Extension extension = new Extension();
+        extension.setExtensionParams(new HashMap<String, Object>());
+
         String result = controller.post(patient,
                 asList(diagnosisJson1, diagnosisJson2, diagnosisJson3),
                 "", // no disposition
-                null, // no additional observations
                 freeTextComments,
+                extension,
                 httpSession,
                 httpServletRequest,
                 consultService,
@@ -139,9 +146,6 @@ public class ConsultPageControllerTest {
         int primaryConceptNameId = 2460;
 
         String diagnosisJson = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"PRIMARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.CONCEPT_NAME_PREFIX + primaryConceptNameId + "\" }";
-
-        Map<String, String> additionalObs = new HashMap<String, String>();
-        additionalObs.put("uuid-123", "uuid-answer-123");
 
         Concept conceptFor2460 = new Concept();
         final ConceptName conceptName2460 = new ConceptName();
@@ -175,11 +179,14 @@ public class ConsultPageControllerTest {
         MockHttpSession httpSession = new MockHttpSession();
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         ConsultPageController controller = new ConsultPageController();
+
+        httpServletRequest.addParameter("fieldName", "uuid-answer-123");
+
         String result = controller.post(patient,
             asList(diagnosisJson),
             "",
-            additionalObs,
             "",
+            buildAdditionalObsConfig(),
             httpSession,
             httpServletRequest,
             consultService,
@@ -208,9 +215,6 @@ public class ConsultPageControllerTest {
         int primaryConceptNameId = 2460;
 
         String diagnosisJson = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"PRIMARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.CONCEPT_NAME_PREFIX + primaryConceptNameId + "\" }";
-
-        Map<String, String> additionalObs = new HashMap<String, String>();
-        additionalObs.put("uuid-123", "2013-05-21 17:23:47");
 
         Concept conceptFor2460 = new Concept();
         final ConceptName conceptName2460 = new ConceptName();
@@ -243,11 +247,14 @@ public class ConsultPageControllerTest {
         MockHttpSession httpSession = new MockHttpSession();
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         ConsultPageController controller = new ConsultPageController();
+
+        httpServletRequest.addParameter("fieldName", "2013-05-21 17:23:47");
+
         String result = controller.post(patient,
             asList(diagnosisJson),
             "",
-            additionalObs,
             "",
+            buildAdditionalObsConfig(),
             httpSession,
             httpServletRequest,
             consultService,
@@ -277,9 +284,6 @@ public class ConsultPageControllerTest {
 
         String diagnosisJson = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"PRIMARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.CONCEPT_NAME_PREFIX + primaryConceptNameId + "\" }";
 
-        Map<String, String> additionalObs = new HashMap<String, String>();
-        additionalObs.put("uuid-123", "");
-
         Concept conceptFor2460 = new Concept();
         final ConceptName conceptName2460 = new ConceptName();
         conceptName2460.setConcept(conceptFor2460);
@@ -300,11 +304,14 @@ public class ConsultPageControllerTest {
         MockHttpSession httpSession = new MockHttpSession();
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         ConsultPageController controller = new ConsultPageController();
+
+        httpServletRequest.addParameter("fieldName", "");
+
         String result = controller.post(patient,
             asList(diagnosisJson),
             "",
-            additionalObs,
             "",
+            buildAdditionalObsConfig(),
             httpSession,
             httpServletRequest,
             consultService,
@@ -320,6 +327,17 @@ public class ConsultPageControllerTest {
                     actual.getAdditionalObs().size() == 0;
             }
         }));
+    }
+
+    private Extension buildAdditionalObsConfig() {
+        Extension extension = new Extension();
+        extension.setExtensionParams(new HashMap<String, Object>());
+        extension.getExtensionParams().put("additionalObservationsConfig", new LinkedList<Map<String, String>>());
+        ((List<Map<String, String>>) extension.getExtensionParams().get("additionalObservationsConfig")).add(new HashMap<String, String>());
+        ((List<Map<String, String>>) extension.getExtensionParams().get("additionalObservationsConfig")).get(0).put("formFieldName", "fieldName");
+        ((List<Map<String, String>>) extension.getExtensionParams().get("additionalObservationsConfig")).get(0).put("concept", "uuid-123");
+
+        return extension;
     }
 
 }

@@ -64,6 +64,7 @@ public class ConsultPageController {
             additionalObservationsConfig = new LinkedList<Map<String, Object>>();
         }
 
+        model.addAttribute("consultNoteConfig", config.getId());
         model.addAttribute("title", config.getExtensionParams().get("title"));
         model.addAttribute("dispositions", factory.getDispositions());
         model.addAttribute("additionalObservationsConfig", additionalObservationsConfig);
@@ -87,8 +88,8 @@ public class ConsultPageController {
     public String post(@RequestParam("patientId") Patient patient,
                        @RequestParam("diagnosis") List<String> diagnoses, // each string is json, like {"certainty":"PRESUMED","diagnosisOrder":"PRIMARY","diagnosis":"ConceptName:840"}
                        @RequestParam(required = false, value = "disposition") String disposition, // a unique key for a disposition
-                       @RequestParam(required = false, value = "additionalObservations") Map<String, String> additionalObs,
                        @RequestParam(required = false, value = "freeTextComments") String freeTextComments,
+                       @MethodParam("getConfigFromExtension") Extension config,
                        HttpSession httpSession,
                        HttpServletRequest request,
                        @SpringBean("consultService") ConsultService consultService,
@@ -100,8 +101,11 @@ public class ConsultPageController {
         consultNote.setPatient(patient);
         addDiagnosis(consultNote, diagnoses, conceptService);
 
-        if (additionalObs != null) {
-            addAdditionalObs(consultNote, additionalObs, conceptService);
+        List<Map<String, Object>> additionalObservationsConfig = (List<Map<String, Object>>) config.getExtensionParams().get(
+            "additionalObservationsConfig");
+
+        if (additionalObservationsConfig != null) {
+            addAdditionalObs(consultNote, request, additionalObservationsConfig, conceptService);
         }
 
         if (StringUtils.hasText(freeTextComments)) {
@@ -124,22 +128,23 @@ public class ConsultPageController {
         return "redirect:" + ui.pageLink("emr", "patient", SimpleObject.create("patientId", patient.getId()));
     }
 
-    private void addAdditionalObs(ConsultNote consultNote, Map<String, String> additionalObs, ConceptService conceptService) {
-        for (String conceptUuid : additionalObs.keySet()) {
-            String value = additionalObs.get(conceptUuid);
-            if (!value.isEmpty()) {
-                Obs obs;
-                try {
-                    Concept concept = conceptService.getConceptByUuid(conceptUuid);
-                    String datatype = concept.getDatatype().getName().toUpperCase();
-                    obs = ObservationJsonParser.valueOf(datatype).createObs(conceptService, concept, value);
-                } catch (Exception e) {
-                    throw new RuntimeException("Invalid submitted additional observations: " + value, e);
-                }
-                if (obs != null) {
-                    consultNote.addAdditionalObs(obs);
-                }
+    private void addAdditionalObs(ConsultNote consultNote, HttpServletRequest request, List<Map<String, Object>> additionalObservationsConfig, ConceptService conceptService) {
+        for (Map<String, Object> config : additionalObservationsConfig) {
+            String value = request.getParameter((String) config.get("formFieldName"));
+            if (value != null && !value.isEmpty()) {
+                consultNote.addAdditionalObs(
+                    createObservation(conceptService, value, (String) config.get("concept")));
             }
+        }
+    }
+
+    private Obs createObservation(ConceptService conceptService, String value, String concept1) {
+        try {
+            Concept concept = conceptService.getConceptByUuid(concept1);
+            String datatype = concept.getDatatype().getName().toUpperCase();
+            return ObservationJsonParser.valueOf(datatype).createObs(conceptService, concept, value);
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid submitted additional observations: " + value, e);
         }
     }
 
