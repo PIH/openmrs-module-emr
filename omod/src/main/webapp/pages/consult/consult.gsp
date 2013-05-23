@@ -65,7 +65,9 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 
             <% if (dispositions && featureToggles.isFeatureEnabled("consultNoteDispositions")) { %>
                 <p>
-                    <label for="dispositions">${ ui.message("emr.consult.disposition") }</label>
+                    <label for="dispositions">
+                        ${ ui.message("emr.consult.disposition") } <span>(${ ui.message("emr.formValidation.messages.requiredField.label") })</span>
+                    </label>
                     <select id="dispositions" name="disposition" data-bind="value: disposition">
                         <option value=""></option>
                         <% dispositions.each { disposition -> %>
