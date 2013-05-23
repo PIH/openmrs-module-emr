@@ -273,5 +273,4 @@ describe("Outpatient consult form", function() {
         viewModel.validations.push(function() { return false; });
         expect(viewModel.isValid()).toBe(false);
     });
-
 });

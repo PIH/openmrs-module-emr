@@ -17,12 +17,15 @@ package org.openmrs.module.emr.page.controller.consult;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.Concept;
+import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptName;
 import org.openmrs.Location;
 import org.openmrs.Obs;
@@ -105,7 +108,7 @@ public class ConsultPageControllerTest {
         String result = controller.post(patient,
                 asList(diagnosisJson1, diagnosisJson2, diagnosisJson3),
                 "", // no disposition
-                null,
+                null, // no additional observations
                 freeTextComments,
                 httpSession,
                 httpServletRequest,
@@ -137,7 +140,8 @@ public class ConsultPageControllerTest {
 
         String diagnosisJson = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"PRIMARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.CONCEPT_NAME_PREFIX + primaryConceptNameId + "\" }";
 
-        String additionalObsJson = "{ \"concept\": \"uuid-123\", \"value\": \"uuid-answer-123\", \"datatype\": \"Coded\"}";
+        Map<String, String> additionalObs = new HashMap<String, String>();
+        additionalObs.put("uuid-123", "uuid-answer-123");
 
         Concept conceptFor2460 = new Concept();
         final ConceptName conceptName2460 = new ConceptName();
@@ -147,6 +151,9 @@ public class ConsultPageControllerTest {
 
         final Concept conceptForAdditionalObs = new Concept();
         conceptForAdditionalObs.setUuid("uuid-123");
+        ConceptDatatype type = new ConceptDatatype();
+        type.setName("Coded");
+        conceptForAdditionalObs.setDatatype(type);
 
         final Concept answerForAdditionalObs = new Concept();
         answerForAdditionalObs.setUuid("uuid-answer-123");
@@ -171,7 +178,7 @@ public class ConsultPageControllerTest {
         String result = controller.post(patient,
             asList(diagnosisJson),
             "",
-            asList(additionalObsJson),
+            additionalObs,
             "",
             httpSession,
             httpServletRequest,
@@ -202,7 +209,8 @@ public class ConsultPageControllerTest {
 
         String diagnosisJson = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"PRIMARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.CONCEPT_NAME_PREFIX + primaryConceptNameId + "\" }";
 
-        String additionalObsJson = "{ \"concept\": \"uuid-123\", \"value\": \"2013-05-21 17:23:47\", \"datatype\": \"Date\"}";
+        Map<String, String> additionalObs = new HashMap<String, String>();
+        additionalObs.put("uuid-123", "2013-05-21 17:23:47");
 
         Concept conceptFor2460 = new Concept();
         final ConceptName conceptName2460 = new ConceptName();
@@ -212,6 +220,10 @@ public class ConsultPageControllerTest {
 
         final Concept conceptForAdditionalObs = new Concept();
         conceptForAdditionalObs.setUuid("uuid-123");
+        ConceptDatatype type = new ConceptDatatype();
+        type.setName("Date");
+        conceptForAdditionalObs.setDatatype(type);
+
         Calendar calendar = new GregorianCalendar(2013, 04, 21, 17, 23, 47);
         final Date dateForAdditionalObs = calendar.getTime();
 
@@ -234,7 +246,7 @@ public class ConsultPageControllerTest {
         String result = controller.post(patient,
             asList(diagnosisJson),
             "",
-            asList(additionalObsJson),
+            additionalObs,
             "",
             httpSession,
             httpServletRequest,
@@ -252,7 +264,7 @@ public class ConsultPageControllerTest {
             public boolean matches(Object o) {
                 ConsultNote actual = (ConsultNote) o;
                 Obs actualObs = actual.getAdditionalObs().get(0);
-                return containsInAnyOrder(new Diagnosis(new CodedOrFreeTextAnswer(conceptName2460), Diagnosis.Order.PRIMARY)).matches(actual.getDiagnoses()) &&
+                    return containsInAnyOrder(new Diagnosis(new CodedOrFreeTextAnswer(conceptName2460), Diagnosis.Order.PRIMARY)).matches(actual.getDiagnoses()) &&
                     actual.getAdditionalObs().size() == 1 && actualObs.getConcept() == conceptForAdditionalObs &&
                     actualObs.getValueDate().equals(dateForAdditionalObs);
             }
@@ -260,12 +272,13 @@ public class ConsultPageControllerTest {
     }
 
     @Test
-    public void shouldSubmitConsultNoteWithOptionalAdditionalObservationsWithoutValur() throws Exception {
+    public void shouldSubmitConsultNoteWithOptionalAdditionalObservationsWithoutValue() throws Exception {
         int primaryConceptNameId = 2460;
 
         String diagnosisJson = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"PRIMARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.CONCEPT_NAME_PREFIX + primaryConceptNameId + "\" }";
 
-        String additionalObsJson = "";
+        Map<String, String> additionalObs = new HashMap<String, String>();
+        additionalObs.put("uuid-123", "");
 
         Concept conceptFor2460 = new Concept();
         final ConceptName conceptName2460 = new ConceptName();
@@ -290,7 +303,7 @@ public class ConsultPageControllerTest {
         String result = controller.post(patient,
             asList(diagnosisJson),
             "",
-            asList(additionalObsJson),
+            additionalObs,
             "",
             httpSession,
             httpServletRequest,

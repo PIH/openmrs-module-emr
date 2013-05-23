@@ -2,6 +2,8 @@
     config.require("formFieldName")
     config.require("options")
 
+    def required = config.classes && config.classes.contains("required");
+
     def selectDataBind = "";
     if (config.depends && config.depends.disable) {
         selectDataBind += "disable: ${ config.depends.variable }() == '${ config.depends.disable }'"
@@ -9,7 +11,7 @@
     if (config.depends && config.depends.enable) {
         selectDataBind += "enable: ${ config.depends.variable }() == '${ config.depends.enable }'"
     }
-    if (config.dependency || (config.classes && config.classes.contains("required"))) {
+    if (config.dependency || required) {
         selectDataBind += ", value: ${ config.observable }"
     }
 %>
@@ -18,7 +20,7 @@
     <% if (config.depends) { %> data-bind="visible: ${ config.depends.variable }() == '${ config.depends.value }'" <% } %> >
 
     <label for="${ config.id }-field">
-        ${ ui.message(config.label) ?: '' } <% if (config.classes && config.classes.contains("required")) { %><span>(${ ui.message("emr.formValidation.messages.requiredField.label") })</span><% } %>
+        ${ ui.message(config.label) ?: '' } <% if (required) { %><span>(${ ui.message("emr.formValidation.messages.requiredField.label") })</span><% } %>
     </label>
 
     <select id="${ config.id }-field" name="${ config.formFieldName}"
@@ -39,12 +41,12 @@
     ${ ui.includeFragment("uicommons", "fieldErrors", [ fieldName: config.formFieldName ]) }
 </p>
 
-<% if (config.dependency || (config.classes && config.classes.contains("required"))) { %>
+<% if (config.dependency || required) { %>
 <script type="text/javascript">
     viewModel.${ config.observable } = ko.observable();
-    <% if (config.classes && config.classes.contains("required")) { %>
+    <% if (required) { %>
     viewModel.validations.push(function() {
-        return jq('#${ config.id }-field').is(':disabled') || viewModel.${ config.observable }();
+        return jq('#${ config.id }-field').is(':disabled') || (viewModel.${ config.observable }() ? true : false);
     });
     <% } %>
 </script>
