@@ -124,9 +124,12 @@ public class ConsultPageController {
 
         consultService.saveConsultNote(consultNote);
 
-        httpSession.setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
-            ui.message(config.getExtensionParams().get("successMessage").toString(), ui.format(patient)));
-        httpSession.setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+        String successMessage = (String) config.getExtensionParams().get("successMessage");
+        if (successMessage != null) {
+            httpSession.setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
+                ui.message(successMessage.toString(), ui.format(patient)));
+            httpSession.setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+        }
 
         return "redirect:" + ui.pageLink("emr", "patient", SimpleObject.create("patientId", patient.getId()));
     }

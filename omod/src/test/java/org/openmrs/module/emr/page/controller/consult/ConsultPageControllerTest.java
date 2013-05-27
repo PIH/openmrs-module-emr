@@ -110,7 +110,9 @@ public class ConsultPageControllerTest {
         ConsultPageController controller = new ConsultPageController();
 
         Extension extension = new Extension();
-        extension.setExtensionParams(new HashMap<String, Object>());
+        HashMap<String, Object> extensionParams = new HashMap<String, Object>();
+        extensionParams.put("successMessage", "message");
+        extension.setExtensionParams(extensionParams);
 
         String result = controller.post(patient,
                 asList(diagnosisJson1, diagnosisJson2, diagnosisJson3),
