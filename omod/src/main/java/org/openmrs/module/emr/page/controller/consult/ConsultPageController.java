@@ -52,10 +52,10 @@ public class ConsultPageController {
     private static final String CONSULT_NOTE_CONFIG_EXTENSION = "org.openmrs.referenceapplication.consult.note.config";
 
     public void get(@RequestParam("patientId") Patient patient,
-                    @SpringBean DispositionFactory factory,
-                    @SpringBean("conceptService") ConceptService conceptService,
-                    @MethodParam("getConfigFromExtension") Extension config,
-                    PageModel model) throws IOException {
+        @SpringBean DispositionFactory factory,
+        @SpringBean("conceptService") ConceptService conceptService,
+        @MethodParam("getConfigFromExtension") Extension config,
+        PageModel model) throws IOException {
 
         List<Map<String, Object>> additionalObservationsConfig = (List<Map<String, Object>>) config.getExtensionParams().get(
             "additionalObservationsConfig");
@@ -72,7 +72,7 @@ public class ConsultPageController {
     }
 
     public Extension getConfigFromExtension(@RequestParam("config") String configExtensionId,
-                                            @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService) {
+        @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService) {
         Extension config = null;
         List<Extension> extensions = appFrameworkService.getExtensionsForCurrentUser(CONSULT_NOTE_CONFIG_EXTENSION);
         for (Extension extension : extensions) {
@@ -86,17 +86,19 @@ public class ConsultPageController {
     }
 
     public String post(@RequestParam("patientId") Patient patient,
-                       @RequestParam("diagnosis") List<String> diagnoses, // each string is json, like {"certainty":"PRESUMED","diagnosisOrder":"PRIMARY","diagnosis":"ConceptName:840"}
-                       @RequestParam(required = false, value = "disposition") String disposition, // a unique key for a disposition
-                       @RequestParam(required = false, value = "freeTextComments") String freeTextComments,
-                       @MethodParam("getConfigFromExtension") Extension config,
-                       HttpSession httpSession,
-                       HttpServletRequest request,
-                       @SpringBean("consultService") ConsultService consultService,
-                       @SpringBean("conceptService") ConceptService conceptService,
-                       @SpringBean DispositionFactory dispositionFactory,
-                       EmrContext emrContext,
-                       UiUtils ui) throws IOException {
+        @RequestParam(
+            "diagnosis") List<String> diagnoses, // each string is json, like {"certainty":"PRESUMED","diagnosisOrder":"PRIMARY","diagnosis":"ConceptName:840"}
+        @RequestParam(required = false, value = "disposition") String disposition, // a unique key for a disposition
+        @RequestParam(required = false, value = "freeTextComments") String freeTextComments,
+        @MethodParam("getConfigFromExtension") Extension config,
+        HttpSession httpSession,
+        HttpServletRequest request,
+        @SpringBean("consultService") ConsultService consultService,
+        @SpringBean("conceptService") ConceptService conceptService,
+        @SpringBean DispositionFactory dispositionFactory,
+        EmrContext emrContext,
+        UiUtils ui) throws IOException {
+
         ConsultNote consultNote = new ConsultNote();
         consultNote.setPatient(patient);
         addDiagnosis(consultNote, diagnoses, conceptService);
@@ -122,7 +124,8 @@ public class ConsultPageController {
 
         consultService.saveConsultNote(consultNote);
 
-        httpSession.setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, ui.message("emr.consult.successMessage", ui.format(patient)));
+        httpSession.setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
+            ui.message(config.getExtensionParams().get("successMessage").toString(), ui.format(patient)));
         httpSession.setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
         return "redirect:" + ui.pageLink("emr", "patient", SimpleObject.create("patientId", patient.getId()));
@@ -165,8 +168,7 @@ public class ConsultPageController {
     }
 
     /**
-     *
-     * @param diagnosisJson like {"certainty":"PRESUMED","diagnosisOrder":"PRIMARY","diagnosis":"ConceptName:840"}
+     * @param diagnosisJson  like {"certainty":"PRESUMED","diagnosisOrder":"PRIMARY","diagnosis":"ConceptName:840"}
      * @param conceptService
      * @return
      * @throws Exception
