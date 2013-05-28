@@ -15,23 +15,43 @@
            jq("select option:selected").each(function(){
                selectedItems = jq(this).text() + "; id=" + this.value;
                selectedItemId =this.value;
+               if(parseInt(selectedItemId, 10) > 0){
+                   emr.navigateTo({
+                       provider: 'emr',
+                       page: 'inpatients',
+                       query: { ward: selectedItemId }
+                   });
+               }else{
+                   emr.navigateTo({
+                       provider: 'emr',
+                       page: 'inpatients'
+                   });
+               }
+
            });
-           console.log("selectItems=" + selectedItems);
        });
     });
 
 </script>
 
 <h3>${ ui.message("emr.inpatients.title") }</h3>
-
     <div style="float:right;">
-
-        ${ ui.includeFragment("emr", "field/location", [
-            "id": "inpatients-filterByLocation",
-            "formFieldName": "filterByLocationId",
-            "label": "emr.inpatients.filterByCurrentWard",
-            "withTag": "Admission Location"
-        ] ) }
+        <% if(ward!= null && ward.id>0) { %>
+            ${ ui.includeFragment("emr", "field/location", [
+                    "id": "inpatients-filterByLocation",
+                    "formFieldName": "filterByLocationId",
+                    "label": "emr.inpatients.filterByCurrentWard",
+                    "initialValue" : ward.id,
+                    "withTag": "Admission Location"
+            ] ) }
+        <% }else{ %>
+            ${ ui.includeFragment("emr", "field/location", [
+                "id": "inpatients-filterByLocation",
+                "formFieldName": "filterByLocationId",
+                "label": "emr.inpatients.filterByCurrentWard",
+                "withTag": "Admission Location"
+            ] ) }
+        <% } %>
         <br>
         <em>Patient Count:</em>
         <span>${visitSummaries.size()}</span>
