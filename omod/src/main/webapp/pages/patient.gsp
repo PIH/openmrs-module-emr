@@ -36,8 +36,6 @@
     var patient = { id: ${ patient.id } };
 </script>
 
-
-
 ${ ui.includeFragment("emr", "patientHeader", [ patient: patient.patient ]) }
 
 <div class="actions dropdown">

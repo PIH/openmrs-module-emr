@@ -1,4 +1,4 @@
-function loadTemplates () {
+function loadTemplates (activeVisit) {
     function loadVisit(visitElement) {
         var localVisitId = visitElement.attr('visitId');
         if (visitElement != null &&  localVisitId!= undefined) {
@@ -23,8 +23,10 @@ function loadTemplates () {
 
     var visitDetailsSection = $("#visit-details");
 
-    //load first visit
-    loadVisit($('.viewVisitDetails').first());
+    if (activeVisit || !emr.isFeatureEnabled('noActiveVisitView')) {
+        //load first visit
+        loadVisit($('.viewVisitDetails').first());
+    }
 
     $('.viewVisitDetails').click(function() {
         loadVisit($(this));

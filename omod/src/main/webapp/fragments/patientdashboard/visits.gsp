@@ -77,7 +77,7 @@
 
 <script type="text/javascript">
     jq(function(){
-        loadTemplates();
+        loadTemplates(${ emrContext.activeVisit != null });
     });
 </script>
 
@@ -111,8 +111,19 @@
         ${ ui.message("emr.patientDashBoard.noVisits")} 
     <% } %>
 </ul>
+
 <div id="visit-details" class="main-content">
+    <% if (!emrContext.activeVisit) { %>
+        <h4>${ ui.message('emr.noActiveVisit') }</h4>
+        <p class="spaced">${ ui.message('emr.noActiveVisit.description') }</p>
+        <p class="spaced">
+            <a href="javascript:visit.showQuickVisitCreationDialog()" class="button task">
+                <i class="icon-check-in small"></i>${ ui.message("emr.task.startVisit.label") }
+            </a>
+        </p>
+    <% } %>
 </div>
+
 <div id="delete-encounter-dialog" class="dialog" style="display: none">
     <div class="dialog-header">
         <h3>${ ui.message("emr.patientDashBoard.deleteEncounter.title") }</h3>
