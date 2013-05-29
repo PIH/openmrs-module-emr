@@ -42,14 +42,14 @@
                     "formFieldName": "filterByLocationId",
                     "label": "emr.inpatients.filterByCurrentWard",
                     "initialValue" : ward.id,
-                    "withTag": "Admission Location"
+                    "withTag": "Admission Location;Transfer Location"
             ] ) }
         <% }else{ %>
             ${ ui.includeFragment("emr", "field/location", [
                 "id": "inpatients-filterByLocation",
                 "formFieldName": "filterByLocationId",
                 "label": "emr.inpatients.filterByCurrentWard",
-                "withTag": "Admission Location"
+                "withTag": "Admission Location;Transfer Location"
             ] ) }
         <% } %>
         <br>

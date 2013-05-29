@@ -4,9 +4,16 @@
     // config supports withTag
 
     def options;
+    def tagList = [];
     if (config.withTag) {
-        def tag = config.withTag instanceof String ? context.locationService.getLocationTagByName(config.withTag) : config.withTag
-        options = context.locationService.getLocationsHavingAnyTag([ tag ])
+        tagArray = config.withTag.split(";")
+        if(tagArray.size() >0){
+            tagArray.each{ t ->
+                def tag = t instanceof String ? context.locationService.getLocationTagByName(t) : t
+                tagList.add(tag)
+            }
+        }
+        options = context.locationService.getLocationsHavingAnyTag(tagList)
     } else {
         options = context.locationService.allLocations
     }
