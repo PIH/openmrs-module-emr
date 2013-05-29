@@ -14,15 +14,13 @@
 
 package org.openmrs.module.emr.consult;
 
-import java.util.Date;
-
-import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.handler.EncounterVisitHandler;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.module.emr.utils.ObservationFactory;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.concept.EmrConceptService;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
@@ -34,6 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.util.Date;
 
 /**
  *
@@ -78,7 +78,8 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
         }
 
         if (StringUtils.hasText(consultNote.getComments())) {
-            encounter.addObs(buildTextObs(emrApiProperties.getConsultFreeTextCommentsConcept(), consultNote.getComments()));
+            encounter.addObs(ObservationFactory.TEXT.createObs(null, emrApiProperties.getConsultFreeTextCommentsConcept(),
+                    consultNote.getComments()));
         }
 
         // normally we'd wait for encounterService.saveEncounter to assign a visit, but the actions may want to modify the visit,
@@ -104,13 +105,6 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
         }
 
         return encounterService.saveEncounter(encounter);
-    }
-
-    private Obs buildTextObs(Concept question, String answer) {
-        Obs obs = new Obs();
-        obs.setConcept(question);
-        obs.setValueText(answer);
-        return obs;
     }
 
     public void setEmrApiProperties(EmrApiProperties emrApiProperties) {

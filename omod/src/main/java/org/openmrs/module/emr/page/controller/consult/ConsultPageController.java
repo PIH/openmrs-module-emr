@@ -14,16 +14,6 @@
 
 package org.openmrs.module.emr.page.controller.consult;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.Concept;
@@ -36,6 +26,7 @@ import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.consult.ConsultNote;
 import org.openmrs.module.emr.consult.ConsultService;
+import org.openmrs.module.emr.utils.ObservationFactory;
 import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.disposition.DispositionFactory;
@@ -46,6 +37,13 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class ConsultPageController {
 
@@ -145,13 +143,9 @@ public class ConsultPageController {
     }
 
     private Obs createObservation(ConceptService conceptService, String value, String concept1) {
-        try {
-            Concept concept = conceptService.getConceptByUuid(concept1);
-            String datatype = concept.getDatatype().getName().toUpperCase();
-            return ObservationJsonParser.valueOf(datatype).createObs(conceptService, concept, value);
-        } catch (Exception e) {
-            throw new RuntimeException("Invalid submitted additional observations: " + value, e);
-        }
+        Concept concept = conceptService.getConceptByUuid(concept1);
+        String datatype = concept.getDatatype().getName().toUpperCase();
+        return ObservationFactory.valueOf(datatype).createObs(conceptService, concept, value);
     }
 
     private void addDiagnosis(ConsultNote consultNote, List<String> diagnoses, ConceptService conceptService) {
@@ -189,31 +183,4 @@ public class ConsultPageController {
         return diagnosis;
     }
 
-    private enum ObservationJsonParser {
-        CODED {
-            @Override
-            public Obs createObs(ConceptService conceptService, Concept concept, String value) {
-                Obs obs = new Obs();
-                obs.setConcept(concept);
-                obs.setValueCoded(conceptService.getConceptByUuid(value));
-
-                return obs;
-            }
-        },
-
-        DATE {
-            @Override
-            public Obs createObs(ConceptService conceptService, Concept concept, String value) throws ParseException {
-                Obs obs = new Obs();
-                obs.setConcept(concept);
-
-                DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                obs.setValueDate(formatter.parse(value));
-
-                return obs;
-            }
-        };
-
-        public abstract Obs createObs(ConceptService conceptService, Concept concept, String value) throws ParseException;
-    }
 }
