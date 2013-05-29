@@ -54,7 +54,7 @@
         <% } %>
         <br>
         <em>Patient Count:</em>
-        <span>${visitSummaries.size()}</span>
+        <span id="patient-count">${visitSummaries.size()}</span>
     </div>
 
 <table id="active-visits" width="100%" border="1" cellspacing="0" cellpadding="2">
