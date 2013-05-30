@@ -117,7 +117,7 @@
         <h4>${ ui.message('emr.noActiveVisit') }</h4>
         <p class="spaced">${ ui.message('emr.noActiveVisit.description') }</p>
         <p class="spaced">
-            <a href="javascript:visit.showQuickVisitCreationDialog()" class="button task">
+            <a id="noVisitShowVisitCreationDialog" href="javascript:visit.showQuickVisitCreationDialog()" class="button task">
                 <i class="icon-check-in small"></i>${ ui.message("emr.task.startVisit.label") }
             </a>
         </p>
