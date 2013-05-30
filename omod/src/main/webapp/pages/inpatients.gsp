@@ -53,7 +53,7 @@
             ] ) }
         <% } %>
         <br>
-        <em>Patient Count:</em>
+        <em>${ ui.message("emr.inpatients.patientCount") }:</em>
         <span id="patient-count">${visitSummaries.size()}</span>
     </div>
 
