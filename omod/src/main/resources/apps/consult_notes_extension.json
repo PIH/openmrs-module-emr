@@ -1,0 +1,22 @@
+[
+    {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.consult",
+        "extensionPointId": "patientDashboard.visitActions",
+        "type": "link",
+        "label": "emr.clinic.consult.title",
+        "url": "emr/consult/consult.page?config=emr.clinic.consult.note&patientId={{patientId}}",
+        "icon": "icon-stethoscope",
+        "order": 30,
+        "requiredPrivilege": "Task: emr.enterClinicalForms"
+    },
+    {
+        "id": "${project.parent.groupId}.${project.parent.artifactId}.edConsult",
+        "extensionPointId": "patientDashboard.visitActions",
+        "type": "link",
+        "label": "emr.ed.consult.title",
+        "url": "emr/consult/consult.page?config=emr.ed.consult.note&patientId={{patientId}}",
+        "icon": "icon-stethoscope",
+        "order": 31,
+        "requiredPrivilege": "Task: only.sysadmin.can.see.this.now"
+    }
+]
