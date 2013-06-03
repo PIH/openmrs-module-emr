@@ -40,6 +40,7 @@ public class EmrConstants {
 
     // copied to paperrecord
     public static final String GP_PAPER_RECORD_IDENTIFIER_TYPE = "emr.paperRecordIdentifierType";
+    public static final String GP_EXTERNAL_DOSSIER_IDENTIFIER_TYPE = "emr.externalDossierIdentifierType";
 
     // copied to emrapi
     public static final String GP_EXTRA_PATIENT_IDENTIFIER_TYPES = "emr.extraPatientIdentifierTypes";

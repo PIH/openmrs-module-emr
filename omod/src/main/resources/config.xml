@@ -113,6 +113,14 @@
     </globalProperty>
 
     <globalProperty>
+        <property>emr.externalDossierIdentifierType</property>
+        <defaultValue></defaultValue>
+        <description>
+            UUID of the Patient Identifier Type that represents an external dossier number for a patient
+        </description>
+    </globalProperty>
+
+    <globalProperty>
         <property>emr.extraPatientIdentifierTypes</property>
         <defaultValue></defaultValue>
         <description>
