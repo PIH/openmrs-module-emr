@@ -1,5 +1,6 @@
 <%
     ui.decorateWith("appui", "standardEmrPage")
+    ui.includeCss("mirebalais", "inpatient.css")
 %>
 <script type="text/javascript">
     var breadcrumbs = [
@@ -34,8 +35,8 @@
 
 </script>
 
-<h3>${ ui.message("emr.inpatients.title") }</h3>
-    <div style="float:right;">
+<h3 class="inpatient-count">${ ui.message("emr.inpatients.patientCount") }: ${visitSummaries.size()}</h3>
+    <div class="inpatient-filter">
         <% if(ward!= null && ward.id>0) { %>
             ${ ui.includeFragment("emr", "field/location", [
                     "id": "inpatients-filterByLocation",
@@ -52,9 +53,6 @@
                 "withTag": "Admission Location;Transfer Location"
             ] ) }
         <% } %>
-        <br>
-        <em>${ ui.message("emr.inpatients.patientCount") }:</em>
-        <span id="patient-count">${visitSummaries.size()}</span>
     </div>
 
 <table id="active-visits" width="100%" border="1" cellspacing="0" cellpadding="2">
