@@ -12,7 +12,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.format(patient.familyName) }, ${ ui.format(patient.givenName) }", link:'${ ui.pageLink("emr", "patient", [patientId: patient.id]) }' },
+        { label: "${ ui.format(patient.familyName) }, ${ ui.format(patient.givenName) }", link:'${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.id]) }' },
         { label: "${ ui.message(title) }" }
     ];
 
@@ -29,7 +29,7 @@
         ko.applyBindings(viewModel, jq('#contentForm').get(0));
         jq('#diagnosis-search').focus();
         jq('#contentForm .cancel').click(function(event) {
-            emr.navigateTo({ page: "patient", query: { patientId: ${ patient.id } } });
+            emr.navigateTo({ provider:"coreapps", page: "patientdashboard/patientDashboard", query: { patientId: ${ patient.id } } });
         });
 
         jq('#consult-note').submit(function() {

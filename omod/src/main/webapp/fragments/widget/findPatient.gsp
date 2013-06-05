@@ -3,8 +3,8 @@
 
     // defaults
     config.merge([
-            targetPageProvider: "emr",
-            targetPage: "patient"
+            targetPageProvider: "coreapps",
+            targetPage: "patientdashboard/patientDashboard"
     ])
 %>
 

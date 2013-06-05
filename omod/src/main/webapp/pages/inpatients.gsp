@@ -77,7 +77,7 @@
     <tr id="visit-${ v.visit.id }">
         <td>${ v.visit.patient.patientIdentifier.identifier }</td>
         <td>
-            <a href="${ ui.pageLink("emr", "patient", [ patientId: v.visit.patient.id ]) }">
+            <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: v.visit.patient.id ]) }">
                 ${ ui.format(v.visit.patient) }
             </a>
         </td>

@@ -34,8 +34,8 @@
         jq('#results').on('click', '.patient-result', function(event) {
             var ptId = jq(this).find('input[name=patientId]').val();
             emr.navigateTo({
-                provider: 'emr',
-                page: 'patient',
+                provider: 'coreapps',
+                page: 'patientdashboard/patientDashboard',
                 query: { patientId: ptId }
             });
         });

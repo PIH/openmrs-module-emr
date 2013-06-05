@@ -18,7 +18,7 @@ ${ ui.includeFragment("emr", "validationMessages")}
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.format(patient.familyName) }, ${ ui.format(patient.givenName) }", link:'${ui.pageLink("emr", "patient", [patientId: patient.id])}' },
+        { label: "${ ui.format(patient.familyName) }, ${ ui.format(patient.givenName) }", link:'${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.id])}' },
         { label: "${ui.message("emr.app.retrospectiveCheckin.label")}" }
     ];
 </script>
