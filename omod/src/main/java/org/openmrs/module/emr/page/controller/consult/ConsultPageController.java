@@ -129,7 +129,7 @@ public class ConsultPageController {
             httpSession.setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
         }
 
-        return "redirect:" + ui.pageLink("emr", "patient", SimpleObject.create("patientId", patient.getId()));
+        return "redirect:" + ui.pageLink("coreapps", "patientdashboard/patientDashboard", SimpleObject.create("patientId", patient.getId()));
     }
 
     private void addAdditionalObs(ConsultNote consultNote, HttpServletRequest request, List<Map<String, Object>> additionalObservationsConfig, ConceptService conceptService) {

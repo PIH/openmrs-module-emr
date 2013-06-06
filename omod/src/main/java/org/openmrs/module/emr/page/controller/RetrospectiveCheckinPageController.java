@@ -71,7 +71,7 @@ public class RetrospectiveCheckinPageController {
 
         request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE, "emr.retrospectiveCheckin.success");
         request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
-        return "redirect:" + ui.pageLink("emr", "patient", SimpleObject.create("patientId", patient.getId()));
+        return "redirect:" + ui.pageLink("coreapps", "patientdashboard/patientDashboard", SimpleObject.create("patientId", patient.getId()));
     }
 
     private Obs createPaymentReceiptObservation(EmrProperties emrProperties, String receiptNumber) {
