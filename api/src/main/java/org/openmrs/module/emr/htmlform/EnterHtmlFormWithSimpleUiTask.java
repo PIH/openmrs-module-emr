@@ -38,7 +38,7 @@ public class EnterHtmlFormWithSimpleUiTask extends BaseEnterPatientHtmlFormTask 
         if (getBreadcrumbOverride() != null) {
             params.put("breadcrumbOverride", getBreadcrumbOverride());
         }
-        return uiUtils.pageLinkWithoutContextPath("emr", "htmlform/enterHtmlFormWithSimpleUi", params);
+        return uiUtils.pageLinkWithoutContextPath("htmlformentryui", "htmlform/enterHtmlFormWithSimpleUi", params);
     }
 
 }
