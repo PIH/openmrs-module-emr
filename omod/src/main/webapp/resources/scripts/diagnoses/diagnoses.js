@@ -1,0 +1,148 @@
+(function(diagnoses, $, _, undefined) {
+
+    var codingSystemToUse = 'ICD-10-WHO';
+
+    diagnoses.sameDiagnosis = function(d1, d2) {
+        if (d1.diagnosis.conceptId && d2.diagnosis.conceptId) {
+            return d1.diagnosis.conceptId === d2.diagnosis.conceptId;
+        } else {
+            return d1.diagnosis.matchedName === d2.diagnosis.matchedName;
+        }
+    };
+
+    diagnoses.validateDiagnosis = function(d) {
+        if (!d.hasOwnProperty("diagnosis") || !d.hasOwnProperty("confirmed") || !d.hasOwnProperty("primary")) {
+            throw "required properties: diagnosis, confirmed, primary";
+        }
+    };
+
+    diagnoses.CodedOrFreeTextConceptAnswer = function(item) {
+        if (typeof item === "string") {
+            // free-text case
+
+            var api = {
+                type: "free-text",
+                matchedName: item,
+                preferredName: null,
+                code: null,
+                conceptId: null,
+                valueToSubmit: function() {
+                    return "Non-Coded:" + item;
+                }
+            };
+            return api;
+
+        }
+        else {
+            // expect object like
+            // {
+            //     concept: { id, conceptMappings, preferredName },
+            //     conceptName: { id, conceptNameType, name }
+            // }
+
+            var api = _.extend(item, {
+                type: "concept",
+                matchedName: item.conceptName ? item.conceptName.name : item.concept.preferredName,
+                preferredName: item.conceptName && item.conceptName.name != item.concept.preferredName ? item.concept.preferredName : null,
+                nameIsPreferred: item.conceptName ? (item.conceptName === item.concept.preferredName) : true,
+                code: findConceptMapping(item.concept, codingSystemToUse),
+                conceptId: item.concept.id,
+                exactlyMatchesQuery: function(query) {
+                    query = emr.stripAccents(query.toLowerCase());
+                    return (api.code && api.code.toLowerCase() == query) ||
+                        (api.preferredName && emr.stripAccents(api.preferredName.toLowerCase()) == query) ||
+                        (api.matchedName && emr.stripAccents(api.matchedName.toLowerCase()) == query);
+                },
+                valueToSubmit: function() {
+                    return item.conceptName ? "ConceptName:" + item.conceptName.id : "Concept:" + item.concept.id;
+                }
+            });
+            return api;
+        }
+    };
+
+    diagnoses.Diagnosis = function(item) {
+        var api = {
+            diagnosis: item,
+            confirmed: false,
+            primary: false
+        }
+
+        api.certainty = function() {
+            return api.confirmed ? "CONFIRMED" : "PRESUMED";
+        };
+
+        api.diagnosisOrder = function() {
+            return api.primary ? "PRIMARY" : "SECONDARY";
+        };
+
+        api.valueToSubmit = function() {
+            return JSON.stringify({
+                certainty: api.certainty(),
+                diagnosisOrder: api.diagnosisOrder(),
+                diagnosis: api.diagnosis.valueToSubmit()
+            });
+        };
+
+        return api;
+    };
+
+    diagnoses.EncounterDiagnoses = function() {
+
+        var api = {
+            diagnoses: []
+        };
+
+        api.findSelectedSimilarDiagnosis = function(diagnosis) {
+            return _.find(api.diagnoses, function(candidate) {
+                return diagnoses.sameDiagnosis(diagnosis, candidate);
+            });
+        };
+
+        api.hasPrimaryDiagnosis = function() {
+            return _.some(api.diagnoses, function(item) {
+                return item.primary;
+            });
+        };
+
+        api.addDiagnosis = function(diagnosis) {
+            diagnoses.validateDiagnosis(diagnosis);
+            if (api.findSelectedSimilarDiagnosis(diagnosis)) {
+                return;
+            }
+            if (!api.hasPrimaryDiagnosis()) {
+                diagnosis.primary = true;
+            }
+            api.diagnoses.push(diagnosis);
+        };
+
+        api.removeDiagnosis = function(diagnosis) {
+            api.diagnoses = _.reject(api.diagnoses, function(candidate) {
+                return diagnoses.sameDiagnosis(diagnosis, candidate);
+            });
+            if (!api.hasPrimaryDiagnosis() && api.diagnoses.length > 0) {
+                api.diagnoses[0].primary = true;
+            }
+        }
+
+        api.primaryDiagnoses = function() {
+            return _.filter(api.diagnoses, function(candidate) {
+                return candidate.primary;
+            });
+        };
+
+        api.secondaryDiagnoses = function() {
+            return _.filter(api.diagnoses, function(candidate) {
+                return !candidate.primary;
+            });
+        };
+
+        api.render = function(template, target) {
+            $(target).html(template({ diagnoses: api }));
+        };
+
+        return api;
+    };
+
+
+} ( window.diagnoses = window.diagnoses || {}, jQuery, _));
