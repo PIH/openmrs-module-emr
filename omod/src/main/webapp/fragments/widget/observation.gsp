@@ -3,8 +3,7 @@
 
     def concept = conceptService.getConceptByUuid(config.concept)
 
-    def fragmentOptions = [ label: ui.format(concept),
-                            observable: config.id ] << config
+    def fragmentOptions = [ label: ui.format(concept) ] << config
 
     if (concept.getDatatype().isCoded()) {
         def options = []
