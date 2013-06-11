@@ -26,7 +26,6 @@ import org.openmrs.api.ProviderService;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.emr.EmrConstants;
-import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.consult.ConsultNote;
 import org.openmrs.module.emr.consult.ConsultService;
 import org.openmrs.module.emr.utils.ObservationFactory;
@@ -113,9 +112,9 @@ public class ConsultPageController {
                        @SpringBean("consultService") ConsultService consultService,
                        @SpringBean("conceptService") ConceptService conceptService,
                        @SpringBean DispositionFactory dispositionFactory,
-                       EmrContext emrContext,
                        UiUtils ui,
-                       @RequestParam("consultLocation") Location consultLocation) throws IOException {
+                       @RequestParam("consultLocation") Location consultLocation,
+                       @RequestParam("consultProvider") Provider consultProvider) throws IOException {
 
         ConsultNote consultNote = new ConsultNote();
         consultNote.setPatient(patient);
@@ -132,7 +131,7 @@ public class ConsultPageController {
             consultNote.setComments(freeTextComments);
         }
 
-        consultNote.setClinician(emrContext.getCurrentProvider());
+        consultNote.setClinician(consultProvider);
         consultNote.setEncounterLocation(consultLocation);
 
         if (StringUtils.hasText(disposition)) {

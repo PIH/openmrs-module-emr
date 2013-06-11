@@ -97,10 +97,7 @@ public class ConsultPageControllerTest {
         Patient patient = new Patient();
         patient.addName(new PersonName("Jean", "Paul", "Marie"));
         final Location consultLocation = new Location();
-        final Provider currentProvider = new Provider();
-
-        EmrContext emrContext = new EmrContext();
-        emrContext.setCurrentProvider(currentProvider);
+        final Provider consultProvider = new Provider();
 
         DispositionFactory dispositionFactory = mock(DispositionFactory.class);
 
@@ -123,9 +120,9 @@ public class ConsultPageControllerTest {
                 consultService,
                 conceptService,
                 dispositionFactory,
-                emrContext,
                 new TestUiUtils(),
-                consultLocation);
+                consultLocation,
+                consultProvider);
 
         assertThat(result, startsWith("redirect:"));
         assertThat(httpSession.getAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE), notNullValue());
@@ -139,7 +136,7 @@ public class ConsultPageControllerTest {
                         new Diagnosis(new CodedOrFreeTextAnswer(secondaryText), Diagnosis.Order.SECONDARY)).matches(actual.getDiagnoses()) &&
                         actual.getComments().equals(freeTextComments) &&
                         actual.getEncounterLocation().equals(consultLocation) &&
-                        actual.getClinician().equals(currentProvider);
+                        actual.getClinician().equals(consultProvider);
             }
         }));
     }
@@ -196,7 +193,7 @@ public class ConsultPageControllerTest {
             consultService,
             conceptService,
             dispositionFactory,
-            emrContext, new TestUiUtils(), consultLocation);
+                new TestUiUtils(), consultLocation, new Provider());
 
         final Obs traumaObs = new Obs();
         traumaObs.setConcept(conceptForAdditionalObs);
@@ -265,7 +262,7 @@ public class ConsultPageControllerTest {
             consultService,
             conceptService,
             dispositionFactory,
-            emrContext, new TestUiUtils(), consultLocation);
+                new TestUiUtils(), consultLocation, new Provider());
 
         final Obs traumaObs = new Obs();
         traumaObs.setConcept(conceptForAdditionalObs);
@@ -323,7 +320,7 @@ public class ConsultPageControllerTest {
             consultService,
             conceptService,
             dispositionFactory,
-            emrContext, new TestUiUtils(), consultLocation);
+                new TestUiUtils(), consultLocation, new Provider());
 
         verify(consultService).saveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
             @Override
