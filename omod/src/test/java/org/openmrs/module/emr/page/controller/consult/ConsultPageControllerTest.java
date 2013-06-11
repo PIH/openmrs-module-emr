@@ -29,7 +29,6 @@ import org.openmrs.Provider;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.emr.EmrConstants;
-import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.consult.ConsultNote;
 import org.openmrs.module.emr.consult.ConsultService;
 import org.openmrs.module.emr.test.TestUiUtils;
@@ -39,7 +38,9 @@ import org.openmrs.module.emrapi.disposition.DispositionFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 
+import java.io.IOException;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -64,10 +65,10 @@ import static org.mockito.MockitoAnnotations.Mock;
 public class ConsultPageControllerTest {
 
     @Mock
-    ConsultService consultService;
+    private ConsultService consultService;
 
     @Mock
-    ConceptService conceptService;
+    private ConceptService conceptService;
 
     @Before
     public void initMocks() {
@@ -84,6 +85,7 @@ public class ConsultPageControllerTest {
         String diagnosisJson1 = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"PRIMARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.CONCEPT_NAME_PREFIX + primaryConceptNameId + "\" }";
         String diagnosisJson2 = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"SECONDARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.CONCEPT_PREFIX + secondaryConceptId + "\" }";
         String diagnosisJson3 = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"SECONDARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.NON_CODED_PREFIX + secondaryText + "\" }";
+        List<String> diagnoses = asList(diagnosisJson1, diagnosisJson2, diagnosisJson3);
 
         Concept conceptFor2460 = new Concept();
         final ConceptName conceptName2460 = new ConceptName();
@@ -94,35 +96,11 @@ public class ConsultPageControllerTest {
         when(conceptService.getConceptName(primaryConceptNameId)).thenReturn(conceptName2460);
         when(conceptService.getConcept(secondaryConceptId)).thenReturn(concept3);
 
-        Patient patient = new Patient();
-        patient.addName(new PersonName("Jean", "Paul", "Marie"));
+        MockHttpSession httpSession = new MockHttpSession();
         final Location consultLocation = new Location();
         final Provider consultProvider = new Provider();
 
-        DispositionFactory dispositionFactory = mock(DispositionFactory.class);
-
-        MockHttpSession httpSession = new MockHttpSession();
-        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        ConsultPageController controller = new ConsultPageController();
-
-        Extension extension = new Extension();
-        HashMap<String, Object> extensionParams = new HashMap<String, Object>();
-        extensionParams.put("successMessage", "message");
-        extension.setExtensionParams(extensionParams);
-
-        String result = controller.post(patient,
-                asList(diagnosisJson1, diagnosisJson2, diagnosisJson3),
-                "", // no disposition
-                freeTextComments,
-                extension,
-                httpSession,
-                httpServletRequest,
-                consultService,
-                conceptService,
-                dispositionFactory,
-                new TestUiUtils(),
-                consultLocation,
-                consultProvider);
+        String result = post(freeTextComments, diagnoses, httpSession, consultLocation, consultProvider, "");
 
         assertThat(result, startsWith("redirect:"));
         assertThat(httpSession.getAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE), notNullValue());
@@ -143,202 +121,108 @@ public class ConsultPageControllerTest {
 
     @Test
     public void shouldSubmitEDConsultNoteWithAdditionalObservationsOfTypeCoded() throws Exception {
-        int primaryConceptNameId = 2460;
-
-        String diagnosisJson = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"PRIMARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.CONCEPT_NAME_PREFIX + primaryConceptNameId + "\" }";
-
-        Concept conceptFor2460 = new Concept();
-        final ConceptName conceptName2460 = new ConceptName();
-        conceptName2460.setConcept(conceptFor2460);
-
-        when(conceptService.getConceptName(primaryConceptNameId)).thenReturn(conceptName2460);
-
-        final Concept conceptForAdditionalObs = new Concept();
-        conceptForAdditionalObs.setUuid("uuid-123");
-        ConceptDatatype type = new ConceptDatatype();
-        type.setName("Coded");
-        conceptForAdditionalObs.setDatatype(type);
+        final Concept conceptForAdditionalObs = createConcept("uuid-123", "Coded");
 
         final Concept answerForAdditionalObs = new Concept();
         answerForAdditionalObs.setUuid("uuid-answer-123");
-
-        when(conceptService.getConceptByUuid("uuid-123")).thenReturn(conceptForAdditionalObs);
         when(conceptService.getConceptByUuid("uuid-answer-123")).thenReturn(answerForAdditionalObs);
 
-        Patient patient = new Patient();
-        patient.addName(new PersonName("Jean", "Paul", "Marie"));
-        final Location sessionLocation = new Location();
-        final Provider currentProvider = new Provider();
-
-        DispositionFactory dispositionFactory = mock(DispositionFactory.class);
-
-        EmrContext emrContext = new EmrContext();
-        emrContext.setSessionLocation(sessionLocation);
-        emrContext.setCurrentProvider(currentProvider);
-
-        MockHttpSession httpSession = new MockHttpSession();
-        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        ConsultPageController controller = new ConsultPageController();
-
-        httpServletRequest.addParameter("fieldName", "uuid-answer-123");
-
-        Location consultLocation = new Location();
-        String result = controller.post(patient,
-            asList(diagnosisJson),
-            "",
-            "",
-            buildAdditionalObsConfig(),
-            httpSession,
-            httpServletRequest,
-            consultService,
-            conceptService,
-            dispositionFactory,
-                new TestUiUtils(), consultLocation, new Provider());
-
-        final Obs traumaObs = new Obs();
-        traumaObs.setConcept(conceptForAdditionalObs);
-        traumaObs.setValueCoded(answerForAdditionalObs);
+        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), "uuid-answer-123");
 
         verify(consultService).saveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
             @Override
             public boolean matches(Object o) {
                 ConsultNote actual = (ConsultNote) o;
                 Obs actualObs = actual.getAdditionalObs().get(0);
-                return containsInAnyOrder(new Diagnosis(new CodedOrFreeTextAnswer(conceptName2460), Diagnosis.Order.PRIMARY)).matches(actual.getDiagnoses()) &&
-                    actual.getAdditionalObs().size() == 1 && actualObs.getConcept() == conceptForAdditionalObs &&
-                    actualObs.getValueCoded() == answerForAdditionalObs;
+                return actual.getAdditionalObs().size() == 1 && actualObs.getConcept() == conceptForAdditionalObs &&
+                       actualObs.getValueCoded() == answerForAdditionalObs;
             }
         }));
     }
 
     @Test
     public void shouldSubmitEDConsultNoteWithAdditionalObservationsOfTypeDate() throws Exception {
-        int primaryConceptNameId = 2460;
-
-        String diagnosisJson = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"PRIMARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.CONCEPT_NAME_PREFIX + primaryConceptNameId + "\" }";
-
-        Concept conceptFor2460 = new Concept();
-        final ConceptName conceptName2460 = new ConceptName();
-        conceptName2460.setConcept(conceptFor2460);
-
-        when(conceptService.getConceptName(primaryConceptNameId)).thenReturn(conceptName2460);
-
-        final Concept conceptForAdditionalObs = new Concept();
-        conceptForAdditionalObs.setUuid("uuid-123");
-        ConceptDatatype type = new ConceptDatatype();
-        type.setName("Date");
-        conceptForAdditionalObs.setDatatype(type);
+        final Concept conceptForAdditionalObs = createConcept("uuid-123", "Date");
 
         Calendar calendar = new GregorianCalendar(2013, 04, 21, 17, 23, 47);
         final Date dateForAdditionalObs = calendar.getTime();
 
-        when(conceptService.getConceptByUuid("uuid-123")).thenReturn(conceptForAdditionalObs);
-
-        Patient patient = new Patient();
-        patient.addName(new PersonName("Jean", "Paul", "Marie"));
-        final Location sessionLocation = new Location();
-        final Provider currentProvider = new Provider();
-
-        DispositionFactory dispositionFactory = mock(DispositionFactory.class);
-
-        EmrContext emrContext = new EmrContext();
-        emrContext.setSessionLocation(sessionLocation);
-        emrContext.setCurrentProvider(currentProvider);
-
-        MockHttpSession httpSession = new MockHttpSession();
-        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        ConsultPageController controller = new ConsultPageController();
-
-        httpServletRequest.addParameter("fieldName", "2013-05-21 17:23:47");
-
-        Location consultLocation = new Location();
-        String result = controller.post(patient,
-            asList(diagnosisJson),
-            "",
-            "",
-            buildAdditionalObsConfig(),
-            httpSession,
-            httpServletRequest,
-            consultService,
-            conceptService,
-            dispositionFactory,
-                new TestUiUtils(), consultLocation, new Provider());
-
-        final Obs traumaObs = new Obs();
-        traumaObs.setConcept(conceptForAdditionalObs);
-        traumaObs.setValueDate(dateForAdditionalObs);
+        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), "2013-05-21 17:23:47");
 
         verify(consultService).saveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
             @Override
             public boolean matches(Object o) {
                 ConsultNote actual = (ConsultNote) o;
                 Obs actualObs = actual.getAdditionalObs().get(0);
-                    return containsInAnyOrder(new Diagnosis(new CodedOrFreeTextAnswer(conceptName2460), Diagnosis.Order.PRIMARY)).matches(actual.getDiagnoses()) &&
-                    actual.getAdditionalObs().size() == 1 && actualObs.getConcept() == conceptForAdditionalObs &&
-                    actualObs.getValueDate().equals(dateForAdditionalObs);
+                return actual.getAdditionalObs().size() == 1 && actualObs.getConcept() == conceptForAdditionalObs &&
+                       actualObs.getValueDate().equals(dateForAdditionalObs);
             }
         }));
     }
 
     @Test
     public void shouldSubmitConsultNoteWithOptionalAdditionalObservationsWithoutValue() throws Exception {
-        int primaryConceptNameId = 2460;
-
-        String diagnosisJson = "{ \"certainty\": \"PRESUMED\", \"diagnosisOrder\": \"PRIMARY\", \"diagnosis\": \"" + CodedOrFreeTextAnswer.CONCEPT_NAME_PREFIX + primaryConceptNameId + "\" }";
-
-        Concept conceptFor2460 = new Concept();
-        final ConceptName conceptName2460 = new ConceptName();
-        conceptName2460.setConcept(conceptFor2460);
-
-        when(conceptService.getConceptName(primaryConceptNameId)).thenReturn(conceptName2460);
-
-        Patient patient = new Patient();
-        patient.addName(new PersonName("Jean", "Paul", "Marie"));
-        final Location sessionLocation = new Location();
-        final Provider currentProvider = new Provider();
-
-        DispositionFactory dispositionFactory = mock(DispositionFactory.class);
-
-        EmrContext emrContext = new EmrContext();
-        emrContext.setSessionLocation(sessionLocation);
-        emrContext.setCurrentProvider(currentProvider);
-
-        MockHttpSession httpSession = new MockHttpSession();
-        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        ConsultPageController controller = new ConsultPageController();
-
-        httpServletRequest.addParameter("fieldName", "");
-
-        Location consultLocation = new Location();
-        String result = controller.post(patient,
-            asList(diagnosisJson),
-            "",
-            "",
-            buildAdditionalObsConfig(),
-            httpSession,
-            httpServletRequest,
-            consultService,
-            conceptService,
-            dispositionFactory,
-                new TestUiUtils(), consultLocation, new Provider());
+        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), "");
 
         verify(consultService).saveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
             @Override
             public boolean matches(Object o) {
                 ConsultNote actual = (ConsultNote) o;
-                return containsInAnyOrder(new Diagnosis(new CodedOrFreeTextAnswer(conceptName2460), Diagnosis.Order.PRIMARY)).matches(actual.getDiagnoses()) &&
-                    actual.getAdditionalObs().size() == 0;
+                return actual.getAdditionalObs().size() == 0;
             }
         }));
+    }
+
+    private Concept createConcept(String conceptUUID, String dataType) {
+        ConceptDatatype type = new ConceptDatatype();
+        type.setName(dataType);
+
+        Concept concept = new Concept();
+        concept.setUuid(conceptUUID);
+        concept.setDatatype(type);
+
+        when(conceptService.getConceptByUuid(conceptUUID)).thenReturn(concept);
+
+        return concept;
+    }
+
+    private String post(String freeTextComments, List<String> diagnoses, MockHttpSession httpSession, Location consultLocation, Provider consultProvider, String fieldNameParam) throws IOException {
+        Patient patient = new Patient();
+        patient.addName(new PersonName("Jean", "Paul", "Marie"));
+
+        DispositionFactory dispositionFactory = mock(DispositionFactory.class);
+
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        ConsultPageController controller = new ConsultPageController();
+
+        httpServletRequest.addParameter("fieldName", fieldNameParam);
+
+        return controller.post(patient,
+                diagnoses,
+                "",
+                freeTextComments,
+                buildAdditionalObsConfig(),
+                httpSession,
+                httpServletRequest,
+                consultService,
+                conceptService,
+                dispositionFactory,
+                new TestUiUtils(),
+                consultLocation,
+                consultProvider);
     }
 
     private Extension buildAdditionalObsConfig() {
         Extension extension = new Extension();
         extension.setExtensionParams(new HashMap<String, Object>());
-        extension.getExtensionParams().put("additionalObservationsConfig", new LinkedList<Map<String, String>>());
-        ((List<Map<String, String>>) extension.getExtensionParams().get("additionalObservationsConfig")).add(new HashMap<String, String>());
-        ((List<Map<String, String>>) extension.getExtensionParams().get("additionalObservationsConfig")).get(0).put("formFieldName", "fieldName");
-        ((List<Map<String, String>>) extension.getExtensionParams().get("additionalObservationsConfig")).get(0).put("concept", "uuid-123");
+        extension.getExtensionParams().put("successMessage", "message");
+
+        List<Map<String, String>> additionalObsConfig = new LinkedList<Map<String, String>>();
+        extension.getExtensionParams().put("additionalObservationsConfig", additionalObsConfig);
+
+        additionalObsConfig.add(new HashMap<String, String>());
+        additionalObsConfig.get(0).put("formFieldName", "fieldName");
+        additionalObsConfig.get(0).put("concept", "uuid-123");
 
         return extension;
     }
