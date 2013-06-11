@@ -32,6 +32,12 @@
             emr.navigateTo({ provider:"coreapps", page: "patientdashboard/patientDashboard", query: { patientId: ${ patient.id } } });
         });
 
+        jq('#toggle-who-where-when').click(function() {
+            jq('#who-where-when-view').toggle();
+            jq('#who-where-when-edit').toggle();
+            return false;
+        });
+
         jq('#consult-note').submit(function() {
             var valid = viewModel.isValid();
             if (valid) {
@@ -57,6 +63,55 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
 <div id="contentForm">
     <h2>${ ui.message(title) }</h2>
     <form id="consult-note" method="post">
+        <table id="who-where-when-view"><tr>
+            <td>
+                <label>${ ui.message("emr.patientDashBoard.provider") }</label>
+                <span data-bind="text: consultProvider"></span>
+            </td>
+            <td>
+                <label>${ ui.message("emr.location") }</label>
+                <span data-bind="text: consultLocation"></span>
+            </td>
+            <td>
+                <label>${ ui.message("emr.patientDashBoard.date") }</label>
+                <span data-bind="text: consultDate"></span>
+            </td>
+            <td>
+                <a id="toggle-who-where-when" href="#">${ ui.message("emr.edit") }</a>
+            </td>
+        </tr></table>
+
+        <div id="who-where-when-edit">
+            ${ ui.includeFragment("emr", "field/dropDown", [
+                    id: "consultProvider",
+                    label: "emr.patientDashBoard.provider",
+                    formFieldName: "consultProviderId",
+                    options: providers,
+                    classes: ['required'],
+                    hideEmptyLabel: true,
+                    initialValue: emrContext.currentProvider.providerId
+            ])}
+
+            ${ ui.includeFragment("emr", "field/location", [
+                    id: "consultLocation",
+                    label: "emr.location",
+                    formFieldName: "consultLocation",
+                    classes: ['required'],
+                    withTag: "Login Location",
+                    hideEmptyLabel: true,
+                    initialValue: sessionContext.sessionLocationId
+            ])}
+
+            ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                    id: "consultDate",
+                    label: "emr.patientDashBoard.date",
+                    formFieldName: "consultDate",
+                    useTime: true,
+                    classes: ['required'],
+                    defaultToday: true
+            ])}
+        </div>
+
         <div id="entry-fields">
             <p>
                 <label for="diagnosis-search">${ ui.message("emr.consult.addDiagnosis") }</label>

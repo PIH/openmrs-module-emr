@@ -17,9 +17,12 @@ package org.openmrs.module.emr.page.controller.consult;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.Concept;
+import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.Provider;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.ProviderService;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.emr.EmrConstants;
@@ -41,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +56,7 @@ public class ConsultPageController {
     public void get(@RequestParam("patientId") Patient patient,
         @SpringBean DispositionFactory factory,
         @SpringBean("conceptService") ConceptService conceptService,
+        @SpringBean("providerService") ProviderService providerService,
         @MethodParam("getConfigFromExtension") Extension config,
         PageModel model) throws IOException {
 
@@ -66,7 +71,21 @@ public class ConsultPageController {
         model.addAttribute("title", config.getExtensionParams().get("title"));
         model.addAttribute("dispositions", factory.getDispositions());
         model.addAttribute("additionalObservationsConfig", additionalObservationsConfig);
+        model.addAttribute("providers", getProviders(providerService));
         model.addAttribute("conceptService", conceptService);
+    }
+
+    private List<SimpleObject> getProviders(ProviderService providerService) {
+        List<SimpleObject> items = new ArrayList<SimpleObject>();
+        List<Provider> clerks = providerService.getAllProviders(false);
+        for(Provider clerk: clerks) {
+            SimpleObject item = new SimpleObject();
+            item.put("value", clerk.getProviderId());
+            item.put("label", clerk.getName());
+            items.add(item);
+        }
+
+        return items;
     }
 
     public Extension getConfigFromExtension(@RequestParam("config") String configExtensionId,
@@ -84,18 +103,19 @@ public class ConsultPageController {
     }
 
     public String post(@RequestParam("patientId") Patient patient,
-        @RequestParam(
-            "diagnosis") List<String> diagnoses, // each string is json, like {"certainty":"PRESUMED","diagnosisOrder":"PRIMARY","diagnosis":"ConceptName:840"}
-        @RequestParam(required = false, value = "disposition") String disposition, // a unique key for a disposition
-        @RequestParam(required = false, value = "freeTextComments") String freeTextComments,
-        @MethodParam("getConfigFromExtension") Extension config,
-        HttpSession httpSession,
-        HttpServletRequest request,
-        @SpringBean("consultService") ConsultService consultService,
-        @SpringBean("conceptService") ConceptService conceptService,
-        @SpringBean DispositionFactory dispositionFactory,
-        EmrContext emrContext,
-        UiUtils ui) throws IOException {
+                       @RequestParam(
+                               "diagnosis") List<String> diagnoses, // each string is json, like {"certainty":"PRESUMED","diagnosisOrder":"PRIMARY","diagnosis":"ConceptName:840"}
+                       @RequestParam(required = false, value = "disposition") String disposition, // a unique key for a disposition
+                       @RequestParam(required = false, value = "freeTextComments") String freeTextComments,
+                       @MethodParam("getConfigFromExtension") Extension config,
+                       HttpSession httpSession,
+                       HttpServletRequest request,
+                       @SpringBean("consultService") ConsultService consultService,
+                       @SpringBean("conceptService") ConceptService conceptService,
+                       @SpringBean DispositionFactory dispositionFactory,
+                       EmrContext emrContext,
+                       UiUtils ui,
+                       @RequestParam("consultLocation") Location consultLocation) throws IOException {
 
         ConsultNote consultNote = new ConsultNote();
         consultNote.setPatient(patient);
@@ -113,7 +133,7 @@ public class ConsultPageController {
         }
 
         consultNote.setClinician(emrContext.getCurrentProvider());
-        consultNote.setEncounterLocation(emrContext.getSessionLocation());
+        consultNote.setEncounterLocation(consultLocation);
 
         if (StringUtils.hasText(disposition)) {
             consultNote.setDisposition(dispositionFactory.getDispositionByUniqueId(disposition));

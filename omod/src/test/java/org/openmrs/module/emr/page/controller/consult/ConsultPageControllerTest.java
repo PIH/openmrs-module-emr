@@ -14,14 +14,6 @@
 
 package org.openmrs.module.emr.page.controller.consult;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -46,6 +38,14 @@ import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.disposition.DispositionFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.startsWith;
@@ -75,7 +75,7 @@ public class ConsultPageControllerTest {
     }
 
     @Test
-    public void testSubmit() throws Exception {
+    public void shouldSaveConsultNoteAndRedirect() throws Exception {
         int primaryConceptNameId = 2460;
         int secondaryConceptId = 3;
         final String secondaryText = "Fatigue from too much testing";
@@ -96,11 +96,10 @@ public class ConsultPageControllerTest {
 
         Patient patient = new Patient();
         patient.addName(new PersonName("Jean", "Paul", "Marie"));
-        final Location sessionLocation = new Location();
+        final Location consultLocation = new Location();
         final Provider currentProvider = new Provider();
 
         EmrContext emrContext = new EmrContext();
-        emrContext.setSessionLocation(sessionLocation);
         emrContext.setCurrentProvider(currentProvider);
 
         DispositionFactory dispositionFactory = mock(DispositionFactory.class);
@@ -124,7 +123,9 @@ public class ConsultPageControllerTest {
                 consultService,
                 conceptService,
                 dispositionFactory,
-                emrContext, new TestUiUtils());
+                emrContext,
+                new TestUiUtils(),
+                consultLocation);
 
         assertThat(result, startsWith("redirect:"));
         assertThat(httpSession.getAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE), notNullValue());
@@ -137,7 +138,7 @@ public class ConsultPageControllerTest {
                         new Diagnosis(new CodedOrFreeTextAnswer(concept3), Diagnosis.Order.SECONDARY),
                         new Diagnosis(new CodedOrFreeTextAnswer(secondaryText), Diagnosis.Order.SECONDARY)).matches(actual.getDiagnoses()) &&
                         actual.getComments().equals(freeTextComments) &&
-                        actual.getEncounterLocation().equals(sessionLocation) &&
+                        actual.getEncounterLocation().equals(consultLocation) &&
                         actual.getClinician().equals(currentProvider);
             }
         }));
@@ -184,6 +185,7 @@ public class ConsultPageControllerTest {
 
         httpServletRequest.addParameter("fieldName", "uuid-answer-123");
 
+        Location consultLocation = new Location();
         String result = controller.post(patient,
             asList(diagnosisJson),
             "",
@@ -194,7 +196,7 @@ public class ConsultPageControllerTest {
             consultService,
             conceptService,
             dispositionFactory,
-            emrContext, new TestUiUtils());
+            emrContext, new TestUiUtils(), consultLocation);
 
         final Obs traumaObs = new Obs();
         traumaObs.setConcept(conceptForAdditionalObs);
@@ -252,6 +254,7 @@ public class ConsultPageControllerTest {
 
         httpServletRequest.addParameter("fieldName", "2013-05-21 17:23:47");
 
+        Location consultLocation = new Location();
         String result = controller.post(patient,
             asList(diagnosisJson),
             "",
@@ -262,7 +265,7 @@ public class ConsultPageControllerTest {
             consultService,
             conceptService,
             dispositionFactory,
-            emrContext, new TestUiUtils());
+            emrContext, new TestUiUtils(), consultLocation);
 
         final Obs traumaObs = new Obs();
         traumaObs.setConcept(conceptForAdditionalObs);
@@ -309,6 +312,7 @@ public class ConsultPageControllerTest {
 
         httpServletRequest.addParameter("fieldName", "");
 
+        Location consultLocation = new Location();
         String result = controller.post(patient,
             asList(diagnosisJson),
             "",
@@ -319,7 +323,7 @@ public class ConsultPageControllerTest {
             consultService,
             conceptService,
             dispositionFactory,
-            emrContext, new TestUiUtils());
+            emrContext, new TestUiUtils(), consultLocation);
 
         verify(consultService).saveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
             @Override
