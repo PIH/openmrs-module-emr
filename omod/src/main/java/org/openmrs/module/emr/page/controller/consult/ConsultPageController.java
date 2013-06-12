@@ -44,6 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -53,14 +54,14 @@ public class ConsultPageController {
     private static final String CONSULT_NOTE_CONFIG_EXTENSION = "org.openmrs.referenceapplication.consult.note.config";
 
     public void get(@RequestParam("patientId") Patient patient,
-        @SpringBean DispositionFactory factory,
-        @SpringBean("conceptService") ConceptService conceptService,
-        @SpringBean("providerService") ProviderService providerService,
-        @MethodParam("getConfigFromExtension") Extension config,
-        PageModel model) throws IOException {
+                    @SpringBean DispositionFactory factory,
+                    @SpringBean("conceptService") ConceptService conceptService,
+                    @SpringBean("providerService") ProviderService providerService,
+                    @MethodParam("getConfigFromExtension") Extension config,
+                    PageModel model) throws IOException {
 
         List<Map<String, Object>> additionalObservationsConfig = (List<Map<String, Object>>) config.getExtensionParams().get(
-            "additionalObservationsConfig");
+                "additionalObservationsConfig");
 
         if (additionalObservationsConfig == null) {
             additionalObservationsConfig = new LinkedList<Map<String, Object>>();
@@ -77,7 +78,7 @@ public class ConsultPageController {
     private List<SimpleObject> getProviders(ProviderService providerService) {
         List<SimpleObject> items = new ArrayList<SimpleObject>();
         List<Provider> clerks = providerService.getAllProviders(false);
-        for(Provider clerk: clerks) {
+        for (Provider clerk : clerks) {
             SimpleObject item = new SimpleObject();
             item.put("value", clerk.getProviderId());
             item.put("label", clerk.getName());
@@ -88,7 +89,7 @@ public class ConsultPageController {
     }
 
     public Extension getConfigFromExtension(@RequestParam("config") String configExtensionId,
-        @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService) {
+                                            @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService) {
         Extension config = null;
         List<Extension> extensions = appFrameworkService.getExtensionsForCurrentUser(CONSULT_NOTE_CONFIG_EXTENSION);
         for (Extension extension : extensions) {
@@ -102,26 +103,26 @@ public class ConsultPageController {
     }
 
     public String post(@RequestParam("patientId") Patient patient,
-                       @RequestParam(
-                               "diagnosis") List<String> diagnoses, // each string is json, like {"certainty":"PRESUMED","diagnosisOrder":"PRIMARY","diagnosis":"ConceptName:840"}
+                       @RequestParam("diagnosis") List<String> diagnoses, // each string is json, like {"certainty":"PRESUMED","diagnosisOrder":"PRIMARY","diagnosis":"ConceptName:840"}
                        @RequestParam(required = false, value = "disposition") String disposition, // a unique key for a disposition
                        @RequestParam(required = false, value = "freeTextComments") String freeTextComments,
+                       @RequestParam("consultProviderId") Provider consultProvider,
+                       @RequestParam("consultLocationId") Location consultLocation,
+                       @RequestParam("consultDate") Date date,
                        @MethodParam("getConfigFromExtension") Extension config,
-                       HttpSession httpSession,
-                       HttpServletRequest request,
                        @SpringBean("consultService") ConsultService consultService,
                        @SpringBean("conceptService") ConceptService conceptService,
                        @SpringBean DispositionFactory dispositionFactory,
-                       UiUtils ui,
-                       @RequestParam("consultLocation") Location consultLocation,
-                       @RequestParam("consultProvider") Provider consultProvider) throws IOException {
+                       HttpSession httpSession,
+                       HttpServletRequest request,
+                       UiUtils ui) throws IOException {
 
         ConsultNote consultNote = new ConsultNote();
         consultNote.setPatient(patient);
         addDiagnosis(consultNote, diagnoses, conceptService);
 
         List<Map<String, Object>> additionalObservationsConfig = (List<Map<String, Object>>) config.getExtensionParams().get(
-            "additionalObservationsConfig");
+                "additionalObservationsConfig");
 
         if (additionalObservationsConfig != null) {
             addAdditionalObs(consultNote, request, additionalObservationsConfig, conceptService);
@@ -133,6 +134,7 @@ public class ConsultPageController {
 
         consultNote.setClinician(consultProvider);
         consultNote.setEncounterLocation(consultLocation);
+        consultNote.setEncounterDate(date);
 
         if (StringUtils.hasText(disposition)) {
             consultNote.setDisposition(dispositionFactory.getDispositionByUniqueId(disposition));
@@ -144,7 +146,7 @@ public class ConsultPageController {
         String successMessage = (String) config.getExtensionParams().get("successMessage");
         if (successMessage != null) {
             httpSession.setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
-                ui.message(successMessage.toString(), ui.format(patient)));
+                    ui.message(successMessage.toString(), ui.format(patient)));
             httpSession.setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
         }
 
@@ -156,7 +158,7 @@ public class ConsultPageController {
             String value = request.getParameter((String) config.get("formFieldName"));
             if (value != null && !value.isEmpty()) {
                 consultNote.addAdditionalObs(
-                    createObservation(conceptService, value, (String) config.get("concept")));
+                        createObservation(conceptService, value, (String) config.get("concept")));
             }
         }
     }

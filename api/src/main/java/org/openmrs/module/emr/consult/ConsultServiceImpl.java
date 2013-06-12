@@ -33,8 +33,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.Date;
-
 /**
  *
  */
@@ -62,7 +60,7 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
         DispositionDescriptor dispositionDescriptor = emrApiProperties.getDispositionDescriptor();
 
         Encounter encounter = new Encounter();
-        encounter.setEncounterDatetime(new Date());
+        encounter.setEncounterDatetime(consultNote.getEncounterDate());
         encounter.setLocation(consultNote.getEncounterLocation());
         encounter.setEncounterType(emrApiProperties.getConsultEncounterType());
         encounter.setPatient(consultNote.getPatient());

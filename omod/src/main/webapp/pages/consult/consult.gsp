@@ -66,15 +66,15 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
         <table id="who-where-when-view"><tr>
             <td>
                 <label>${ ui.message("emr.patientDashBoard.provider") }</label>
-                <span data-bind="text: consultProvider"></span>
+                <span>${ ui.format(emrContext.currentProvider) }</span>
             </td>
             <td>
                 <label>${ ui.message("emr.location") }</label>
-                <span data-bind="text: consultLocation"></span>
+                <span>${ ui.format(sessionContext.sessionLocation) }</span>
             </td>
             <td>
                 <label>${ ui.message("emr.patientDashBoard.date") }</label>
-                <span data-bind="text: consultDate"></span>
+                <span>${ ui.format(new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date())) }</span>
             </td>
             <td>
                 <a id="toggle-who-where-when" href="#">${ ui.message("emr.edit") }</a>
@@ -95,7 +95,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             ${ ui.includeFragment("emr", "field/location", [
                     id: "consultLocation",
                     label: "emr.location",
-                    formFieldName: "consultLocation",
+                    formFieldName: "consultLocationId",
                     classes: ['required'],
                     withTag: "Login Location",
                     hideEmptyLabel: true,

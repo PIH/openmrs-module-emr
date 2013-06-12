@@ -14,12 +14,6 @@
 
 package org.openmrs.module.emr.consult;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,6 +54,15 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.context.ApplicationContext;
+
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
@@ -358,6 +361,23 @@ public class ConsultServiceTest {
         assertThat(obsAtTopLevel, containsInAnyOrder(
             diagnosisMatcher(primary, presumed, malaria, null),
             new CodedObsMatcher(trauma, accident)));
+    }
+
+    @Test
+    public void saveConsultNote_shouldSaveConsultNoteWithSpecificDate() throws Exception {
+        ConsultNote consultNote = buildConsultNote();
+        consultNote.addPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(malaria)));
+
+        Calendar calendar = new GregorianCalendar(2013, 04, 21, 17, 23, 47);
+        final Date date = calendar.getTime();
+        consultNote.setEncounterDate(date);
+
+        Encounter encounter = consultService.saveConsultNote(consultNote);
+
+        assertNotNull(encounter);
+        verify(encounterService).saveEncounter(encounter);
+
+        assertThat(encounter.getEncounterDatetime(), is(date));
     }
 
     private ConsultNote buildConsultNote() {

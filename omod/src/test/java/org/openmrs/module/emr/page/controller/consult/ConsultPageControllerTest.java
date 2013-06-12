@@ -100,7 +100,8 @@ public class ConsultPageControllerTest {
         final Location consultLocation = new Location();
         final Provider consultProvider = new Provider();
 
-        String result = post(freeTextComments, diagnoses, httpSession, consultLocation, consultProvider, "");
+        final Date consultDate = new Date();
+        String result = post(freeTextComments, diagnoses, httpSession, consultLocation, consultProvider, consultDate, "");
 
         assertThat(result, startsWith("redirect:"));
         assertThat(httpSession.getAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE), notNullValue());
@@ -114,7 +115,8 @@ public class ConsultPageControllerTest {
                         new Diagnosis(new CodedOrFreeTextAnswer(secondaryText), Diagnosis.Order.SECONDARY)).matches(actual.getDiagnoses()) &&
                         actual.getComments().equals(freeTextComments) &&
                         actual.getEncounterLocation().equals(consultLocation) &&
-                        actual.getClinician().equals(consultProvider);
+                        actual.getClinician().equals(consultProvider) &&
+                        actual.getEncounterDate().equals(consultDate);
             }
         }));
     }
@@ -127,7 +129,7 @@ public class ConsultPageControllerTest {
         answerForAdditionalObs.setUuid("uuid-answer-123");
         when(conceptService.getConceptByUuid("uuid-answer-123")).thenReturn(answerForAdditionalObs);
 
-        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), "uuid-answer-123");
+        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), new Date(), "uuid-answer-123");
 
         verify(consultService).saveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
             @Override
@@ -147,7 +149,7 @@ public class ConsultPageControllerTest {
         Calendar calendar = new GregorianCalendar(2013, 04, 21, 17, 23, 47);
         final Date dateForAdditionalObs = calendar.getTime();
 
-        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), "2013-05-21 17:23:47");
+        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), new Date(), "2013-05-21 17:23:47");
 
         verify(consultService).saveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
             @Override
@@ -162,7 +164,7 @@ public class ConsultPageControllerTest {
 
     @Test
     public void shouldSubmitConsultNoteWithOptionalAdditionalObservationsWithoutValue() throws Exception {
-        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), "");
+        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), new Date(), "");
 
         verify(consultService).saveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
             @Override
@@ -186,7 +188,8 @@ public class ConsultPageControllerTest {
         return concept;
     }
 
-    private String post(String freeTextComments, List<String> diagnoses, MockHttpSession httpSession, Location consultLocation, Provider consultProvider, String fieldNameParam) throws IOException {
+    private String post(String freeTextComments, List<String> diagnoses, MockHttpSession httpSession,
+                        Location consultLocation, Provider consultProvider, Date consultDate, String fieldNameParam) throws IOException {
         Patient patient = new Patient();
         patient.addName(new PersonName("Jean", "Paul", "Marie"));
 
@@ -201,15 +204,12 @@ public class ConsultPageControllerTest {
                 diagnoses,
                 "",
                 freeTextComments,
+                consultProvider, consultLocation, consultDate,
                 buildAdditionalObsConfig(),
-                httpSession,
+                consultService, conceptService, dispositionFactory, httpSession,
                 httpServletRequest,
-                consultService,
-                conceptService,
-                dispositionFactory,
-                new TestUiUtils(),
-                consultLocation,
-                consultProvider);
+                new TestUiUtils()
+        );
     }
 
     private Extension buildAdditionalObsConfig() {
