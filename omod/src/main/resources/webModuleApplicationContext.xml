@@ -9,4 +9,65 @@
 		<property name="moduleId" value="${project.parent.artifactId}"/>
 	</bean>
 
+
+    <!-- Tasks -->
+    <bean id="emrPrintPaperRecordLabelsOnPatientDashboard" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
+        <property name="id" value="emr.printPaperRecordLabel"/>
+        <property name="labelCode" value="emr.task.printPaperRecordLabel.label"/>
+        <property name="javascript" value="printPaperRecordLabel()"/>
+        <property name="priority" value="-10.0"/>
+        <property name="extensionPoint" value="patient.globalActions"/>
+        <property name="iconUrl" value="icon-print"/>
+        <property name="requiredPrivilegeName" value="Task: emr.printLabels"/>
+    </bean>
+
+    <bean id="emrPrintIdCardLabelsOnPatientDashboard" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
+        <property name="id" value="emr.printIdCardLabel"/>
+        <property name="labelCode" value="emr.task.printIdCardLabel.label"/>
+        <property name="javascript" value="printIdCardLabel()"/>
+        <property name="priority" value="-10.0"/>
+        <property name="extensionPoint" value="patient.globalActions"/>
+        <property name="iconUrl" value="icon-print"/>
+        <property name="requiredPrivilegeName" value="Task: emr.printLabels"/>
+    </bean>
+
+    <bean id="emrRequestChartOnPatientDashboard" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
+        <property name="id" value="emr.requestPaperRecord"/>
+        <property name="labelCode" value="emr.task.requestPaperRecord.label"/>
+        <property name="javascript" value="showRequestChartDialog()"/>
+        <property name="priority" value="-10.0"/>
+        <property name="extensionPoint" value="patient.globalActions"/>
+        <property name="iconUrl" value="icon-folder-open"/>
+    </bean>
+
+    <bean id="emrClinicConsultationTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
+        <property name="id" value="emr.consult"/>
+        <property name="labelCode" value="emr.clinic.consult.title"/>
+        <property name="url" value="emr/consult/consult.page?config=emr.clinic.consult.note"/>
+        <property name="priority" value="30.0"/>
+        <property name="extensionPoint" value="patient.visits.active.actions"/>
+        <property name="iconUrl" value="icon-stethoscope"/>
+        <property name="requiredPrivilegeName" value="Task: emr.enterClinicalForms"/>
+    </bean>
+
+    <bean id="emrEDConsultationTask" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
+        <property name="id" value="emr.consult"/>
+        <property name="labelCode" value="emr.ed.consult.title"/>
+        <property name="url" value="emr/consult/consult.page?config=emr.ed.consult.note"/>
+        <property name="priority" value="31.0"/>
+        <property name="extensionPoint" value="patient.visits.active.actions"/>
+        <property name="iconUrl" value="icon-stethoscope"/>
+        <property name="requiredPrivilegeName" value="Task: emr.enterClinicalForms"/>
+    </bean>
+
+    <!-- not for first release
+    <bean id="emrRetrospectiveCheckin" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
+        <property name="id" value="emr.retrospectiveCheckin"/>
+        <property name="labelCode" value="emr.task.retrospectiveCheckin.label"/>
+        <property name="url" value="emr/retrospectiveCheckin.page"/>
+        <property name="priority" value="20.3"/>
+        <property name="extensionPoint" value="patient.globalActions"/>
+        <property name="iconUrl" value="icon-calendar"/>
+    </bean>
+    -->
 </beans>
