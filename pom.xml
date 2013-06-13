@@ -187,6 +187,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>htmlformentryui-omod</artifactId>
+            <version>${htmlformentryuiVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- End OpenMRS modules -->
 
         <!-- start other dependencies -->
