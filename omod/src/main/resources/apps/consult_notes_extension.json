@@ -17,6 +17,6 @@
         "url": "emr/consult/consult.page?config=emr.ed.consult.note&patientId={{patientId}}&visitId={{visit.id}}",
         "icon": "icon-stethoscope",
         "order": 30,
-        "requiredPrivilege": "Task: only.sysadmin.can.see.this.now"
+        "requiredPrivilege": "Task: emr.enterClinicalForms"
     }
 ]
