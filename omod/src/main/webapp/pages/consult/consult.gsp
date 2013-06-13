@@ -7,6 +7,9 @@
     ui.includeCss("mirebalais", "consult.css", -200)
 
     def patient = emrContext.currentPatient
+
+    def dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm")
+    def now = dateFormat.format(new Date())
 %>
 
 <script type="text/javascript">
@@ -74,7 +77,7 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
             </td>
             <td>
                 <label>${ ui.message("emr.patientDashBoard.date") }</label>
-                <span>${ ui.format(new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date())) }</span>
+                <span>${ now }</span>
             </td>
             <td>
                 <a id="toggle-who-where-when" href="#">${ ui.message("emr.edit") }</a>
@@ -107,8 +110,9 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                     label: "emr.patientDashBoard.date",
                     formFieldName: "consultDate",
                     useTime: true,
-                    classes: ['required'],
-                    defaultToday: true
+                    startDate: dateFormat.format(encounterStartDateRange),
+                    endDate: dateFormat.format(encounterEndDateRange),
+                    classes: ['required']
             ])}
         </div>
 

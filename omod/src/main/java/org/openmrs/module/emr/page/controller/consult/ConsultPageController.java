@@ -21,6 +21,7 @@ import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
+import org.openmrs.Visit;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.module.appframework.domain.Extension;
@@ -44,6 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,7 +55,7 @@ public class ConsultPageController {
 
     private static final String CONSULT_NOTE_CONFIG_EXTENSION = "org.openmrs.referenceapplication.consult.note.config";
 
-    public void get(@RequestParam("patientId") Patient patient,
+    public void get(@RequestParam("visitId") Visit visit,
                     @SpringBean DispositionFactory factory,
                     @SpringBean("conceptService") ConceptService conceptService,
                     @SpringBean("providerService") ProviderService providerService,
@@ -71,8 +73,31 @@ public class ConsultPageController {
         model.addAttribute("title", config.getExtensionParams().get("title"));
         model.addAttribute("dispositions", factory.getDispositions());
         model.addAttribute("additionalObservationsConfig", additionalObservationsConfig);
+        model.addAttribute("encounterStartDateRange", getEncounterStartDateRange(visit));
+        model.addAttribute("encounterEndDateRange", getEncounterEndDateRange(visit));
+        model.addAttribute("visit", visit);
         model.addAttribute("providers", getProviders(providerService));
         model.addAttribute("conceptService", conceptService);
+    }
+
+    private Date getEncounterStartDateRange(Visit visit) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(visit.getStartDatetime());
+        calendar.add(Calendar.MINUTE, 1);
+
+        return calendar.getTime();
+    }
+
+    private Date getEncounterEndDateRange(Visit visit) {
+        if (visit.getStopDatetime() == null) {
+            return new Date();
+        } else {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(visit.getStopDatetime());
+            calendar.add(Calendar.MINUTE, -1);
+
+            return calendar.getTime();
+        }
     }
 
     private List<SimpleObject> getProviders(ProviderService providerService) {
