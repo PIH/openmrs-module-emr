@@ -33,6 +33,7 @@ import org.openmrs.module.emr.utils.ObservationFactory;
 import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.disposition.DispositionFactory;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.MethodParam;
@@ -55,7 +56,7 @@ public class ConsultPageController {
 
     private static final String CONSULT_NOTE_CONFIG_EXTENSION = "org.openmrs.referenceapplication.consult.note.config";
 
-    public void get(@RequestParam("visitId") Visit visit,
+    public void get(@MethodParam("visitWrapper") VisitDomainWrapper visitWrapper,
                     @SpringBean DispositionFactory factory,
                     @SpringBean("conceptService") ConceptService conceptService,
                     @SpringBean("providerService") ProviderService providerService,
@@ -73,31 +74,11 @@ public class ConsultPageController {
         model.addAttribute("title", config.getExtensionParams().get("title"));
         model.addAttribute("dispositions", factory.getDispositions());
         model.addAttribute("additionalObservationsConfig", additionalObservationsConfig);
-        model.addAttribute("encounterStartDateRange", getEncounterStartDateRange(visit));
-        model.addAttribute("encounterEndDateRange", getEncounterEndDateRange(visit));
-        model.addAttribute("visit", visit);
+        model.addAttribute("encounterStartDateRange", visitWrapper.getEncounterStartDateRange());
+        model.addAttribute("encounterEndDateRange", visitWrapper.getEncounterStopDateRange());
+        model.addAttribute("visit", visitWrapper.getVisit());
         model.addAttribute("providers", getProviders(providerService));
         model.addAttribute("conceptService", conceptService);
-    }
-
-    private Date getEncounterStartDateRange(Visit visit) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(visit.getStartDatetime());
-        calendar.add(Calendar.MINUTE, 1);
-
-        return calendar.getTime();
-    }
-
-    private Date getEncounterEndDateRange(Visit visit) {
-        if (visit.getStopDatetime() == null) {
-            return new Date();
-        } else {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(visit.getStopDatetime());
-            calendar.add(Calendar.MINUTE, -1);
-
-            return calendar.getTime();
-        }
     }
 
     private List<SimpleObject> getProviders(ProviderService providerService) {
@@ -227,6 +208,10 @@ public class ConsultPageController {
         diagnosis.setCertainty(certainty);
 
         return diagnosis;
+    }
+
+    public VisitDomainWrapper visitWrapper(@RequestParam("visitId") Visit visit) {
+        return new VisitDomainWrapper(visit);
     }
 
 }
