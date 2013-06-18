@@ -8,7 +8,7 @@
 
     def patient = emrContext.currentPatient
 
-    def dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm")
+    def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy K:mm a")
     def encounterDate = emrContext.activeVisit ? (emrContext.activeVisit.visit == visit ? new Date() : visit.startDatetime) : visit.startDatetime
     def now = dateFormat.format(encounterDate)
 %>
