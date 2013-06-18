@@ -9,6 +9,7 @@
     def patient = emrContext.currentPatient
 
     def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy K:mm a")
+    def editDateFormat = new java.text.SimpleDateFormat("dd-MM-yyyy HH:mm")
     def encounterDate = emrContext.activeVisit ? (emrContext.activeVisit.visit == visit ? new Date() : visit.startDatetime) : visit.startDatetime
     def now = dateFormat.format(encounterDate)
 %>
@@ -112,8 +113,8 @@ ${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
                     formFieldName: "consultDate",
                     useTime: true,
                     defaultDate: encounterDate,
-                    startDate: dateFormat.format(encounterStartDateRange),
-                    endDate: dateFormat.format(encounterEndDateRange),
+                    startDate: editDateFormat.format(encounterStartDateRange),
+                    endDate: editDateFormat.format(encounterEndDateRange),
                     classes: ['required']
             ])}
         </div>
