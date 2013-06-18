@@ -17,6 +17,7 @@ package org.openmrs.module.emr.page.controller.consult;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -46,7 +47,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -147,7 +147,7 @@ public class ConsultPageController {
             consultNote.setDispositionParameters((Map<String, String[]>) request.getParameterMap());
         }
 
-        consultService.saveConsultNote(consultNote);
+        Encounter encounter = consultService.saveConsultNote(consultNote);
 
         String successMessage = (String) config.getExtensionParams().get("successMessage");
         if (successMessage != null) {
@@ -156,7 +156,8 @@ public class ConsultPageController {
             httpSession.setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
         }
 
-        return "redirect:" + ui.pageLink("coreapps", "patientdashboard/patientDashboard", SimpleObject.create("patientId", patient.getId()));
+        return "redirect:" + ui.pageLink("coreapps", "patientdashboard/patientDashboard",
+                SimpleObject.create("patientId", patient.getId().toString(), "visitId", encounter.getVisit().getId().toString()));
     }
 
     private void addAdditionalObs(ConsultNote consultNote, HttpServletRequest request, List<Map<String, Object>> additionalObservationsConfig, ConceptService conceptService) {

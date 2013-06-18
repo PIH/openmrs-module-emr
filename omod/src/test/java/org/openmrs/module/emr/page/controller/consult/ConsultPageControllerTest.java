@@ -21,11 +21,13 @@ import org.mockito.MockitoAnnotations;
 import org.openmrs.Concept;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptName;
+import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PersonName;
 import org.openmrs.Provider;
+import org.openmrs.Visit;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.emr.EmrConstants;
@@ -50,12 +52,12 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.Mock;
 
@@ -101,12 +103,8 @@ public class ConsultPageControllerTest {
         final Provider consultProvider = new Provider();
 
         final Date consultDate = new Date();
-        String result = post(freeTextComments, diagnoses, httpSession, consultLocation, consultProvider, consultDate, "");
 
-        assertThat(result, startsWith("redirect:"));
-        assertThat(httpSession.getAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE), notNullValue());
-
-        verify(consultService).saveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
+        verifySaveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
             @Override
             public boolean matches(Object o) {
                 ConsultNote actual = (ConsultNote) o;
@@ -119,6 +117,12 @@ public class ConsultPageControllerTest {
                         actual.getEncounterDate().equals(consultDate);
             }
         }));
+
+        String result = post(freeTextComments, diagnoses, httpSession, consultLocation, consultProvider, consultDate, "");
+
+        assertThat(result, startsWith("redirect:"));
+        assertThat(result, containsString("visitId=1"));
+        assertThat(httpSession.getAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE), notNullValue());
     }
 
     @Test
@@ -129,17 +133,17 @@ public class ConsultPageControllerTest {
         answerForAdditionalObs.setUuid("uuid-answer-123");
         when(conceptService.getConceptByUuid("uuid-answer-123")).thenReturn(answerForAdditionalObs);
 
-        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), new Date(), "uuid-answer-123");
-
-        verify(consultService).saveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
+        verifySaveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
             @Override
             public boolean matches(Object o) {
                 ConsultNote actual = (ConsultNote) o;
                 Obs actualObs = actual.getAdditionalObs().get(0);
                 return actual.getAdditionalObs().size() == 1 && actualObs.getConcept() == conceptForAdditionalObs &&
-                       actualObs.getValueCoded() == answerForAdditionalObs;
+                        actualObs.getValueCoded() == answerForAdditionalObs;
             }
         }));
+
+        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), new Date(), "uuid-answer-123");
     }
 
     @Test
@@ -149,30 +153,30 @@ public class ConsultPageControllerTest {
         Calendar calendar = new GregorianCalendar(2013, 04, 21, 17, 23, 47);
         final Date dateForAdditionalObs = calendar.getTime();
 
-        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), new Date(), "2013-05-21 17:23:47");
-
-        verify(consultService).saveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
+        verifySaveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
             @Override
             public boolean matches(Object o) {
                 ConsultNote actual = (ConsultNote) o;
                 Obs actualObs = actual.getAdditionalObs().get(0);
                 return actual.getAdditionalObs().size() == 1 && actualObs.getConcept() == conceptForAdditionalObs &&
-                       actualObs.getValueDate().equals(dateForAdditionalObs);
+                        actualObs.getValueDate().equals(dateForAdditionalObs);
             }
         }));
+
+        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), new Date(), "2013-05-21 17:23:47");
     }
 
     @Test
     public void shouldSubmitConsultNoteWithOptionalAdditionalObservationsWithoutValue() throws Exception {
-        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), new Date(), "");
-
-        verify(consultService).saveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
+        verifySaveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
             @Override
             public boolean matches(Object o) {
                 ConsultNote actual = (ConsultNote) o;
                 return actual.getAdditionalObs().size() == 0;
             }
         }));
+
+        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), new Date(), "");
     }
 
     private Concept createConcept(String conceptUUID, String dataType) {
@@ -192,6 +196,7 @@ public class ConsultPageControllerTest {
                         Location consultLocation, Provider consultProvider, Date consultDate, String fieldNameParam) throws IOException {
         Patient patient = new Patient();
         patient.addName(new PersonName("Jean", "Paul", "Marie"));
+        patient.setId(1);
 
         DispositionFactory dispositionFactory = mock(DispositionFactory.class);
 
@@ -227,4 +232,11 @@ public class ConsultPageControllerTest {
         return extension;
     }
 
+    private void verifySaveConsultNote(ConsultNote matcher) {
+        Encounter encounter = new Encounter();
+        Visit visit = new Visit();
+        visit.setId(1);
+        encounter.setVisit(visit);
+        when(consultService.saveConsultNote(matcher)).thenReturn(encounter);
+    }
 }
