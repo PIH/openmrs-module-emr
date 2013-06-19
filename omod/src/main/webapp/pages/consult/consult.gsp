@@ -63,7 +63,7 @@
     });
 </script>
 
-${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
+${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
 <div id="contentForm">
     <h2>${ ui.message(title) }</h2>

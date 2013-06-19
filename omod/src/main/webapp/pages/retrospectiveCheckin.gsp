@@ -23,7 +23,7 @@ ${ ui.includeFragment("emr", "validationMessages")}
     ];
 </script>
 
-${ ui.includeFragment("emr", "patientHeader", [ patient: patient ]) }
+${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
 <div id="content" class="container">
     <h2>Retrospective Check-in</h2>
