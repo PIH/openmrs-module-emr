@@ -51,16 +51,6 @@
             }
             return valid;
         });
-
-        <% if (featureToggles.isFeatureEnabled("consultNoteDispositions")) { %>
-            var dispositions = [];
-            <% dispositions.each { disposition -> %>
-                <% disposition.clientSideActions.each { action -> %>
-                    dispositions.push("${disposition.uuid}")
-                <% } %>
-            <% } %>
-            viewModel.requireDisposition(dispositions);
-        <% } %>
     });
 </script>
 
@@ -129,31 +119,31 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
             </p>
 
             <% if (dispositions && featureToggles.isFeatureEnabled("consultNoteDispositions")) { %>
-                <p>
-                    <label for="dispositions">
-                        ${ ui.message("emr.consult.disposition") } <span>(${ ui.message("emr.formValidation.messages.requiredField.label") })</span>
-                    </label>
-                    <select id="dispositions" name="disposition" data-bind="value: disposition">
-                        <option value=""></option>
-                        <% dispositions.each { disposition -> %>
-                            <option value="${disposition.uuid}">${ui.message(disposition.name)}</option>
-                        <% } %>
-
-                    </select>
-                </p>
+                <%
+                    def dispositionOptions = []
+                    dispositions.each { disposition ->
+                        dispositionOptions << [label: ui.message(disposition.name), value: disposition.uuid ]
+                    }
+                %>
+                ${ ui.includeFragment("uicommons", "field/dropDown", [
+                        id: 'disposition',
+                        label: 'emr.consult.disposition',
+                        classes: [ isThisVisitActive ? 'required' : '' ],
+                        formFieldName: 'disposition',
+                        dependency: true,
+                        options: dispositionOptions
+                ])}
 
                 <% dispositions.each { disposition -> %>
                     <% if (disposition.clientSideActions) { %>
-                        <div data-bind="visible: disposition() == '${ disposition.uuid }'">
-                            <% disposition.clientSideActions.each { action ->
-                                def includeConfig = [
-                                        observable: action.fragmentConfig.formFieldName,
-                                        depends: [ variable: "disposition", value: "${ disposition.uuid }", enable: "${ disposition.uuid }" ]
-                                ] << action.fragmentConfig
-                            %>
-                                ${ ui.includeFragment(action.module, action.fragment, includeConfig ) }
-                            <% } %>
-                        </div>
+                        <% disposition.clientSideActions.each { action ->
+                            def includeConfig = [
+                                    observable: action.fragmentConfig.formFieldName,
+                                    depends: [ variable: "disposition", value: "${ disposition.uuid }", enable: "${ disposition.uuid }" ]
+                            ] << action.fragmentConfig
+                        %>
+                            ${ ui.includeFragment(action.module, action.fragment, includeConfig ) }
+                        <% } %>
                     <% } %>
                 <% } %>
             <% } %>

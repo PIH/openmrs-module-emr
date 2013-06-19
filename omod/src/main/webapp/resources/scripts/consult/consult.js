@@ -79,12 +79,10 @@ function ConsultFormViewModel() {
 
     var api = {};
 
-    api.requireDisposition = ko.observable(false);
     api.submitting = ko.observable(false);
 
     api.searchTerm = ko.observable();
     api.diagnoses = ko.observableArray();
-    api.disposition = ko.observable();
 
     api.validations = [];
 
@@ -110,12 +108,7 @@ function ConsultFormViewModel() {
         });
     }
 
-    api.hasDispositionIfRequired = function() {
-        return !api.requireDisposition() || api.disposition();
-    }
-
     api.validations.push(api.hasPrimaryDiagnosis);
-    api.validations.push(api.hasDispositionIfRequired);
 
     api.isValid = function() {
         var validated = true;
