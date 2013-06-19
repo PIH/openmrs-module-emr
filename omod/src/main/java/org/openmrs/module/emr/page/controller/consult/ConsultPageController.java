@@ -16,6 +16,7 @@ package org.openmrs.module.emr.page.controller.consult;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.joda.time.DateTime;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
@@ -28,6 +29,7 @@ import org.openmrs.api.ProviderService;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
 import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.consult.ConsultNote;
 import org.openmrs.module.emr.consult.ConsultService;
 import org.openmrs.module.emr.utils.ObservationFactory;
@@ -109,6 +111,7 @@ public class ConsultPageController {
     }
 
     public String post(@RequestParam("patientId") Patient patient,
+                       @MethodParam("visitWrapper") VisitDomainWrapper visitWrapper,
                        @RequestParam("diagnosis") List<String> diagnoses, // each string is json, like {"certainty":"PRESUMED","diagnosisOrder":"PRIMARY","diagnosis":"ConceptName:840"}
                        @RequestParam(required = false, value = "disposition") String disposition, // a unique key for a disposition
                        @RequestParam(required = false, value = "freeTextComments") String freeTextComments,
@@ -121,6 +124,7 @@ public class ConsultPageController {
                        @SpringBean DispositionFactory dispositionFactory,
                        HttpSession httpSession,
                        HttpServletRequest request,
+                       EmrContext emrContext,
                        UiUtils ui) throws IOException {
 
         ConsultNote consultNote = new ConsultNote();
@@ -140,7 +144,12 @@ public class ConsultPageController {
 
         consultNote.setClinician(consultProvider);
         consultNote.setEncounterLocation(consultLocation);
-        consultNote.setEncounterDate(date);
+
+        Date encounterDate = date;
+        if (!visitWrapper.equals(emrContext.getActiveVisit())) {
+            encounterDate = getRetrospectiveEncounterDate(visitWrapper, date);
+        }
+        consultNote.setEncounterDate(encounterDate);
 
         if (StringUtils.hasText(disposition)) {
             consultNote.setDisposition(dispositionFactory.getDispositionByUniqueId(disposition));
@@ -158,6 +167,15 @@ public class ConsultPageController {
 
         return "redirect:" + ui.pageLink("coreapps", "patientdashboard/patientDashboard",
                 SimpleObject.create("patientId", patient.getId().toString(), "visitId", encounter.getVisit().getId().toString()));
+    }
+
+    private Date getRetrospectiveEncounterDate(VisitDomainWrapper visitWrapper, Date date) {
+        Date encounterDate;DateTime beginningOfToday = new DateTime(date);
+        beginningOfToday = beginningOfToday.toDateMidnight().toDateTime().plusMinutes(1);
+        Date visitStartDatetime = visitWrapper.getStartDatetime();
+
+        encounterDate = visitStartDatetime.after(beginningOfToday.toDate()) ? visitStartDatetime : beginningOfToday.toDate();
+        return encounterDate;
     }
 
     private void addAdditionalObs(ConsultNote consultNote, HttpServletRequest request, List<Map<String, Object>> additionalObservationsConfig, ConceptService conceptService) {

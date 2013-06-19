@@ -14,6 +14,7 @@
 
 package org.openmrs.module.emr.page.controller.consult;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -31,12 +32,14 @@ import org.openmrs.Visit;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.emr.EmrContext;
 import org.openmrs.module.emr.consult.ConsultNote;
 import org.openmrs.module.emr.consult.ConsultService;
 import org.openmrs.module.emr.test.TestUiUtils;
 import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.disposition.DispositionFactory;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 
@@ -51,6 +54,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.notNullValue;
@@ -118,7 +122,7 @@ public class ConsultPageControllerTest {
             }
         }));
 
-        String result = post(freeTextComments, diagnoses, httpSession, consultLocation, consultProvider, consultDate, "");
+        String result = post(freeTextComments, diagnoses, httpSession, consultLocation, consultProvider, consultDate, "", new VisitDomainWrapper(new Visit()), true);
 
         assertThat(result, startsWith("redirect:"));
         assertThat(result, containsString("visitId=1"));
@@ -143,7 +147,7 @@ public class ConsultPageControllerTest {
             }
         }));
 
-        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), new Date(), "uuid-answer-123");
+        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), new Date(), "uuid-answer-123", new VisitDomainWrapper(new Visit()), true);
     }
 
     @Test
@@ -163,7 +167,7 @@ public class ConsultPageControllerTest {
             }
         }));
 
-        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), new Date(), "2013-05-21 17:23:47");
+        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), new Date(), "2013-05-21 17:23:47", new VisitDomainWrapper(new Visit()), true);
     }
 
     @Test
@@ -176,7 +180,47 @@ public class ConsultPageControllerTest {
             }
         }));
 
-        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), new Date(), "");
+        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), new Date(), "", new VisitDomainWrapper(new Visit()), true);
+    }
+
+    @Test
+    public void shouldSubmitRetrospectiveConsultNoteAndSetConsultDatetimeToStartVisitDatetime() throws Exception {
+        Visit visit = new Visit();
+        visit.setId(1);
+        final Date startVisitDatetime = (new DateTime(2013, 6, 18, 17, 4, 32)).toDate();
+        visit.setStartDatetime(startVisitDatetime);
+
+        final Date encounterDate = (new DateTime(2013, 6, 18, 0, 0, 0)).toDate();
+
+        verifySaveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
+            @Override
+            public boolean matches(Object o) {
+                ConsultNote actual = (ConsultNote) o;
+                return actual.getEncounterDate().equals(startVisitDatetime);
+            }
+        }));
+
+        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), encounterDate, "", new VisitDomainWrapper(visit), false);
+    }
+
+    @Test
+    public void shouldSubmitRetrospectiveConsultNoteAndSetConsultDatetimeToBeginningOfSubmittedDayOnMultiDayVisit() throws Exception {
+        Visit visit = new Visit();
+        final Date startVisitDatetime = (new DateTime(2013, 6, 18, 17, 4, 32)).toDate();
+        visit.setStartDatetime(startVisitDatetime);
+
+        final Date submittedEncounterDate = (new DateTime(2013, 6, 19, 18, 32, 23)).toDate();
+        final Date encounterDate = (new DateTime(2013, 6, 19, 0, 1, 0)).toDate();
+
+        verifySaveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
+            @Override
+            public boolean matches(Object o) {
+                ConsultNote actual = (ConsultNote) o;
+                return actual.getEncounterDate().equals(encounterDate);
+            }
+        }));
+
+        post("", Collections.<String>emptyList(), new MockHttpSession(), new Location(), new Provider(), submittedEncounterDate, "", new VisitDomainWrapper(visit), false);
     }
 
     private Concept createConcept(String conceptUUID, String dataType) {
@@ -193,12 +237,16 @@ public class ConsultPageControllerTest {
     }
 
     private String post(String freeTextComments, List<String> diagnoses, MockHttpSession httpSession,
-                        Location consultLocation, Provider consultProvider, Date consultDate, String fieldNameParam) throws IOException {
+                        Location consultLocation, Provider consultProvider, Date consultDate, String fieldNameParam,
+                        VisitDomainWrapper visitWrapper, boolean isVisitActive) throws IOException {
         Patient patient = new Patient();
         patient.addName(new PersonName("Jean", "Paul", "Marie"));
         patient.setId(1);
 
         DispositionFactory dispositionFactory = mock(DispositionFactory.class);
+
+        EmrContext emrContext = mock(EmrContext.class);
+        when(emrContext.getActiveVisit()).thenReturn(isVisitActive ? visitWrapper : null);
 
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         ConsultPageController controller = new ConsultPageController();
@@ -206,6 +254,7 @@ public class ConsultPageControllerTest {
         httpServletRequest.addParameter("fieldName", fieldNameParam);
 
         return controller.post(patient,
+                visitWrapper,
                 diagnoses,
                 "",
                 freeTextComments,
@@ -213,6 +262,7 @@ public class ConsultPageControllerTest {
                 buildAdditionalObsConfig(),
                 consultService, conceptService, dispositionFactory, httpSession,
                 httpServletRequest,
+                emrContext,
                 new TestUiUtils()
         );
     }

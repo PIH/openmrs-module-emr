@@ -9,8 +9,9 @@
     def patient = emrContext.currentPatient
 
     def dateFormat = new java.text.SimpleDateFormat("dd MMM yyyy K:mm a")
-    def editDateFormat = new java.text.SimpleDateFormat("dd-MM-yyyy HH:mm")
-    def encounterDate = emrContext.activeVisit ? (emrContext.activeVisit.visit == visit ? new Date() : visit.startDatetime) : visit.startDatetime
+    def editDateFormat = new java.text.SimpleDateFormat("dd-MM-yyyy")
+    def isThisVisitActive = emrContext.activeVisit && emrContext.activeVisit.visit == visit
+    def encounterDate = isThisVisitActive ? new Date() : visit.startDatetime
     def now = dateFormat.format(encounterDate)
 %>
 
@@ -81,9 +82,11 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                 <label>${ ui.message("emr.patientDashBoard.date") }</label>
                 <span>${ now }</span>
             </td>
-            <td>
-                <a id="toggle-who-where-when" href="#">${ ui.message("emr.edit") }</a>
-            </td>
+            <% if (!isThisVisitActive) { %>
+                <td class="edit">
+                    <a id="toggle-who-where-when" href="#">${ ui.message("emr.edit") }</a>
+                </td>
+            <% } %>
         </tr></table>
 
         <div id="who-where-when-edit">
@@ -111,7 +114,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                     id: "consultDate",
                     label: "emr.patientDashBoard.date",
                     formFieldName: "consultDate",
-                    useTime: true,
+                    useTime: false,
                     defaultDate: encounterDate,
                     startDate: editDateFormat.format(encounterStartDateRange),
                     endDate: editDateFormat.format(encounterEndDateRange),
