@@ -49,6 +49,7 @@
         <springVersion>3.0.5.RELEASE</springVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <uicommonsVersion>1.0-SNAPSHOT</uicommonsVersion>
+        <htmlformentryuiVersion>1.0-SNAPSHOT</htmlformentryuiVersion>
     </properties>
 
     <dependencies>
@@ -183,6 +184,13 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>uicommons-api</artifactId>
             <version>${uicommonsVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>htmlformentryui-omod</artifactId>
+            <version>${htmlformentryuiVersion}</version>
             <scope>provided</scope>
         </dependency>
 
