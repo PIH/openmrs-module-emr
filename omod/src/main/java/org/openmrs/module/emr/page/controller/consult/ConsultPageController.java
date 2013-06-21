@@ -16,6 +16,7 @@ package org.openmrs.module.emr.page.controller.consult;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
@@ -170,12 +171,10 @@ public class ConsultPageController {
     }
 
     private Date getRetrospectiveEncounterDate(VisitDomainWrapper visitWrapper, Date date) {
-        Date encounterDate;DateTime beginningOfToday = new DateTime(date);
-        beginningOfToday = beginningOfToday.toDateMidnight().toDateTime().plusMinutes(1);
+        DateMidnight beginningOfToday = (new DateTime(date)).toDateMidnight();
         Date visitStartDatetime = visitWrapper.getStartDatetime();
 
-        encounterDate = visitStartDatetime.after(beginningOfToday.toDate()) ? visitStartDatetime : beginningOfToday.toDate();
-        return encounterDate;
+        return visitStartDatetime.after(beginningOfToday.toDate()) ? visitStartDatetime : beginningOfToday.toDate();
     }
 
     private void addAdditionalObs(ConsultNote consultNote, HttpServletRequest request, List<Map<String, Object>> additionalObservationsConfig, ConceptService conceptService) {

@@ -210,7 +210,7 @@ public class ConsultPageControllerTest {
         visit.setStartDatetime(startVisitDatetime);
 
         final Date submittedEncounterDate = (new DateTime(2013, 6, 19, 18, 32, 23)).toDate();
-        final Date encounterDate = (new DateTime(2013, 6, 19, 0, 1, 0)).toDate();
+        final Date encounterDate = (new DateTime(2013, 6, 19, 0, 0, 0)).toDate();
 
         verifySaveConsultNote(argThat(new ArgumentMatcher<ConsultNote>() {
             @Override
