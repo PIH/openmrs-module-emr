@@ -74,7 +74,8 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                     label: "emr.patientDashBoard.provider",
                     formFieldName: "consultProviderId",
                     options: providers,
-                    classes: ['required']
+                    classes: ['required'],
+                    initialValue: isThisVisitActive ? emrContext.currentProvider.providerId : null
             ])}
 
             ${ ui.includeFragment("emr", "field/location", [
@@ -82,7 +83,8 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                     label: "emr.location",
                     formFieldName: "consultLocationId",
                     classes: ['required'],
-                    withTag: "Login Location"
+                    withTag: "Login Location",
+                    initialValue: isThisVisitActive ? sessionContext.sessionLocationId : null
             ])}
 
             ${ ui.includeFragment("uicommons", "field/datetimepicker", [
