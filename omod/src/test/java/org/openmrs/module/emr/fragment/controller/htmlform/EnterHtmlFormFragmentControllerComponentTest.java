@@ -202,7 +202,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
         Encounter created = encounterService.getEncountersByPatient(patient).get(0);
 
-        Date expectedEndDate = new DateTime(2012, 12, 17, 23, 59, 59).toDate();
+        Date expectedEndDate = new DateTime(2012, 12, 17, 23, 59, 59, 999).toDate();
 
         assertNotNull(created.getVisit());
         assertThat(created.getVisit().getStartDatetime(), is(date));
@@ -237,8 +237,6 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
         Encounter created = encounterService.getEncountersByPatient(patient).get(0);
-
-        Date expectedEndDate = new DateTime(2012, 12, 17, 23, 59, 59, 999).toDate();
 
         assertNotNull(created.getVisit());
         assertThat(created.getVisit().getStartDatetime(), is(date));
