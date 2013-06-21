@@ -38,12 +38,6 @@
             emr.navigateTo({ provider:"coreapps", page: "patientdashboard/patientDashboard", query: { patientId: ${ patient.id } } });
         });
 
-        jq('#toggle-who-where-when').click(function() {
-            jq('#who-where-when-view').toggle();
-            jq('#who-where-when-edit').toggle();
-            return false;
-        });
-
         jq('#consult-note').submit(function() {
             var valid = viewModel.isValid();
             if (valid) {
@@ -59,7 +53,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 <div id="contentForm">
     <h2>${ ui.message(title) }</h2>
     <form id="consult-note" method="post">
-        <table id="who-where-when-view"><tr>
+        <table id="who-where-when-view"<% if (!isThisVisitActive) { %>  class="hidden" <% } %> ><tr>
             <td>
                 <label>${ ui.message("emr.patientDashBoard.provider") }</label>
                 <span>${ ui.format(emrContext.currentProvider) }</span>
@@ -72,22 +66,15 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                 <label>${ ui.message("emr.patientDashBoard.date") }</label>
                 <span>${ now }</span>
             </td>
-            <% if (!isThisVisitActive) { %>
-                <td class="edit">
-                    <a id="toggle-who-where-when" href="#">${ ui.message("emr.edit") }</a>
-                </td>
-            <% } %>
         </tr></table>
 
-        <div id="who-where-when-edit">
+        <div id="who-where-when-edit"<% if (isThisVisitActive) { %>  class="hidden" <% } %> >
             ${ ui.includeFragment("emr", "field/dropDown", [
                     id: "consultProvider",
                     label: "emr.patientDashBoard.provider",
                     formFieldName: "consultProviderId",
                     options: providers,
-                    classes: ['required'],
-                    hideEmptyLabel: true,
-                    initialValue: emrContext.currentProvider.providerId
+                    classes: ['required']
             ])}
 
             ${ ui.includeFragment("emr", "field/location", [
@@ -95,9 +82,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                     label: "emr.location",
                     formFieldName: "consultLocationId",
                     classes: ['required'],
-                    withTag: "Login Location",
-                    hideEmptyLabel: true,
-                    initialValue: sessionContext.sessionLocationId
+                    withTag: "Login Location"
             ])}
 
             ${ ui.includeFragment("uicommons", "field/datetimepicker", [
