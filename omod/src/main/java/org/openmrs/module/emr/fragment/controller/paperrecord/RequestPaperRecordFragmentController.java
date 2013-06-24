@@ -45,6 +45,17 @@ public class RequestPaperRecordFragmentController {
         return SimpleObject.create("message", ui.message("emr.patientDashBoard.requestPaperRecord.successMessage"));
     }
 
+    public SimpleObject createDossierNumber(UiUtils ui,
+                                           @RequestParam("patientId") Patient patient,
+                                           @RequestParam("locationId") Location location,
+                                           @SpringBean("paperRecordService") PaperRecordService service) {
+
+
+        service.createPaperMedicalRecordNumber(patient, location);
+
+        return SimpleObject.create("message", ui.message("emr.patientDashBoard.createDossier.successMessage"));
+    }
+
     public SimpleObject printPaperRecordLabel(UiUtils ui,
            @RequestParam("patientId") Patient patient,
            @RequestParam("locationId") Location location,
