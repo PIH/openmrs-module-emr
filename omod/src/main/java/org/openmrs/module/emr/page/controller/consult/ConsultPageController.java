@@ -77,7 +77,7 @@ public class ConsultPageController {
         model.addAttribute("title", config.getExtensionParams().get("title"));
         model.addAttribute("dispositions", factory.getDispositions());
         model.addAttribute("additionalObservationsConfig", additionalObservationsConfig);
-        model.addAttribute("encounterStartDateRange", visitWrapper.getEncounterStartDateRange());
+        model.addAttribute("encounterStartDateRange", visitWrapper.getStartDatetime());
         model.addAttribute("encounterEndDateRange", visitWrapper.getEncounterStopDateRange());
         model.addAttribute("visit", visitWrapper.getVisit());
         model.addAttribute("providers", getProviders(providerService));
