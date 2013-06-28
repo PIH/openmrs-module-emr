@@ -246,7 +246,7 @@ public class ConsultPageControllerTest {
         DispositionFactory dispositionFactory = mock(DispositionFactory.class);
 
         EmrContext emrContext = mock(EmrContext.class);
-        when(emrContext.getActiveVisit()).thenReturn(isVisitActive ? visitWrapper : null);
+        when(emrContext.getActiveVisit()).thenReturn(isVisitActive ? visitWrapper : new VisitDomainWrapper(new Visit()));
 
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         ConsultPageController controller = new ConsultPageController();
