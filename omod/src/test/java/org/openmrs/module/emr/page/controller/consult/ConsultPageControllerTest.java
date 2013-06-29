@@ -54,7 +54,6 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.notNullValue;
@@ -246,7 +245,7 @@ public class ConsultPageControllerTest {
         DispositionFactory dispositionFactory = mock(DispositionFactory.class);
 
         EmrContext emrContext = mock(EmrContext.class);
-        when(emrContext.getActiveVisit()).thenReturn(isVisitActive ? visitWrapper : new VisitDomainWrapper(new Visit()));
+        when(emrContext.getActiveVisit()).thenReturn(isVisitActive ? visitWrapper : null);
 
         MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
         ConsultPageController controller = new ConsultPageController();
