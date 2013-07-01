@@ -41,11 +41,22 @@
 
     function navigateToPatient(patientId) {
         if(patientId > 0) {
-            emr.navigateTo({
-                provider: '${ config.targetPageProvider }',
-                page: '${ config.targetPage }',
-                query: { patientId: patientId }
-            });
+            var returnFormUrl = ${ config.formUrl };
+            console.log("returnFormUrl= " + returnFormUrl);
+            if( returnFormUrl && returnFormUrl.length > 0){
+                emr.navigateTo({
+                    provider: '${ config.targetPageProvider }',
+                    page: '${ config.targetPage }',
+                    query: { patientId: patientId, formUrl: returnFormUrl }
+                });
+            }else{
+                emr.navigateTo({
+                    provider: '${ config.targetPageProvider }',
+                    page: '${ config.targetPage }',
+                    query: { patientId: patientId }
+                });
+            }
+
         }
     }
 </script>
