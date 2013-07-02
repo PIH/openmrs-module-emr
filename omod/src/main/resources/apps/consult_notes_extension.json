@@ -6,7 +6,7 @@
         "label": "emr.clinic.consult.title",
         "url": "emr/consult/consult.page?config=emr.clinic.consult.note&patientId={{patientId}}&visitId={{visit.id}}",
         "icon": "icon-stethoscope",
-        "order": 31,
+        "order": 33,
         "requiredPrivilege": "Task: emr.enterClinicalForms"
     },
     {
@@ -16,7 +16,7 @@
         "label": "emr.ed.consult.title",
         "url": "emr/consult/consult.page?config=emr.ed.consult.note&patientId={{patientId}}&visitId={{visit.id}}",
         "icon": "icon-stethoscope",
-        "order": 30,
+        "order": 34,
         "requiredPrivilege": "Task: emr.enterClinicalForms"
     }
 ]
