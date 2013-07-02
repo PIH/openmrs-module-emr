@@ -43,6 +43,7 @@ import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.MethodParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
+import org.openmrs.util.ProviderByPersonNameComparator;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -50,6 +51,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -87,6 +89,9 @@ public class ConsultPageController {
     private List<SimpleObject> getProviders(ProviderService providerService) {
         List<SimpleObject> items = new ArrayList<SimpleObject>();
         List<Provider> clerks = providerService.getAllProviders(false);
+
+        Collections.sort(clerks, new ProviderByPersonNameComparator());
+
         for (Provider clerk : clerks) {
             SimpleObject item = new SimpleObject();
             item.put("value", clerk.getProviderId());
