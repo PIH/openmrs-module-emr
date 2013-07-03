@@ -128,6 +128,13 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                                     observable: action.fragmentConfig.formFieldName,
                                     depends: [ variable: "disposition", value: "${ disposition.uuid }", enable: "${ disposition.uuid }" ]
                             ] << action.fragmentConfig
+                            if (("${ disposition.uuid }" == "markPatientDead") &&
+                                (action.fragment == "field/datetimepicker") ) {
+                                includeConfig.put( "defaultDate", encounterDate)
+                                includeConfig.put( "startDate", editDateFormat.format(encounterStartDateRange))
+                                includeConfig.put( "endDate", editDateFormat.format(encounterEndDateRange))
+                            }
+
                         %>
                             ${ ui.includeFragment(action.module, action.fragment, includeConfig ) }
                         <% } %>
