@@ -5,6 +5,28 @@
     ui.includeJavascript("emr", "diagnoses/diagnoses-angular.js")
 %>
 
+<% /* This is an underscore template, since I don't know how to use angular templates programmatically */ %>
+<script type="text/template" id="autocomplete-render-item">
+    <span class="code">
+        {{ if (item.code) { }}
+        {{- item.code }}
+        {{ } else if (item.concept) { }}
+        ${ ui.message("emr.consult.codedButNoCode") }
+        {{ } else { }}
+        ${ ui.message("emr.consult.nonCoded") }
+        {{ } }}
+    </span>
+    <strong class="matched-name">
+        {{- item.matchedName }}
+    </strong>
+    {{ if (item.preferredName) { }}
+    <span class="preferred-name">
+        <small>${ ui.message("emr.consult.synonymFor") }</small>
+        {{- item.concept.preferredName }}
+    </span>
+    {{ } }}
+</script>
+
 <div data-ng-app="diagnoses">
 
     <script type="text/ng-template" id="selected-diagnosis">
@@ -39,9 +61,7 @@
 
     <div data-ng-controller="DiagnosesController">
 
-        <form data-ng-submit="addDiagnosis()">
-            <input type="text" data-ng-model="freeTextDiagnosis"/>
-        </form>
+        <input type="text" autocomplete itemFormatter="autocomplete-render-item"/>
 
         <div id="display-diagnoses">
             <h3>${ ui.message("emr.consult.primaryDiagnosis") }</h3>

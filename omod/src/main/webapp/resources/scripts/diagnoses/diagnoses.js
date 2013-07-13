@@ -2,6 +2,21 @@
 
     var codingSystemToUse = 'ICD-10-WHO';
 
+    var mapTypeOrder = [ "SAME-AS", "NARROWER-THAN" ]
+
+    findConceptMapping = function(concept, sourceName) {
+        var matches = _.filter(concept.conceptMappings, function(item) {
+            return item.conceptReferenceTerm.conceptSource.name == sourceName
+        });
+        if (!matches || matches.length == 0) {
+            return "";
+        }
+        return _.sortBy(matches, function(item) {
+            var temp = _.indexOf(mapTypeOrder, item.conceptMapType);
+            return temp < 0 ? 9999 : temp;
+        })[0].conceptReferenceTerm.code;
+    };
+
     diagnoses.sameDiagnosis = function(d1, d2) {
         if (d1.diagnosis.conceptId && d2.diagnosis.conceptId) {
             return d1.diagnosis.conceptId === d2.diagnosis.conceptId;
@@ -96,6 +111,12 @@
         api.findSelectedSimilarDiagnosis = function(diagnosis) {
             return _.find(api.diagnoses, function(candidate) {
                 return diagnoses.sameDiagnosis(diagnosis, candidate);
+            });
+        };
+
+        api.diagnosisWithConceptId = function(conceptId) {
+            return _.find(api.diagnoses, function(candidate) {
+                return candidate.diagnosis.type === 'concept' && candidate.diagnosis.conceptId === conceptId;
             });
         };
 
