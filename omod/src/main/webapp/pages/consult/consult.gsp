@@ -69,7 +69,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
         </tr></table>
 
         <div id="who-where-when-edit"<% if (isThisVisitActive) { %>  class="hidden" <% } %> >
-            ${ ui.includeFragment("emr", "field/dropDown", [
+            ${ ui.includeFragment("uicommons", "field/dropDown", [
                     id: "consultProvider",
                     label: "emr.patientDashBoard.provider",
                     formFieldName: "consultProviderId",

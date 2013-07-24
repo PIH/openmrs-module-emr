@@ -119,7 +119,7 @@
                 ${ ui.includeFragment("uicommons", "fieldErrors", [ fieldName: "confirmPassword" ])}
             </p>
 
-            ${ ui.includeFragment("emr", "field/dropDown", [ 
+            ${ ui.includeFragment("uicommons", "field/dropDown", [
                 label: ui.message("emr.user.privilegeLevel"), 
                 emptyOptionLabel: ui.message("emr.chooseOne"), 
                 formFieldName: "privilegeLevel", 
@@ -128,7 +128,7 @@
             ])}
 
             <p>
-                ${ ui.includeFragment("emr", "field/dropDown", [ 
+                ${ ui.includeFragment("uicommons", "field/dropDown", [
                     label: ui.message("emr.user.defaultLocale"), 
                     emptyOptionLabel: ui.message("emr.chooseOne"), 
                     formFieldName: "defaultLocale", 
@@ -161,7 +161,7 @@
 		<legend>${ ui.message("emr.provider.details") }</legend>
 		<div class="emr_providerDetails">
             <p>
-                ${ ui.includeFragment("emr", "field/dropDown", [
+                ${ ui.includeFragment("uicommons", "field/dropDown", [
                         label: ui.message("emr.account.providerRole.label"),
                         emptyOptionLabel: ui.message("emr.chooseOne"),
                         formFieldName: "providerRole",
