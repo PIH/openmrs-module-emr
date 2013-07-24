@@ -23,4 +23,4 @@
     options = options.sort { a, b -> a.label <=> b.label }
 %>
 
-${ ui.includeFragment("emr", "field/dropDown", [ options: options ] << config) }
+${ ui.includeFragment("uicommons", "field/dropDown", [ options: options ] << config) }
