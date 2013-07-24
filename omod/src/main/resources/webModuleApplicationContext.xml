@@ -59,15 +59,4 @@
         <property name="iconUrl" value="icon-stethoscope"/>
         <property name="requiredPrivilegeName" value="Task: emr.enterClinicalForms"/>
     </bean>
-
-    <!-- not for first release
-    <bean id="emrRetrospectiveCheckin" class="org.openmrs.module.emr.task.SimpleTaskDescriptor">
-        <property name="id" value="emr.retrospectiveCheckin"/>
-        <property name="labelCode" value="emr.task.retrospectiveCheckin.label"/>
-        <property name="url" value="emr/retrospectiveCheckin.page"/>
-        <property name="priority" value="20.3"/>
-        <property name="extensionPoint" value="patient.globalActions"/>
-        <property name="iconUrl" value="icon-calendar"/>
-    </bean>
-    -->
 </beans>
