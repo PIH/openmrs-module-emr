@@ -87,13 +87,14 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                     initialValue: isThisVisitActive ? sessionContext.sessionLocationId : null
             ])}
 
+            <!-- TODO we should be able to remove the formatting of the startDate and endDate and pass in the encounterStart/EndDateRange directly after we refactor datepicker -->
             ${ ui.includeFragment("uicommons", "field/datetimepicker", [
                     id: "consultDate",
                     label: "emr.patientDashBoard.date",
                     formFieldName: "consultDate",
                     useTime: false,
                     defaultDate: encounterDate,
-                    startDate: editDateFormat.format(encounterStartDateRange),               // TODO probably can remove this formatting now that the datepicker widget does it for us
+                    startDate: editDateFormat.format(encounterStartDateRange),
                     endDate: editDateFormat.format(encounterEndDateRange),
                     classes: ['required']
             ])}
