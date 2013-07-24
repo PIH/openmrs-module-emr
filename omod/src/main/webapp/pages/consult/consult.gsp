@@ -93,7 +93,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                     formFieldName: "consultDate",
                     useTime: false,
                     defaultDate: encounterDate,
-                    startDate: editDateFormat.format(encounterStartDateRange),
+                    startDate: editDateFormat.format(encounterStartDateRange),               // TODO probably can remove this formatting now that the datepicker widget does it for us
                     endDate: editDateFormat.format(encounterEndDateRange),
                     classes: ['required']
             ])}
