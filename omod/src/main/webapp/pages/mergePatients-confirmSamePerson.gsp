@@ -148,11 +148,16 @@
             <div class="row">
                 <h3>${ui.message("emr.mergePatients.section.lastSeen")}</h3>
 
-                <div>${ui.format(patient1.lastEncounter.encounterType)}</div>
+                <% if (patient1.lastEncounter) { %>
+                    <div>${ui.format(patient1.lastEncounter.encounterType)}</div>
 
-                <div>${ui.message("emr.atLocation", ui.format(patient1.lastEncounter.location))}</div>
+                    <div>${ui.message("emr.atLocation", ui.format(patient1.lastEncounter.location))}</div>
 
-                <div>${ui.message("emr.onDatetime", ui.format(patient1.lastEncounter.encounterDatetime))}</div>
+                    <div>${ui.message("emr.onDatetime", ui.format(patient1.lastEncounter.encounterDatetime))}</div>
+                <% } else { %>
+                    ${ ui.message("emr.none") }
+                <% } %>
+
             </div>
 
             <div class="row">
