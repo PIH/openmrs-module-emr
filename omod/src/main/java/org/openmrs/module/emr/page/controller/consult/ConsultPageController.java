@@ -162,6 +162,9 @@ public class ConsultPageController {
         if (emrContext.getActiveVisit() == null || !visitWrapper.getVisit().equals(emrContext.getActiveVisit().getVisit())) {
             encounterDate = getRetrospectiveEncounterDate(visitWrapper, date);
         }
+        else {
+            encounterDate = new Date();
+        }
         consultNote.setEncounterDate(encounterDate);
 
         if (StringUtils.hasText(disposition)) {
