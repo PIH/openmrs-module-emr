@@ -117,7 +117,8 @@ public class ConsultPageControllerTest {
                         actual.getComments().equals(freeTextComments) &&
                         actual.getEncounterLocation().equals(consultLocation) &&
                         actual.getClinician().equals(consultProvider) &&
-                        actual.getEncounterDate().equals(consultDate);
+                        (actual.getEncounterDate().after(consultDate) || actual.getEncounterDate().equals(consultDate)) &&
+                        actual.getEncounterDate().equals(new Date()) || actual.getEncounterDate().before(new Date());
             }
         }));
 
