@@ -30,6 +30,7 @@ import org.openmrs.ConceptReferenceTerm;
 import org.openmrs.ConceptSource;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
+import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -378,6 +379,22 @@ public class ConsultServiceTest {
         verify(encounterService).saveEncounter(encounter);
 
         assertThat(encounter.getEncounterDatetime(), is(date));
+    }
+
+    @Test
+    public void saveConsultNote_shouldSaveConsultNoteWithSpecifiedForm() throws Exception {
+        ConsultNote consultNote = buildConsultNote();
+        consultNote.addPrimaryDiagnosis(new Diagnosis(new CodedOrFreeTextAnswer(malaria)));
+
+        Form encounterForm = new Form();
+        consultNote.setEncounterForm(encounterForm);
+
+        Encounter encounter = consultService.saveConsultNote(consultNote);
+
+        assertNotNull(encounter);
+        verify(encounterService).saveEncounter(encounter);
+
+        assertThat(encounter.getForm(), is(encounterForm));
     }
 
     private ConsultNote buildConsultNote() {

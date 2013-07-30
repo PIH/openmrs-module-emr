@@ -13,17 +13,11 @@
  */
 package org.openmrs.module.emr.api;
 
-import org.openmrs.Concept;
-import org.openmrs.ConceptClass;
-import org.openmrs.ConceptSearchResult;
-import org.openmrs.ConceptSource;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.OpenmrsService;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Public API for EMR-related functionality.
@@ -41,17 +35,5 @@ public interface EmrService extends OpenmrsService {
     List<Location> getLoginLocations();
 
     Patient findPatientByPrimaryId(String primaryId);
-
-    /**
-     * Searches for concepts by a fuzzy name match, or an exact match on a concept mapping
-     * @param query
-     * @param locale
-     * @param classes if specified, only search among concepts with this class
-     * @param inSets if specified, only search among concepts within these sets (doesn't explode sets-of-sets; caller must do this)
-     * @param sources if specified, search for exact matches on mappings in this source
-     * @param limit return up to this many results (defaults to 100)
-     * @return
-     */
-    List<ConceptSearchResult> conceptSearch(String query, Locale locale, Collection<ConceptClass> classes, Collection<Concept> inSets, Collection<ConceptSource> sources, Integer limit);
 
 }

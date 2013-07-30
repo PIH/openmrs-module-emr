@@ -64,6 +64,7 @@ public class ConsultServiceImpl extends BaseOpenmrsService implements ConsultSer
         encounter.setLocation(consultNote.getEncounterLocation());
         encounter.setEncounterType(emrApiProperties.getConsultEncounterType());
         encounter.setPatient(consultNote.getPatient());
+        encounter.setForm(consultNote.getEncounterForm());
 
         encounter.addProvider(emrApiProperties.getClinicianEncounterRole(), consultNote.getClinician());
 

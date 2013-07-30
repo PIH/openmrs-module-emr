@@ -4,7 +4,7 @@
         "extensionPointId": "patientDashboard.visitActions",
         "type": "link",
         "label": "emr.clinic.consult.title",
-        "url": "emr/consult/consult.page?config=emr.clinic.consult.note&patientId={{patientId}}&visitId={{visit.id}}",
+        "url": "emr/consult/consult.page?config=emr.clinic.consult.note&patientId={{patientId}}&visitId={{visit.id}}&formUuid=a3fc5c38-eb32-11e2-981f-96c0fcb18276",
         "icon": "icon-stethoscope",
         "order": 33,
         "requiredPrivilege": "Task: emr.enterClinicalForms"
@@ -14,7 +14,7 @@
         "extensionPointId": "patientDashboard.visitActions",
         "type": "link",
         "label": "emr.ed.consult.title",
-        "url": "emr/consult/consult.page?config=emr.ed.consult.note&patientId={{patientId}}&visitId={{visit.id}}",
+        "url": "emr/consult/consult.page?config=emr.ed.consult.note&patientId={{patientId}}&visitId={{visit.id}}&formUuid=793915d6-f8d9-11e2-8ff2-fd54ab5fdb2a",
         "icon": "icon-stethoscope",
         "order": 34,
         "requiredPrivilege": "Task: emr.enterClinicalForms"
