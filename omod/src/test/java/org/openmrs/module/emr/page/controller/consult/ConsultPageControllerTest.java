@@ -30,6 +30,7 @@ import org.openmrs.PersonName;
 import org.openmrs.Provider;
 import org.openmrs.Visit;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.FormService;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrContext;
@@ -74,6 +75,9 @@ public class ConsultPageControllerTest {
 
     @Mock
     private ConceptService conceptService;
+
+    @Mock
+    private FormService formService;
 
     @Before
     public void initMocks() {
@@ -258,8 +262,9 @@ public class ConsultPageControllerTest {
                 "",
                 freeTextComments,
                 consultProvider, consultLocation, consultDate,
+                null, // no formUuid
                 buildAdditionalObsConfig(),
-                consultService, conceptService, dispositionFactory, httpSession,
+                consultService, conceptService, formService, dispositionFactory, httpSession,
                 httpServletRequest,
                 emrContext,
                 new TestUiUtils()

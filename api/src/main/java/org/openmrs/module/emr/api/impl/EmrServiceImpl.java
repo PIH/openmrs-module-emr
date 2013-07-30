@@ -13,10 +13,6 @@
  */
 package org.openmrs.module.emr.api.impl;
 
-import org.openmrs.Concept;
-import org.openmrs.ConceptClass;
-import org.openmrs.ConceptSearchResult;
-import org.openmrs.ConceptSource;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
@@ -32,9 +28,7 @@ import org.openmrs.module.emrapi.adt.AdtService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
 
@@ -117,11 +111,4 @@ public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
 
     }
 
-    @Override
-    public List<ConceptSearchResult> conceptSearch(String query, Locale locale, Collection<ConceptClass> classes, Collection<Concept> inSets, Collection<ConceptSource> sources, Integer limit) {
-        if (limit == null) {
-            limit = 100;
-        }
-        return dao.conceptSearch(query, locale, classes, inSets, sources, limit);
-    }
 }

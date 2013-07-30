@@ -14,6 +14,7 @@
 
 package org.openmrs.module.emr.consult;
 
+import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -47,6 +48,9 @@ public class ConsultNote {
     private Map<String, String[]> dispositionParameters;
 
     private Date encounterDate;
+
+    // the form that was used to create this consult note
+    private Form encounterForm;
 
     public Patient getPatient() {
         return patient;
@@ -149,4 +153,13 @@ public class ConsultNote {
     public void setEncounterDate(Date encounterDate) {
         this.encounterDate = encounterDate;
     }
+
+    public Form getEncounterForm() {
+        return encounterForm;
+    }
+
+    public void setEncounterForm(Form encounterForm) {
+        this.encounterForm = encounterForm;
+    }
+
 }

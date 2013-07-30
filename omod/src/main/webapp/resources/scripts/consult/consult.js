@@ -163,7 +163,7 @@ ko.bindingHandlers.autocomplete = {
             return e.which != 13;
         });
         $(element).autocomplete({
-            source: emr.fragmentActionLink("emr", "diagnoses", "search"),
+            source: emr.fragmentActionLink("coreapps", "diagnoses", "search"),
             response: function(event, ui) {
                 var query = event.target.value.toLowerCase();
                 var items = ui.content;

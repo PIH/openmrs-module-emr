@@ -20,12 +20,14 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
+import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.Visit;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.FormService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.module.appframework.domain.Extension;
 import org.openmrs.module.appframework.service.AppFrameworkService;
@@ -66,6 +68,7 @@ public class ConsultPageController {
                     @SpringBean("conceptService") ConceptService conceptService,
                     @SpringBean("providerService") ProviderService providerService,
                     @MethodParam("getConfigFromExtension") Extension config,
+                    @RequestParam(required = false, value = "formUuid") String formUuid,
                     PageModel model) throws IOException {
 
         List<Map<String, Object>> additionalObservationsConfig = (List<Map<String, Object>>) config.getExtensionParams().get(
@@ -84,6 +87,7 @@ public class ConsultPageController {
         model.addAttribute("visit", visitWrapper.getVisit());
         model.addAttribute("providers", getProviders(providerService));
         model.addAttribute("conceptService", conceptService);
+        model.addAttribute("formUuid", formUuid);
     }
 
     private List<SimpleObject> getProviders(ProviderService providerService) {
@@ -124,9 +128,11 @@ public class ConsultPageController {
                        @RequestParam("consultProviderId") Provider consultProvider,
                        @RequestParam("consultLocationId") Location consultLocation,
                        @RequestParam("consultDate") Date date,
+                       @RequestParam(required = false, value = "formUuid") String formUuid,
                        @MethodParam("getConfigFromExtension") Extension config,
                        @SpringBean("consultService") ConsultService consultService,
                        @SpringBean("conceptService") ConceptService conceptService,
+                       @SpringBean("formService") FormService formService,
                        @SpringBean DispositionFactory dispositionFactory,
                        HttpSession httpSession,
                        HttpServletRequest request,
@@ -161,6 +167,11 @@ public class ConsultPageController {
         if (StringUtils.hasText(disposition)) {
             consultNote.setDisposition(dispositionFactory.getDispositionByUniqueId(disposition));
             consultNote.setDispositionParameters((Map<String, String[]>) request.getParameterMap());
+        }
+
+        if (formUuid != null) {
+            Form form = formService.getFormByUuid(formUuid);
+            consultNote.setEncounterForm(form);
         }
 
         Encounter encounter = consultService.saveConsultNote(consultNote);
