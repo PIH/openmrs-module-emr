@@ -1,15 +1,5 @@
 [
     {
-        "id": "emr.activeVisits",
-        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
-        "type": "link",
-        "label": "emr.app.activeVisits.label",
-        "url": "emr/activeVisits.page",
-        "icon": "icon-calendar",
-        "order": 3,
-        "requiredPrivilege": "App: emr.activeVisits"
-    },
-    {
         "id": "emr.inpatients",
         "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
         "type": "link",
