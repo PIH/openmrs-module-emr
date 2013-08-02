@@ -26,7 +26,6 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.Module;
 import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.ModuleFactory;
-import org.openmrs.module.emr.htmlformentry.UiMessageTagHandler;
 import org.openmrs.module.emr.task.TaskDescriptor;
 import org.openmrs.module.emr.task.TaskFactory;
 import org.openmrs.module.emr.task.TaskService;
@@ -158,7 +157,6 @@ public class EmrActivator implements ModuleActivator {
 
             createConceptSources(conceptService);
 
-            htmlFormEntryService.addHandler(EmrConstants.HTMLFORMENTRY_UI_MESSAGE_TAG_NAME, new UiMessageTagHandler());
         } catch (Exception e) {
             Module mod = ModuleFactory.getModuleById(EMR_MODULE_ID);
             ModuleFactory.stopModule(mod);
@@ -205,12 +203,6 @@ public class EmrActivator implements ModuleActivator {
      * @see ModuleActivator#stopped()
      */
     public void stopped() {
-        HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
-        try {
-            htmlFormEntryService.getHandlers().remove(EmrConstants.HTMLFORMENTRY_UI_MESSAGE_TAG_NAME);
-        } catch (Exception ex) {
-            // pass
-        }
         log.info("EMR Module stopped");
     }
 

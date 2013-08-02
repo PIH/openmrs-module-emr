@@ -14,9 +14,6 @@
 
 package org.openmrs.module.emr;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class EmrConstants {
 
     public static final String EMR_MODULE_ID = "emr";
@@ -138,8 +135,6 @@ public class EmrConstants {
     public static final String PAYMENT_REASON_CONCEPT = "emr.paymentReasonConcept";
     public static final String PAYMENT_RECEIPT_NUMBER_CONCEPT = "emr.paymentReceiptNumberConcept";
     public static final String PAYMENT_CONSTRUCT_CONCEPT = "emr.paymentConstructConcept";
-
-    public static final String HTMLFORMENTRY_UI_MESSAGE_TAG_NAME = "uimessage";
 
     // copied to emrapi
     public static final String EMR_CONCEPT_SOURCE_NAME = "org.openmrs.module.emr";
