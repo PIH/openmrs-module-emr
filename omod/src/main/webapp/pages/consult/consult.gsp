@@ -13,6 +13,9 @@
     def isThisVisitActive = emrContext.activeVisit && emrContext.activeVisit.visit == visit
     def encounterDate = isThisVisitActive ? new Date() : visit.startDatetime
     def now = dateFormat.format(encounterDate)
+
+    def areProviderLocationAndDateEditable = !isThisVisitActive ||
+            (emrContext.userContext.hasPrivilege("Task: emr.retroConsultNote") && featureToggles.isFeatureEnabled("enterRetrospectiveConsultNoteInActiveVisit"))
 %>
 
 <script type="text/javascript">
@@ -53,7 +56,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 <div id="contentForm">
     <h2>${ ui.message(title) }</h2>
     <form id="consult-note" method="post">
-        <table id="who-where-when-view"<% if (!isThisVisitActive) { %>  class="hidden" <% } %> ><tr>
+        <table id="who-where-when-view"<% if (areProviderLocationAndDateEditable) { %>  class="hidden" <% } %> ><tr>
             <td>
                 <label>${ ui.message("emr.patientDashBoard.provider") }</label>
                 <span>${ ui.format(emrContext.currentProvider) }</span>
@@ -68,14 +71,14 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
             </td>
         </tr></table>
 
-        <div id="who-where-when-edit"<% if (isThisVisitActive) { %>  class="hidden" <% } %> >
+        <div id="who-where-when-edit"<% if (!areProviderLocationAndDateEditable) { %>  class="hidden" <% } %> >
             ${ ui.includeFragment("uicommons", "field/dropDown", [
                     id: "consultProvider",
                     label: "emr.patientDashBoard.provider",
                     formFieldName: "consultProviderId",
                     options: providers,
                     classes: ['required'],
-                    initialValue: isThisVisitActive ? emrContext.currentProvider.providerId : null
+                    initialValue: areProviderLocationAndDateEditable ? null : emrContext.currentProvider.providerId
             ])}
 
             ${ ui.includeFragment("emr", "field/location", [
@@ -84,7 +87,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                     formFieldName: "consultLocationId",
                     classes: ['required'],
                     withTag: "Login Location",
-                    initialValue: isThisVisitActive ? sessionContext.sessionLocationId : null
+                    initialValue: areProviderLocationAndDateEditable ? null : sessionContext.sessionLocationId
             ])}
 
             <!-- TODO we should be able to remove the formatting of the startDate and endDate and pass in the encounterStart/EndDateRange directly after we refactor datepicker -->

@@ -158,8 +158,9 @@ public class ConsultPageController {
         consultNote.setEncounterLocation(consultLocation);
 
         Date encounterDate = date;
-        // set the retrospective encounter date if this isn't the active visit
-        if (emrContext.getActiveVisit() == null || !visitWrapper.getVisit().equals(emrContext.getActiveVisit().getVisit())) {
+        // set the retrospective encounter date if 1) this isn't the active visit or 2) if date is not equal to today
+        if (emrContext.getActiveVisit() == null || !visitWrapper.getVisit().equals(emrContext.getActiveVisit().getVisit())
+                || !(new DateMidnight(date).equals(new DateMidnight()))) {
             encounterDate = getRetrospectiveEncounterDate(visitWrapper, date);
         }
         else {
