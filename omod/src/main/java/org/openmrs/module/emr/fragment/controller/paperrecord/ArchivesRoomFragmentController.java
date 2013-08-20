@@ -135,7 +135,7 @@ public class ArchivesRoomFragmentController {
             return new SuccessResult(ui.message("emr.archivesRoom.pullRequests.message"));
         }
         catch (UnableToPrintLabelException ex) {
-            log.error("Unable to assign pull requests: User " + emrContext.getUserContext().getAuthenticatedUser()
+            log.warn("Unable to assign pull requests: User " + emrContext.getUserContext().getAuthenticatedUser()
                     + " unable to print paper record label at location " + emrContext.getSessionLocation(), ex);
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToPrintLabel"));
         }
@@ -157,7 +157,7 @@ public class ArchivesRoomFragmentController {
             return new SuccessResult(ui.message("emr.archivesRoom.createRequests.message"));
         }
         catch (UnableToPrintLabelException ex) {
-            log.error("Unable to assign create requests: User " + emrContext.getUserContext().getAuthenticatedUser()
+            log.warn("Unable to assign create requests: User " + emrContext.getUserContext().getAuthenticatedUser()
                     + " unable to print paper record label at location " + emrContext.getSessionLocation(), ex);
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToPrintLabel"));
         }
@@ -286,8 +286,8 @@ public class ArchivesRoomFragmentController {
             paperRecordService.printPaperRecordLabel(request, emrContext.getSessionLocation());
             return new SuccessResult(ui.message("emr.archivesRoom.printedLabel.message", request.getIdentifier()));
         }
-        catch (Exception e) {
-            log.error("User " + emrContext.getUserContext().getAuthenticatedUser() + " unable to print paper record label at location "
+        catch (UnableToPrintLabelException e) {
+            log.warn("User " + emrContext.getUserContext().getAuthenticatedUser() + " unable to print paper record label at location "
                     + emrContext.getSessionLocation(), e);
             return new FailureResult(ui.message("emr.archivesRoom.error.unableToPrintLabel"));
 
