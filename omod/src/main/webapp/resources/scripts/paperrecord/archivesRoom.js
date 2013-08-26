@@ -25,10 +25,10 @@ jq(document).ready( function() {
     // load the tables
     refreshAllQueues();
 
-    // set up auto-refresh of tables every 2 minutes
+    // set up auto-refresh of tables every 1 minute
     setInterval(function() {
         refreshAllQueues();
-    }, 120000)
+    }, 60000)
 
     // handle entering identifiers to mark records as pulled
     jq('.mark-as-pulled').submit(function (e) {
