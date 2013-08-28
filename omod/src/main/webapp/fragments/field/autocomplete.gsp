@@ -53,7 +53,7 @@
                 xhr= jq.ajax({
                     url: ajaxUrl,
                     dataType: 'json',
-                    data: { term: request.term , maxResults: ${config.maxResults} ? ${config.maxResults} : 0} ,
+                    data: { term: encodeURIComponent(request.term) , maxResults: ${config.maxResults} ? ${config.maxResults} : 0} ,
                     success: function (data) {
                         if (data.length == 0){
                             data.push({

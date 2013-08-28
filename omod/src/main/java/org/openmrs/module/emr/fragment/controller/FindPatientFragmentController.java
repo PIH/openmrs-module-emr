@@ -14,6 +14,8 @@
 package org.openmrs.module.emr.fragment.controller;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -26,6 +28,8 @@ import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +37,8 @@ import java.util.List;
  * AJAX ssearch methods for patients
  */
 public class FindPatientFragmentController {
+
+    private final Log log = LogFactory.getLog(getClass());
 
     public List<SimpleObject> search(@RequestParam(value = "q", required = false) String query,
                                      @RequestParam(value = "term", required = false) String term,
@@ -43,6 +49,11 @@ public class FindPatientFragmentController {
                                      UiUtils ui) {
         if (StringUtils.isBlank(query)) {
             query = term;
+        }
+        try {
+            query = URLDecoder.decode(query, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            log.warn("failed to decode: " + query, e);
         }
         int resultLimit = 100;
         if(maxResults!=null && maxResults.intValue()>0){
