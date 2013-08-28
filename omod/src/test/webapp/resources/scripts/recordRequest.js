@@ -1,23 +1,5 @@
 describe("Tests for medical record requests", function() {
 
-    function verifySelectedRecords(numberSelected) {
-        for (var i = 0; i < numberSelected; i++) {
-            expect(viewModel.recordsToPull()[i].selected()).toBe(true);
-        }
-        for (var i = numberSelected; i < viewModel.recordsToPull().length; i++) {
-            expect(viewModel.recordsToPull()[i].selected()).toBe(false);
-        }
-    }
-
-    function verifyHoveredRecords(numberSelected) {
-        for (var i = 0; i < numberSelected; i++) {
-            expect(viewModel.recordsToPull()[i].hovered()).toBe(true);
-        }
-        for (var i = numberSelected; i < viewModel.recordsToPull().length; i++) {
-            expect(viewModel.recordsToPull()[i].hovered()).toBe(false);
-        }
-    }
-
     var thirdRecord = RecordRequestModel(3, "Darius", 1, "A033", "Lacoline", "12:34 pm");
     var secondRecord = RecordRequestModel(2, "Mark", 2, "A021", "Lacoline", "12:34 pm");
 
@@ -34,77 +16,27 @@ describe("Tests for medical record requests", function() {
     var viewModel = PullRequestsViewModel(recordsToPull);
 
 
-    it("should select first three records", function() {
-        viewModel.selectRequestToBePulled(thirdRecord);
-        verifySelectedRecords(3);
+    it("should select two records and unselect one", function() {
+        viewModel.selectRecordToBePulled(secondRecord);
+        viewModel.selectRecordToBePulled(thirdRecord);
+        expect(viewModel.recordsToPull()[1].selected()).toBe(true);
+        expect(viewModel.recordsToPull()[2].selected()).toBe(true);
+
+        viewModel.selectRecordToBePulled(thirdRecord);
+        expect(viewModel.recordsToPull()[1].selected()).toBe(true);
+        expect(viewModel.recordsToPull()[2].selected()).toBe(false);
     });
 
-    it("should select first two records after selecting three records", function() {
-        viewModel.selectRequestToBePulled(thirdRecord);
-        viewModel.selectRequestToBePulled(secondRecord);
-        verifySelectedRecords(2);
-    });
+    it("should hover two hovers and unhover one", function() {
+        viewModel.hoverRecords(secondRecord);
+        viewModel.hoverRecords(thirdRecord);
+        expect(viewModel.recordsToPull()[1].hovered()).toBe(true);
+        expect(viewModel.recordsToPull()[2].hovered()).toBe(true);
 
-    it("should select by number", function() {
-        viewModel.selectNumber(4);
-        verifySelectedRecords(4);
-        viewModel.selectNumber(1);
-        verifySelectedRecords(1);
-    });
+        viewModel.unHoverRecords(thirdRecord);
+        expect(viewModel.recordsToPull()[1].hovered()).toBe(true);
+        expect(viewModel.recordsToPull()[2].hovered()).toBe(false);
+    })
 
-    it("should hover by number", function() {
-        viewModel.hoverNumber(4);
-        verifyHoveredRecords(4);
-        viewModel.hoverNumber(1);
-        verifyHoveredRecords(1);
-    });
 
-    it("should hover all if number is larger than size", function () {
-        viewModel.hoverNumber(10);
-        verifyHoveredRecords(8);
-    });
-
-    it("should select all if number is larger than size", function () {
-       viewModel.selectNumber(10);
-        verifySelectedRecords(8);
-    });
-
-    it("should compute when none are selected", function() {
-        viewModel.selectNumber(0);
-        expect(viewModel.selectedRequests().length).toBe(0);
-    });
-
-    it("should compute when none are hovered", function() {
-        viewModel.hoverNumber(0);
-        expect(viewModel.hoveredRequests().length).toBe(0);
-    });
-
-    it("should compute when some are selected", function() {
-        viewModel.selectNumber(2);
-        expect(viewModel.selectedRequests().length).toBe(2);
-    });
-
-    it("should compute when some are hovered", function() {
-        viewModel.hoverNumber(2);
-        expect(viewModel.hoveredRequests().length).toBe(2);
-    });
-
-    it("should unhover all the rows", function() {
-        viewModel.hoverNumber(2);
-        expect(viewModel.hoveredRequests().length).toBe(2);
-        viewModel.unHoverRecords();
-        expect(viewModel.hoveredRequests().length).toBe(0);
-    });
-
-    it("should assess that the viewModel without selected records is not valid", function() {
-        viewModel.selectNumber(0);
-        expect(viewModel.selectedRequests().length).toBe(0);
-        expect(viewModel.isValid()).toBe(false);
-    });
-
-    it("should assess that the viewModel with selected records is valid", function() {
-        viewModel.selectNumber(1);
-        expect(viewModel.selectedRequests().length).toBe(1);
-        expect(viewModel.isValid()).toBe(true);
-    });
 })

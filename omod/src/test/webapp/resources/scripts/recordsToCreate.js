@@ -25,9 +25,15 @@ describe("Tests to create medical records", function() {
 
     var viewModel = CreateRequestsViewModel(recordsToPull);
 
-    it("should select first three records", function() {
-        viewModel.selectRecordsToBeCreated(thirdRecord);
-        verifySelectedRecordsToBeCreated(3);
+    it("should select two records and then unselect one", function() {
+        viewModel.selectRecordToBeCreated(secondRecord);
+        viewModel.selectRecordToBeCreated(thirdRecord);
+        expect(viewModel.recordsToCreate()[1].selected()).toBe(true);
+        expect(viewModel.recordsToCreate()[2].selected()).toBe(true);
+
+        viewModel.selectRecordToBeCreated(thirdRecord);
+        expect(viewModel.recordsToCreate()[1].selected()).toBe(true);
+        expect(viewModel.recordsToCreate()[2].selected()).toBe(false);
 
     });
 

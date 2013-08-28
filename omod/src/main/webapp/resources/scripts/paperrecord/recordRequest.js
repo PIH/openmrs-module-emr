@@ -42,37 +42,21 @@ function PullRequestsViewModel(recordsToPull) {
     var api = {};
     api.recordsToPull = ko.observableArray(recordsToPull);
 
-    api.selectNumber = function(number) {
-        for (var i = 0; i < recordsToPull.length; ++i) {
-            recordsToPull[i].selected(i < number);
-        }
-    };
-
-    api.hoverNumber = function(number){
-        for (var i = 0; i < recordsToPull.length; ++i) {
-            recordsToPull[i].hovered(i < number);
-        }
-    }
-
     api.isValid = function(){
         return api.selectedRequests().length > 0;
     }
 
-    api.selectRequestToBePulled = function(request) {
-        var indexOf = recordsToPull.indexOf(request);
-        api.selectNumber(indexOf + 1);
+    api.selectRecordToBePulled = function(record) {
+        record.hovered(false);
+        record.selected(!record.selected())
     };
 
-    api.hoverRecords = function(request) {
-        var indexOf = recordsToPull.indexOf(request);
-        api.hoverNumber(indexOf + 1);
+    api.hoverRecords = function(record) {
+        record.hovered(true);
     };
 
-    api.unHoverRecords = function(){
-        var indexOf = api.recordsToPull();
-        for( var i=0; i < api.recordsToPull().length; i++) {
-            api.recordsToPull()[i].hovered(false);
-        }
+    api.unHoverRecords = function(record){
+        record.hovered(false);
     }
 
     api.selectedRequests = ko.computed(function() {
@@ -122,11 +106,9 @@ function CreateRequestsViewModel(recordsToCreate) {
     var api = {};
     api.recordsToCreate = ko.observableArray(recordsToCreate);
 
-    api.selectRecordsToBeCreated = function(record) {
-        var indexOf = api.recordsToCreate().indexOf(record);
-        for( var i=0; i<api.recordsToCreate().length; i++) {
-            api.recordsToCreate()[i].selected(i <= indexOf);
-        }
+    api.selectRecordToBeCreated = function(record) {
+        record.hovered(false);
+        record.selected(!record.selected());
     };
 
     api.isValid = function(){
@@ -134,17 +116,11 @@ function CreateRequestsViewModel(recordsToCreate) {
     }
 
     api.hoverRecords = function(record){
-        var indexOf = api.recordsToCreate().indexOf(record);
-        for( var i=0; i < api.recordsToCreate().length; i++) {
-            api.recordsToCreate()[i].hovered(i <= indexOf);
-        }
+        record.hovered(true);
     }
 
-    api.unHoverRecords = function(){
-        var indexOf = api.recordsToCreate();
-        for( var i=0; i < api.recordsToCreate().length; i++) {
-            api.recordsToCreate()[i].hovered(false);
-        }
+    api.unHoverRecords = function(record){
+        record.hovered(false);
     }
 
     api.selectedRequests = ko.computed(function() {

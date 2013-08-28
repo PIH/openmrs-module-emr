@@ -52,10 +52,10 @@
                         </thead>
                         <tbody data-bind="foreach: recordsToCreate">
                         <tr data-bind="attr:{'class': patientId}, css:{ selected: selected(), hover: hovered() }" >
-                            <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordsToBeCreated"><span data-bind="text: patientName"></span></td>
-                            <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordsToBeCreated"><span data-bind="text: patientId"></span></td>
-                            <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordsToBeCreated"><span data-bind="text: sendToLocation"></span></td>
-                            <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordsToBeCreated"><span data-bind="text: timeRequested"></span></td>
+                            <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordToBeCreated"><span data-bind="text: patientName"></span></td>
+                            <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordToBeCreated"><span data-bind="text: patientId"></span></td>
+                            <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordToBeCreated"><span data-bind="text: sendToLocation"></span></td>
+                            <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordToBeCreated"><span data-bind="text: timeRequested"></span></td>
                             <td><i data-bind="click: \$root.cancelRequest" class="delete-item icon-remove" title="${ui.message("emr.archivesRoom.cancel")}"></i></td>
                         </tr>
                         </tbody>
@@ -131,10 +131,10 @@
                         </thead>
                         <tbody data-bind="foreach: recordsToPull">
                         <tr data-bind="attr:{'class': patientId}, css:{selected: selected(), hover: hovered() }" >
-                            <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRequestToBePulled"><span data-bind="text: patientName"></span></td>
-                            <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRequestToBePulled"><span data-bind="text: dossierNumber"></span></td>
-                            <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRequestToBePulled"><span data-bind="text: sendToLocation"></span></td>
-                            <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRequestToBePulled"><span data-bind="text: timeRequested"></span></td>
+                            <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordToBePulled"><span data-bind="text: patientName"></span></td>
+                            <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordToBePulled"><span data-bind="text: dossierNumber"></span></td>
+                            <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordToBePulled"><span data-bind="text: sendToLocation"></span></td>
+                            <td data-bind="event: { mouseover: \$root.hoverRecords, mouseout: \$root.unHoverRecords }, click: \$root.selectRecordToBePulled"><span data-bind="text: timeRequested"></span></td>
                             <td><i data-bind="click: \$root.cancelRequest" class="delete-item icon-remove" title="${ui.message("emr.archivesRoom.cancel")}"></i></td>
                         </tr>
                         <tr data-bind="attr:{'class': patientId}, css:{selected: selected(), hover: hovered() }">
