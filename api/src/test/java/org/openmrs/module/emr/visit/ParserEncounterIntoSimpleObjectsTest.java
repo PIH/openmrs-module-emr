@@ -17,7 +17,7 @@ import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
-import org.openmrs.module.emrapi.disposition.actions.ClientSideAction;
+import org.openmrs.module.emrapi.disposition.DispositionObs;
 import org.openmrs.module.emrapi.test.MockMetadataTestUtil;
 import org.openmrs.module.emrapi.test.builder.ConceptBuilder;
 import org.openmrs.module.emrapi.test.builder.ObsBuilder;
@@ -85,7 +85,7 @@ public class ParserEncounterIntoSimpleObjectsTest {
     public void testParsingDispositions() throws Exception {
         Concept admit = new ConceptBuilder(null, conceptService.getConceptDatatypeByName("N/A"), conceptService.getConceptClassByName("Misc")).addName("Admit").get();
         when(emrConceptService.getConcept("test:admit")).thenReturn(admit);
-        Obs dispositionObs = dispositionDescriptor.buildObsGroup(new Disposition("emrapi.admit", "Admit", "test:admit", Collections.<String>emptyList(), Collections.<ClientSideAction>emptyList()), emrConceptService);
+        Obs dispositionObs = dispositionDescriptor.buildObsGroup(new Disposition("emrapi.admit", "Admit", "test:admit", Collections.<String>emptyList(), Collections.<DispositionObs>emptyList()), emrConceptService);
         encounter.addObs(doNotGoToServiceToFormatMembers(dispositionObs));
         ParsedObs parsed = parser.parseObservations(Locale.ENGLISH);
 
