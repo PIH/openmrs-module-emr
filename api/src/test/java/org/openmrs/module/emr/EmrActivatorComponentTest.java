@@ -53,7 +53,6 @@ public class EmrActivatorComponentTest extends BaseModuleContextSensitiveTest {
     @Test
     public void testStarted() throws Exception {
         new EmrActivator().started();
-        assertThat(emrApiProperties.getEmrApiConceptSource().getName(), is(EmrConstants.EMR_CONCEPT_SOURCE_NAME));
     }
 
     @Test

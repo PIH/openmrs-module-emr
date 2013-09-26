@@ -136,13 +136,6 @@ public class EmrConstants {
     public static final String PAYMENT_RECEIPT_NUMBER_CONCEPT = "emr.paymentReceiptNumberConcept";
     public static final String PAYMENT_CONSTRUCT_CONCEPT = "emr.paymentConstructConcept";
 
-    // copied to emrapi
-    public static final String EMR_CONCEPT_SOURCE_NAME = "org.openmrs.module.emr";
-    // copied to emrapi
-    public static final String EMR_CONCEPT_SOURCE_DESCRIPTION = "Source used to tag concepts used in the EMR module";
-    // copied to emrapi
-    public static final String EMR_CONCEPT_SOURCE_UUID = "b5e44116-778f-11e2-ad73-903c7bb72694";
-
     // codes in the concept source provided by this module
     // copied to emrapi
     public static final String CONCEPT_CODE_DIAGNOSIS_CONCEPT_SET = "Diagnosis Concept Set";
