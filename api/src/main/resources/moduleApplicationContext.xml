@@ -92,9 +92,6 @@
         </property>
     </bean>
 
-    <bean id="visitDomainWrapperFactory" class="org.openmrs.module.emr.visit.VisitDomainWrapperFactory"/>
-    <bean id="visitDomainWrapperRepository" class="org.openmrs.module.emr.visit.VisitDomainWrapperRepository"/>
-
     <!-- add type converters -->
     <bean class="org.openmrs.module.emr.converter.StringToPrinterConverter"/>
 

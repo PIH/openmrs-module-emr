@@ -10,7 +10,7 @@ import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
-import org.openmrs.module.emrapi.disposition.DispositionFactory;
+import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.emrapi.disposition.actions.DispositionAction;
 import org.openmrs.module.emrapi.encounter.EncounterDomainWrapper;
 import org.openmrs.ui.framework.UiUtils;
@@ -33,7 +33,7 @@ public class DispositionActionPageControllerTest {
 
     private DispositionActionPageController controller = new DispositionActionPageController();
 
-    private DispositionFactory dispositionFactory;
+    private DispositionService dispositionService;
 
     private ApplicationContext applicationContext;
 
@@ -88,7 +88,7 @@ public class DispositionActionPageControllerTest {
         deathDisposition.setActions(Arrays.asList("dischargeIfAdmittedDispositionAction", "markPatientDeadDispositionAction"));
 
         uiUtils = mock(UiUtils.class);
-        dispositionFactory = mock(DispositionFactory.class);
+        dispositionService = mock(DispositionService.class);
         applicationContext = mock(ApplicationContext.class);
         dischargeIfAdmittedDispositionAction = mock(DispositionAction.class);
         markPatientDeadDispositionAction = mock(DispositionAction.class);
@@ -100,8 +100,8 @@ public class DispositionActionPageControllerTest {
         dispositionDescriptor.setDispositionConcept(dispositionObsConcept);
         dispositionDescriptor.setDispositionSetConcept(dispositionObsGroupConcept);
 
-        when(dispositionFactory.getDispositionDescriptor()).thenReturn(dispositionDescriptor);
-        when(dispositionFactory.getDispositionFromObsGroup(deathDispositionObsGroup)).thenReturn(deathDisposition);
+        when(dispositionService.getDispositionDescriptor()).thenReturn(dispositionDescriptor);
+        when(dispositionService.getDispositionFromObsGroup(deathDispositionObsGroup)).thenReturn(deathDisposition);
 
         expectedParams.put("patientId", "1");
         expectedParams.put("visitId", "2");
@@ -112,7 +112,7 @@ public class DispositionActionPageControllerTest {
     @Test
     public void shouldAllActionsAssociatedWithDeathDisposition() throws IOException {
         encounter.addObs(deathDispositionObsGroup);
-        controller.controller(encounter, "1", "2", dispositionFactory, applicationContext, uiUtils);
+        controller.controller(encounter, "1", "2", dispositionService, applicationContext, uiUtils);
         verify(dischargeIfAdmittedDispositionAction).action(argThat(new IsExpectedEncounterDomainWrapper(encounter)), eq(deathDispositionObsGroup), anyMap());
         verify(markPatientDeadDispositionAction).action(argThat(new IsExpectedEncounterDomainWrapper(encounter)), eq(deathDispositionObsGroup), anyMap());
         verify(uiUtils).pageLinkWithoutContextPath(eq("coreapps"), eq("patientdashboard/patientDashboard"), eq(expectedParams));
@@ -122,7 +122,7 @@ public class DispositionActionPageControllerTest {
     @Test
     public void shouldRedirectToDashboardIfNoDispositionSpecified() throws IOException {
         encounter.addObs(nonDispositionObsGroup);
-        controller.controller(encounter, "1", "2", dispositionFactory, applicationContext, uiUtils);
+        controller.controller(encounter, "1", "2", dispositionService, applicationContext, uiUtils);
         verify(dischargeIfAdmittedDispositionAction, never()).action(argThat(new IsExpectedEncounterDomainWrapper(encounter)), eq(deathDispositionObsGroup), anyMap());
         verify(markPatientDeadDispositionAction,never()).action(argThat(new IsExpectedEncounterDomainWrapper(encounter)), eq(deathDispositionObsGroup), anyMap());
         verify(uiUtils).pageLinkWithoutContextPath(eq("coreapps"), eq("patientdashboard/patientDashboard"), eq(expectedParams));
@@ -131,7 +131,7 @@ public class DispositionActionPageControllerTest {
 
     @Test
     public void shouldRedirectToDashboardIfNoEncounterSpecified() throws IOException {
-        controller.controller(null, "1", "2", dispositionFactory, applicationContext, uiUtils);
+        controller.controller(null, "1", "2", dispositionService, applicationContext, uiUtils);
         verify(dischargeIfAdmittedDispositionAction, never()).action(argThat(new IsExpectedEncounterDomainWrapper(encounter)), eq(deathDispositionObsGroup), anyMap());
         verify(markPatientDeadDispositionAction,never()).action(argThat(new IsExpectedEncounterDomainWrapper(encounter)), eq(deathDispositionObsGroup), anyMap());
         verify(uiUtils).pageLinkWithoutContextPath(eq("coreapps"), eq("patientdashboard/patientDashboard"), eq(expectedParams));

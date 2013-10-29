@@ -5,7 +5,7 @@ import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
-import org.openmrs.module.emrapi.disposition.DispositionFactory;
+import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.emrapi.disposition.actions.DispositionAction;
 import org.openmrs.module.emrapi.encounter.EncounterDomainWrapper;
 import org.openmrs.ui.framework.UiUtils;
@@ -23,9 +23,10 @@ public class DispositionActionPageController {
     public String controller(@RequestParam(value = "encounterId", required = false) Encounter encounter,
                            @RequestParam(value = "patientId", required = false) String patientId,
                            @RequestParam(value = "visitId", required = false) String visitId,
-                           @SpringBean("dispositionFactory") DispositionFactory dispositionFactory,
+                           @SpringBean("dispositionService") DispositionService dispositionService,
                            @SpringBean("applicationContext") ApplicationContext applicationContext,
                            UiUtils ui) throws IOException {
+
 
         // fetch the disposition off the obs
         if (encounter != null) {
@@ -33,14 +34,16 @@ public class DispositionActionPageController {
             Disposition disposition = null;
             Obs dispositionObsGroup = null;
 
-            DispositionDescriptor dispositionDescriptor = dispositionFactory.getDispositionDescriptor();
+            DispositionDescriptor dispositionDescriptor = dispositionService.getDispositionDescriptor();
 
             for (Obs obs : encounter.getAllObs()) {
                 if (dispositionDescriptor.isDisposition(obs)) {
-                    disposition = dispositionFactory.getDispositionFromObsGroup(obs);
+                    disposition = dispositionService.getDispositionFromObsGroup(obs);
                     dispositionObsGroup = obs;
                 }
             }
+
+            // TODO if we actually want to keep this, we should pull this into a DispositionService service method
 
             if (disposition != null) {
                 for (String actionBeanName : disposition.getActions()) {
