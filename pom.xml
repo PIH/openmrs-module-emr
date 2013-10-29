@@ -48,7 +48,7 @@
         <serializationxstreamVersion>0.2.7</serializationxstreamVersion>
         <springVersion>3.0.5.RELEASE</springVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <uicommonsVersion>1.1-SNAPSHOT</uicommonsVersion>
+        <uicommonsVersion>1.2-SNAPSHOT</uicommonsVersion>
         <htmlformentryuiVersion>1.1-SNAPSHOT</htmlformentryuiVersion>
     </properties>
 
