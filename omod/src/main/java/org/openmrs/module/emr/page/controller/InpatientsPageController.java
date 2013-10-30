@@ -1,17 +1,27 @@
 package org.openmrs.module.emr.page.controller;
 
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.api.LocationService;
 import org.openmrs.module.emr.EmrContext;
+import org.openmrs.module.emr.api.EmrService;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 public class InpatientsPageController {
+
+    private final Log log = LogFactory.getLog(getClass());
+
     public void get(EmrContext emrContext, PageModel model,
                     @RequestParam(value = "ward", required = false) Location ward,
                     @SpringBean AdtService service,
+                    @SpringBean EmrService emrService,
                     @SpringBean("locationService") LocationService locationService) {
 
         Location sessionLocation = emrContext.getSessionLocation();
@@ -24,6 +34,7 @@ public class InpatientsPageController {
         }
 
         model.addAttribute("ward", ward);
-        model.addAttribute("visitSummaries", service.getInpatientVisits(visitLocation, ward));
+        List<Object[]> inpatientsList = emrService.getInpatientsList(visitLocation);
+        model.addAttribute("inpatientsList", inpatientsList);
     }
 }

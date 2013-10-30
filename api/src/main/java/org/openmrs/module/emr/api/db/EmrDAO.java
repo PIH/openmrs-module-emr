@@ -22,4 +22,6 @@ public interface EmrDAO {
 
     List<Patient> findPatients(String query, Location checkedInAt, Integer start, Integer length);
 
+    List<Object[]> getInpatientsList(Location location);
+
 }

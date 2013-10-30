@@ -35,7 +35,7 @@
 
 </script>
 
-<h3 class="inpatient-count">${ ui.message("emr.inpatients.patientCount") }: ${visitSummaries.size()}</h3>
+<h3 class="inpatient-count">${ ui.message("emr.inpatients.patientCount") }: ${inpatientsList.size()}</h3>
     <div class="inpatient-filter">
         <% if(ward!= null && ward.id>0) { %>
             ${ ui.includeFragment("emr", "field/location", [
@@ -65,42 +65,47 @@
     </tr>
     </thead>
     <tbody>
-    <% if (visitSummaries.size() == 0) { %>
+    <% if (inpatientsList.size() == 0) { %>
     <tr>
         <td colspan="4">${ ui.message("emr.none") }</td>
     </tr>
     <% } %>
-    <% visitSummaries.each { v ->
-        def admitted = v.admissionEncounter
-        def latest = v.latestAdtEncounter
+    <% inpatientsList.each { v ->
     %>
-    <tr id="visit-${ v.visit.id }">
-        <td>${ v.visit.patient.patientIdentifier.identifier }</td>
-        <td>
-            <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: v.visit.patient.id ]) }">
-                ${ ui.format(v.visit.patient) }
-            </a>
-        </td>
-        <td>
-            <% if (admitted) { %>
-            ${ ui.format(admitted.location) }
-            <br/>
-            <small>
-                ${ ui.format(admitted.encounterDatetime) }
-            </small>
-            <% } %>
-        </td>
-        <td>
-            <% if (latest) { %>
-            ${ ui.format(latest.location) }
-            <br/>
-            <small>
-                ${ ui.format(latest.encounterDatetime) }
-            </small>
-
-            <% } %>
-        </td>
-    </tr>
+        <tr id="visit-${ v[0]}">
+            <td>${ v[1] }</td>
+            <td>
+                <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: v[0] ]) }">
+                    ${ ui.format(v[2] + " " + v[3]) }
+                </a>
+            </td>
+            <td>
+                ${ ui.format(v[5]) }
+                <br/>
+                <small>
+                    ${ ui.format(v[4]) }
+                </small>
+            </td>
+            <td>
+                ${ ui.format(v[7]) }
+                <br/>
+                <small>
+                    ${ ui.format(v[6]) }
+                </small>
+            </td>
+        </tr>
     <% } %>
     </tbody>
 </table>
+
+${ ui.includeFragment("uicommons", "widget/dataTable", [ object: "#active-visits",
+        options: [
+                bFilter: true,
+                bJQueryUI: true,
+                bLengthChange: false,
+                iDisplayLength: 10,
+                sPaginationType: '\"full_numbers\"',
+                bSort: false,
+                sDom: '\'ft<\"fg-toolbar ui-toolbar ui-corner-bl ui-corner-br ui-helper-clearfix datatables-info-and-pg \"ip>\''
+        ]
+]) }
