@@ -85,8 +85,10 @@ public class HibernateEmrDAO implements EmrDAO {
         SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery("select distinct v.patient_id as patientId " +
                     ", id1.identifier as primaryIdentifierType" +
                     ", n.given_name as firstName, n.family_name as lastName" +
-                    ", admission.encounter_datetime as admissionDateTime, al.name as admissionLocation" +
-                    ", mostRecentAdt.encounter_datetime as mostRecentAdtDateTime , tl.name as currentWard" +
+                    ", admission.encounter_datetime as admissionDateTime" +
+                    ", al.name as admissionLocation, concat(al.uuid, '') as admissionLocationUUID" +
+                    ", mostRecentAdt.encounter_datetime as mostRecentAdtDateTime" +
+                    ", tl.name as currentWard, concat(tl.uuid, '') as currentWardUUID" +
                 " from visit v inner join person_name n on n.person_id = v.patient_id" +
                 " LEFT JOIN patient_identifier as id1" +
                     " ON (v.patient_id = id1.patient_id" +

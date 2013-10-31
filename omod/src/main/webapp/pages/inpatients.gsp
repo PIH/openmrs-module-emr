@@ -80,17 +80,17 @@
                 </a>
             </td>
             <td>
-                ${ ui.format(v[5]) }
+                ${ ui.message("ui.i18n.Location.name." + v[6]) }
                 <br/>
                 <small>
                     ${ ui.format(v[4]) }
                 </small>
             </td>
             <td>
-                ${ ui.format(v[7]) }
+                ${ ui.message("ui.i18n.Location.name." + v[9]) }
                 <br/>
                 <small>
-                    ${ ui.format(v[6]) }
+                    ${ ui.format(v[7]) }
                 </small>
             </td>
         </tr>
