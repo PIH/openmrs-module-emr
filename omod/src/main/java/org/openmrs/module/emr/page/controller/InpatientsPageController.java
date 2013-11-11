@@ -10,6 +10,7 @@ import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class InpatientsPageController {

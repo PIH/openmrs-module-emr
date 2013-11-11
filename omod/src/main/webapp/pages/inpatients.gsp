@@ -1,6 +1,10 @@
 <%
     ui.decorateWith("appui", "standardEmrPage")
     ui.includeCss("mirebalais", "inpatient.css")
+    def inpatientsNumber = 0;
+    if (inpatientsList != null ){
+        inpatientsNumber = inpatientsList.size();
+    }
 %>
 <script type="text/javascript">
     var breadcrumbs = [
@@ -30,7 +34,7 @@
 
 </script>
 
-<h3 class="inpatient-count">${ ui.message("emr.inpatients.patientCount") }: <span id="listSize">${inpatientsList.size()}</span></h3>
+<h3 class="inpatient-count">${ ui.message("emr.inpatients.patientCount") }: <span id="listSize">${inpatientsNumber}</span></h3>
     <div class="inpatient-filter">
         ${ ui.includeFragment("emr", "field/location", [
             "id": "inpatients-filterByLocation",
@@ -50,7 +54,7 @@
     </tr>
     </thead>
     <tbody>
-    <% if (inpatientsList.size() == 0) { %>
+    <% if ((inpatientsList == null) || (inpatientsList != null && inpatientsList.size() == 0)) { %>
     <tr>
         <td colspan="4">${ ui.message("emr.none") }</td>
     </tr>
@@ -83,6 +87,7 @@
     </tbody>
 </table>
 
+<% if ( (inpatientsList != null) && (inpatientsList.size() > 0) ) { %>
 ${ ui.includeFragment("uicommons", "widget/dataTable", [ object: "#active-visits",
         options: [
                 bFilter: true,
@@ -94,3 +99,4 @@ ${ ui.includeFragment("uicommons", "widget/dataTable", [ object: "#active-visits
                 sDom: '\'ft<\"fg-toolbar ui-toolbar ui-corner-bl ui-corner-br ui-helper-clearfix datatables-info-and-pg \"ip>\''
         ]
 ]) }
+<% } %>
