@@ -81,6 +81,7 @@ public class HibernateEmrDAO implements EmrDAO {
         EncounterType dischargeEncounterType = emrApiProperties.getExitFromInpatientEncounterType();
         EncounterType transferEncounterType = emrApiProperties.getTransferWithinHospitalEncounterType();
         PatientIdentifierType primaryIdentifierType = emrApiProperties.getPrimaryIdentifierType();
+        PatientIdentifierType dossierIdentifierType = emrApiProperties.getDossierIdentifierType();
 
         SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery("select distinct v.patient_id as patientId " +
                     ", id1.identifier as primaryIdentifierType" +
@@ -89,10 +90,14 @@ public class HibernateEmrDAO implements EmrDAO {
                     ", al.name as admissionLocation, concat(al.uuid, '') as admissionLocationUUID" +
                     ", mostRecentAdt.encounter_datetime as mostRecentAdtDateTime" +
                     ", tl.name as currentWard, concat(tl.uuid, '') as currentWardUUID" +
+                    ", id2.identifier as dossierNumber" +
                 " from visit v inner join person_name n on n.person_id = v.patient_id" +
                 " LEFT JOIN patient_identifier as id1" +
                     " ON (v.patient_id = id1.patient_id" +
                     " and id1.identifier_type = :primaryIdentifierType)" +
+                " LEFT JOIN patient_identifier as id2" +
+                    " ON (v.patient_id = id2.patient_id" +
+                    " and id2.identifier_type = :dossierIdentifierType)" +
                 " inner join encounter admission" +
                     " on v.visit_id = admission.visit_id" +
                     " and admission.voided = false" +
@@ -123,6 +128,7 @@ public class HibernateEmrDAO implements EmrDAO {
 
         query.setInteger("visitLocation", location.getId());
         query.setInteger("primaryIdentifierType", primaryIdentifierType.getId());
+        query.setInteger("dossierIdentifierType", dossierIdentifierType.getId());
         query.setInteger("admissionEncounterType", admissionEncounterType.getId());
         query.setParameterList("adtEncounterTypes", new Integer[]{admissionEncounterType.getId(), dischargeEncounterType.getId(), transferEncounterType.getId()});
         query.setParameterList("admitOrTransferEncounterTypes", new Integer[] { admissionEncounterType.getId(), transferEncounterType.getId() });

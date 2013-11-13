@@ -48,6 +48,7 @@
     <thead>
     <tr>
         <th>${ ui.message("emr.patient.identifier") }</th>
+        <th>${ ui.message("ui.i18n.PatientIdentifierType.name.e66645eb-03a8-4991-b4ce-e87318e37566") }</th>
         <th>${ ui.message("emr.person.name") }</th>
         <th>${ ui.message("emr.inpatients.firstAdmitted") }</th>
         <th>${ ui.message("emr.inpatients.currentWard") }</th>
@@ -63,6 +64,7 @@
     %>
         <tr id="visit-${ v[0]}">
             <td>${ v[1] }</td>
+            <td>${ v[10] }</td>
             <td>
                 <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: v[0] ]) }">
                     ${ ui.format(v[2] + " " + v[3]) }
