@@ -12,7 +12,7 @@
         { label: "${ ui.message("emr.app.inpatients.label")}"}
     ];
 
-    var WARD_COLUMN_INDEX = 3;
+    var WARD_COLUMN_INDEX = 4;
 
     jq(function() {
        jq("#inpatients-filterByLocation").change(function(event){
