@@ -63,18 +63,18 @@
     <% inpatientsList.each { v ->
     %>
         <tr id="visit-${ v[0]}">
-            <td>${ v[1] }</td>
-            <td>${ v[10] }</td>
+            <td>${ v[1] ?: ''}</td>
+            <td>${ v[10] ?: ''}</td>
             <td>
                 <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: v[0] ]) }">
-                    ${ ui.format(v[2] + " " + v[3]) }
+                    ${ ui.format(v[2] ?: '' + " " + v[3] ?: '') }
                 </a>
             </td>
             <td>
                 ${ ui.message("ui.i18n.Location.name." + v[6]) }
                 <br/>
                 <small>
-                    ${ ui.format(v[4]) }
+                    ${ ui.format(v[4])}
                 </small>
             </td>
             <td>
