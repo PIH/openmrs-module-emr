@@ -43,4 +43,10 @@
         </div>
     </a>
     <% } %>
+    <a class="button app big" href="${ ui.pageLink("mirebalais", "toggles") }">
+        <div class="task">
+            <i class="icon-search"></i>
+            ${ ui.message("emr.advancedFeatures") }
+        </div>
+    </a>
 </div>
