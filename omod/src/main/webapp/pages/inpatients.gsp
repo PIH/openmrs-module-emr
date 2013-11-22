@@ -67,7 +67,7 @@
             <td>${ v[10] ?: ''}</td>
             <td>
                 <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: v[0] ]) }">
-                    ${ ui.format(v[2] ?: '' + " " + v[3] ?: '') }
+                    ${ ui.format((v[2] ? v[2] : '') + " " + (v[3] ? v[3] : '')) }
                 </a>
             </td>
             <td>
