@@ -15,6 +15,7 @@
 <a href="${ ui.pageLink("emr", "account/account") }">
     <button id="create-account-button">${ ui.message("emr.createAccount") }</button>
 </a>
+<hr>
 
 <table id="list-accounts" width="50%" border="1" cellspacing="0" cellpadding="2">
 	<thead>
@@ -56,3 +57,17 @@
 		<% } %>
 	</tbody>
 </table>
+
+<% if ( (accounts != null) && (accounts.size() > 0) ) { %>
+${ ui.includeFragment("uicommons", "widget/dataTable", [ object: "#list-accounts",
+        options: [
+                bFilter: true,
+                bJQueryUI: true,
+                bLengthChange: false,
+                iDisplayLength: 10,
+                sPaginationType: '\"full_numbers\"',
+                bSort: false,
+                sDom: '\'ft<\"fg-toolbar ui-toolbar ui-corner-bl ui-corner-br ui-helper-clearfix datatables-info-and-pg \"ip>\''
+        ]
+]) }
+<% } %>
