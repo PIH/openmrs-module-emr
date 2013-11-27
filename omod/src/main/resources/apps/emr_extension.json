@@ -1,18 +1,5 @@
 [
     {
-        "id": "emr.inpatients",
-        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
-        "type": "link",
-        "label": "emr.app.inpatients.label",
-        "url": "emr/inpatients.page",
-        "icon": "icon-list-ol",
-        "order": 4,
-        "requiredPrivilege": "App: emr.inpatients",
-        "extensionParams": {
-            "featureToggle": "inpatientsList"
-        }
-    },
-    {
         "id": "emr.systemAdministration",
         "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
         "type": "link",
