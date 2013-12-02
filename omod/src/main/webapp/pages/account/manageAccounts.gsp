@@ -16,8 +16,7 @@
     <button id="create-account-button">${ ui.message("emr.createAccount") }</button>
 </a>
 <hr>
-
-<table id="list-accounts" width="50%" border="1" cellspacing="0" cellpadding="2">
+<table id="list-accounts" cellspacing="0" cellpadding="2">
 	<thead>
 		<tr>
 			<th>${ ui.message("emr.person.name")}</th>
