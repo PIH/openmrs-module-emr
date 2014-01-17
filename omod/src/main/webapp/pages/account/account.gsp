@@ -66,7 +66,7 @@
         ${ ui.includeFragment("uicommons", "field/text", [
             label: ui.message("emr.person.familyName"),
             formFieldName: "familyName", 
-            initialValue: (account.familyName ?: '') 
+            initialValue: (account.familyName ?: '')
         ])}
 
         ${ ui.includeFragment("uicommons", "field/text", [

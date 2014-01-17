@@ -50,7 +50,7 @@
         </div>
     </a>
     <% if(featureToggles.isFeatureEnabled('scheduleAppointment')) { %>
-    <a class="button app big">
+    <a class="button app big" href="${ ui.pageLink("appointmentschedulingui", "manageAppointmentTypes") }">
         <div class="task">
             <i class="icon-calendar"></i>
             ${ ui.message("emr.appointment.label") }
