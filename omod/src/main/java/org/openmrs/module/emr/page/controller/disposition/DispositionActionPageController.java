@@ -45,7 +45,7 @@ public class DispositionActionPageController {
 
             // TODO if we actually want to keep this, we should pull this into a DispositionService service method
 
-            if (disposition != null) {
+            if (disposition != null && (disposition.getActions() != null) ) {
                 for (String actionBeanName : disposition.getActions()) {
                     DispositionAction action = applicationContext.getBean(actionBeanName, DispositionAction.class);
                     action.action(new EncounterDomainWrapper(encounter), dispositionObsGroup, null);
