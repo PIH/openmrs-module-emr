@@ -49,7 +49,7 @@
             ${ ui.message("emr.advancedFeatures") }
         </div>
     </a>
-    <% if(featureToggles.isFeatureEnabled('scheduleAppointment')) { %>
+    <% if(featureToggles.isFeatureEnabled('new_appointment_scheduling_ui')) { %>
     <a class="button app big" href="${ ui.pageLink("appointmentschedulingui", "manageAppointmentTypes") }">
         <div class="task">
             <i class="icon-calendar"></i>
