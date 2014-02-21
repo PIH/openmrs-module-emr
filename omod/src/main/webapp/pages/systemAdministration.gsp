@@ -50,12 +50,18 @@
         </div>
     </a>
     <% if(featureToggles.isFeatureEnabled('new_appointment_scheduling_ui')) { %>
-    <a class="button app big" href="${ ui.pageLink("appointmentschedulingui", "manageAppointmentTypes") }">
-        <div class="task">
-            <i class="icon-calendar"></i>
-            ${ ui.message("emr.appointment.label") }
-        </div>
-    </a>
+        <a class="button app big" href="${ ui.pageLink("appointmentschedulingui", "manageAppointmentTypes") }">
+            <div class="task">
+                <i class="icon-calendar"></i>
+                ${ ui.message("emr.appointment.label") }
+            </div>
+        </a>
+        <a class="button app big" href="${ ui.pageLink("appointmentschedulingui", "scheduleProviders") }">
+            <div class="task">
+                <i class="icon-calendar"></i>
+                ${ ui.message("appointmentschedulingui.scheduleProviders.app.title") }
+            </div>
+        </a>
     <% } %>
 
 </div>
