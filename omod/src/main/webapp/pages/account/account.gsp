@@ -143,7 +143,7 @@
 
 			<% capabilities.each{ %>
                 ${ ui.includeFragment("emr", "field/checkbox", [ 
-                    label: ui.message("emr.app." + (it.name - rolePrefix) + ".label"), 
+                    label: ui.format(it),
                     formFieldName: "capabilities", 
                     value: it.name, 
                     checked: account.capabilities?.contains(it) 
