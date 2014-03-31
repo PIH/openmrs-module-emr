@@ -1,15 +1,5 @@
 [
     {
-        "id": "emr.systemAdministration",
-        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
-        "type": "link",
-        "label": "emr.app.systemAdministration.label",
-        "url": "emr/systemAdministration.page",
-        "icon": "icon-cogs",
-        "order": 2,
-        "requiredPrivilege": "App: emr.systemAdministration"
-    },
-    {
         "id": "emr.myAccount",
         "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
         "type": "link",
