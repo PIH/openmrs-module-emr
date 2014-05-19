@@ -15,7 +15,6 @@
 package org.openmrs.module.emr;
 
 import org.openmrs.Concept;
-import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.module.emr.api.EmrService;
 import org.openmrs.module.emrapi.utils.ModuleProperties;
@@ -37,10 +36,6 @@ public class EmrProperties extends ModuleProperties {
      */
     public void setEmrService(EmrService emrService) {
         this.emrService = emrService;
-    }
-
-    public EncounterType getCheckInEncounterType() {
-        return getEncounterTypeByGlobalProperty(EmrConstants.GP_CHECK_IN_ENCOUNTER_TYPE);
     }
 
     public EncounterType getTriageEncounterType() {

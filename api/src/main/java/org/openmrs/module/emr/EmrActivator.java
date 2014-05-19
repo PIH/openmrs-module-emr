@@ -28,6 +28,7 @@ import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.emr.task.TaskDescriptor;
 import org.openmrs.module.emr.task.TaskFactory;
 import org.openmrs.module.emr.task.TaskService;
+import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.adt.CloseStaleVisitsTask;
 import org.openmrs.module.emrapi.utils.GeneralUtils;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
@@ -42,7 +43,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.openmrs.module.emr.EmrConstants.EMR_MODULE_ID;
-import static org.openmrs.module.emr.EmrConstants.TEST_PATIENT_ATTRIBUTE_UUID;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
@@ -134,7 +134,7 @@ public class EmrActivator implements ModuleActivator {
         PersonAttributeType personAttributeType = new PersonAttributeType();
         personAttributeType.setName("Test Patient");
         personAttributeType.setDescription("Flag to describe if the patient was created to a test or not");
-        personAttributeType.setUuid(TEST_PATIENT_ATTRIBUTE_UUID);
+        personAttributeType.setUuid(EmrApiConstants.TEST_PATIENT_ATTRIBUTE_UUID);
         personAttributeType.setFormat("java.lang.Boolean");
 
 
@@ -164,7 +164,7 @@ public class EmrActivator implements ModuleActivator {
     }
 
     private void saveTestPatientAttribute() {
-        PersonAttributeType personAttributeTypeByUuid = personService.getPersonAttributeTypeByUuid(TEST_PATIENT_ATTRIBUTE_UUID);
+        PersonAttributeType personAttributeTypeByUuid = personService.getPersonAttributeTypeByUuid(EmrApiConstants.TEST_PATIENT_ATTRIBUTE_UUID);
 
         if (personAttributeTypeByUuid == null) {
             personService.savePersonAttributeType(buildTestPersonAttributeType());
