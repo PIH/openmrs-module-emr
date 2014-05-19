@@ -30,6 +30,8 @@ import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emrapi.EmrApiConstants;
+import org.openmrs.module.paperrecord.PaperRecordConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -63,7 +65,7 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
 
         LocationService locationService = Context.getLocationService();
 
-        LocationTag supportsVisits = new LocationTag(EmrConstants.LOCATION_TAG_SUPPORTS_VISITS, "no description");
+        LocationTag supportsVisits = new LocationTag(EmrApiConstants.LOCATION_TAG_SUPPORTS_VISITS, "no description");
         locationService.saveLocationTag(supportsVisits);
 
         where = locationService.getLocation(1);
@@ -80,7 +82,7 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
 
     @Test
     public void testFindPatientsByPrimaryIdentifier() throws Exception {
-        administrationService.setGlobalProperty(EmrConstants.PRIMARY_IDENTIFIER_TYPE, "1");
+        administrationService.setGlobalProperty(EmrApiConstants.PRIMARY_IDENTIFIER_TYPE, "1");
         List<Patient> patients = service.findPatients("6TS-4", null, null, null);
         assertEquals(1, patients.size());
         assertContainsElementWithProperty(patients, "patientId", 7);
@@ -89,8 +91,8 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
     @Ignore("since moving paper record number into the paperrecord module, this no longer works")
     @Test
     public void testFindPatientsByPaperRecordNumber() throws Exception {
-        administrationService.setGlobalProperty(EmrConstants.PRIMARY_IDENTIFIER_TYPE, "1");
-        administrationService.setGlobalProperty(EmrConstants.GP_PAPER_RECORD_IDENTIFIER_TYPE, "2");
+        administrationService.setGlobalProperty(EmrApiConstants.PRIMARY_IDENTIFIER_TYPE, "1");
+        administrationService.setGlobalProperty(PaperRecordConstants.GP_PAPER_RECORD_IDENTIFIER_TYPE, "2");
         List<Patient> patients = service.findPatients("12345K", null, null, null);
         assertEquals(1, patients.size());
         assertContainsElementWithProperty(patients, "patientId", 6);
@@ -122,12 +124,12 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
 				log.debug("roleName:" +  role.getName());
 			}
 		}
-		Role fullRole = userService.getRole(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
+		Role fullRole = userService.getRole(EmrApiConstants.PRIVILEGE_LEVEL_FULL_ROLE);
 		if(fullRole==null){
 			fullRole = new Role();
-			fullRole.setName(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
-			fullRole.setRole(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
-			fullRole.setDescription(EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
+			fullRole.setName(EmrApiConstants.PRIVILEGE_LEVEL_FULL_ROLE);
+			fullRole.setRole(EmrApiConstants.PRIVILEGE_LEVEL_FULL_ROLE);
+			fullRole.setDescription(EmrApiConstants.PRIVILEGE_LEVEL_FULL_ROLE);
 			userService.saveRole(fullRole);
 		}
 		
@@ -137,8 +139,8 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
 				log.debug("" + privilege.getName());
 				String privilegeName = privilege.getName();
 				if(!fullRole.hasPrivilege(privilegeName)){
-					if(!StringUtils.startsWithIgnoreCase(privilegeName, EmrConstants.PRIVILEGE_PREFIX_APP) && 
-							!StringUtils.startsWithIgnoreCase(privilegeName, EmrConstants.PRIVILEGE_PREFIX_TASK)){
+					if(!StringUtils.startsWithIgnoreCase(privilegeName, EmrApiConstants.PRIVILEGE_PREFIX_APP) &&
+							!StringUtils.startsWithIgnoreCase(privilegeName, EmrApiConstants.PRIVILEGE_PREFIX_TASK)){
 						fullRole.addPrivilege(privilege);
 					}
 				}
@@ -146,7 +148,7 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
 		}
 		userService.saveRole(fullRole);
 		
-		assertEquals(fullRole.getName(), EmrConstants.PRIVILEGE_LEVEL_FULL_ROLE);
+		assertEquals(fullRole.getName(), EmrApiConstants.PRIVILEGE_LEVEL_FULL_ROLE);
 	}
 
 }

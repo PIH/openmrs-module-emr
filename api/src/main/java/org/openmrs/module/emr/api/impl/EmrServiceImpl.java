@@ -111,9 +111,4 @@ public class EmrServiceImpl extends BaseOpenmrsService implements EmrService {
 
     }
 
-    @Override
-    public List<Object[]> getInpatientsList(Location location) {
-        return dao.getInpatientsList(location);
-    }
-
 }

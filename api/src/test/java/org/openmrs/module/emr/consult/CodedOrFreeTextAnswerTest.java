@@ -22,7 +22,7 @@ import org.openmrs.ConceptMapType;
 import org.openmrs.ConceptName;
 import org.openmrs.ConceptReferenceTerm;
 import org.openmrs.ConceptSource;
-import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
 import org.openmrs.util.LocaleUtility;
 import org.powermock.api.mockito.PowerMockito;
@@ -48,7 +48,7 @@ public class CodedOrFreeTextAnswerTest {
         String code = "A00.0";
 
         ConceptMapType sameAs = new ConceptMapType();
-        sameAs.setUuid(EmrConstants.SAME_AS_CONCEPT_MAP_TYPE_UUID);
+        sameAs.setUuid(EmrApiConstants.SAME_AS_CONCEPT_MAP_TYPE_UUID);
         sameAs.setName("SAME-AS");
 
         ConceptSource icd10 = new ConceptSource();

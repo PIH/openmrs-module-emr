@@ -36,6 +36,4 @@ public interface EmrService extends OpenmrsService {
 
     Patient findPatientByPrimaryId(String primaryId);
 
-    List<Object[]> getInpatientsList(Location location);
-
 }

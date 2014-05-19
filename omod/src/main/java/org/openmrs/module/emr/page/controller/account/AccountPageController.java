@@ -21,6 +21,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emr.EmrConstants;
+import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.account.AccountDomainWrapper;
 import org.openmrs.module.emrapi.account.AccountService;
 import org.openmrs.module.emrapi.account.AccountValidator;
@@ -34,8 +35,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 public class AccountPageController {
 
@@ -66,7 +67,7 @@ public class AccountPageController {
         model.addAttribute("account", account);
         model.addAttribute("capabilities", accountService.getAllCapabilities());
         model.addAttribute("privilegeLevels", accountService.getAllPrivilegeLevels());
-        model.addAttribute("rolePrefix", EmrConstants.ROLE_PREFIX_CAPABILITY);
+        model.addAttribute("rolePrefix", EmrApiConstants.ROLE_PREFIX_CAPABILITY);
         model.addAttribute("allowedLocales", administrationService.getAllowedLocales());
         model.addAttribute("providerRoles", providerManagementService.getAllProviderRoles(false));
     }
@@ -111,7 +112,7 @@ public class AccountPageController {
         model.addAttribute("account", account);
         model.addAttribute("capabilities", accountService.getAllCapabilities());
         model.addAttribute("privilegeLevels", accountService.getAllPrivilegeLevels());
-        model.addAttribute("rolePrefix", EmrConstants.ROLE_PREFIX_CAPABILITY);
+        model.addAttribute("rolePrefix", EmrApiConstants.ROLE_PREFIX_CAPABILITY);
         model.addAttribute("allowedLocales", administrationService.getAllowedLocales());
         model.addAttribute("providerRoles", providerManagementService.getAllProviderRoles(false));
 
