@@ -75,7 +75,7 @@
                 formFieldName: "patientId",
                 fragment: "findPatient",
                 action: "search",
-                maxResults: 10,
+                maxResults: 20,   // Note that we have to double this, 20 will only return 10 results, see: http://www.theotherian.com/2013/07/hibernate-joins-maxresults.html
                 itemValueProperty: "patientId",
                 itemLabelFunction: "findPatientLabelFunction",
                 onExactMatchFunction: "findPatientNavigateFunction"
