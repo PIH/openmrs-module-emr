@@ -66,6 +66,7 @@
         <i class="icon-search small"></i>
         ${ ui.message("emr.searchPatientHeading") }
     </label>
+    <!-- Note that we have to double maxResults to 20, as it will only return ~10 results, see: http://www.theotherian.com/2013/07/hibernate-joins-maxresults.html -->
     <div class="search-input">
         ${ ui.includeFragment("emr", "field/autocomplete", [
                 id: "patient-search-field",
@@ -75,7 +76,7 @@
                 formFieldName: "patientId",
                 fragment: "findPatient",
                 action: "search",
-                maxResults: 20,   // Note that we have to double this, 20 will only return 10 results, see: http://www.theotherian.com/2013/07/hibernate-joins-maxresults.html
+                maxResults: 20,
                 itemValueProperty: "patientId",
                 itemLabelFunction: "findPatientLabelFunction",
                 onExactMatchFunction: "findPatientNavigateFunction"
