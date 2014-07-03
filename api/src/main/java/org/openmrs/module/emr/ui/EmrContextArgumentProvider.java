@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Collection;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Makes EmrContext and EmrProperties arguments available in PageModel and FragmentModel, and for injection into page
@@ -51,6 +52,8 @@ import java.util.Map;
 public class EmrContextArgumentProvider implements PageModelConfigurator, FragmentModelConfigurator,
         PossiblePageControllerArgumentProvider, PossibleFragmentControllerArgumentProvider,
         PossibleFragmentActionArgumentProvider {
+
+    private Pattern onlyDigits = Pattern.compile("\\d+");
 
     @Autowired
     @Qualifier("patientService")
@@ -139,19 +142,28 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
         }
 
         if (StringUtils.isNotEmpty(patientId)) {
-            try {
-                Patient patient = patientService.getPatient(Integer.valueOf(patientId));
-                if (patient != null) {
-                    emrContext.setCurrentPatient(patient);
 
-                    Location visitLocation = adtService.getLocationThatSupportsVisits(emrContext.getSessionLocation());
-                    VisitDomainWrapper activeVisit = adtService.getActiveVisit(patient, visitLocation);
-                    if (activeVisit != null) {
-                        emrContext.setActiveVisit(activeVisit);
-                    }
+            Patient patient = null;
+            try {
+                if (onlyDigits.matcher(patientId).matches()) {
+                    patient = patientService.getPatient(Integer.valueOf(patientId));
                 }
+                else {
+                    patient = patientService.getPatientByUuid(patientId);
+                }
+
             } catch (Exception ex) {
                 // don't fail, even if the patientId or patient parameter isn't as expected
+            }
+
+            if (patient != null) {
+                emrContext.setCurrentPatient(patient);
+
+                Location visitLocation = adtService.getLocationThatSupportsVisits(emrContext.getSessionLocation());
+                VisitDomainWrapper activeVisit = adtService.getActiveVisit(patient, visitLocation);
+                if (activeVisit != null) {
+                    emrContext.setActiveVisit(activeVisit);
+                }
             }
         }
         return emrContext;
