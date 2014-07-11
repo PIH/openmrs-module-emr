@@ -28,10 +28,8 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.emr.EmrConstants;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emrapi.EmrApiConstants;
-import org.openmrs.module.paperrecord.PaperRecordConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -88,16 +86,6 @@ public class EmrServiceComponentTest extends BaseModuleContextSensitiveTest {
         assertContainsElementWithProperty(patients, "patientId", 7);
     }
 
-    @Ignore("since moving paper record number into the paperrecord module, this no longer works")
-    @Test
-    public void testFindPatientsByPaperRecordNumber() throws Exception {
-        administrationService.setGlobalProperty(EmrApiConstants.PRIMARY_IDENTIFIER_TYPE, "1");
-        administrationService.setGlobalProperty(PaperRecordConstants.GP_PAPER_RECORD_IDENTIFIER_TYPE, "2");
-        List<Patient> patients = service.findPatients("12345K", null, null, null);
-        assertEquals(1, patients.size());
-        assertContainsElementWithProperty(patients, "patientId", 6);
-    }
-	
 	@Test
 	public void testFindPatientsByName() throws Exception {
 		List<Patient> patients = service.findPatients("Test", null, null, null);

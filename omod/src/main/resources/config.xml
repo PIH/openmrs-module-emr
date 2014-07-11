@@ -188,15 +188,6 @@
         <description>Gives API-level access within the Paper Record service to request records</description>
     </privilege>
     <privilege>
-        <name>Printers - Access Printers</name>
-        <description>Gives API-level access within the Printer service to fetch information about printers</description>
-    </privilege>
-    <privilege>
-        <name>Printers - Manage Printers</name>
-        <description>Gives API-level access within the Printer service to manage and update printer information
-        </description>
-    </privilege>
-    <privilege>
         <name>Allowed for everyone</name>
         <description>Gives basic permission to users who want change their own information (e.g. password)</description>
     </privilege>

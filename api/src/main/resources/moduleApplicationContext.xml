@@ -92,7 +92,4 @@
         </property>
     </bean>
 
-    <!-- add type converters -->
-    <bean class="org.openmrs.module.emr.converter.StringToPrinterConverter"/>
-
 </beans>
