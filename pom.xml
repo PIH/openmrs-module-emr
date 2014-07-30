@@ -40,12 +40,11 @@
         <appframeworkVersion>2.0</appframeworkVersion>
         <idgenVersion>2.5</idgenVersion>
         <htmlformentryVersion>2.1.4</htmlformentryVersion>
-        <providerManagementVersion>2.0</providerManagementVersion>
+        <providermanagementVersion>2.0</providermanagementVersion>
         <metadatasharingVersion>1.1.8</metadatasharingVersion>
         <reportingVersion>0.9.1-SNAPSHOT</reportingVersion>
         <calculationVersion>1.0</calculationVersion>
         <serializationxstreamVersion>0.2.7</serializationxstreamVersion>
-        <springVersion>3.0.5.RELEASE</springVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <uicommonsVersion>1.2-SNAPSHOT</uicommonsVersion>
         <htmlformentryuiVersion>1.1-SNAPSHOT</htmlformentryuiVersion>
@@ -142,7 +141,7 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>providermanagement-api</artifactId>
-            <version>${providerManagementVersion}</version>
+            <version>${providermanagementVersion}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -288,6 +287,47 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+
+
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <generateBackupPoms>false</generateBackupPoms>
+                    <allowSnapshots>true</allowSnapshots>
+                    <properties>
+                        <property>
+                            <name>openMRSVersion</name>
+                            <version>[1.9.0,1.10.0-!)</version>
+                            <banSnapshots>true</banSnapshots>
+                        </property>
+                        <property>
+                            <name>metadatasharingVersion</name>
+                            <banSnapshots>true</banSnapshots>
+                        </property>
+                        <property>
+                            <name>idgenVersion</name>
+                            <banSnapshots>true</banSnapshots>
+                        </property>
+                        <property>
+                            <name>calculationVersion</name>
+                            <banSnapshots>true</banSnapshots>
+                        </property>
+                        <property>
+                            <name>serializationxstreamVersion</name>
+                            <banSnapshots>true</banSnapshots>
+                        </property>
+                        <property>
+                            <name>providermanagementVersion</name>
+                            <banSnapshots>true</banSnapshots>
+                        </property>
+                    </properties>
+                </configuration>
+            </plugin>
+        </plugins>
+
     </build>
 
     <repositories>
