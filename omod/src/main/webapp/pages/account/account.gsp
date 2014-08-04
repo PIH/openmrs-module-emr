@@ -59,7 +59,12 @@
 
 <h3>${ (createAccount) ? ui.message("emr.createAccount") : ui.message("emr.editAccount") }</h3>
 
-<form method="post" id="accountForm">
+<form method="post" id="accountForm" autocomplete="off">
+
+    <!-- dummy fields so that Chrome doesn't autocomplete the real username/password fields with the users own password -->
+    <input style="display:none" type="text" name="wrong-username-from-autocomplete"/>
+    <input style="display:none" type="password" name="wrong-username-from-autocomplete"/>
+
 	<fieldset>
 		<legend>${ ui.message("emr.person.details") }</legend>
 
