@@ -163,7 +163,7 @@
             <div class="row">
                 <h3>${ui.message("emr.mergePatients.section.activeVisit")}</h3>
                 <% def activeVisit = patient1.getActiveVisit(emrContext.sessionLocation)
-                activeVisit = (activeVisit ? ui.format(activeVisit) : ui.message("emr.none")) %>
+                activeVisit = (activeVisit ? ui.format(activeVisit.visit) : ui.message("emr.none")) %>
                 <div>${activeVisit}</div>
             </div>
 
@@ -241,7 +241,7 @@
             <div class="row">
                 <h3>${ui.message("emr.mergePatients.section.activeVisit")}</h3>
                 <% activeVisit = patient2.getActiveVisit(emrContext.sessionLocation)
-                activeVisit = (activeVisit ? ui.format(activeVisit) : ui.message("emr.none")) %>
+                activeVisit = (activeVisit ? ui.format(activeVisit.visit) : ui.message("emr.none")) %>
                 <div>${activeVisit}</div>
             </div>
 
