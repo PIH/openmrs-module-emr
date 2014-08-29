@@ -2,7 +2,7 @@
 
 function getPatientId(id, hiddenId, fullNameField, callbackFunction){
     jQuery.ajax({
-        url: emr.fragmentActionLink("emr", "findPatient", "searchById",  { primaryId: id }),
+        url: emr.fragmentActionLink("coreapps", "findPatient", "searchById",  { primaryId: id }),
         dataType: 'json',
         type: 'POST'
     })
