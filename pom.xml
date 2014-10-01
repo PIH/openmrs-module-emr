@@ -39,7 +39,7 @@
         <uiframeworkVersion>3.3-SNAPSHOT</uiframeworkVersion>
         <appframeworkVersion>2.3-SNAPSHOT</appframeworkVersion>
         <idgenVersion>2.9.1</idgenVersion>
-        <htmlformentryVersion>2.4</htmlformentryVersion>
+        <htmlformentryVersion>2.5-SNAPSHOT</htmlformentryVersion>
         <providermanagementVersion>2.1</providermanagementVersion>
         <metadatasharingVersion>1.1.8</metadatasharingVersion>
         <reportingVersion>0.9.3-SNAPSHOT</reportingVersion>
