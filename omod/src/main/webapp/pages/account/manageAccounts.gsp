@@ -28,7 +28,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<% accounts.each{  %>
+		<% accounts.sort { it.person.personName?.familyName.toLowerCase() }.each{  %>
 	 	<tr>
 	 		<td>
 				${ ui.format(it.person.personName)}
