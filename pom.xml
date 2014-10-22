@@ -38,7 +38,7 @@
         <emrapiVersion>1.5-SNAPSHOT</emrapiVersion>
         <uiframeworkVersion>3.3-SNAPSHOT</uiframeworkVersion>
         <appframeworkVersion>2.3-SNAPSHOT</appframeworkVersion>
-        <idgenVersion>2.9.1</idgenVersion>
+        <idgenVersion>3.0</idgenVersion>
         <htmlformentryVersion>2.5-SNAPSHOT</htmlformentryVersion>
         <providermanagementVersion>2.2</providermanagementVersion>
         <metadatasharingVersion>1.1.8</metadatasharingVersion>
