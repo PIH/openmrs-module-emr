@@ -25,7 +25,7 @@
     providerRoles. each {
         providerRolesOptions.push([ label: ui.format(it), value: it.id ])
     }
-
+    providerRolesOptions = providerRolesOptions.sort { it.label };
 %>
 
 <script type="text/javascript">
