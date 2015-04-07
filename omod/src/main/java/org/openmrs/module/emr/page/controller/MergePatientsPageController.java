@@ -25,10 +25,13 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 
+
+// TODO we should be able to delete this, after we confirm that it has been copied properly into the coreapps modulemerge
+@Deprecated
 public class MergePatientsPageController {
 
     public String get(@RequestParam(required = false, value = "patient1") Patient patient1,
