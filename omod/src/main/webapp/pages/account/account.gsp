@@ -146,7 +146,7 @@
                 <strong>${ ui.message("emr.user.Capabilities") }</strong>
             </p>
 
-			<% capabilities.each{ %>
+			<% capabilities.sort { ui.format(it).toLowerCase() }.each{ %>
                 ${ ui.includeFragment("emr", "field/checkbox", [ 
                     label: ui.format(it),
                     formFieldName: "capabilities", 
