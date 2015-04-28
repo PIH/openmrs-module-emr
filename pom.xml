@@ -34,7 +34,7 @@
     </modules>
 
     <properties>
-        <openMRSVersion>1.10.1</openMRSVersion>
+        <openMRSVersion>1.9.8</openMRSVersion>
         <emrapiVersion>1.7-SNAPSHOT</emrapiVersion>
         <uiframeworkVersion>3.4-SNAPSHOT</uiframeworkVersion>
         <appframeworkVersion>2.4-SNAPSHOT</appframeworkVersion>
@@ -92,7 +92,7 @@
         <!-- Begin OpenMRS modules -->
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>emrapi-api-1.10</artifactId>
+            <artifactId>emrapi-api-1.9</artifactId>
             <version>${emrapiVersion}</version>
             <scope>provided</scope>
         </dependency>
@@ -135,12 +135,6 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>htmlformentry-api</artifactId>
-            <version>${htmlformentryVersion}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>htmlformentry-api-1.10</artifactId>
             <version>${htmlformentryVersion}</version>
             <scope>provided</scope>
         </dependency>
@@ -305,12 +299,12 @@
                     <properties>
                         <property>
                             <name>openMRSVersion</name>
-                            <version>[1.10.0,1.11.0-!)</version>
+                            <version>[1.9.0,1.10.0-!)</version>
                             <banSnapshots>true</banSnapshots>
                         </property>
                         <property>
                             <name>openMRSwebVersion</name>
-                            <version>[1.10.0,1.11.0-!)</version>
+                            <version>[1.9.0,1.10.0-!)</version>
                             <banSnapshots>true</banSnapshots>
                         </property>
                         <property>
