@@ -17,21 +17,13 @@ package org.openmrs.module.emr;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.PersonAttributeType;
-import org.openmrs.api.ConceptService;
-import org.openmrs.api.LocationService;
-import org.openmrs.api.PersonService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.Module;
 import org.openmrs.module.ModuleActivator;
-import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.emr.task.TaskDescriptor;
 import org.openmrs.module.emr.task.TaskFactory;
 import org.openmrs.module.emr.task.TaskService;
-import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.adt.CloseStaleVisitsTask;
 import org.openmrs.module.emrapi.utils.GeneralUtils;
-import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.scheduler.SchedulerException;
 import org.openmrs.scheduler.SchedulerService;
 import org.openmrs.scheduler.TaskDefinition;
@@ -42,15 +34,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.openmrs.module.emr.EmrConstants.EMR_MODULE_ID;
-
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
  */
 public class EmrActivator implements ModuleActivator {
 
     protected Log log = LogFactory.getLog(getClass());
-    private PersonService personService;
 
     /**
      * @see ModuleActivator#willRefreshContext()
@@ -86,10 +75,6 @@ public class EmrActivator implements ModuleActivator {
 
         log.info("EMR Module refreshed. " + allTasks.size() + " tasks and " + allTaskFactories.size() + " task factories available.");
 
-        ensureScheduledTasks();
-    }
-
-    private void ensureScheduledTasks() {
         SchedulerService schedulerService = Context.getSchedulerService();
         TaskDefinition task = schedulerService.getTaskByName(EmrConstants.TASK_CLOSE_STALE_VISITS_NAME);
         if (task == null) {
@@ -130,45 +115,11 @@ public class EmrActivator implements ModuleActivator {
         log.info("Starting EMR Module");
     }
 
-    private PersonAttributeType buildTestPersonAttributeType() {
-        PersonAttributeType personAttributeType = new PersonAttributeType();
-        personAttributeType.setName("Test Patient");
-        personAttributeType.setDescription("Flag to describe if the patient was created to a test or not");
-        personAttributeType.setUuid(EmrApiConstants.TEST_PATIENT_ATTRIBUTE_UUID);
-        personAttributeType.setFormat("java.lang.Boolean");
-
-
-        return personAttributeType;
-    }
-
     /**
      * @see ModuleActivator#started()
      */
     public void started() {
-
-        try {
-            LocationService locationService = Context.getLocationService();
-            HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
-            ConceptService conceptService = Context.getConceptService();
-            personService = Context.getPersonService();
-
-            saveTestPatientAttribute();
-
-        } catch (Exception e) {
-            Module mod = ModuleFactory.getModuleById(EMR_MODULE_ID);
-            ModuleFactory.stopModule(mod);
-            throw new RuntimeException("failed to setup the EMR modules", e);
-        }
-
         log.info("EMR Module started");
-    }
-
-    private void saveTestPatientAttribute() {
-        PersonAttributeType personAttributeTypeByUuid = personService.getPersonAttributeTypeByUuid(EmrApiConstants.TEST_PATIENT_ATTRIBUTE_UUID);
-
-        if (personAttributeTypeByUuid == null) {
-            personService.savePersonAttributeType(buildTestPersonAttributeType());
-        }
     }
 
     /**
