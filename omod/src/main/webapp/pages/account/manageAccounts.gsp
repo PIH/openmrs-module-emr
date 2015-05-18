@@ -24,6 +24,7 @@
 			<th>${ ui.message("emr.gender") }</th>
             <th>${ ui.message("emr.account.providerRole.label") }</th>
             <th>${ ui.message("emr.account.providerIdentifier.label") }</th>
+            <th>${ ui.message("emr.account.enabled.label") }</th>
 			<th></th>
 		</tr>
 	</thead>
@@ -46,6 +47,9 @@
             </td>
             <td>
                 ${ ui.format(it.provider?.identifier) }
+            </td>
+            <td>
+                ${ it.userEnabled ? ui.message("emr.yes") : ui.message("emr.no") }
             </td>
 			<td>
 	            <a href="/${ contextPath }/emr/account/account.page?personId=${ it.person.personId }">
