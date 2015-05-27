@@ -14,7 +14,6 @@
 package org.openmrs.module.emr;
 
 
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
@@ -22,14 +21,8 @@ import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.emr.task.TaskDescriptor;
 import org.openmrs.module.emr.task.TaskFactory;
 import org.openmrs.module.emr.task.TaskService;
-import org.openmrs.module.emrapi.adt.CloseStaleVisitsTask;
-import org.openmrs.module.emrapi.utils.GeneralUtils;
-import org.openmrs.scheduler.SchedulerException;
-import org.openmrs.scheduler.SchedulerService;
-import org.openmrs.scheduler.TaskDefinition;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -75,37 +68,6 @@ public class EmrActivator implements ModuleActivator {
 
         log.info("EMR Module refreshed. " + allTasks.size() + " tasks and " + allTaskFactories.size() + " task factories available.");
 
-        SchedulerService schedulerService = Context.getSchedulerService();
-        TaskDefinition task = schedulerService.getTaskByName(EmrConstants.TASK_CLOSE_STALE_VISITS_NAME);
-        if (task == null) {
-            task = new TaskDefinition();
-            task.setName(EmrConstants.TASK_CLOSE_STALE_VISITS_NAME);
-            task.setDescription(EmrConstants.TASK_CLOSE_STALE_VISITS_DESCRIPTION);
-            task.setTaskClass(CloseStaleVisitsTask.class.getName());
-            task.setStartTime(DateUtils.addMinutes(new Date(), 5));
-            task.setRepeatInterval(EmrConstants.TASK_CLOSE_STALE_VISITS_REPEAT_INTERVAL);
-            task.setStartOnStartup(true);
-            try {
-                schedulerService.scheduleTask(task);
-            } catch (SchedulerException e) {
-                throw new RuntimeException("Failed to schedule close stale visits task", e);
-            }
-        } else {
-            // if you modify any of the properties above, you also need to set them here, in order to update existing servers
-            boolean changed = GeneralUtils.setPropertyIfDifferent(task, "taskClass", CloseStaleVisitsTask.class.getName());
-            if (changed) {
-                schedulerService.saveTask(task);
-            }
-
-            if (!task.getStarted()) {
-                task.setStarted(true);
-                try {
-                    schedulerService.scheduleTask(task);
-                } catch (SchedulerException e) {
-                    throw new RuntimeException("Failed to schedule close stale visits task", e);
-                }
-            }
-        }
     }
 
     /**
