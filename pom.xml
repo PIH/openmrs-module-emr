@@ -35,7 +35,7 @@
 
     <properties>
         <openMRSVersion>1.9.10-SNAPSHOT</openMRSVersion>
-        <emrapiVersion>1.11-SNAPSHOT</emrapiVersion>
+        <emrapiVersion>1.12-SNAPSHOT</emrapiVersion>
         <uiframeworkVersion>3.4</uiframeworkVersion>
         <appframeworkVersion>2.4-SNAPSHOT</appframeworkVersion>
         <idgenVersion>4.0</idgenVersion>
@@ -46,7 +46,7 @@
         <calculationVersion>1.1</calculationVersion>
         <serializationxstreamVersion>0.2.8-SNAPSHOT</serializationxstreamVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <uicommonsVersion>1.7</uicommonsVersion>
+        <uicommonsVersion>1.8-SNAPSHOT</uicommonsVersion>
         <htmlformentryuiVersion>1.3-SNAPSHOT</htmlformentryuiVersion>
     </properties>
 
