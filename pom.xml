@@ -36,15 +36,15 @@
     <properties>
         <openMRSVersion>1.9.10-SNAPSHOT</openMRSVersion>
         <emrapiVersion>1.12-SNAPSHOT</emrapiVersion>
-        <uiframeworkVersion>3.4</uiframeworkVersion>
-        <appframeworkVersion>2.4</appframeworkVersion>
+        <uiframeworkVersion>3.5-SNAPSHOT</uiframeworkVersion>
+        <appframeworkVersion>2.5-SNAPSHOT</appframeworkVersion>
         <idgenVersion>4.0</idgenVersion>
         <htmlformentryVersion>2.7-SNAPSHOT</htmlformentryVersion>
         <providermanagementVersion>2.3</providermanagementVersion>
         <metadatasharingVersion>1.1.9</metadatasharingVersion>
-        <reportingVersion>0.9.7</reportingVersion>
+        <reportingVersion>0.9.8-SNAPSHOT</reportingVersion>
         <calculationVersion>1.1</calculationVersion>
-        <serializationxstreamVersion>0.2.8</serializationxstreamVersion>
+        <serializationxstreamVersion>0.2.9-SNAPSHOT</serializationxstreamVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <uicommonsVersion>1.8-SNAPSHOT</uicommonsVersion>
         <htmlformentryuiVersion>1.4-SNAPSHOT</htmlformentryuiVersion>
