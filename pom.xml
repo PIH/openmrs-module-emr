@@ -42,7 +42,7 @@
         <htmlformentryVersion>2.7-SNAPSHOT</htmlformentryVersion>
         <providermanagementVersion>2.3</providermanagementVersion>
         <metadatasharingVersion>1.1.9</metadatasharingVersion>
-        <reportingVersion>0.9.8</reportingVersion>
+        <reportingVersion>0.9.9-SNAPSHOT</reportingVersion>
         <calculationVersion>1.1</calculationVersion>
         <serializationxstreamVersion>0.2.10-SNAPSHOT</serializationxstreamVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
