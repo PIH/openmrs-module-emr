@@ -38,11 +38,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Collection;
 import java.util.Map;
 import java.util.regex.Pattern;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * Makes EmrContext and EmrProperties arguments available in PageModel and FragmentModel, and for injection into page
@@ -159,8 +159,16 @@ public class EmrContextArgumentProvider implements PageModelConfigurator, Fragme
             if (patient != null) {
                 emrContext.setCurrentPatient(patient);
 
-                Location visitLocation = adtService.getLocationThatSupportsVisits(emrContext.getSessionLocation());
-                VisitDomainWrapper activeVisit = adtService.getActiveVisit(patient, visitLocation);
+                VisitDomainWrapper activeVisit = null;
+
+                try {
+                    Location visitLocation = adtService.getLocationThatSupportsVisits(emrContext.getSessionLocation());
+                    activeVisit = adtService.getActiveVisit(patient, visitLocation);
+                }
+                catch (IllegalArgumentException e) {
+                    // don't fail hard if location doesn't support visits
+                }
+
                 if (activeVisit != null) {
                     emrContext.setActiveVisit(activeVisit);
                 }
