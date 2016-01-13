@@ -34,7 +34,7 @@
     </modules>
 
     <properties>
-        <openMRSVersion>1.9.10</openMRSVersion>
+        <openMRSVersion>1.9.11-SNAPSHOT</openMRSVersion>
         <emrapiVersion>1.12-SNAPSHOT</emrapiVersion>
         <uiframeworkVersion>3.5-SNAPSHOT</uiframeworkVersion>
         <appframeworkVersion>2.5-SNAPSHOT</appframeworkVersion>
