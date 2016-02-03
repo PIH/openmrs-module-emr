@@ -33,8 +33,8 @@
     </modules>
 
     <properties>
-        <openMRSVersion>1.9.10</openMRSVersion>
-        <emrapiVersion>1.11</emrapiVersion>
+        <openMRSVersion>2.0.0-alpha</openMRSVersion>
+        <emrapiVersion>1.11.1</emrapiVersion>
         <uiframeworkVersion>3.5</uiframeworkVersion>
         <appframeworkVersion>2.4</appframeworkVersion>
         <idgenVersion>4.2</idgenVersion>
