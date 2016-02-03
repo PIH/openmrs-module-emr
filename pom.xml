@@ -40,7 +40,7 @@
         <appframeworkVersion>2.5-SNAPSHOT</appframeworkVersion>
         <idgenVersion>4.2</idgenVersion>
         <htmlformentryVersion>3.0-SNAPSHOT</htmlformentryVersion>
-        <providermanagementVersion>2.3</providermanagementVersion>
+        <providermanagementVersion>2.4</providermanagementVersion>
         <metadatasharingVersion>1.1.10</metadatasharingVersion>
         <reportingVersion>0.9.9-SNAPSHOT</reportingVersion>
         <calculationVersion>1.1</calculationVersion>
