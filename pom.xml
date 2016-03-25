@@ -33,7 +33,7 @@
     </modules>
 
     <properties>
-        <openMRSVersion>2.0.0-alpha</openMRSVersion>
+        <openMRSVersion>1.10.4</openMRSVersion>
         <emrapiVersion>1.13</emrapiVersion>
         <uiframeworkVersion>3.6</uiframeworkVersion>
         <appframeworkVersion>2.8</appframeworkVersion>
@@ -298,10 +298,12 @@
                 <artifactId>versions-maven-plugin</artifactId>
                 <version>2.1</version>
                 <configuration>
-                    <property>
-                        <name>openMRSVersion</name>
-                        <version>[1.9.0,1.10.0-!)</version>
-                    </property>
+                    <properties>
+                        <property>
+                            <name>openMRSVersion</name>
+                            <version>[1.9.0,1.10.0-!)</version>
+                        </property>
+                    </properties>
                 </configuration>
             </plugin>
         </plugins>
