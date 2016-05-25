@@ -41,7 +41,7 @@
         <htmlformentryVersion>3.2</htmlformentryVersion>
         <providermanagementVersion>2.4</providermanagementVersion>
         <metadatasharingVersion>1.2</metadatasharingVersion>
-        <reportingVersion>0.9.9</reportingVersion>
+        <reportingVersion>0.10.0</reportingVersion>
         <calculationVersion>1.1</calculationVersion>
         <serializationxstreamVersion>0.2.11</serializationxstreamVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
