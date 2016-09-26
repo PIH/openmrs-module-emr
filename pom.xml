@@ -38,7 +38,7 @@
         <uiframeworkVersion>3.7</uiframeworkVersion>
         <appframeworkVersion>2.9</appframeworkVersion>
         <idgenVersion>4.4.0</idgenVersion>
-        <htmlformentryVersion>3.2</htmlformentryVersion>
+        <htmlformentryVersion>3.3.0</htmlformentryVersion>
         <providermanagementVersion>2.5.0</providermanagementVersion>
         <metadatasharingVersion>1.2.2</metadatasharingVersion>
         <reportingVersion>0.10.2</reportingVersion>
