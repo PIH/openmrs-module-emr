@@ -37,7 +37,7 @@
         <emrapiVersion>1.17</emrapiVersion>
         <uiframeworkVersion>3.7</uiframeworkVersion>
         <appframeworkVersion>2.9</appframeworkVersion>
-        <idgenVersion>4.3</idgenVersion>
+        <idgenVersion>4.4.0</idgenVersion>
         <htmlformentryVersion>3.2</htmlformentryVersion>
         <providermanagementVersion>2.4</providermanagementVersion>
         <metadatasharingVersion>1.2.2</metadatasharingVersion>
