@@ -35,7 +35,7 @@
     <properties>
         <openMRSVersion>1.10.4</openMRSVersion>
         <emrapiVersion>1.17</emrapiVersion>
-        <uiframeworkVersion>3.7</uiframeworkVersion>
+        <uiframeworkVersion>3.8</uiframeworkVersion>
         <appframeworkVersion>2.9</appframeworkVersion>
         <idgenVersion>4.4.0</idgenVersion>
         <htmlformentryVersion>3.3.0</htmlformentryVersion>
