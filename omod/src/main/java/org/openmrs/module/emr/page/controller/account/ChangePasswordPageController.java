@@ -60,7 +60,7 @@ public class ChangePasswordPageController {
             return "account/changePassword";
         }
 
-        return "account/myAccount";
+        return "redirect:index.htm";
     }
 
     private void validatePasswords(ChangePassword changePassword, BindingResult errors, MessageSourceService messageSourceService) {
