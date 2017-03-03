@@ -16,27 +16,11 @@ package org.openmrs.module.emr;
 
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
-import org.openmrs.module.emr.api.EmrService;
 import org.openmrs.module.emrapi.utils.ModuleProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component("emrProperties")
 public class EmrProperties extends ModuleProperties {
-
-    @Autowired
-    @Qualifier("emrService")
-    protected EmrService emrService;
-
-    /**
-     * For testing. In production this will be autowired
-     *
-     * @param emrService
-     */
-    public void setEmrService(EmrService emrService) {
-        this.emrService = emrService;
-    }
 
     public EncounterType getTriageEncounterType() {
         return getEncounterTypeByGlobalProperty(EmrConstants.GP_TRIAGE_ENCOUNTER_TYPE);
