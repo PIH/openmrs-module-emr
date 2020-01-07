@@ -29,7 +29,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<% accounts.sort { it.person.personName?.familyName.toLowerCase() }.each{  %>
+		<% accounts.sort { (it.person.personName !=null && it.person.personName.familyName != null) ? it.person.personName.familyName.toLowerCase() : false }.each{  %>
 	 	<tr>
 	 		<td>
 				${ ui.format(it.person.personName)}
