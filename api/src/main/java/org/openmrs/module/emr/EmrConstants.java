@@ -28,12 +28,6 @@ public class EmrConstants {
 
     public static final String SESSION_ATTRIBUTE_TOAST_MESSAGE = "emr.toastMessage";
 
-    public static final String TASK_CLOSE_STALE_VISITS_NAME = "EMR module - Close Stale Visits";
-
-    public static final String TASK_CLOSE_STALE_VISITS_DESCRIPTION = "Closes any open visits that are no longer active";
-
-    public static final long TASK_CLOSE_STALE_VISITS_REPEAT_INTERVAL = 5 * 60; // 5 minutes
-
     public static final String PAYMENT_AMOUNT_CONCEPT = "emr.paymentAmountConcept";
     public static final String PAYMENT_REASON_CONCEPT = "emr.paymentReasonConcept";
     public static final String PAYMENT_RECEIPT_NUMBER_CONCEPT = "emr.paymentReceiptNumberConcept";
