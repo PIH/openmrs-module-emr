@@ -57,53 +57,7 @@
 
     <!-- Global Properties -->
 
-    <globalProperty>
-        <property>emr.consultEncounterType</property>
-        <defaultValue></defaultValue>
-        <description>
-            UUID of the encounter type used for writing a consult note (e.g. clinician examining the patient)
-        </description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>emr.checkInEncounterType</property>
-        <defaultValue></defaultValue>
-        <description>
-            UUID of the encounter type for checking in a patient
-        </description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>emr.clinicianEncounterRole</property>
-        <defaultValue></defaultValue>
-        <description>
-            UUID of the encounter role that represents the clinician who signs off on an encounter, e.g. a consult note
-        </description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>emr.orderingProviderEncounterRole</property>
-        <defaultValue></defaultValue>
-        <description>
-            UUID of the encounter role that represents the provider ordering the order associated with the encounter
-        </description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>emr.checkInClerkEncounterRole</property>
-        <defaultValue></defaultValue>
-        <description>
-            UUID of the encounter role that represents the clerk who is checking in the patient
-        </description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>emr.atFacilityVisitType</property>
-        <defaultValue></defaultValue>
-        <description>
-            UUID of the VisitType that we use for newly-created visits
-        </description>
-    </globalProperty>
+    <!-- TODO: confirm that we are setting all these global properties somewhere else and remove the rest of these -->
 
     <globalProperty>
         <property>emr.paperRecordIdentifierType</property>
@@ -118,22 +72,6 @@
         <defaultValue></defaultValue>
         <description>
             UUID of the Patient Identifier Type that represents an external dossier number for a patient
-        </description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>emr.extraPatientIdentifierTypes</property>
-        <defaultValue></defaultValue>
-        <description>
-            A list of UUIDs indicating extra Patient Identifier Types that should be displayed
-        </description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>emr.primaryIdentifierType</property>
-        <defaultValue>ZL EMR ID</defaultValue>
-        <description>
-            Primary identifier type for looking up patients, generating barcodes, etc
         </description>
     </globalProperty>
 
