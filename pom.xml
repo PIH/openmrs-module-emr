@@ -33,9 +33,9 @@
 
     <properties>
         <openMRSVersion>1.10.4</openMRSVersion>
-        <emrapiVersion>1.28.0</emrapiVersion>
-        <uiframeworkVersion>3.17.0</uiframeworkVersion>
-        <appframeworkVersion>2.14.0</appframeworkVersion>
+        <emrapiVersion>1.29.0</emrapiVersion>
+        <uiframeworkVersion>3.18.0</uiframeworkVersion>
+        <appframeworkVersion>2.15.0</appframeworkVersion>
         <idgenVersion>4.5.0</idgenVersion>
         <htmlformentryVersion>3.10.0</htmlformentryVersion>
         <providermanagementVersion>2.11.0</providermanagementVersion>
@@ -45,7 +45,7 @@
         <calculationVersion>1.2</calculationVersion>
         <serializationxstreamVersion>0.2.14</serializationxstreamVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <uicommonsVersion>2.13.0</uicommonsVersion>
+        <uicommonsVersion>2.14.0</uicommonsVersion>
         <htmlformentryuiVersion>1.11.2</htmlformentryuiVersion>
     </properties>
 
