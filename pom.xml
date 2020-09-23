@@ -45,7 +45,7 @@
         <calculationVersion>1.2.1</calculationVersion>
         <serializationxstreamVersion>0.2.14</serializationxstreamVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <uicommonsVersion>2.14.0</uicommonsVersion>
+        <uicommonsVersion>2.15.0</uicommonsVersion>
         <htmlformentryuiVersion>1.11.2</htmlformentryuiVersion>
     </properties>
 
