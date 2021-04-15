@@ -15,6 +15,15 @@
 <a href="${ ui.pageLink("emr", "account/account") }">
     <button id="create-account-button">${ ui.message("emr.createAccount") }</button>
 </a>
+<% if (showDisabled) { %>
+	<a href="${ ui.pageLink("emr", "account/manageAccounts", [ 'showDisabled': 'false' ]) }">
+		<button id="hide-disabled-button">${ ui.message("emr.account.hideDisabled.label") }</button>
+	</a>
+<% } else {  %>
+	<a href="${ ui.pageLink("emr", "account/manageAccounts", [ 'showDisabled': 'true' ]) }">
+		<button id="show-disabled-button">${ ui.message("emr.account.showDisabled.label") }</button>
+	</a>
+<% } %>
 <hr>
 <table id="list-accounts" cellspacing="0" cellpadding="2">
 	<thead>
