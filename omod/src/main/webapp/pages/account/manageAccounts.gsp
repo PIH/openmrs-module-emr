@@ -12,18 +12,18 @@
 
 <h3>${  ui.message("emr.task.accountManagement.label") }</h3>
 
-<a href="${ ui.pageLink("emr", "account/account") }">
-    <button id="create-account-button">${ ui.message("emr.createAccount") }</button>
-</a>
-<% if (showDisabled) { %>
-	<a href="${ ui.pageLink("emr", "account/manageAccounts", [ 'showDisabled': 'false' ]) }">
-		<button id="hide-disabled-button">${ ui.message("emr.account.hideDisabled.label") }</button>
-	</a>
-<% } else {  %>
-	<a href="${ ui.pageLink("emr", "account/manageAccounts", [ 'showDisabled': 'true' ]) }">
-		<button id="show-disabled-button">${ ui.message("emr.account.showDisabled.label") }</button>
-	</a>
-<% } %>
+<div style="display:flex; justify-content: space-between;">
+	<div>
+		<a href="${ ui.pageLink("emr", "account/account") }">
+			<button id="create-account-button">${ ui.message("emr.createAccount") }</button>
+		</a>
+	</div>
+	<div style="margin-left:auto;">
+		<input type="checkbox" id="filter-only-enabled" value="true" />
+		${ ui.message("emr.account.showOnlyEnabled.label") }
+	</div>
+</div>
+
 <hr>
 <table id="list-accounts" cellspacing="0" cellpadding="2">
 	<thead>
@@ -83,3 +83,18 @@ ${ ui.includeFragment("uicommons", "widget/dataTable", [ object: "#list-accounts
         ]
 ]) }
 <% } %>
+<script type="text/javascript">
+	jq( document ).ready(function() {
+		jq("#filter-only-enabled").click(function(event) {
+			let table = jq("#list-accounts").dataTable();
+			let onlyEnabled = jq(this).is(':checked');
+			if (onlyEnabled) {
+				table.fnFilter('${ ui.message("emr.yes") }', 5);
+			}
+			else {
+				table.fnFilter('', 5);
+			}
+			table.fnDraw();
+		});
+	});
+</script>
