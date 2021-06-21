@@ -46,7 +46,7 @@
         <serializationxstreamVersion>0.2.15</serializationxstreamVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <uicommonsVersion>2.18.0</uicommonsVersion>
-        <htmlformentryuiVersion>1.11.2</htmlformentryuiVersion>
+        <htmlformentryuiVersion>1.12.0</htmlformentryuiVersion>
     </properties>
 
     <dependencies>
