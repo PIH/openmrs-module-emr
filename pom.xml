@@ -35,7 +35,7 @@
         <openMRSVersion>1.10.4</openMRSVersion>
         <emrapiVersion>1.33.0</emrapiVersion>
         <uiframeworkVersion>3.22.1</uiframeworkVersion>
-        <appframeworkVersion>2.16.0</appframeworkVersion>
+        <appframeworkVersion>2.17.0</appframeworkVersion>
         <idgenVersion>4.8.0</idgenVersion>
         <htmlformentryVersion>3.13.1</htmlformentryVersion>
         <providermanagementVersion>2.14.0</providermanagementVersion>
