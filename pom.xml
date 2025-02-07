@@ -24,6 +24,7 @@
         <connection>scm:git:git@github.com:PIH/openmrs-module-emr.git</connection>
         <developerConnection>scm:git:git@github.com:PIH/openmrs-module-emr.git</developerConnection>
         <url>scm:git:git@github.com:PIH/openmrs-module-emr.git</url>
+        <tag>HEAD</tag>
     </scm>
 
     <modules>
