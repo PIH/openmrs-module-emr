@@ -21,9 +21,9 @@
     </organization>
 
     <scm>
-        <connection>scm:git:git@github.com:PIH/openmrs-module-emr.git</connection>
-        <developerConnection>scm:git:git@github.com:PIH/openmrs-module-emr.git</developerConnection>
-        <url>scm:git:git@github.com:PIH/openmrs-module-emr.git</url>
+        <connection>scm:git:https://github.com/PIH/openmrs-module-emr.git</connection>
+        <developerConnection>scm:git:https://github.com/PIH/openmrs-module-emr.git</developerConnection>
+        <url>https://github.com/PIH/openmrs-module-emr</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -353,7 +353,7 @@
             <url>https://openmrs.jfrog.io/artifactory/modules-pih/</url>
         </repository>
         <snapshotRepository>
-            <id>openmrs-repo-modules-pih-snapshots</id>
+            <id>openmrs-repo-modules-pih</id>
             <name>OpenMRS Snapshots</name>
             <url>https://openmrs.jfrog.io/artifactory/modules-pih-snapshots</url>
         </snapshotRepository>
