@@ -34,17 +34,17 @@
 
     <properties>
         <openMRSVersion>1.10.4</openMRSVersion>
-        <emrapiVersion>1.37.0-SNAPSHOT</emrapiVersion>
-        <uiframeworkVersion>4.0.1-SNAPSHOT</uiframeworkVersion>
-        <appframeworkVersion>2.20.0-SNAPSHOT</appframeworkVersion>
-        <idgenVersion>6.0.0-SNAPSHOT</idgenVersion>
-        <htmlformentryVersion>3.14.0-SNAPSHOT</htmlformentryVersion>
-        <metadatamappingVersion>2.1.0-SNAPSHOT</metadatamappingVersion>
-        <reportingVersion>2.2.0-SNAPSHOT</reportingVersion>
-        <calculationVersion>2.1.0-SNAPSHOT</calculationVersion>
-        <serializationxstreamVersion>0.2.17-SNAPSHOT</serializationxstreamVersion>
+        <emrapiVersion>1.36.0</emrapiVersion>
+        <uiframeworkVersion>4.0.0</uiframeworkVersion>
+        <appframeworkVersion>2.18.0</appframeworkVersion>
+        <idgenVersion>4.14.0</idgenVersion>
+        <htmlformentryVersion>3.13.1</htmlformentryVersion>
+        <metadatamappingVersion>1.7.0</metadatamappingVersion>
+        <reportingVersion>1.28.0</reportingVersion>
+        <calculationVersion>1.3.0</calculationVersion>
+        <serializationxstreamVersion>0.2.16</serializationxstreamVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <htmlformentryuiVersion>3.3.0-SNAPSHOT</htmlformentryuiVersion>
+        <htmlformentryuiVersion>3.0.0</htmlformentryuiVersion>
     </properties>
 
     <dependencies>
